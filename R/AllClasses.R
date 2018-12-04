@@ -32,7 +32,23 @@ setMethod(
   definition = function(object) {
     cat("Genotype Table Name: ",object@name,"\n")
     cat(is(object)," wraps ", show(object@jtsGenotypeTable) ,"\n")
-    cat("Taxa: ",object@jtsGenotypeTable$numberOfSites(), " Sites: ",object@jtsGenotypeTable$numberOfTaxa(),"\n")
+    cat("Sites: ",object@jtsGenotypeTable$numberOfSites(), " Taxa: ",object@jtsGenotypeTable$numberOfTaxa(),"\n")
+  }
+)
+
+setMethod(
+  f = "positions",
+  signature = "GenotypeTable",
+  definition = function(object) {
+    new("PositionList",name="TASSEL Position List", jtsPositionList=object@jtsGenotypeTable$positions())
+  }
+)
+
+setMethod(
+  f = "taxa",
+  signature = "GenotypeTable",
+  definition = function(object) {
+    new("TaxaList",name="TASSEL Taxa List", jtsTaxaList=object@jtsGenotypeTable$taxa())
   }
 )
 
@@ -50,5 +66,46 @@ readGenotypeTable <- function(path) {
     )
   )
 }
+
+## A R Wrapper for the PositionList class
+setClass(
+  Class = "PositionList",
+  representation = representation(
+    name = "character",
+    jtsPositionList = "jobjRef"
+  )
+  #todo - this class seems like it should inherit from jobjRef
+  #contains = "jobjRef"
+)
+
+setMethod(
+  f = "show",
+  signature = "PositionList",
+  definition = function(object) {
+    cat("Position List Name: ",object@name,"\n")
+    cat(is(object)," wraps ", show(object@jtsPositionList) ,"\n")
+    cat("Sites: ",object@jtsPositionList$size(),"\n")
+  }
+)
+
+setClass(
+  Class = "TaxaList",
+  representation = representation(
+    name = "character",
+    jtsTaxaList = "jobjRef"
+  )
+  #todo - this class seems like it should inherit from jobjRef
+  #contains = "jobjRef"
+)
+
+setMethod(
+  f = "show",
+  signature = "TaxaList",
+  definition = function(object) {
+    cat("Taxa List Name: ",object@name,"\n")
+    cat(is(object)," wraps ", show(object@jtsTaxaList) ,"\n")
+    cat("Taxa: ",object@jtsTaxaList$size(),"\n")
+  }
+)
 
 

@@ -25,6 +25,10 @@ filterSiteBuilderPlugin <- function(genotypeTable,
                                     startSite=0,
                                     endSite=0
 ) {
+  # Unwrap the java object if necessary
+  if(is(genotypeTable,"GenotypeTable") == TRUE) {
+    genotypeTable <- genotypeTable@jtsGenotypeTable
+  }
   plugin <- rJava::.jnew("net.maizegenetics.analysis.filter.FilterSiteBuilderPlugin")
   plugin$setParameter("siteMinCount",toString(siteMinCount))
   plugin$setParameter("siteMinAlleleFreq",toString(siteMinAlleleFreq))
@@ -35,6 +39,7 @@ filterSiteBuilderPlugin <- function(genotypeTable,
   plugin$setParameter("endSite",toString(endSite))
   
   filteredGT <- plugin$runPlugin(genotypeTable)
+  #rewrap the object
   new(
     Class = "GenotypeTable",
     #todo come up with better name

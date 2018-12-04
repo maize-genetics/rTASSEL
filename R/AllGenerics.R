@@ -18,3 +18,10 @@ setGeneric(
         standardGeneric("positions")
     }
 )
+
+setGeneric(
+  name = "taxa",
+  def = function(object) {
+    standardGeneric("taxa")
+  }
+)
