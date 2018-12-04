@@ -14,6 +14,8 @@
 
 # Preamble 
 
+source("R/AllClasses.R")
+
 filterSiteBuilderPlugin <- function(genotypeTable,
                                     siteMinCount=0,
                                     siteMinAlleleFreq=0.0,
@@ -31,5 +33,12 @@ filterSiteBuilderPlugin <- function(genotypeTable,
   plugin$setParameter("maxHeterozygous",toString(maxHeterozygous))
   plugin$setParameter("startSite",toString(startSite))
   plugin$setParameter("endSite",toString(endSite))
-  plugin$runPlugin(genotypeTable)
+  
+  filteredGT <- plugin$runPlugin(genotypeTable)
+  new(
+    Class = "GenotypeTable",
+    #todo come up with better name
+    name = paste0("Filtered:"),
+    jtsGenotypeTable = filteredGT
+  )
 }

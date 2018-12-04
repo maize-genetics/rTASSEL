@@ -18,9 +18,11 @@
 setClass(
   Class = "GenotypeTable",
   representation = representation(
-    path = "character",
+    name = "character",
     jtsGenotypeTable = "jobjRef"
   )
+  #todo - this class seems like it should inherit from jobjRef
+  #contains = "jobjRef"
 )
 
 ## Display overview when object is called
@@ -28,13 +30,9 @@ setMethod(
   f = "show",
   signature = "GenotypeTable",
   definition = function(object) {
-    rJava::.jcall(
-      "net/maizegenetics/dna/snp/ImportUtils",
-      "Lnet/maizegenetics/dna/snp/GenotypeSummaryPlugin;",
-      "printSimpleSummary",
-      object,
-      "Bob"
-    )
+    cat("Genotype Table Name: ",object@name,"\n")
+    cat(is(object)," wraps ", show(object@jtsGenotypeTable) ,"\n")
+    cat("Taxa: ",object@jtsGenotypeTable$numberOfSites(), " Sites: ",object@jtsGenotypeTable$numberOfTaxa(),"\n")
   }
 )
 
@@ -42,7 +40,8 @@ setMethod(
 readGenotypeTable <- function(path) {
   new(
     Class = "GenotypeTable",
-    path = path,
+    #todo split path to only grab the filename
+    name = paste0("PATH:",path),
     jtsGenotypeTable = rJava::.jcall(
       "net/maizegenetics/dna/snp/ImportUtils",
       "Lnet/maizegenetics/dna/snp/GenotypeTable;",

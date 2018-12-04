@@ -22,5 +22,9 @@ tsGenotypeTable <- rJava::.jcall(
 
 test <- readGenotypeTable(vcfPath)
 test
-test@path
+test@name
 test@jtsGenotypeTable
+test2 <- filterSiteBuilderPlugin(test@jtsGenotypeTable, siteMinCount = 40)
+test2
+test2@name
+test2@jtsGenotypeTable
