@@ -11,3 +11,10 @@
 #    The main purpose of this Rscript produce wrapper classes for 
 #    TASSEL S4 generics
 #--------------------------------------------------------------------
+
+setGeneric(
+    name = "positions",
+    def = function(object) {
+        standardGeneric("positions")
+    }
+)
