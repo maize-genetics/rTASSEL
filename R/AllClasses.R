@@ -108,4 +108,21 @@ setMethod(
   }
 )
 
+## Constructor for GenotypeTable class object
+sampleDataFrame <- function(GenoTableOrTaxaList) {
+  if(is(jtsGenoTableOrTaxaList,"GenotypeTable")) {
+    jtsTL <- taxa(GenoTableOrTaxaList)@jtsTaxaList
+  } else if(is(jtsGenoTableOrTaxaList,"TaxaList")) {
+    jtsTL <- jtsGenoTableOrTaxaList@jtsTaxaList
+  } else {
+    jtsTL <- GenoTableOrTaxaList
+  }
+  taxaArray <- c()
+  for(i in 1:jtsTL$size()) {
+    #why do I have to do -1L
+    taxaArray[i] = toString(jtsTL$taxaName(i-1L))
+  }
+  colData <- DataFrame(Sample=taxaArray)
+  colData
+}
 

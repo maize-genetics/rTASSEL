@@ -26,3 +26,5 @@ testPostions <- positions(test)
 testPostions
 testTaxa <- taxa(test)
 testTaxa
+
+sampleDF <- sampleDataFrame(testTaxa)
