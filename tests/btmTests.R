@@ -14,6 +14,14 @@
 #    capabilities for rTASSEL in generating GenomicRanges class
 #--------------------------------------------------------------------
 
+## Load packages
+library(rJava)
+library(GenomicRanges)
+
+
+## Set WD
+setwd("~/Projects/rtassel/")
+
 ## Source files
 source("R/AllClasses.R")
 source("R/AllGenerics.R")
@@ -40,5 +48,15 @@ vcfPath <- paste0(
     "/tassel_5_test/dataFiles/GenotypeTableTests/",
     "maize_chr9_10thin100.recode.vcf"
 )
+
+test <- readGenotypeTable(vcfPath)
+
+## Let's do some iteration...
+
+numSite <- as.numeric(test@jtsGenotypeTable$numberOfSites())
+l1 <- lapply(seq_len(numSite), function(i) {
+    test@jtsGenotypeTable$chromosomalPosition(as.integer(i - 1))
+})
+
 
 
