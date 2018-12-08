@@ -12,6 +12,8 @@
 #    TASSEL classes
 #--------------------------------------------------------------------
 
+source("R/AllClasses.R")
+
 ## Constructor for GenotypeTable class object
 sampleDataFrame <- function(jtsGenoTableOrTaxaList) {
   if(is(jtsGenoTableOrTaxaList,"GenotypeTable")) {
@@ -32,7 +34,7 @@ sampleDataFrame <- function(jtsGenoTableOrTaxaList) {
 
 
 ## Constructor for GRanges (GenomicRanges) class object
-sampleGenomicRanges <- function(jtsGenoTableOrPos) {
+sampleGenomicRanges <- function(jtsGenoTable) {
     if(is(jtsGenoTable,"GenotypeTable")) {
         jtsGT <- positions(jtsGenoTable)@jtsPositionList
     } else {

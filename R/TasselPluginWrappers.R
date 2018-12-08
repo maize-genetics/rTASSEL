@@ -12,6 +12,7 @@
 #   for TASSEL plugins
 #--------------------------------------------------------------------
 
+source("R/AllClasses.R")
 filterSiteBuilderPlugin <- function(genotypeTable,
                                     siteMinCount=0,
                                     siteMinAlleleFreq=0.0,
