@@ -14,6 +14,8 @@
 #    capabilities for rTASSEL in generating GenomicRanges class
 #--------------------------------------------------------------------
 
+# Preamble
+
 ## Load packages
 library(rJava)
 library(GenomicRanges)
@@ -21,12 +23,6 @@ library(GenomicRanges)
 
 ## Set WD
 setwd("~/Projects/rtassel/")
-
-## Source files
-source("R/AllClasses.R")
-source("R/AllGenerics.R")
-source("R/TasselPluginWrappers.R")
-
 
 ## jinit
 rJava::.jinit()
@@ -40,6 +36,10 @@ rJava::.jaddClassPath(
     paste0(homeloc, "/Development/tassel_5_standalone/sTASSEL.jar")
 )
 
+## Source files
+source("R/AllClasses.R")
+source("R/AllGenerics.R")
+source("R/TasselPluginWrappers.R")
 
 ## Add VCF path
 devloc <- paste0(homeloc, "/Development")
@@ -49,14 +49,15 @@ vcfPath <- paste0(
     "maize_chr9_10thin100.recode.vcf"
 )
 
-test <- readGenotypeTable(vcfPath)
-
-## Let's do some iteration...
-
-numSite <- as.numeric(test@jtsGenotypeTable$numberOfSites())
-l1 <- lapply(seq_len(numSite), function(i) {
-    test@jtsGenotypeTable$chromosomalPosition(as.integer(i - 1))
-})
 
 
+# Tests
 
+## Make genotype table
+tasGenoTable <- readGenotypeTable(vcfPath)
+
+## Make sample data frame of Taxa
+tasDF <- sampleDataFrame(tasGenoTable)
+
+## Make genomic ranges
+tasGRanges <- sampleGenomicRanges(tasGenoTable)
