@@ -111,11 +111,11 @@ setMethod(
 ## Constructor for GenotypeTable class object
 sampleDataFrame <- function(jtsGenoTableOrTaxaList) {
   if(is(jtsGenoTableOrTaxaList,"GenotypeTable")) {
-    jtsTL <- taxa(GenoTableOrTaxaList)@jtsTaxaList
+    jtsTL <- taxa(jtsGenoTableOrTaxaList)@jtsTaxaList
   } else if(is(jtsGenoTableOrTaxaList,"TaxaList")) {
     jtsTL <- jtsGenoTableOrTaxaList@jtsTaxaList
   } else {
-    jtsTL <- GenoTableOrTaxaList
+    jtsTL <- jtsGenoTableOrTaxaList
   }
   taxaArray <- c()
   for(i in 1:jtsTL$size()) {
@@ -126,3 +126,28 @@ sampleDataFrame <- function(jtsGenoTableOrTaxaList) {
   colData
 }
 
+
+## Constructor for GRanges (GenomicRanges) class object
+sampleGenomicRanges <- function(jtsGenoTable) {
+    if(is(jtsGenoTable,"GenotypeTable")) {
+        jtsGT <- positions(jtsGenoTable)@jtsPositionList
+    } else {
+        stop("Object is not of \"GenotypeTable\" class")
+    }
+    
+    numSite <- as.numeric(jtsGT$numberOfSites())
+    physPos <- jtsGT$physicalPositions()
+    
+    cat("Extracting chromosome names for each postion...\n")
+    cat("...is there a quicker way to get this? (~ Brandon)\n")
+    chrName <- lapply(seq_len(numSite), function(pos) {
+        jtsGT$chromosomeName(as.integer(pos - 1))
+    })
+    chrName <- unlist(chrName)
+    
+    gr2 <- GenomicRanges::GRanges(
+        seqnames = S4Vectors::Rle(chrName),
+        ranges = IRanges::IRanges(start = physPos, end = physPos)
+    )
+    return(gr2)
+}
