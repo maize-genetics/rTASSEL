@@ -61,3 +61,4 @@ tasDF <- sampleDataFrame(tasGenoTable)
 
 ## Make genomic ranges
 tasGRanges <- sampleGenomicRanges(tasGenoTable)
+tasGRanges
