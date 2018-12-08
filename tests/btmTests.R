@@ -40,6 +40,7 @@ rJava::.jaddClassPath(
 source("R/AllClasses.R")
 source("R/AllGenerics.R")
 source("R/TasselPluginWrappers.R")
+source("R/PullFunctions.R")
 
 ## Add VCF path
 devloc <- paste0(homeloc, "/Development")

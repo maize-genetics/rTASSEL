@@ -1,6 +1,6 @@
-##--------------------------------------------------------------------
-# Script Name:   rjava_tests.R
-# Description:   Various tests with rJava
+#---------------------------------------------------------------------
+# Script Name:   AllClasses.R
+# Description:   All classes for rTASSEL
 # Author:        Brandon Monier & Ed Buckler
 # Created:       2018-11-26 at 11:14:36
 # Last Modified: 2018-12-03 at 17:58:46
@@ -11,8 +11,6 @@
 #    The main purpose of this Rscript produce wrapper classes for 
 #    TASSEL classes
 #--------------------------------------------------------------------
-
-# Preamble 
 
 ## Make a GenotypeTable class
 setClass(
@@ -36,6 +34,7 @@ setMethod(
   }
 )
 
+## Get positions for GenotypeTable class objects
 setMethod(
   f = "positions",
   signature = "GenotypeTable",
@@ -44,6 +43,7 @@ setMethod(
   }
 )
 
+## Get taxa for GenotypeTable class objects
 setMethod(
   f = "taxa",
   signature = "GenotypeTable",
@@ -78,6 +78,7 @@ setClass(
   #contains = "jobjRef"
 )
 
+## Show positions lists
 setMethod(
   f = "show",
   signature = "PositionList",
@@ -88,6 +89,7 @@ setMethod(
   }
 )
 
+## A R Wrapper for the TaxaList class
 setClass(
   Class = "TaxaList",
   representation = representation(
@@ -98,6 +100,7 @@ setClass(
   #contains = "jobjRef"
 )
 
+## Show method for TaxaList class objects
 setMethod(
   f = "show",
   signature = "TaxaList",
@@ -107,47 +110,3 @@ setMethod(
     cat("Taxa: ",object@jtsTaxaList$size(),"\n")
   }
 )
-
-## Constructor for GenotypeTable class object
-sampleDataFrame <- function(jtsGenoTableOrTaxaList) {
-  if(is(jtsGenoTableOrTaxaList,"GenotypeTable")) {
-    jtsTL <- taxa(jtsGenoTableOrTaxaList)@jtsTaxaList
-  } else if(is(jtsGenoTableOrTaxaList,"TaxaList")) {
-    jtsTL <- jtsGenoTableOrTaxaList@jtsTaxaList
-  } else {
-    jtsTL <- jtsGenoTableOrTaxaList
-  }
-  taxaArray <- c()
-  for(i in 1:jtsTL$size()) {
-    #why do I have to do -1L
-    taxaArray[i] = toString(jtsTL$taxaName(i-1L))
-  }
-  colData <- data.frame(Sample=taxaArray)
-  colData
-}
-
-
-## Constructor for GRanges (GenomicRanges) class object
-sampleGenomicRanges <- function(jtsGenoTable) {
-    if(is(jtsGenoTable,"GenotypeTable")) {
-        jtsGT <- positions(jtsGenoTable)@jtsPositionList
-    } else {
-        stop("Object is not of \"GenotypeTable\" class")
-    }
-    
-    numSite <- as.numeric(jtsGT$numberOfSites())
-    physPos <- jtsGT$physicalPositions()
-    
-    cat("Extracting chromosome names for each postion...\n")
-    cat("...is there a quicker way to get this? (~ Brandon)\n")
-    chrName <- lapply(seq_len(numSite), function(pos) {
-        jtsGT$chromosomeName(as.integer(pos - 1))
-    })
-    chrName <- unlist(chrName)
-    
-    gr2 <- GenomicRanges::GRanges(
-        seqnames = S4Vectors::Rle(chrName),
-        ranges = IRanges::IRanges(start = physPos, end = physPos)
-    )
-    return(gr2)
-}
