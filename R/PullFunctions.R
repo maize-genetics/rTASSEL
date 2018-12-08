@@ -35,8 +35,7 @@ sampleDataFrame <- function(jtsGenoTableOrTaxaList) {
 sampleGenomicRanges <- function(jtsGenoTableOrPos) {
     if(is(jtsGenoTable,"GenotypeTable")) {
         jtsGT <- positions(jtsGenoTable)@jtsPositionList
-    } else if(is(jtsGenoTable, ))
-    else {
+    } else {
         stop("Object is not of \"GenotypeTable\" class")
     }
     
