@@ -40,4 +40,21 @@ haplotypeGraphStreamBuilderPlugin <- function(configFile
 
 configFilePath <- paste0(getwd(),"/data/configSQLiteR.txt")
 method <- "B73ref"
+plugin <- new(J("net.maizegenetics.pangenome.api.HaplotypeGraphBuilderPlugin"), .jnull(), FALSE)
+#plugin$setParameter("configFile",toString(configFile))
+#plugin$setParameter("myMethods",toString(myMethods))
+# plugin$setParameter("myIncludeSequences",toString(FALSE))
+plugin$configFile(configFilePath)
+plugin$methods(method)
+jfalse <- .jnew("java/lang/Boolean",FALSE)
+jfalse
+plugin$includeSequences(jfalse)
+hg <- plugin$build()
+hg$chromosomes()
+rrList <- hg$referenceRangeList()
+rrList$get(0L)
+
+
+hn <- hg$nodes()
+
 haplotypeGraphBuilderPlugin(configFilePath,method)
