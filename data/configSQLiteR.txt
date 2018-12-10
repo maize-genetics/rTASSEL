@@ -1,0 +1,17 @@
+# db connection parameters
+host=localHost
+user=sqlite
+password=sqlite
+DB=/tempFileDir/outputDir/phgSmallSeq.db
+DBtype=sqlite
+
+# HapCountBestPathToTextPlugin parameters
+maxNodesPerRange=30
+minTaxaPerRange=1
+minGBSReads=0
+maxGBSReads=1000
+minTransitionProb=0.001
+probReadMappedCorrectly=0.99
+emissionMethod=allCounts
+splitTaxa=false
+
