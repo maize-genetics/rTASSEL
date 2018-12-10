@@ -2,7 +2,7 @@
 host=localHost
 user=sqlite
 password=sqlite
-DB=/tempFileDir/outputDir/phgSmallSeq.db
+DB=/Users/edbuckler/temp/phgMaizeGzip_deltaG_depthAndNonMappedFix.db
 DBtype=sqlite
 
 # HapCountBestPathToTextPlugin parameters

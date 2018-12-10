@@ -27,7 +27,7 @@ path_exp_tassel <- paste0(getwd(),"/inst/java/sTASSEL.jar")
 
 
 ## jinit
-rJava::.jinit()
+rJava::.jinit(parameters="-Xmx6g")
 .jcall(.jnew("java/lang/Runtime"), "J", "totalMemory")
 .jcall(.jnew("java/lang/Runtime"), "J", "maxMemory")
 
