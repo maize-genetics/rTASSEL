@@ -2,6 +2,11 @@
 
 ##Installs needed
 # install.packages("tidyverse")
+# To install Java on a mac
+# make sure latest git/gcc tools are installed
+# from terminal: xcode-select --install
+# With R closed, run this to let R know what Java is available.  Close the term when done
+# from terminal: R CMD javareconf
 # install.packages("rJava", dependencies=TRUE, type="source")
 # if (!requireNamespace("BiocManager")) {
 #   install.packages("BiocManager")
@@ -9,16 +14,17 @@
 # BiocManager::install("SummarizedExperiment")
 
 ## Load packages
-library(rJava)
+library(rJava) 
 library(GenomicRanges)
 library(stringr)
 
 
 is_experimental <- TRUE
-path_exp_tassel <- "/Users/edwardbuckler/Code/tassel-5-source/dist/sTASSEL.jar"
-
 ## Set WD
 setwd("~/Code/rtassel")
+path_exp_tassel <- paste0(getwd(),"/inst/java/sTASSEL.jar")
+
+
 
 ## jinit
 rJava::.jinit()
@@ -51,8 +57,8 @@ source("R/PullFunctions.R")
 
 ## VCF file path exmaple...
 vcfPath <- paste0(
-  "/Users/edwardbuckler/Code/tassel-5-test/dataFiles/GenotypeTableTests/",
-  "maize_chr9_10thin100.recode.vcf"
+  getwd(),
+  "/data/maize_chr9_10thin40000.recode.vcf"
 )
 
 test <- readGenotypeTable(vcfPath)
