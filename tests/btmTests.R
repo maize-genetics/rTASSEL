@@ -61,5 +61,5 @@ tasGenoTable <- readGenotypeTable(vcfPath)
 tasDF <- sampleDataFrame(tasGenoTable)
 
 ## Make genomic ranges
-tasGRanges <- sampleGenomicRanges(tasGenoTable)
+tasGRanges <- genomicRanges(tasGenoTable)
 tasGRanges

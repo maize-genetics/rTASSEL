@@ -34,7 +34,7 @@ sampleDataFrame <- function(jtsGenoTableOrTaxaList) {
 
 
 ## Constructor for GRanges (GenomicRanges) class object
-sampleGenomicRanges <- function(jtsGenoTable) {
+genomicRanges <- function(jtsGenoTable) {
     if(is(jtsGenoTable,"GenotypeTable")) {
         jtsGT <- positions(jtsGenoTable)@jtsPositionList
     } else {
@@ -57,3 +57,5 @@ sampleGenomicRanges <- function(jtsGenoTable) {
     )
     return(gr2)
 }
+
+
