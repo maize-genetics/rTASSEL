@@ -55,6 +55,6 @@ rrList <- hg$referenceRangeList()
 rrList$get(0L)
 
 
-hn <- hg$nodes()
+hn <- hg$nodes
 
 haplotypeGraphBuilderPlugin(configFilePath,method)
