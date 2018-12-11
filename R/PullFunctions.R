@@ -30,7 +30,7 @@ sampleDataFrame <- function(jtsGenoTableOrTaxaList) {
   }
   
   #This could be faster
-  # genoNameArray <- rJava::.jcall(
+  # taxaArray <- rJava::.jcall(
   #   "net/maizegenetics/plugindef/GenerateRCode",
   #   "[S",
   #   "genotypeTableToSampleNameArray",
@@ -41,7 +41,7 @@ sampleDataFrame <- function(jtsGenoTableOrTaxaList) {
     #why do I have to do -1L
     taxaArray[i] = toString(jtsTL$taxaName(i-1L))
   }
-  colData <- data.frame(Sample=taxaArray)
+  colData <- data.frame(Sample=taxaArray, row.names = taxaArray)
   colData
 }
 
