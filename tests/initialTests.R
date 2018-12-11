@@ -12,12 +12,16 @@
 #   install.packages("BiocManager")
 # }
 # BiocManager::install("SummarizedExperiment")
+# BiocManager::install("snpStats")
+# BiocManager::install("hexbin")
 
 ## Load packages
 library(rJava) 
 library(GenomicRanges)
 library(stringr)
 library(SummarizedExperiment)
+library(snpStats)
+library(hexbin)
 
 ## Set WD
 setwd("~/Code/rtassel")
@@ -69,5 +73,6 @@ testTaxa
 sampleDF <- sampleDataFrame(testTaxa)
 
 sumExp <- summarizeExperimentFromGenotypeTable(readGenotypeTable(vcfPath))
+asnpmat <- snpMatrixFromGenotypeTable(readGenotypeTable(vcfPath))
 
 

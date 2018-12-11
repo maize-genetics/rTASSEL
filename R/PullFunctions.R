@@ -104,3 +104,31 @@ summarizeExperimentFromGenotypeTable <- function(genotypeTable) {
 }
 
 
+## Create Summarized Experiment from a TASSEL Genotype Table
+snpMatrixFromGenotypeTable <- function(genotypeTable) {
+  if(is(genotypeTable,"GenotypeTable")) {
+    jGT <- genotypeTable@jtsGenotypeTable
+  } else if(genotypeTable %instanceof% "net.maizegenetics.dna.snp.GenotypeTable") {
+    jGT <- genotypeTable
+  } else {
+    stop("Object is not of \"GenotypeTable\" class")
+  }
+  
+  sampleDF <- sampleDataFrame(jGT)
+  genomicRangesDF <- genomicRanges(jGT)
+  
+  genoCallIntArray <- rJava::.jcall(
+    "net/maizegenetics/plugindef/GenerateRCode",
+    "[I",
+    "genotypeTableToDosageIntArray",
+    jGT
+  )
+  aMatrix <- matrix(genoCallIntArray,length(genomicRangesDF))
+  colnames(aMatrix) <- sampleDF[["Sample"]]
+  rownames(aMatrix) <- paste0(seqnames(genomicRangesDF),":",ranges(genomicRangesDF))
+  as(aMatrix, "SnpMatrix")
+}
+
+
+
+
