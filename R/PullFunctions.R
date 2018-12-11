@@ -14,15 +14,28 @@
 
 source("R/AllClasses.R")
 
+
 ## Constructor for GenotypeTable class object
 sampleDataFrame <- function(jtsGenoTableOrTaxaList) {
   if(is(jtsGenoTableOrTaxaList,"GenotypeTable")) {
     jtsTL <- taxa(jtsGenoTableOrTaxaList)@jtsTaxaList
   } else if(is(jtsGenoTableOrTaxaList,"TaxaList")) {
     jtsTL <- jtsGenoTableOrTaxaList@jtsTaxaList
-  } else {
+  } else if(jtsGenoTableOrTaxaList %instanceof% "net.maizegenetics.dna.snp.GenotypeTable") {
+    jtsTL <- jtsGenoTableOrTaxaList$taxa()
+  } else if(jtsGenoTableOrTaxaList %instanceof% "net.maizegenetics.taxa.TaxaList") {
     jtsTL <- jtsGenoTableOrTaxaList
+  } else {
+    stop("Object is not of \"TaxaList\" class")
   }
+  
+  #This could be faster
+  # genoNameArray <- rJava::.jcall(
+  #   "net/maizegenetics/plugindef/GenerateRCode",
+  #   "[S",
+  #   "genotypeTableToSampleNameArray",
+  #   test@jtsGenotypeTable
+  # )
   taxaArray <- c()
   for(i in 1:jtsTL$size()) {
     #why do I have to do -1L
@@ -34,20 +47,29 @@ sampleDataFrame <- function(jtsGenoTableOrTaxaList) {
 
 
 ## Constructor for GRanges (GenomicRanges) class object
-genomicRanges <- function(jtsGenoTable) {
-    if(is(jtsGenoTable,"GenotypeTable")) {
-        jtsGT <- positions(jtsGenoTable)@jtsPositionList
+genomicRanges <- function(genoTable) {
+    if(is(genoTable,"GenotypeTable")) {
+        jtsPL <- positions(genoTable)@jtsPositionList
+    } else if(genoTable %instanceof% "net.maizegenetics.dna.snp.GenotypeTable") {
+      jtsPL <- genoTable$positions()
     } else {
         stop("Object is not of \"GenotypeTable\" class")
     }
     
-    numSite <- as.numeric(jtsGT$numberOfSites())
-    physPos <- jtsGT$physicalPositions()
+  # genoPositionVector <- rJava::.jcall(
+  #   "net/maizegenetics/plugindef/GenerateRCode",
+  #   "Lnet/maizegenetics/plugindef/GenerateRCode$PositionVectors;",
+  #   "genotypeTableToPositionListOfArrays",
+  #   test@jtsGenotypeTable
+  # )
+  
+    numSite <- as.numeric(jtsPL$numberOfSites())
+    physPos <- jtsPL$physicalPositions()
     
     cat("Extracting chromosome names for each postion...\n")
     cat("...is there a quicker way to get this? (~ Brandon)\n")
     chrName <- lapply(seq_len(numSite), function(pos) {
-        jtsGT$chromosomeName(as.integer(pos - 1))
+        jtsPL$chromosomeName(as.integer(pos - 1))
     })
     chrName <- unlist(chrName)
     
@@ -56,6 +78,29 @@ genomicRanges <- function(jtsGenoTable) {
         ranges = IRanges::IRanges(start = physPos, end = physPos)
     )
     return(gr2)
+}
+
+## Create Summarized Experiment from a TASSEL Genotype Table
+summarizeExperimentFromGenotypeTable <- function(genotypeTable) {
+  if(is(genotypeTable,"GenotypeTable")) {
+    jGT <- genotypeTable@jtsGenotypeTable
+  } else if(genotypeTable %instanceof% "net.maizegenetics.dna.snp.GenotypeTable") {
+    jGT <- genotypeTable
+  } else {
+    stop("Object is not of \"GenotypeTable\" class")
+  }
+  
+  sampleDF <- sampleDataFrame(jGT)
+  genomicRangesDF <- genomicRanges(jGT)
+  
+  genoCallIntArray <- rJava::.jcall(
+    "net/maizegenetics/plugindef/GenerateRCode",
+    "[I",
+    "genotypeTableToDosageIntArray",
+    jGT
+  )
+  
+ SummarizedExperiment(assays=matrix(genoCallIntArray,length(genomicRangesDF)), rowRanges=genomicRangesDF, colData=sampleDF)
 }
 
 

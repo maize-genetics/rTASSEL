@@ -17,9 +17,8 @@
 library(rJava) 
 library(GenomicRanges)
 library(stringr)
+library(SummarizedExperiment)
 
-
-is_experimental <- TRUE
 ## Set WD
 setwd("~/Code/rtassel")
 path_exp_tassel <- paste0(getwd(),"/inst/java/sTASSEL.jar")
@@ -34,11 +33,6 @@ rJava::.jinit(parameters="-Xmx6g")
 ## Add class path
 # Note the file class paths may differ between Windows and Macs.
 homeloc <- Sys.getenv("HOME")
-if(is_experimental == TRUE) {
-  tasselPath <- path_exp_tassel
-} else {
-  tasselPath <- paste0(homeloc, "/Code/tassel-5-standalone/sTASSEL.jar")
-}
 
 rJava::.jaddClassPath(tasselPath)
 print(.jclassPath())
@@ -75,6 +69,8 @@ testTaxa <- taxa(test)
 testTaxa
 
 sampleDF <- sampleDataFrame(testTaxa)
+
+sumExp <- summarizeExperimentFromGenotypeTable(readGenotypeTable(vcfPath))
 
 genoIntArray <- rJava::.jcall(
   "net/maizegenetics/plugindef/GenerateRCode",
