@@ -65,7 +65,7 @@ rownames(phenosOneLoc) <- phenosOneLoc$Taxa
 phenosOneLoc <- phenosOneLoc[,-c(2)]
 
 ## create GWASpoly object with coopted read.GWASpoly function
-data_gwasPoly <- se_createGWASpolyObject(ploidy = 2, phenoDF = phenosOneLoc, simplifiedExperimentGeno =  tas_se, format = "numeric", n.traits = 3)
+data_gwasPoly <- se_createGWASpolyObject(ploidy = 2, phenoDF = phenosOneLoc, SummarizedExperimentObject =  tas_se, format = "numeric", n.traits = 3)
 
 ## add kinship information to object
 data_gwasPoly <- set.K(data_gwasPoly)
@@ -84,3 +84,16 @@ data_gwasPoly_res <- set.threshold(data_gwasPoly_res, method = "FDR", level=0.05
 get.QTL(data = data_gwasPoly_res)
 
 manhattan.plot(data_gwasPoly_res, trait = "EarDia", model = "additive")
+
+traitGWASresults <- data.frame()
+for(trait in names(data_gwasPoly_res@scores)){
+  traitMarkerpScores <- as.data.frame(data_gwasPoly_res@scores[trait])
+  traitMarkerpVals <- exp(traitMarkerpScores*-1)
+  traitMarkerEffects <-  as.data.frame(data_gwasPoly_res@effects[trait])
+  traitGWASresults <- rbind(traitGWASresults, data.frame(traitMarkerEffects, traitMarkerpVals, traitMarkerpScores, trait = trait))
+}
+
+traitGWASresults$Marker <- rownames(traitGWASresults)
+
+traitGWASresults <- merge(traitGWASresults, data_gwasPoly_res@map, by = "Marker")
+
