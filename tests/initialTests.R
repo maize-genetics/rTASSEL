@@ -34,7 +34,7 @@ rJava::.jinit(parameters="-Xmx6g")
 # Note the file class paths may differ between Windows and Macs.
 homeloc <- Sys.getenv("HOME")
 
-rJava::.jaddClassPath(tasselPath)
+rJava::.jaddClassPath(path_exp_tassel)
 print(.jclassPath())
 
 tasselVersion <- rJava::.jfield("net/maizegenetics/tassel/TASSELMainFrame","S","version")
