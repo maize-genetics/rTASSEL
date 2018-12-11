@@ -8,7 +8,7 @@
 
 #--------------------------------------------------------------------
 # Detailed Purpose:
-#    The main purpose of this Rscript produce wrapper classes for 
+#    The main purpose of this Rscript produce wrapper classes for
 #    TASSEL classes
 #--------------------------------------------------------------------
 
@@ -28,7 +28,7 @@ sampleDataFrame <- function(jtsGenoTableOrTaxaList) {
   } else {
     stop("Object is not of \"TaxaList\" class")
   }
-  
+
   #This could be faster
   # genoNameArray <- rJava::.jcall(
   #   "net/maizegenetics/plugindef/GenerateRCode",
@@ -55,24 +55,24 @@ genomicRanges <- function(genoTable) {
     } else {
         stop("Object is not of \"GenotypeTable\" class")
     }
-    
+
   # genoPositionVector <- rJava::.jcall(
   #   "net/maizegenetics/plugindef/GenerateRCode",
   #   "Lnet/maizegenetics/plugindef/GenerateRCode$PositionVectors;",
   #   "genotypeTableToPositionListOfArrays",
   #   test@jtsGenotypeTable
   # )
-  
+
     numSite <- as.numeric(jtsPL$numberOfSites())
     physPos <- jtsPL$physicalPositions()
-    
+
     cat("Extracting chromosome names for each postion...\n")
     cat("...is there a quicker way to get this? (~ Brandon)\n")
     chrName <- lapply(seq_len(numSite), function(pos) {
         jtsPL$chromosomeName(as.integer(pos - 1))
     })
     chrName <- unlist(chrName)
-    
+
     gr2 <- GenomicRanges::GRanges(
         seqnames = S4Vectors::Rle(chrName),
         ranges = IRanges::IRanges(start = physPos, end = physPos)
@@ -89,18 +89,27 @@ summarizeExperimentFromGenotypeTable <- function(genotypeTable) {
   } else {
     stop("Object is not of \"GenotypeTable\" class")
   }
-  
+
   sampleDF <- sampleDataFrame(jGT)
   genomicRangesDF <- genomicRanges(jGT)
-  
+
   genoCallIntArray <- rJava::.jcall(
     "net/maizegenetics/plugindef/GenerateRCode",
     "[I",
     "genotypeTableToDosageIntArray",
     jGT
   )
-  
+
  SummarizedExperiment(assays=matrix(genoCallIntArray,length(genomicRangesDF)), rowRanges=genomicRangesDF, colData=sampleDF)
 }
 
-
+## Create GWASpoly geno dataframe from SimplifiedExperiment object
+GWASpolyGenoFromSummarizedExperiment <- function(SummarizedExperimentObject){
+  geno <- data.frame(markerName = paste("dummy", 1:length(ranges(SummarizedExperimentObject@rowRanges))), # dummy name as current summarizeExperimentFromGenotypeTable doesn't keep
+                     chr = seqnames(SummarizedExperimentObject@rowRanges),
+                     pos = start(ranges(SummarizedExperimentObject@rowRanges)),
+                     as.data.frame(SummarizedExperimentObject@assays$data@listData) # same as assay(SummarizedExperimentObject)
+  )
+  colnames(geno)[4:ncol(geno)] <- as.character(SummarizedExperimentObject$Sample)
+  geno
+}
