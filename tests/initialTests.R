@@ -21,9 +21,7 @@ library(SummarizedExperiment)
 
 ## Set WD
 setwd("~/Code/rtassel")
-path_exp_tassel <- paste0(getwd(),"/inst/java/sTASSEL.jar")
-
-
+path_tassel <- paste0(getwd(),"/inst/java/sTASSEL.jar")
 
 ## jinit
 rJava::.jinit(parameters="-Xmx6g")
@@ -34,7 +32,7 @@ rJava::.jinit(parameters="-Xmx6g")
 # Note the file class paths may differ between Windows and Macs.
 homeloc <- Sys.getenv("HOME")
 
-rJava::.jaddClassPath(path_exp_tassel)
+rJava::.jaddClassPath(path_tassel)
 print(.jclassPath())
 
 tasselVersion <- rJava::.jfield("net/maizegenetics/tassel/TASSELMainFrame","S","version")
@@ -72,24 +70,4 @@ sampleDF <- sampleDataFrame(testTaxa)
 
 sumExp <- summarizeExperimentFromGenotypeTable(readGenotypeTable(vcfPath))
 
-genoIntArray <- rJava::.jcall(
-  "net/maizegenetics/plugindef/GenerateRCode",
-  "[I",
-  "genotypeTableToDosageIntArray",
-  test@jtsGenotypeTable
-)
-
-genoNameArray <- rJava::.jcall(
-  "net/maizegenetics/plugindef/GenerateRCode",
-  "[S",
-  "genotypeTableToSampleNameArray",
-  test@jtsGenotypeTable
-)
-
-genoPositionVector <- rJava::.jcall(
-  "net/maizegenetics/plugindef/GenerateRCode",
-  "Lnet/maizegenetics/plugindef/GenerateRCode$PositionVectors;",
-  "genotypeTableToPositionListOfArrays",
-  test@jtsGenotypeTable
-)
 
