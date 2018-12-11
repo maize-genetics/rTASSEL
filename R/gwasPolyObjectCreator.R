@@ -1,6 +1,6 @@
 # Coopting read.gwaspoly to create GWASpoly class object from tassel simplified experiment
 #right now it makes dummy marker names as current summarizeExperimentFromGenotypeTable doesn't keep them
-se_createGWASpolyObject <- function(ploidy, phenoDF, simplifiedExperimentGeno, format, n.traits)
+se_createGWASpolyObject <- function(ploidy, phenoDF, SummarizedExperimentObject, format, n.traits)
 {
   if (format == "ACTG") {
     format <- "ACGT"
@@ -35,12 +35,12 @@ se_createGWASpolyObject <- function(ploidy, phenoDF, simplifiedExperimentGeno, f
   }
 
   ## unwrap tassel summarized experiment to expected GWASpoly genotype format
-  geno <- data.frame(markerName = paste("dummy", 1:length(ranges(simplifiedExperimentGeno@rowRanges))), # dummy name as current summarizeExperimentFromGenotypeTable doesn't keep
-                     chr = seqnames(simplifiedExperimentGeno@rowRanges),
-                     pos = start(ranges(simplifiedExperimentGeno@rowRanges)),
-                     as.data.frame(simplifiedExperimentGeno@assays$data@listData) # same as assay(simplifiedExperimentGeno)
+  geno <- data.frame(markerName = paste("dummy", 1:length(ranges(SummarizedExperimentObject@rowRanges))), # dummy name as current summarizeExperimentFromGenotypeTable doesn't keep
+                     chr = seqnames(SummarizedExperimentObject@rowRanges),
+                     pos = start(ranges(SummarizedExperimentObject@rowRanges)),
+                     as.data.frame(SummarizedExperimentObject@assays$data@listData) # same as assay(SummarizedExperimentObject)
   )
-  colnames(geno)[4:ncol(geno)] <- as.character(simplifiedExperimentGeno$Sample)
+  colnames(geno)[4:ncol(geno)] <- as.character(SummarizedExperimentObject$Sample)
 
   map <- data.frame(Marker = geno[, 1], Chrom = factor(geno[,
                                                             2], ordered = T), Position = geno[, 3], stringsAsFactors = F)
