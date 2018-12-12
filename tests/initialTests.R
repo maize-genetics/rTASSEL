@@ -70,9 +70,23 @@ testPostions
 testTaxa <- taxa(test)
 testTaxa
 
+#Extract genomicRanges from GenotypeTable, then convert to data.frame
+gr <- genomicRanges(test)
+grdf <- as.data.frame(gr)
+
+
 sampleDF <- sampleDataFrame(testTaxa)
 
 sumExp <- summarizeExperimentFromGenotypeTable(readGenotypeTable(vcfPath))
 asnpmat <- snpMatrixFromGenotypeTable(readGenotypeTable(vcfPath))
 
+#PCA Analysis
+xxmat <- xxt(asnpmat, correct.for.missing=FALSE)
+evv <- eigen(xxmat, symmetric=TRUE)
+pcs <- evv$vectors[,1:5]
+evals <- evv$values[1:5]
+evals
+plot(pcs[,1],pcs[,2])
 
+testTaxaFilterGT <- filterTaxaBuilderPlugin(test,0.3, includeTaxa=TRUE)
+taxa(testTaxaFilterGT)
