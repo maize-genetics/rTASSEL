@@ -7,6 +7,7 @@ library(rJava)
 library(GenomicRanges)
 library(SummarizedExperiment)
 library(GWASpoly)
+library(ggplot2)
 
 is_experimental <- TRUE
 
@@ -87,13 +88,22 @@ manhattan.plot(data_gwasPoly_res, trait = "EarDia", model = "additive")
 
 traitGWASresults <- data.frame()
 for(trait in names(data_gwasPoly_res@scores)){
+  message(trait)
   traitMarkerpScores <- as.data.frame(data_gwasPoly_res@scores[trait])
+  Marker <- rownames(traitMarkerpScores)
+  colnames(traitMarkerpScores) <- "markerLogPVal"
   traitMarkerpVals <- exp(traitMarkerpScores*-1)
+  colnames(traitMarkerpVals) <- "markerpVal"
   traitMarkerEffects <-  as.data.frame(data_gwasPoly_res@effects[trait])
-  traitGWASresults <- rbind(traitGWASresults, data.frame(traitMarkerEffects, traitMarkerpVals, traitMarkerpScores, trait = trait))
+  colnames(traitMarkerEffects) <- "markerEffect"
+  sigTreshold <- data_gwasPoly_res@threshold[rownames(data_gwasPoly_res@threshold)==trait]
+  traitGWASresults <- rbind(traitGWASresults, data.frame(Marker, traitMarkerEffects, traitMarkerpVals, traitMarkerpScores, trait, sigTreshold))
 }
 
-traitGWASresults$Marker <- rownames(traitGWASresults)
+summary(traitGWASresults)
 
 traitGWASresults <- merge(traitGWASresults, data_gwasPoly_res@map, by = "Marker")
+summary(traitGWASresults)
+
+ggplot(traitGWASresults) + geom_point(aes(Position, markerLogPVal, col = trait), alpha=0.3) + geom_point(aes(Position, markerLogPVal, col = trait), data = traitGWASresults[traitGWASresults$markerLogPVal>traitGWASresults$sigTreshold,])  + geom_hline(aes(yintercept = sigTreshold, col = trait), lty = "dashed") + facet_grid(~Chrom, scales = "free_x") + theme(axis.text.x = element_text(angle = 45, hjust = 1)) + scale_color_brewer(palette = "Set2") + xlab("Position by Chr") + ylab("-Log10Pval")
 
