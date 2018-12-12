@@ -90,3 +90,5 @@ plot(pcs[,1],pcs[,2])
 
 testTaxaFilterGT <- filterTaxaBuilderPlugin(test,0.3, includeTaxa=TRUE)
 taxa(testTaxaFilterGT)
+
+testTaxaFilterGT <- filterTaxaBuilderPlugin(test,0.3, includeTaxa=TRUE, taxaList ="M0297:C05F2ACXX:5:250021042,A659:C08L7ACXX:6:250048004")

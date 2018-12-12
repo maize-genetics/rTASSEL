@@ -89,6 +89,8 @@ filterTaxaBuilderPlugin <- function(genotypeTable,
   plugin$setParameter("minNotMissing",toString(minNotMissing))
   plugin$setParameter("minHeterozygous",toString(minHeterozygous))
   plugin$setParameter("maxHeterozygous",toString(maxHeterozygous))
+  plugin$setParameter("includeTaxa",toString(includeTaxa))
+#  plugin$setParameter("taxaList",includeTaxa)
   # plugin$includeTaxa(includeTaxa)
   plugin$taxaList(taxaList)
   filteredGT <- plugin$runPlugin(genotypeTable)
