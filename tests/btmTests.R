@@ -17,8 +17,12 @@
 # Preamble
 
 ## Load packages
-library(rJava)
+library(rJava) 
 library(GenomicRanges)
+library(stringr)
+library(SummarizedExperiment)
+library(snpStats)
+library(hexbin)
 
 
 ## Set WD
