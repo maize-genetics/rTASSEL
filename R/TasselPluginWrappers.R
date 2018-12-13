@@ -115,3 +115,29 @@ kinshipPlugin <- function(genotypeTable,
   plugin$setParameter("algorithmVariation",toString(algorithmVariation))
   plugin$runPlugin(genotypeTable)
 }
+
+fixedEffectLMPlugin <- function(phenotypeOrGenotypeTable,
+                                phenoOnly=false,
+                                saveToFile=false,
+                                maxP=1.0,
+                                permute=false,
+                                nperm=0,
+                                genotypeComponent=NULL,
+                                minClassSize=0,
+                                biallelicOnly=false,
+                                siteStatsOut=false,
+                                appendAddDom=false
+) {
+  plugin <- new(J("net.maizegenetics.analysis.association.FixedEffectLMPlugin"), .jnull(), FALSE)
+  plugin$setParameter("phenoOnly",toString(phenoOnly))
+  plugin$setParameter("saveToFile",toString(saveToFile))
+  plugin$setParameter("maxP",toString(maxP))
+  plugin$setParameter("permute",toString(permute))
+  plugin$setParameter("nperm",toString(nperm))
+  plugin$setParameter("genotypeComponent",toString(genotypeComponent))
+  plugin$setParameter("minClassSize",toString(minClassSize))
+  plugin$setParameter("biallelicOnly",toString(biallelicOnly))
+  plugin$setParameter("siteStatsOut",toString(siteStatsOut))
+  plugin$setParameter("appendAddDom",toString(appendAddDom))
+  plugin$runPlugin(phenotypeOrGenotypeTable)
+}
