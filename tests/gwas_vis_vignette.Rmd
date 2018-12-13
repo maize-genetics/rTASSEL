@@ -302,6 +302,12 @@ genesNearestToGWASranges$distanceToNearestAnnot_label[genesNearestToGWASranges$m
 
 ggplot(genesNearestToGWASranges) + geom_point(aes(Position_gwas, markerLogPVal_gwas, col = trait_gwas), alpha = 0.3) + geom_point(aes(Position_gwas, markerLogPVal_gwas, col = trait_gwas), data = genesNearestToGWASranges[genesNearestToGWASranges$markerLogPVal_gwas > genesNearestToGWASranges$sigTreshold_gwas,])  + geom_hline(aes(yintercept = sigTreshold_gwas, col = trait_gwas), lty = "dashed") + theme(axis.text.x = element_text(angle = 45, hjust = 1)) + scale_color_brewer(palette = "Set2") + xlab("Position by Chr") + ylab("-Log10Pval") + geom_label_repel(aes(x = Position_gwas, y = markerLogPVal_gwas, label = Gene_label), inherit.aes = T, box.padding = 2) + geom_label_repel(aes(x = Position_gwas, y = markerLogPVal_gwas, label = distanceToNearestAnnot_label), inherit.aes = T, box.padding = 2)  + facet_wrap(~seqnames, scales = "free_x")
 
+genesNearestToGWASranges$single_label <- paste(genesNearestToGWASranges$Gene_label, genesNearestToGWASranges$distanceToNearestAnnot_label, sep = ": ")
+
+genesNearestToGWASranges$single_label <- gsub("^: $", "" ,genesNearestToGWASranges$single_label)
+
+ggplot(genesNearestToGWASranges) + geom_point(aes(Position_gwas, markerLogPVal_gwas, col = trait_gwas), alpha = 0.3) + geom_point(aes(Position_gwas, markerLogPVal_gwas, col = trait_gwas), data = genesNearestToGWASranges[genesNearestToGWASranges$markerLogPVal_gwas > genesNearestToGWASranges$sigTreshold_gwas,])  + geom_hline(aes(yintercept = sigTreshold_gwas, col = trait_gwas), lty = "dashed") + theme(axis.text.x = element_text(angle = 45, hjust = 1)) + scale_color_brewer(palette = "Set2") + xlab("Position by Chr") + ylab("-Log10Pval") + geom_label_repel(aes(x = Position_gwas, y = markerLogPVal_gwas, label = single_label), inherit.aes = T, box.padding = 2) + facet_wrap(~seqnames, scales = "free_x")
+
 #+ geom_rect(aes(xmin = seqRangeStart, xmax = seqRangeEnd, ymin = 0, ymax=1), fill = "black", data=annotationsDF) + geom_rect(aes(xmin=annotationStart, xmax=annotationEnd, ymin=annotationNum, ymax=annotationNum+1, fill = annotationName), data = annotationsDF) 
 
 
