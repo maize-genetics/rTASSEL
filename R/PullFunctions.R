@@ -113,5 +113,22 @@ snpMatrixFromGenotypeTable <- function(genotypeTable) {
 }
 
 
+createTasselDataSet <- function(...) {
+  arguments <- list(...)
+  jList <- new(J("java/util/ArrayList"))
+  for(javaObj in arguments) {
+    #check if they are all TASSEL jobj
+    if(is(javaObj, "jobjRef") == FALSE) {
+      stop(paste0("Object ",javaObj," is not of class"))
+    }
+    jList$add(new(J("net/maizegenetics/plugindef/Datum"),"FromR",javaObj,NULL))
+  }
+  new(J("net/maizegenetics/plugindef/DataSet"),jList,NULL)
+}
+
+combineTasselGenotypePhenotype <- function(genotypeTable, phenotype) {
+  new(J("net.maizegenetics.phenotype.GenotypePhenotypeBuilder"))$genotype(genotypeTable)$phenotype(phenotype)$intersect()$build()
+}
+
 
 
