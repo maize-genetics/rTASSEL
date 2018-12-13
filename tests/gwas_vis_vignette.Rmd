@@ -1,0 +1,400 @@
+---
+title: "GWAS_vis_vignette"
+author: "Arcadio"
+date: "12/13/2018"
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Loading up packages
+```{r, warning=F}
+library(rJava)
+library(GenomicRanges)
+library(SummarizedExperiment)
+library(GWASpoly)
+library(ggplot2)
+library(ggrepel)
+library(stringr)
+
+multiple_trait_manhattan <-function(traitGWASresults){
+  ggplot(traitGWASresults) + geom_point(aes(Position, markerLogPVal, col = trait), alpha=0.3) + geom_point(aes(Position, markerLogPVal, col = trait), data = traitGWASresults[traitGWASresults$markerLogPVal>traitGWASresults$sigTreshold,])  + geom_hline(aes(yintercept = sigTreshold, col = trait), lty = "dashed") + facet_grid(~Chrom, scales = "free_x") + theme(axis.text.x = element_text(angle = 45, hjust = 1)) + scale_color_brewer(palette = "Set2") + xlab("Position by Chr") + ylab("-Log10Pval")
+}
+```
+
+
+
+Set directory, loading up start functions and rTassel
+```{r}
+is_experimental <- TRUE
+
+#set workdir for rtassel
+setwd("~/myBins/bucklerlabBitbucket/rtassel/")
+
+path_exp_tassel <- paste0(getwd(),"/inst/java/sTASSEL.jar")
+path_exp_tassel_libs <- paste0(getwd(),"/inst/java/lib")
+
+## jinit
+rJava::.jinit(parameters="-Xmx6g")
+.jcall(.jnew("java/lang/Runtime"), "J", "totalMemory")
+.jcall(.jnew("java/lang/Runtime"), "J", "maxMemory")
+
+## Add class paths
+if(is_experimental == TRUE) {
+  tasselPath <- path_exp_tassel
+  tasselLibs <- path_exp_tassel_libs
+}
+
+rJava::.jaddClassPath(tasselPath)
+rJava::.jaddClassPath(tasselLibs)
+print(.jclassPath())
+
+
+## Source files
+source("R/AllGenerics.R")
+source("R/AllClasses.R")
+source("R/TasselPluginWrappers.R")
+source("R/PullFunctions.R")
+source("R/gwasPolyObjectCreator.R")
+```
+
+Load up genotypes implementing Tassel code through rJava
+```{r}
+geno_fileName <- "/Users/jav246/myBins/bucklerlabBitbucket/rtassel/data/mdp_genotype.hmp.txt"
+
+## Make genotype table from tasses sample data
+tasGenoTable <- readGenotypeTable(geno_fileName)
+
+## Make summarized experiment from genotypetable
+tas_se <- summarizeExperimentFromGenotypeTable(tasGenoTable) # not working right now, but
+
+tas_se
+```
+
+Load phenotype data
+```{r}
+###straight load as dataframe, skpping first two rows on tassel specific phenotype table format
+pheno_fileName <- "/Users/jav246/myBins/bucklerlabBitbucket/rtassel/data/mdp_phenotype.txt"
+phenos <- read.table(file = pheno_fileName, skip = 2, header = T, sep = "\t", na.strings = "NaN")
+summary(phenos)
+
+### select sinlge location, as GWASpoly requires single entries for taxa.
+phenosOneLoc <- phenos[phenos$location == "A",]
+rownames(phenosOneLoc) <- phenosOneLoc$Taxa
+###remove location as it is now redundant. 
+###Also, GWASpoly expects all traits as initial columns, and fixed effect covariates last
+phenosOneLoc <- phenosOneLoc[,-c(2)]
+
+summary(phenosOneLoc)
+```
+
+Run GWASpoly 
+```{r}
+## create GWASpoly object with coopted read.GWASpoly function
+data_gwasPoly <- se_createGWASpolyObject(ploidy = 2, phenoDF = phenosOneLoc, 
+                                         SummarizedExperimentObject =  tas_se, 
+                                         format = "numeric", n.traits = 3)
+
+## add kinship information to object
+data_gwasPoly <- set.K(data_gwasPoly)
+
+## set parameters for mixed model
+params <- set.params(fixed=unlist(strsplit("Q1,Q2,Q3", ",")),
+                     fixed.type=rep("numeric",3))
+
+## run gwas
+data_gwasPoly_res <- GWASpoly(data = data_gwasPoly, models = "additive", 
+                              params = params)
+```
+
+Create GWASpoly plots and set thresholds to get QTLs
+```{r, warning=F}
+qq.plot(data_gwasPoly_res, trait = "EarDia", model = "additive")
+
+#can set Bonferroni and own pvalue
+data_gwasPoly_res <- set.threshold(data_gwasPoly_res, method = "FDR", level=0.05)
+
+get.QTL(data = data_gwasPoly_res)
+
+#can set any of the 3 traits
+manhattan.plot(data_gwasPoly_res, trait = "EarDia", model = "additive")
+```
+
+Unwrap gwaspoly results class object
+```{r}
+traitGWASresults <- data.frame()
+for(trait in names(data_gwasPoly_res@scores)){
+  message(paste("Getting results for:", trait))
+  traitMarkerpScores <- as.data.frame(data_gwasPoly_res@scores[trait])
+  Marker <- rownames(traitMarkerpScores)
+  colnames(traitMarkerpScores) <- "markerLogPVal"
+  traitMarkerpVals <- exp(traitMarkerpScores*-1)
+  colnames(traitMarkerpVals) <- "markerpVal"
+  traitMarkerEffects <-  as.data.frame(data_gwasPoly_res@effects[trait])
+  colnames(traitMarkerEffects) <- "markerEffect"
+  sigTreshold <- data_gwasPoly_res@threshold[rownames(data_gwasPoly_res@threshold)==trait]
+  traitGWASresults <- rbind(traitGWASresults, data.frame(Marker, traitMarkerEffects, traitMarkerpVals, traitMarkerpScores, trait, sigTreshold))
+}
+
+summary(traitGWASresults)
+
+traitGWASresults <- merge(traitGWASresults, data_gwasPoly_res@map, by = "Marker")
+
+summary(traitGWASresults)
+```
+
+Create simple manhattan like plot for all traits
+```{r}
+multiple_trait_manhattan(traitGWASresults = traitGWASresults)
+```
+
+Parse GFF file to get genes and create GenomicRanges object
+```{r}
+maizeGFF <- read.table("~/Box/projectMaize/PHG/cimmyt_assemblies_analy/b73/Zea_mays.AGPv4.40.chr.gff3", quote = "", sep = "\t")
+colnames(maizeGFF) <- c("Chr", "Source", "annotType", "Start", "End", "other", "Strand", "other2", "IDs")
+
+maizeGFF$Chr <- as.factor(maizeGFF$Chr)
+
+maizeGFFgenes <- maizeGFF[maizeGFF$annotType=="gene",]
+
+maizeGFFgenes$Gene <- str_split(str_split(maizeGFFgenes$IDs, ";", simplify = T)[,1],":", simplify = T)[,2]
+
+head(maizeGFFgenes)
+
+maizeGFFgenesGR <- makeGRangesFromDataFrame(maizeGFFgenes, keep.extra.columns = T)
+
+maizeGFFgenesGR
+```
+
+Make GenomicRanges object out of gwas results
+```{r}
+traitGWASresultsGR <- makeGRangesFromDataFrame(traitGWASresults, seqnames.field = "Chrom", start.field = "Position", end.field = "Position", keep.extra.columns = T)
+
+traitGWASresultsGR
+```
+
+Subset geneRanges with gwasRanges. Finding genes with SNPs in them
+```{r}
+geneGWAShits <- findOverlaps(maizeGFFgenesGR, traitGWASresultsGR)
+geneGWAShits
+
+genesInGWASranges <- maizeGFFgenesGR[unique(queryHits(geneGWAShits)), ]
+
+genesInGWASranges
+
+```
+
+Annotating SNPs with their closest gene
+```{r}
+genesNearestToGWASranges <- nearest(traitGWASresultsGR, maizeGFFgenesGR, ignore.strand = T)
+
+distToNearest <- distanceToNearest(traitGWASresultsGR, maizeGFFgenesGR, ignore.strand = T)
+
+genesNearestToGWASranges <- maizeGFFgenesGR[genesNearestToGWASranges]
+
+genesNearestToGWASranges <- as.data.frame(genesNearestToGWASranges, row.names = NULL)
+
+genesNearestToGWASranges$distanceToNearestAnnot <- distToNearest@elementMetadata$distance
+
+traitGWASresults_temp <- traitGWASresults
+
+colnames(traitGWASresults_temp) <- paste(colnames(traitGWASresults), "gwas", sep = "_")
+
+genesNearestToGWASranges <- cbind(traitGWASresults_temp, genesNearestToGWASranges)
+
+rm(traitGWASresults_temp)
+
+genesNearestToGWASranges <- makeGRangesFromDataFrame(genesNearestToGWASranges, keep.extra.columns = T)
+
+genesNearestToGWASranges
+```
+
+
+Subset GWAS hits by significance for plotting with genes.
+```{r}
+traitGWASresultsGR_sig <- traitGWASresultsGR[traitGWASresultsGR$markerLogPVal > traitGWASresultsGR$sigTreshold,]
+
+traitGWASresultsGR_sig_df <- as.data.frame(traitGWASresultsGR_sig)
+  
+maxDistToAnnotation <- 3e5
+
+genesInGWASranges_sigHits <- findOverlaps(genesInGWASranges, traitGWASresultsGR_sig, maxgap = maxDistToAnnotation)
+
+genesInGWASranges_sigGenesGR <-  genesInGWASranges[unique(queryHits(genesInGWASranges_sigHits)), ]
+
+annotationPadding <- 1e3
+
+annotationsDF <- data.frame()
+for(seqName in as.character(seqnames(genesInGWASranges_sigGenesGR))){
+  #working whole sequence present
+  oneSeqRange <- genesInGWASranges_sigGenesGR[as.character(seqnames(genesInGWASranges_sigGenesGR)) == seqName , ]
+  seqRangeStart <- start(oneSeqRange) - annotationPadding  - maxDistToAnnotation
+  seqRangeEnd <- end(oneSeqRange) + annotationPadding + maxDistToAnnotation
+  
+  annotationCount <- length(oneSeqRange)
+  
+  #working individual annotations
+  annotationNum <- 0
+  for(annotationName in oneSeqRange$Gene){
+    annotationNum <- annotationNum + 1
+    oneAnnotationRange <- oneSeqRange[oneSeqRange$Gene == annotationName,]
+    
+    annotationStart <- start(oneAnnotationRange)
+    annotationEnd <- end(oneAnnotationRange)
+    annotationStrand  <- strand(oneAnnotationRange)
+    
+    annotationsDF <- rbind(annotationsDF, data.frame(seqname = seqName, start=seqRangeStart, end=seqRangeEnd, annotationNum ,annotationName, annotationStart, annotationEnd ))
+    
+  }
+  ggplot(annotationsDF) + geom_rect(aes(xmin = seqRangeStart, xmax = seqRangeEnd, ymin = 0, ymax=1), fill = "black") + geom_rect(aes(xmin=annotationStart, xmax=annotationEnd, ymin=annotationNum, ymax=annotationNum+1, fill = annotationName)) + geom_point(aes(x = start, y = 1.5), data=subset(traitGWASresultsGR_sig_df, seqnames %in% annotationsDF$seqName))
+}
+
+annotationsDF_GR <- makeGRangesFromDataFrame(annotationsDF, keep.extra.columns = T)
+
+traitGWASresultsGR_annotations <- mergeByOverlaps(traitGWASresultsGR, annotationsDF_GR)
+
+traitGWASresultsGR_annotations_df <- as.data.frame(traitGWASresultsGR_annotations)
+
+traitGWASresultsGR_annotations_df$MinDistToAnnotation <- min(abs(traitGWASresultsGR_annotations_df$traitGWASresultsGR.start - traitGWASresultsGR_annotations_df$annotationsDF_GR.annotationStart), abs(traitGWASresultsGR_annotations_df$traitGWASresultsGR.start - traitGWASresultsGR_annotations_df$annotationsDF_GR.annotationEnd))
+
+traitGWASresultsGR_annotations_df$MinDistToAnnotation[traitGWASresultsGR_annotations_df$annotationsDF_GR.annotationStart <= traitGWASresultsGR_annotations_df$traitGWASresultsGR.start & traitGWASresultsGR_annotations_df$annotationsDF_GR.annotationEnd >= traitGWASresultsGR_annotations_df$traitGWASresultsGR.start] <- 0 # to set distance to zero in case GWAS hit is inside annotation
+
+
+ggplot(subset(traitGWASresults, Chrom %in% traitGWASresultsGR_annotations_df$traitGWASresultsGR.seqnames)) + geom_point(aes(Position, markerLogPVal, col = trait), alpha=0.3) + geom_point(aes(Position, markerLogPVal, col = trait), data = subset(traitGWASresults[traitGWASresults$markerLogPVal>traitGWASresults$sigTreshold,], Chrom %in% traitGWASresultsGR_annotations_df$traitGWASresultsGR.seqnames))  + geom_hline(aes(yintercept = sigTreshold, col = trait), lty = "dashed") + theme(axis.text.x = element_text(angle = 45, hjust = 1)) + scale_color_brewer(palette = "Set2") + xlab("Position by Chr") + ylab("-Log10Pval") + geom_rect(aes(xmin = seqRangeStart, xmax = seqRangeEnd, ymin = 0, ymax=1), fill = "black", data=annotationsDF) + geom_rect(aes(xmin=annotationStart, xmax=annotationEnd, ymin=annotationNum, ymax=annotationNum+1, fill = annotationName), data = annotationsDF) + geom_label_repel(aes(x = traitGWASresultsGR.start, y = traitGWASresultsGR.markerLogPVal, label = annotationName), data = subset(traitGWASresultsGR_annotations_df, traitGWASresultsGR.markerLogPVal>traitGWASresultsGR.sigTreshold), inherit.aes = T, box.padding = 2) + geom_label_repel(aes(x = traitGWASresultsGR.start, y = traitGWASresultsGR.markerLogPVal, label = paste(MinDistToAnnotation, "bp")), data = subset(traitGWASresultsGR_annotations_df, traitGWASresultsGR.markerLogPVal>traitGWASresultsGR.sigTreshold), inherit.aes = T, box.padding = 2)  + facet_grid(~Chrom, scales = "free_x")
+
+```
+
+Subset GWAS hits by significance for plotting with genes. Working to make multiple genes show up right
+```{r}
+genesNearestToGWASranges$Gene_label <- as.character(genesNearestToGWASranges$Gene)
+
+bestHitByAnnot <- data.frame()
+for(annotationName in unique(genesNearestToGWASranges$Gene)){
+  annotationData <- genesNearestToGWASranges[genesNearestToGWASranges$Gene == annotationName,]
+  bestHit <- min(annotationData$markerpVal_gwas)
+  bestHitByAnnot <- rbind(bestHitByAnnot, data.frame(Gene = annotationName, bestHitPval = bestHit))  
+}
+
+genesNearestToGWASranges <- merge(genesNearestToGWASranges, bestHitByAnnot, by = "Gene")
+
+
+#to only plot gene names for best gwas SNP
+genesNearestToGWASranges$Gene_label <- as.character(genesNearestToGWASranges$Gene)
+genesNearestToGWASranges$Gene_label[genesNearestToGWASranges$bestHitPval != genesNearestToGWASranges$markerpVal_gwas] <- ""
+genesNearestToGWASranges$Gene_label <- as.factor(genesNearestToGWASranges$Gene_label)
+summary(genesNearestToGWASranges$Gene_label)
+
+genesNearestToGWASranges$distanceToNearestAnnot_label <- genesNearestToGWASranges$distanceToNearestAnnot
+genesNearestToGWASranges$distanceToNearestAnnot_label[genesNearestToGWASranges$bestHitPval != genesNearestToGWASranges$markerpVal_gwas] <- ""
+
+#to only plot gene names for significant SNPs 
+genesNearestToGWASranges$Gene_label <- as.character(genesNearestToGWASranges$Gene)
+genesNearestToGWASranges$Gene_label[genesNearestToGWASranges$markerLogPVal_gwas < genesNearestToGWASranges$sigTreshold_gwas] <- ""
+genesNearestToGWASranges$Gene_label <- as.factor(genesNearestToGWASranges$Gene_label)
+summary(genesNearestToGWASranges$Gene_label)
+
+genesNearestToGWASranges$distanceToNearestAnnot_label <- genesNearestToGWASranges$distanceToNearestAnnot
+genesNearestToGWASranges$distanceToNearestAnnot_label[genesNearestToGWASranges$markerLogPVal_gwas < genesNearestToGWASranges$sigTreshold_gwas] <- ""
+
+ggplot(genesNearestToGWASranges) + geom_point(aes(Position_gwas, markerLogPVal_gwas, col = trait_gwas), alpha = 0.3) + geom_point(aes(Position_gwas, markerLogPVal_gwas, col = trait_gwas), data = genesNearestToGWASranges[genesNearestToGWASranges$markerLogPVal_gwas > genesNearestToGWASranges$sigTreshold_gwas,])  + geom_hline(aes(yintercept = sigTreshold_gwas, col = trait_gwas), lty = "dashed") + theme(axis.text.x = element_text(angle = 45, hjust = 1)) + scale_color_brewer(palette = "Set2") + xlab("Position by Chr") + ylab("-Log10Pval") + geom_label_repel(aes(x = Position_gwas, y = markerLogPVal_gwas, label = Gene_label), inherit.aes = T, box.padding = 2) + geom_label_repel(aes(x = Position_gwas, y = markerLogPVal_gwas, label = distanceToNearestAnnot_label), inherit.aes = T, box.padding = 2)  + facet_wrap(~seqnames, scales = "free_x")
+
+genesNearestToGWASranges$single_label <- paste(genesNearestToGWASranges$Gene_label, genesNearestToGWASranges$distanceToNearestAnnot_label, sep = ": ")
+
+genesNearestToGWASranges$single_label <- gsub("^: $", "" ,genesNearestToGWASranges$single_label)
+
+ggplot(genesNearestToGWASranges) + geom_point(aes(Position_gwas, markerLogPVal_gwas, col = trait_gwas), alpha = 0.3) + geom_point(aes(Position_gwas, markerLogPVal_gwas, col = trait_gwas), data = genesNearestToGWASranges[genesNearestToGWASranges$markerLogPVal_gwas > genesNearestToGWASranges$sigTreshold_gwas,])  + geom_hline(aes(yintercept = sigTreshold_gwas, col = trait_gwas), lty = "dashed") + theme(axis.text.x = element_text(angle = 45, hjust = 1)) + scale_color_brewer(palette = "Set2") + xlab("Position by Chr") + ylab("-Log10Pval") + geom_label_repel(aes(x = Position_gwas, y = markerLogPVal_gwas, label = single_label), inherit.aes = T, box.padding = 2) + facet_wrap(~seqnames, scales = "free_x")
+
+#+ geom_rect(aes(xmin = seqRangeStart, xmax = seqRangeEnd, ymin = 0, ymax=1), fill = "black", data=annotationsDF) + geom_rect(aes(xmin=annotationStart, xmax=annotationEnd, ymin=annotationNum, ymax=annotationNum+1, fill = annotationName), data = annotationsDF) 
+
+
+
+```
+
+
+Subset GWAS hits by significance for plotting with genes. Working to make multiple genes show up right. Temp work not working
+```{r, eval=F}
+traitGWASresultsGR_sig <- traitGWASresultsGR[traitGWASresultsGR$markerLogPVal > traitGWASresultsGR$sigTreshold/1.5,]
+
+traitGWASresultsGR_sig_df <- as.data.frame(traitGWASresultsGR_sig)
+  
+maxDistToAnnotation <- 3e5
+
+genesInGWASranges_sigHits <- findOverlaps(genesInGWASranges, traitGWASresultsGR_sig, maxgap = maxDistToAnnotation)
+
+genesInGWASranges_sigGenesGR <-  genesInGWASranges[unique(queryHits(genesInGWASranges_sigHits)), ]
+
+annotationPadding <- 1e3
+
+annotationsDF <- data.frame()
+for(seqName in as.character(seqnames(genesInGWASranges_sigGenesGR))){
+  #working whole sequence present
+  oneSeqRange <- genesInGWASranges_sigGenesGR[as.character(seqnames(genesInGWASranges_sigGenesGR)) == seqName , ]
+  seqRangeStart <- start(oneSeqRange) - annotationPadding  - maxDistToAnnotation
+  seqRangeEnd <- end(oneSeqRange) + annotationPadding + maxDistToAnnotation
+  
+  annotationCount <- length(oneSeqRange)
+  
+  #working individual annotations
+  annotationNum <- 0
+  for(annotationName in oneSeqRange$Gene){
+    annotationNum <- annotationNum + 1
+    oneAnnotationRange <- oneSeqRange[oneSeqRange$Gene == annotationName,]
+    
+    annotationStart <- start(oneAnnotationRange)
+    annotationEnd <- end(oneAnnotationRange)
+    annotationStrand  <- strand(oneAnnotationRange)
+    
+    annotationsDF <- rbind(annotationsDF, data.frame(seqname = seqName, start=seqRangeStart, end=seqRangeEnd, annotationNum ,annotationName, annotationStart, annotationEnd ))
+    
+  }
+  #ggplot(annotationsDF) + geom_rect(aes(xmin = seqRangeStart, xmax = seqRangeEnd, ymin = 0, ymax=1), fill = "black") + geom_rect(aes(xmin=annotationStart, xmax=annotationEnd, ymin=annotationNum, ymax=annotationNum+1, fill = annotationName)) + geom_point(aes(x = start, y = 1.5), data=subset(traitGWASresultsGR_sig_df, seqnames %in% annotationsDF$seqName))
+}
+
+annotationsDF_GR <- makeGRangesFromDataFrame(annotationsDF, keep.extra.columns = T)
+
+traitGWASresultsGR_annotations <- mergeByOverlaps(traitGWASresultsGR, annotationsDF_GR)
+
+traitGWASresultsGR_annotations_df <- as.data.frame(traitGWASresultsGR_annotations)
+
+traitGWASresultsGR_annotations_df$MinDistToAnnotation <- min(abs(traitGWASresultsGR_annotations_df$traitGWASresultsGR.start - traitGWASresultsGR_annotations_df$annotationsDF_GR.annotationStart), abs(traitGWASresultsGR_annotations_df$traitGWASresultsGR.start - traitGWASresultsGR_annotations_df$annotationsDF_GR.annotationEnd))
+
+traitGWASresultsGR_annotations_df$MinDistToAnnotation[traitGWASresultsGR_annotations_df$annotationsDF_GR.annotationStart <= traitGWASresultsGR_annotations_df$traitGWASresultsGR.start & traitGWASresultsGR_annotations_df$annotationsDF_GR.annotationEnd >= traitGWASresultsGR_annotations_df$traitGWASresultsGR.start] <- 0 # to set distance to zero in case GWAS hit is inside annotation
+
+bestHitByAnnot <- data.frame()
+for(annotationName in unique(traitGWASresultsGR_annotations_df$annotationsDF_GR.annotationName)){
+  message(annotationName)
+  annotationData <- traitGWASresultsGR_annotations_df[traitGWASresultsGR_annotations_df$annotationsDF_GR.annotationName == annotationName,]
+  bestHit <- min(annotationData$traitGWASresultsGR.markerpVal)
+  message(bestHit)
+  bestHitByAnnot <- rbind(bestHitByAnnot, data.frame(annotationsDF_GR.annotationName = annotationName, bestHitPval = bestHit))  
+}
+
+traitGWASresultsGR_annotations_df <- merge(traitGWASresultsGR_annotations_df, bestHitByAnnot, by = "annotationsDF_GR.annotationName")
+
+traitGWASresultsGR_annotations_df$annotationsDF_GR.annotationName_label <- as.character(traitGWASresultsGR_annotations_df$annotationsDF_GR.annotationName)
+
+traitGWASresultsGR_annotations_df$annotationsDF_GR.annotationName_label[traitGWASresultsGR_annotations_df$bestHitPval != traitGWASresultsGR_annotations_df$traitGWASresultsGR.markerpVal] <- ""
+
+traitGWASresultsGR_annotations_df$annotationsDF_GR.annotationName_label <- as.factor(traitGWASresultsGR_annotations_df$annotationsDF_GR.annotationName_label)
+
+summary(traitGWASresultsGR_annotations_df$annotationsDF_GR.annotationName_label)
+
+traitGWASresultsGR_annotations_df$MinDistToAnnotation_label <- paste(traitGWASresultsGR_annotations_df$MinDistToAnnotation, "bp")
+
+
+traitGWASresultsGR_annotations_df$MinDistToAnnotation_label[traitGWASresultsGR_annotations_df$bestHitPval != traitGWASresultsGR_annotations_df$traitGWASresultsGR.markerpVal] <- ""
+
+#ggplot(subset(traitGWASresults, Chrom %in% traitGWASresultsGR_annotations_df$traitGWASresultsGR.seqnames)) + geom_point(aes(Position, markerLogPVal, col = trait), alpha=0.3) + geom_point(aes(Position, markerLogPVal, col = trait), data = subset(traitGWASresults[traitGWASresults$markerLogPVal>traitGWASresults$sigTreshold/1.5,], Chrom %in% traitGWASresultsGR_annotations_df$traitGWASresultsGR.seqnames))  + geom_hline(aes(yintercept = sigTreshold, col = trait), lty = "dashed") + theme(axis.text.x = element_text(angle = 45, hjust = 1)) + scale_color_brewer(palette = "Set2") + xlab("Position by Chr") + ylab("-Log10Pval") + geom_label_repel(aes(x = traitGWASresultsGR.start, y = traitGWASresultsGR.markerLogPVal, label = annotationName), data = subset(traitGWASresultsGR_annotations_df, traitGWASresultsGR.markerLogPVal>traitGWASresultsGR.sigTreshold/1.5), inherit.aes = T, box.padding = 2) + geom_label_repel(aes(x = traitGWASresultsGR.start, y = traitGWASresultsGR.markerLogPVal, label = MinDistToAnnotation), data = subset(traitGWASresultsGR_annotations_df, traitGWASresultsGR.markerLogPVal > traitGWASresultsGR.sigTreshold/1.5), inherit.aes = T, box.padding = 2)  + facet_grid(~Chrom, scales = "free_x")
+
+ggplot(traitGWASresultsGR_annotations_df) + geom_point(aes(traitGWASresultsGR.start, traitGWASresultsGR.markerLogPVal, col = traitGWASresultsGR.trait), alpha = 0.3) + geom_point(aes(traitGWASresultsGR.start, traitGWASresultsGR.markerLogPVal, col = traitGWASresultsGR.trait), data = traitGWASresultsGR_annotations_df[traitGWASresultsGR_annotations_df$traitGWASresultsGR.markerLogPVal > traitGWASresultsGR_annotations_df$traitGWASresultsGR.sigTreshold/1.5,])  + geom_hline(aes(yintercept = traitGWASresultsGR.sigTreshold, col = traitGWASresultsGR.trait), lty = "dashed") + theme(axis.text.x = element_text(angle = 45, hjust = 1)) + scale_color_brewer(palette = "Set2") + xlab("Position by Chr") + ylab("-Log10Pval") + geom_label_repel(aes(x = traitGWASresultsGR.start, y = traitGWASresultsGR.markerLogPVal, label = annotationsDF_GR.annotationName_label), inherit.aes = T, box.padding = 2) + geom_label_repel(aes(x = traitGWASresultsGR.start, y = traitGWASresultsGR.markerLogPVal, label = MinDistToAnnotation_label), inherit.aes = T, box.padding = 2)  + facet_grid(~traitGWASresultsGR.seqnames, scales = "free_x")
+
+#+ geom_rect(aes(xmin = seqRangeStart, xmax = seqRangeEnd, ymin = 0, ymax=1), fill = "black", data=annotationsDF) + geom_rect(aes(xmin=annotationStart, xmax=annotationEnd, ymin=annotationNum, ymax=annotationNum+1, fill = annotationName), data = annotationsDF) 
+
+
+
+```
