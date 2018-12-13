@@ -109,7 +109,7 @@ snpMatrixFromGenotypeTable <- function(genotypeTable) {
   
   sampleDF <- sampleDataFrame(jGT)
   genomicRangesDF <- genomicRanges(jGT)
-  
+
   genoCallIntArray <- rJava::.jcall(
     "net/maizegenetics/plugindef/GenerateRCode",
     "[I",
@@ -122,6 +122,16 @@ snpMatrixFromGenotypeTable <- function(genotypeTable) {
   as(aMatrix, "SnpMatrix")
 }
 
+## Create GWASpoly geno dataframe from SimplifiedExperiment object
+GWASpolyGenoFromSummarizedExperiment <- function(SummarizedExperimentObject){
+  geno <- data.frame(markerName = paste("dummy", 1:length(ranges(SummarizedExperimentObject@rowRanges)), sep = "-"), # dummy name as current summarizeExperimentFromGenotypeTable doesn't keep
+                     chr = seqnames(SummarizedExperimentObject@rowRanges),
+                     pos = start(ranges(SummarizedExperimentObject@rowRanges)),
+                     as.data.frame(SummarizedExperimentObject@assays$data@listData) # same as assay(SummarizedExperimentObject)
+  )
+  colnames(geno)[4:ncol(geno)] <- as.character(SummarizedExperimentObject$Sample)
+  geno
+}
 
 createTasselDataSet <- function(...) {
   arguments <- list(...)
