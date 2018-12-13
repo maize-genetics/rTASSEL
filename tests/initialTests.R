@@ -22,6 +22,7 @@ library(stringr)
 library(SummarizedExperiment)
 library(snpStats)
 library(hexbin)
+library(testthat)
 
 ## Set WD
 setwd("~/Code/rtassel")
@@ -57,27 +58,39 @@ vcfPath <- paste0(
   "/data/maize_chr9_10thin40000.recode.vcf"
 )
 
-test <- readGenotypeTable(vcfPath)
-test
-test@name
-test@jtsGenotypeTable
-test2 <- filterSiteBuilderPlugin(test, siteMinCount = 0)
-test2
-test2@name
-test2@jtsGenotypeTable
-testPostions <- positions(test)
-testPostions
-testTaxa <- taxa(test)
-testTaxa
+#Load a VCF file from disk and a R wrapped TASSEL GenotypeTable
+aGenoTable <- readGenotypeTable(vcfPath)
+show(aGenoTable)
+expect_equal(aGenoTable@jtsGenotypeTable$numberOfSites(), 493)
+expect_equal(aGenoTable@jtsGenotypeTable$numberOfTaxa(), 189)
 
+#Filter a genotype table based minimum count
+siteFiltGenoTable <- filterSiteBuilderPlugin(aGenoTable, siteMinCount = 40)
+show(siteFiltGenoTable)
+expect_equal(siteFiltGenoTable@jtsGenotypeTable$numberOfSites(), 389)
+expect_equal(siteFiltGenoTable@jtsGenotypeTable$numberOfTaxa(), 189)
+
+
+#Extracting the positions wrapper from a GenotypeTable
+aPositions <- positions(aGenoTable)
+aPositions
 #Extract genomicRanges from GenotypeTable, then convert to data.frame
-gr <- genomicRanges(test)
+gr <- genomicRanges(aGenoTable)
 grdf <- as.data.frame(gr)
+grdf
 
+#Extracting the taxa(sample) wrapper from a GenotypeTable
+aTaxa <- taxa(aGenoTable)
+aTaxa
+#Extract dataframe of taxa from GenotypeTable, then convert to data.frame
+sampleDF <- sampleDataFrame(aGenoTable)
+sampleDF
 
-sampleDF <- sampleDataFrame(testTaxa)
-
+#create a summarizedExperiment  from a TASSEL read of the VCF
+#SummarizedExperiment is a core data structure of Bioconductor
 sumExp <- summarizeExperimentFromGenotypeTable(readGenotypeTable(vcfPath))
+show(sumExp)
+#create a snpMatrix of the snpStats from a TASSEL read of the VCF
 asnpmat <- snpMatrixFromGenotypeTable(readGenotypeTable(vcfPath))
 
 #PCA Analysis
@@ -88,7 +101,7 @@ evals <- evv$values[1:5]
 evals
 plot(pcs[,1],pcs[,2])
 
-testTaxaFilterGT <- filterTaxaBuilderPlugin(test,0.3, includeTaxa=TRUE)
+testTaxaFilterGT <- filterTaxaBuilderPlugin(aGenoTable,0.3, includeTaxa=TRUE)
 taxa(testTaxaFilterGT)
 
-testTaxaFilterGT <- filterTaxaBuilderPlugin(test,0.3, includeTaxa=TRUE, taxaList ="M0297:C05F2ACXX:5:250021042,A659:C08L7ACXX:6:250048004")
+testTaxaFilterGT <- filterTaxaBuilderPlugin(aGenoTable,0.3, includeTaxa=TRUE, taxaList ="M0297:C05F2ACXX:5:250021042,A659:C08L7ACXX:6:250048004")
