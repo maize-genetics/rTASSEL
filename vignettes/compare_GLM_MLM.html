@@ -202,6 +202,7 @@ siteAndTaxaFiltGenoTable &lt;- filterTaxaBuilderPlugin(genotypeTable = siteFiltG
                                                     minNotMissing = 0.3, 
                                                     includeTaxa=TRUE)
 
+#This returns the names of the samples as a java object
 genoSampleFilt &lt;- taxa(siteAndTaxaFiltGenoTable) </code></pre>
 </div>
 <div id="import-and-filter-phenotypes" class="section level2">
@@ -216,22 +217,29 @@ filtAndIntersectPhenoTable &lt;- filtOnIntersect(table1 = siteAndTaxaFiltGenoTab
 <div id="run-glm-and-choose-top-snps" class="section level2">
 <h2>Run GLM and Choose Top SNPS</h2>
 <p>Run the General Linear Model with the fully filtered genotpye and filtered and intersected phenotypes. The output of the GLM is a large array which would need to be filtered/indexed before it could work for the filtering top SNPS function.</p>
-<pre class="r"><code>GMLresults &lt;- fixedEffectLMPlugin(Genotypes = siteAndTaxaFiltGenoTable, 
+<pre class="r"><code>genoPhenoCombined &lt;- combineTasselGenotypePhenotype(siteAndTaxaFiltGenoTable@jtsGenotypeTable,
+                                                    jtsPhenotype)
+gwasReports &lt;- fixedEffectLMPlugin(genoPhenoCombined)
+
+GMLresults &lt;- fixedEffectLMPlugin(Genotypes = siteAndTaxaFiltGenoTable, 
                                   Phenotypes = filtAndIntersectPhenoTable)</code></pre>
 <p>The ‘filterTopSNPS’ function I envision being a fuction that takes tassel results and then gives back a list of the SNPs for each trait that have the highest p-values. This list can then be used to filter out the lowest significance SNPS. The SNPintersection would be a function that takes the top snps list and the ‘siteAndTaxaFiltGenoTable’ as arguments and outputs ‘siteAndTaxaFiltGenoTable’ filtered for the top sites so that it can be input into the next model.</p>
 <pre class="r"><code>filtGLMresults &lt;- filtertopSNPS(LMoutput = GMLresults, 
                                   columnName = 'p',
                                   filterSNPpercentage = 99, 
                                   sortByTrait = TRUE)
-topSNPsiteAndTaxaFiltGenoTable &lt;- SNPintersection(GenotypeTable = 
+topSNPgenoSample &lt;- SNPintersection(GenotypeTable = 
                                                   siteAndTaxaFiltGenoTable, 
                                                   SNPList = filtGLMresults)</code></pre>
 </div>
 <div id="run-mlm-on-top-snps" class="section level2">
 <h2>Run MLM on Top SNPs</h2>
-<p>Now take the topSNPsiteAndTaxaFiltGenoTable and the filtAndIntersectPhenoTable and run the MLM on them</p>
-<pre class="r"><code>topSNPsMLMresults &lt;- tasselMLM(Genotypes = topSNPsiteAndTaxaFiltGenoTable,
+<p>Now take the topSNPgenoSample and the filtAndIntersectPhenoTable and run the MLM on them</p>
+<pre class="r"><code>topSNPsMLMresults &lt;- tasselMLM(Genotypes = topSNPgenoSample,
                                Phenotypes = filtAndIntersectPhenoTable)</code></pre>
+</div>
+<div id="comparison" class="section level2">
+<h2>Comparison</h2>
 </div>
 
 

@@ -23,7 +23,9 @@ siteAndTaxaFiltGenoTable <- filterTaxaBuilderPlugin(genotypeTable = siteFiltGeno
                                                     minNotMissing = 0.3, 
                                                     includeTaxa=TRUE)
 
+#This returns the names of the samples as a java object
 genoSampleFilt <- taxa(siteAndTaxaFiltGenoTable) 
+
 ```
 
 ## Import and Filter Phenotypes
@@ -42,6 +44,10 @@ Run the General Linear Model with the fully filtered genotpye and filtered and i
 The output of the GLM is a large array which would need to be filtered/indexed before it could work for the filtering top SNPS function.
 
 ```{r}
+genoPhenoCombined <- combineTasselGenotypePhenotype(siteAndTaxaFiltGenoTable@jtsGenotypeTable,
+                                                    jtsPhenotype)
+gwasReports <- fixedEffectLMPlugin(genoPhenoCombined)
+
 GMLresults <- fixedEffectLMPlugin(Genotypes = siteAndTaxaFiltGenoTable, 
                                   Phenotypes = filtAndIntersectPhenoTable)
 ```
@@ -55,17 +61,18 @@ filtGLMresults <- filtertopSNPS(LMoutput = GMLresults,
                                   columnName = 'p',
                                   filterSNPpercentage = 99, 
                                   sortByTrait = TRUE)
-topSNPsiteAndTaxaFiltGenoTable <- SNPintersection(GenotypeTable = 
+topSNPgenoSample <- SNPintersection(GenotypeTable = 
                                                   siteAndTaxaFiltGenoTable, 
                                                   SNPList = filtGLMresults)
 ```
 
 
 ## Run MLM on Top SNPs
-Now take the topSNPsiteAndTaxaFiltGenoTable and the filtAndIntersectPhenoTable and run the MLM on them
+Now take the topSNPgenoSample and the filtAndIntersectPhenoTable and run the MLM on them
 
 ```{r}
-topSNPsMLMresults <- tasselMLM(Genotypes = topSNPsiteAndTaxaFiltGenoTable,
+topSNPsMLMresults <- tasselMLM(Genotypes = topSNPgenoSample,
                                Phenotypes = filtAndIntersectPhenoTable)
 ```
 
+##Comparison
