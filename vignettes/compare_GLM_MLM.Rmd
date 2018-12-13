@@ -1,0 +1,71 @@
+---
+title: "Vignette for GLM and MLM Comparison"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = FALSE)
+```
+
+## Import and Filter Genotypes
+Pull genotypes from file on computer, use rtassel to filter and set up for gwas, VCF file format assumed to be used.
+
+Reads in a VCF file and filters based on the minimum number of samples that the allele must be present in, then filters based on the taxa lists to filter out bad samples. The taxa names are then inputted to a list for later use.
+```{r}
+
+setwd("~/file_location")
+min_site_count <- 40 #minimum number of samples that the allele must be present in
+aGenoTable <- readGenotypeTable("VCF_file.VCF")
+siteFiltGenoTable <- filterSiteBuilderPlugin(genotypeTable = aGenoTable, 
+                                             siteMinCount = min_site_count) 
+
+siteAndTaxaFiltGenoTable <- filterTaxaBuilderPlugin(genotypeTable = siteFiltGenoTable,
+                                                    minNotMissing = 0.3, 
+                                                    includeTaxa=TRUE)
+
+genoSampleFilt <- taxa(siteAndTaxaFiltGenoTable) 
+```
+
+## Import and Filter Phenotypes
+Upload phenotypes from file on computer. Filter out the missing data. Find the intersection of taxa names between the fully filtered genotype table and the phenotype table uploaded. Filter so that only taxa that appear in both are outputted to the filtered phenotype table. 
+
+```{r}
+phenoTable <- readPhenoTable("pheno_file.csv") #That function does not exist yet?
+filtPhenoTable <- filtMissingPhenot(phenotable)
+
+filtAndIntersectPhenoTable <- filtOnIntersect(table1 = siteAndTaxaFiltGenoTable,  
+                                              table2 = filtPhenoTable) 
+```
+
+## Run GLM and Choose Top SNPS
+Run the General Linear Model with the fully filtered genotpye and filtered and intersected phenotypes. 
+The output of the GLM is a large array which would need to be filtered/indexed before it could work for the filtering top SNPS function.
+
+```{r}
+GMLresults <- fixedEffectLMPlugin(Genotypes = siteAndTaxaFiltGenoTable, 
+                                  Phenotypes = filtAndIntersectPhenoTable)
+```
+
+The 'filterTopSNPS' function I envision being a fuction that takes tassel results and then gives back a list of the SNPs for each trait that have the highest p-values. This list can then be used to filter out the lowest significance SNPS. The SNPintersection would be a function that takes the top snps list and the 'siteAndTaxaFiltGenoTable' as arguments and outputs 'siteAndTaxaFiltGenoTable' filtered for the top sites so that it can be input into the next model. 
+
+
+
+```{r}
+filtGLMresults <- filtertopSNPS(LMoutput = GMLresults, 
+                                  columnName = 'p',
+                                  filterSNPpercentage = 99, 
+                                  sortByTrait = TRUE)
+topSNPsiteAndTaxaFiltGenoTable <- SNPintersection(GenotypeTable = 
+                                                  siteAndTaxaFiltGenoTable, 
+                                                  SNPList = filtGLMresults)
+```
+
+
+## Run MLM on Top SNPs
+Now take the topSNPsiteAndTaxaFiltGenoTable and the filtAndIntersectPhenoTable and run the MLM on them
+
+```{r}
+topSNPsMLMresults <- tasselMLM(Genotypes = topSNPsiteAndTaxaFiltGenoTable,
+                               Phenotypes = filtAndIntersectPhenoTable)
+```
+
