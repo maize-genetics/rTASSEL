@@ -105,3 +105,31 @@ testTaxaFilterGT <- filterTaxaBuilderPlugin(aGenoTable,0.3, includeTaxa=TRUE)
 taxa(testTaxaFilterGT)
 
 testTaxaFilterGT <- filterTaxaBuilderPlugin(aGenoTable,0.3, includeTaxa=TRUE, taxaList ="M0297:C05F2ACXX:5:250021042,A659:C08L7ACXX:6:250048004")
+
+##Phenotype - Genotype GLM tests
+## VCF file path exmaple...
+phenotypePath <- paste0(
+  getwd(),
+  "/data/mdp_traits.txt"
+)
+genotypePath <- paste0(
+  getwd(),
+  "/data/mdp_genotype.hmp.txt.gz"
+)
+gwasGeno <- readGenotypeTable(genotypePath)
+
+#Need to convert to Pull function
+jtsPhenotype <- new(J("net/maizegenetics/phenotype/PhenotypeBuilder"))$fromFile(phenotypePath)$build()$get(0L)
+
+#Estimates BLUEs
+blueReports <- fixedEffectLMPlugin(jtsPhenotype, phenoOnly= TRUE)
+
+#Does GWAS after combining phenotype and genotype
+genoPhenoCombined <- combineTasselGenotypePhenotype(gwasGeno@jtsGenotypeTable,jtsPhenotype)
+gwasReports <- fixedEffectLMPlugin(genoPhenoCombined)
+
+fromFile(phenotypePath)
+
+# Phenotype myPhenotype = new PhenotypeBuilder().fromFile(filename).keepAttributes(new int[]{0,1}).build().get(0);
+
+
