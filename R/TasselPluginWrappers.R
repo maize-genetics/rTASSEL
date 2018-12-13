@@ -116,6 +116,7 @@ kinshipPlugin <- function(genotypeTable,
   plugin$runPlugin(genotypeTable)
 }
 
+
 fixedEffectLMPlugin <- function(phenotypeOrGenotypeTable,
                                 phenoOnly= FALSE,
                                 saveToFile= FALSE,
@@ -129,7 +130,7 @@ fixedEffectLMPlugin <- function(phenotypeOrGenotypeTable,
                                 appendAddDom= FALSE
 ) {
   plugin <- new(J("net.maizegenetics.analysis.association.FixedEffectLMPlugin"), .jnull(), FALSE)
-  plugin$setParameter("phenoOnly",toString(phenoOnly))
+  # plugin$setParameter("phenoOnly",toString(phenoOnly))
   # plugin$setParameter("saveToFile",toString(saveToFile))
   # plugin$setParameter("maxP",toString(maxP))
   # plugin$setParameter("permute",toString(permute))
@@ -140,6 +141,6 @@ fixedEffectLMPlugin <- function(phenotypeOrGenotypeTable,
   # plugin$setParameter("siteStatsOut",toString(siteStatsOut))
   # plugin$setParameter("appendAddDom",toString(appendAddDom))
   jtsDataSet <- createTasselDataSet(phenotypeOrGenotypeTable)
-  plugin$processData(jtsDataSet)
-  # plugin$runPlugin(phenotypeOrGenotypeTable)
+  jtsResultSet <- plugin$processData(jtsDataSet)
+  dataSetToListOfDataFrame(jtsResultSet)
 }

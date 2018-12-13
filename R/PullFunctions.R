@@ -130,5 +130,25 @@ combineTasselGenotypePhenotype <- function(genotypeTable, phenotype) {
   new(J("net.maizegenetics.phenotype.GenotypePhenotypeBuilder"))$genotype(genotypeTable)$phenotype(phenotype)$intersect()$build()
 }
 
+convertTableReportToDataFrame <- function(tableReport) {
+  tableReportVectors <- J("net/maizegenetics/plugindef/GenerateRCode")$tableReportToVectors(tableReport)
+  colNum <- length(tableReportVectors$columnNames)
+  aDF <- data.frame(tableReportVectors$dataVector$get(0L))
+  for(i in 2:(colNum)) {
+    aDF[[i]] <- tableReportVectors$dataVector$get(i-1L)
+  }
+  colnames(aDF) <- tableReportVectors$columnNames
+  aDF
+}
+
+dataSetToListOfDataFrame <- function(jtsDataSet) {
+  result <- c()
+  for(i in 1:(jtsDataSet$getSize())) {
+    name <- jtsDataSet$getData(i-1L)$getName()
+    result[[name]] <- convertTableReportToDataFrame(jtsDataSet$getData(i-1L)$getData())
+  }
+  result
+}
+
 
 
