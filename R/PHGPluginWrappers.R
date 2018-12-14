@@ -27,8 +27,9 @@ haplotypeGraphBuilderPlugin <- function(configFile, myMethods
 ) {
   plugin <- new(J("net.maizegenetics.pangenome.api.HaplotypeGraphBuilderPlugin"), .jnull(), FALSE)
   plugin$setParameter("configFile",toString(configFile))
-  plugin$setParameter("myMethods",toString(myMethods))
-  plugin$setParameter("myIncludeSequences",toString(FALSE))
+  plugin$setParameter("methods",toString(myMethods))
+  plugin$setParameter("includeSequences",toString(FALSE))
+  plugin$setParameter("includeVariantContexts",toString(TRUE))
   plugin$build()
 }
 

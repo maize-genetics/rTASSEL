@@ -190,56 +190,87 @@ $(document).ready(function () {
 
 <div id="import-and-filter-genotypes" class="section level2">
 <h2>Import and Filter Genotypes</h2>
-<p>Pull genotypes from file on computer, use rtassel to filter and set up for gwas, VCF file format assumed to be used.</p>
-<p>Reads in a VCF file and filters based on the minimum number of samples that the allele must be present in, then filters based on the taxa lists to filter out bad samples. The taxa names are then inputted to a list for later use.</p>
+<p>The current pipeline: Pull genotypes from file on computer as a Java object, use rtassel to filter and set up for gwas. Flitering can be done by missing dat per sample, and by minimum minor allele freq. VCF file format assumed to be used.</p>
 <pre class="r"><code>setwd(&quot;~/file_location&quot;)
-min_site_count &lt;- 40 #minimum number of samples that the allele must be present in
+min_site_count &lt;- 40 #minimum number of samples that the allele must be present in.
+#it would be nice, (though more with the phenotype table) to be able to import the genotype to tassel table from an R df. 
+#Brings in the genotype table as a Java object
 aGenoTable &lt;- readGenotypeTable(&quot;VCF_file.VCF&quot;)
+#uses Tassel coding to filter by sites and returns a filtered Java Object
 siteFiltGenoTable &lt;- filterSiteBuilderPlugin(genotypeTable = aGenoTable, 
                                              siteMinCount = min_site_count) 
-
+#uses Tassel coding to filter by sample (taxa) missing data and returns a filtered Java Object
 siteAndTaxaFiltGenoTable &lt;- filterTaxaBuilderPlugin(genotypeTable = siteFiltGenoTable,
                                                     minNotMissing = 0.3, 
                                                     includeTaxa=TRUE)
-
 #This returns the names of the samples as a java object
-genoSampleFilt &lt;- taxa(siteAndTaxaFiltGenoTable) </code></pre>
+genoSampleFilt &lt;- taxa(siteAndTaxaFiltGenoTable) 
+
+#This returns the java object to R as a sumExp format. 
+sumExp &lt;- summarizeExperimentFromGenotypeTable(siteAndTaxaFiltGenoTable)
+#there are fucntion to go to different R data classes/forms from sumExp. Functions could be performed on it/filtering/transforming etc... 
+#after transformations there should be a function that allows the user to rewrap the R df/sumExp/GBS format genotable to be imported back into tassel. </code></pre>
 </div>
 <div id="import-and-filter-phenotypes" class="section level2">
 <h2>Import and Filter Phenotypes</h2>
 <p>Upload phenotypes from file on computer. Filter out the missing data. Find the intersection of taxa names between the fully filtered genotype table and the phenotype table uploaded. Filter so that only taxa that appear in both are outputted to the filtered phenotype table.</p>
-<pre class="r"><code>phenoTable &lt;- readPhenoTable(&quot;pheno_file.csv&quot;) #That function does not exist yet?
-filtPhenoTable &lt;- filtMissingPhenot(phenotable)
+<pre class="r"><code>#bring in the phenotypic data as an R df.
+phenoTable &lt;- readPhenoTable(&quot;pheno_file.csv&quot;) 
+#Currnetly this function works as this:
+#phenotypePath &lt;- paste0(getwd(), &quot;/data/mdp_traits.txt&quot;)
+#jtsPhenotype &lt;- new(J(&quot;net/maizegenetics/phenotype/PhenotypeBuilder&quot;))$fromFile(phenotypePath)$build()$get(0L)
 
+#after importing as r df functions and oter things can be run using R. 
+#Function to wrap the R df/GBS/sumExp and send it into Tassel. 
+tasselPhenoTable &lt;- phenotypeRtoTassel(rdata = phenoTable, style = &quot;GBS&quot; )
+
+#use Tassel functions to filter for missing data and to select the intersection of sample names 
+filtPhenoTable &lt;- filtMissingPhenot(tasselPhenoTable)
 filtAndIntersectPhenoTable &lt;- filtOnIntersect(table1 = siteAndTaxaFiltGenoTable,  
-                                              table2 = filtPhenoTable) </code></pre>
+                                              table2 = filtPhenoTable) 
+
+#Now after the data set goes into tassel and is filtered with tassel functions it might be good bring it back into r as a df 
+rfiltAndIntersectPhenoTable &lt;- phenotpyes2r(filtAndIntersectPhenoTable, style = &quot;df&quot;)</code></pre>
 </div>
 <div id="run-glm-and-choose-top-snps" class="section level2">
 <h2>Run GLM and Choose Top SNPS</h2>
 <p>Run the General Linear Model with the fully filtered genotpye and filtered and intersected phenotypes. The output of the GLM is a large array which would need to be filtered/indexed before it could work for the filtering top SNPS function.</p>
-<pre class="r"><code>genoPhenoCombined &lt;- combineTasselGenotypePhenotype(siteAndTaxaFiltGenoTable@jtsGenotypeTable,
-                                                    jtsPhenotype)
-gwasReports &lt;- fixedEffectLMPlugin(genoPhenoCombined)
+<pre class="r"><code>#Remember our genotypes are in siteAndTaxaFiltGenoTable as a java object. They are also in sumExp as a sumExp dat form in R. The phenotypes are in  filtAndIntersectPhenoTable as a java object and as an R df as rfiltAndIntersectPhenoTable. 
 
-GMLresults &lt;- fixedEffectLMPlugin(Genotypes = siteAndTaxaFiltGenoTable, 
-                                  Phenotypes = filtAndIntersectPhenoTable)</code></pre>
-<p>The ‘filterTopSNPS’ function I envision being a fuction that takes tassel results and then gives back a list of the SNPs for each trait that have the highest p-values. This list can then be used to filter out the lowest significance SNPS. The SNPintersection would be a function that takes the top snps list and the ‘siteAndTaxaFiltGenoTable’ as arguments and outputs ‘siteAndTaxaFiltGenoTable’ filtered for the top sites so that it can be input into the next model.</p>
-<pre class="r"><code>filtGLMresults &lt;- filtertopSNPS(LMoutput = GMLresults, 
-                                  columnName = 'p',
-                                  filterSNPpercentage = 99, 
-                                  sortByTrait = TRUE)
-topSNPgenoSample &lt;- SNPintersection(GenotypeTable = 
-                                                  siteAndTaxaFiltGenoTable, 
-                                                  SNPList = filtGLMresults)</code></pre>
+#Estimates BLUEs - not working anymore as boolean passing messed UP
+blueReports &lt;- fixedEffectLMPlugin(filtAndIntersectPhenoTable, phenoOnly=TRUE)
+#Transfer this java output into R. 
+rBlueReports &lt;- blueReportsjava2r(blueReports)
+
+#Does GWAS after combining phenotype and genotype
+genoPhenoCombined &lt;- combineTasselGenotypePhenotype(siteAndTaxaFiltGenoTable@jtsGenotypeTable,filtAndIntersectPhenoTable)
+gwasReports &lt;- fixedEffectLMPlugin(genoPhenoCombined)
+#GWAS reports contains two dataframes - one with marker tests, other with allele effects.
+#Would it be worthwhile to have a function the transfer the GWAs outputs into R?</code></pre>
+<p>The ‘filterTopSNPS’ function I envision being a fuction that takes tassel results and then gives back a list of the SNPs for each trait that have the highest p-values. This list can then be used to filter out the lowest significance SNPS. The SNPintersection would be a function that takes the top snps list and the ‘siteAndTaxaFiltGenoTable’ as arguments and outputs it filtered for the top sites so that it can be input into the next model.</p>
+<pre class="r"><code>#This function finds the top (100-filterSNPpercentage)% of SNPS for one, or all traits that the GLM was run on. The goal would be then to make reduced genotype tables for each trait of interest and run the MLM on them. I am not sure how that would look programmed in. For now I just have the pretend function pulling out one trait.  The function returns a list of the top SNPs as a java object. A conversion function to get it into R would also be needed. 
+topSNPsListEH &lt;- filtertopSNPS(LMoutput = GMLresults, 
+                                columnName = 'p',
+                                filterSNPpercentage = 99, 
+                                Trait = &quot;ear_height&quot;)
+
+#In this function the java object topSNPsList is used as the basis to filter the genotype table for the MLM. This is where it would be tricky - as each trait will need its own reduced genotype table, as SNPs that were significant for one trait might not be significant for another. For now just showing one &quot;trait&quot;. The output of this is a java object. A function to convert from the java object to an R data type may be needed. 
+topSNPgenoSampleTrait1 &lt;- SNPintersection(GenotypeTable = siteAndTaxaFiltGenoTable, 
+                                         SNPList = topSNPsList)</code></pre>
 </div>
 <div id="run-mlm-on-top-snps" class="section level2">
 <h2>Run MLM on Top SNPs</h2>
-<p>Now take the topSNPgenoSample and the filtAndIntersectPhenoTable and run the MLM on them</p>
-<pre class="r"><code>topSNPsMLMresults &lt;- tasselMLM(Genotypes = topSNPgenoSample,
-                               Phenotypes = filtAndIntersectPhenoTable)</code></pre>
+<p>Now take the topSNPgenoSampleTrait and the filtAndIntersectPhenoTable and run the MLM on them</p>
+<pre class="r"><code>#This function would perform the MLM on the phenotypes and the top SNPs filtered genotype table. The parameters would need to somehow be specified as to what is random/what is fixed, etc...
+#The output of the function would be a java object. There would again need to be a converting function to get the data into a readable r format. 
+topSNPsMLMresultsTrait1 &lt;- tasselMLM(Genotypes = topSNPgenoSampleTrait1,
+                                     Phenotypes = filtAndIntersectPhenoTable,
+                                     randomEffects = c('x','y','z'),
+                                     fixedEffects = c('m', 'n','p'))</code></pre>
 </div>
 <div id="comparison" class="section level2">
 <h2>Comparison</h2>
+<p>Comparison of the two models, their SNPs, effects, etc could be compared as desired by the user.</p>
 </div>
 
 
