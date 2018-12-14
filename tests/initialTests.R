@@ -120,6 +120,9 @@ gwasGeno <- readGenotypeTable(genotypePath)
 
 #Need to convert to Pull function
 jtsPhenotype <- new(J("net/maizegenetics/phenotype/PhenotypeBuilder"))$fromFile(phenotypePath)$build()$get(0L)
+phenotypeDF <- read.table(phenotypePath, skip = 1, na.strings = "-999", col.names = c("Taxon","EarHT","dpoll","EarDia"))
+
+
 
 #Estimates BLUEs - not working anymore at boolean passing messed UP
 blueReports <- fixedEffectLMPlugin(jtsPhenotype, phenoOnly=TRUE)
@@ -129,4 +132,3 @@ genoPhenoCombined <- combineTasselGenotypePhenotype(gwasGeno@jtsGenotypeTable,jt
 gwasReports <- fixedEffectLMPlugin(genoPhenoCombined)
 
 #GWAS reports contains two dataframes - one with marker tests, other with allele effects.
-
