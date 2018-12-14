@@ -65,14 +65,14 @@ gwasPolyToDF <- function(gwasPolyRes=NA, model = "additive"){
   traitGWASresults
 }
 
-manhattan_trait_plot <-function(traitGWASresults, traitIDcol = "trait", positionIDcol = "Position", chromIDcol = "Chrom", pValIDcol = "markerpVal", sigTresholdIDcol = "sigTreshold"){
+manhattan_trait_plot <-function(traitGWASresults, traitIDcol = "trait", positionIDcol = "Position", chromIDcol = "Chrom", pValIDcol = "markerpVal", sigTresholdIDcol = "sigTreshold", colorPal = "Dark2"){
   library(ggplot2)
   
   traitGWASres <- data.frame(Chrom = traitGWASresults[,chromIDcol], Position = traitGWASresults[,positionIDcol], pVal = traitGWASresults[,pValIDcol], sigTreshold = traitGWASresults[,sigTresholdIDcol], trait = traitGWASresults[,traitIDcol])
   
   traitGWASres$markerLogPVal <- abs(log(traitGWASres$pVal))
   
-  ggplot(traitGWASres) + geom_point(aes(Position, markerLogPVal, col = trait), alpha=0.3) + geom_point(aes(Position, markerLogPVal, col = trait), data = traitGWASres[traitGWASres$markerLogPVal>traitGWASres$sigTreshold,])  + geom_hline(aes(yintercept = sigTreshold, col = trait), lty = "dashed") + facet_grid(~Chrom, scales = "free_x") + theme(axis.text.x = element_text(angle = 45, hjust = 1)) + scale_color_brewer(palette = "Set2") + xlab("Position by Chr") + ylab("-Log10Pval")
+  ggplot(traitGWASres) + geom_point(aes(Position, markerLogPVal, col = trait), alpha=0.3) + geom_point(aes(Position, markerLogPVal, col = trait), data = traitGWASres[traitGWASres$markerLogPVal>traitGWASres$sigTreshold,])  + geom_hline(aes(yintercept = sigTreshold, col = trait), lty = "dashed") + facet_grid(~Chrom, scales = "free_x") + theme_bw() + theme(axis.text.x = element_text(angle = 45, hjust = 1), legend.position = "bottom") + scale_color_brewer(palette = colorPal) + xlab("Position by Chr") + ylab("-Log10Pval")
 }
 
 gffToGeneGR <- function(gffFile){
@@ -181,7 +181,8 @@ manhattan_annot_plot <- function(annotatedGWASresults, traitIDcol = "trait_gwas"
       geom_point(aes(position, sig, col = trait), alpha = 0.3) + 
       geom_point(aes(position, sig, col = trait), data = annotatedGWASresults[annotatedGWASresults$sig >= annotatedGWASresults$sigTreshold,])  + 
       geom_hline(aes(yintercept = sigTreshold, col = trait), lty = "dashed") + 
-      theme(axis.text.x = element_text(angle = 45, hjust = 1)) + 
+      theme_bw() +
+      theme(axis.text.x = element_text(angle = 45, hjust = 1), legend.position = "bottom") + 
       scale_color_brewer(palette = colorPal) + 
       xlab("Position by Chr") + ylab("-Log10Pval") + 
       geom_label_repel(aes(x = position, y = sig, label = annotation_label), 
@@ -193,7 +194,8 @@ manhattan_annot_plot <- function(annotatedGWASresults, traitIDcol = "trait_gwas"
     zoomDF <- annotatedGWASresults[annotatedGWASresults$annotationName %in% unique(annotatedGWASresults$annotationName[annotatedGWASresults$sig >= annotatedGWASresults$sigTreshold]), ]
     
     g1 <- ggplot(zoomDF) + 
-      theme(axis.text.x = element_text(angle = 45, hjust = 1)) + 
+      theme_bw() +
+      theme(axis.text.x = element_text(angle = 45, hjust = 1), legend.position = "bottom") + 
       geom_rect(aes(xmin = annotStart, xmax = annotEnd, ymin=0, ymax = max(sig)/5, 
                     fill = annotType), data = zoomDF[zoomDF$sig >= zoomDF$sigTreshold,], alpha = 0.5) +
       geom_point(aes(position, sig, col = trait), alpha = 0.3) + 
@@ -212,7 +214,8 @@ manhattan_annot_plot <- function(annotatedGWASresults, traitIDcol = "trait_gwas"
     zoomDF <- as.data.frame(subsetByOverlaps(annotatedGWASresultsGR, zoomGR, ignore.strand = T))
     
     g1 <- ggplot(zoomDF) + 
-      theme(axis.text.x = element_text(angle = 45, hjust = 1)) + 
+      theme_bw() +
+      theme(axis.text.x = element_text(angle = 45, hjust = 1), legend.position = "bottom") + 
       geom_rect(aes(xmin = start, xmax = end, ymin = 0, ymax = max(sig, na.rm = T)/5, 
                     fill = annotType), alpha = 0.5) +
       geom_point(aes(position, sig, col = trait), alpha = 0.3) + 
@@ -344,16 +347,29 @@ gwas_rrblup <- GWAS(pheno = phenosOneLoc_rrblup, geno = markers_rrblup, K = k_rr
 ```
 
 Create GWASpoly plots and set thresholds to get QTLs
-```{r, warning=F}
+```{r}
 qq.plot(data_gwasPoly_res, trait = "EarDia", model = "additive")
 
 #can set Bonferroni and own pvalue
 data_gwasPoly_res <- set.threshold(data_gwasPoly_res, method = "FDR", level=0.05)
 
-get.QTL(data = data_gwasPoly_res)
-
 #can set any of the 3 traits
 manhattan.plot(data_gwasPoly_res, trait = "EarDia", model = "additive")
+
+get.QTL(data = data_gwasPoly_res)
+
+#issue with gwasPoly output. 
+#Effect sizes of QTL don't match the self-contained effect sizes
+data_gwasPoly_res@scores$EarHT[rownames(data_gwasPoly_res@scores$EarDia) %in% 
+                                 get.QTL(data = data_gwasPoly_res)$Marker,1]
+
+#when checking with my code for unwrapping the gwas poly output 
+#you can find that there are effectively two QTL
+#with the effect sizes that the self reported gwaspoly shows
+#but not in the position that they were supposed to be
+traitGWASresults <- gwasPolyToDF(data_gwasPoly_res)
+traitGWASresults[traitGWASresults$markerLogPVal > traitGWASresults$sigTreshold,]
+
 ```
 
 
@@ -366,7 +382,7 @@ summary(traitGWASresults)
 ```
 
 Create simple manhattan like plot for all traits
-```{r}
+```{r, fig.height=4, fig.width=7}
 manhattan_trait_plot(traitGWASresults = traitGWASresults, traitIDcol = "trait", 
                      positionIDcol = "Position", chromIDcol = "Chrom", pValIDcol = "markerpVal")
 ```
@@ -386,16 +402,17 @@ traitGWASresults_annotated <- annotate_gwasRes_byNearest(gwasResDF = traitGWASre
 ```
 
 Plot manhattan with nearest annotation on significant SNPs or by genomicRange set
-```{r}
+```{r, fig.height=5, fig.width=8}
 #plotting by chromosome
 manhattan_annot_plot(annotatedGWASresults = traitGWASresults_annotated, 
                      labelType = "annotationName", zoomGR = "none")
 
-#plotting with zoon over each closest significant annotations
+#plotting with zoom over each closest significant annotations
 manhattan_annot_plot(annotatedGWASresults = traitGWASresults_annotated, 
                      labelType = "composite", zoomGR = "auto")
 
 #plotting with zoom over genomicRanges
+#actual plotting on region still dependent on having any SNP within the defined range
 myGRegions <- GRanges(seqnames = 10, ranges = IRanges(start=144605146-5e5, end=144605146+5e5))
 manhattan_annot_plot(annotatedGWASresults = traitGWASresults_annotated, 
                      labelType = "composite", zoomGR = myGRegions)
