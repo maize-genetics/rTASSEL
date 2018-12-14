@@ -14,14 +14,19 @@
 
 source("R/AllClasses.R")
 
-createTasselPhenotypeFromDataFrame <- function(phenotypeDF) {
-  atttype <- c("data","data","data")
-  taxaNames <- as.vector(phenotypeDF$Taxon) #"Taxon"]]
+createTasselPhenotypeFromDataFrame <- function(phenotypeDF, attributeTypes = NULL) {
+  taxaNames <- as.vector(phenotypeDF$Taxon)
   colnames <- colnames(phenotypeDF)
   notTaxaCols <- colnames[!colnames %in% c("Taxon")]
+  if(is.null(attributeTypes)) {
+    atttype <- c(rep("data",length(notTaxaCols)))
+  } else {
+    atttype <- attributeTypes
+  }
   jList <- new(J("java/util/ArrayList"))
   for (col_i in notTaxaCols) {
-    jList$add(.jarray(phenotypeDF[[col_i]],"[D"))
+    jList$add(.jarray(phenotypeDF[[col_i]]))
+    
   }
   jc <- J("net/maizegenetics/plugindef/GenerateRCode")$createPhenotypeFromRDataFrameElements(taxaNames,notTaxaCols,atttype,jList)
 }
