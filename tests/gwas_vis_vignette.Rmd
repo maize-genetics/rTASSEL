@@ -74,28 +74,71 @@ annotate_gwasRes <- function(gwasResDF, annotationGR, positionIDcol_gwas = "Posi
 
 
 ##function for creating manhattan plot with closest gene annotation on significant gwas hits.
-##requires annotated gwas object
-multiple_trait_manhattan_annot <- function(annotatedGWASresults, label = "annotationName"){
-  annotatedGWASresults$Gene_label <- as.character(annotatedGWASresults$Gene)
-  
-  annotatedGWASresults$Gene_label[annotatedGWASresults$markerLogPVal_gwas < annotatedGWASresults$sigTreshold_gwas] <- ""
-  annotatedGWASresults$Gene_label <- as.factor(annotatedGWASresults$Gene_label)
-  summary(annotatedGWASresults$Gene_label)
-  
-  annotatedGWASresults$distanceToNearestAnnot_label <- annotatedGWASresults$distanceToNearestAnnot
-  annotatedGWASresults$distanceToNearestAnnot_label[annotatedGWASresults$markerLogPVal_gwas < annotatedGWASresults$sigTreshold_gwas] <- ""
-  
-  if(label == "annotationName"){
-    ggplot(annotatedGWASresults) + geom_point(aes(Position_gwas, markerLogPVal_gwas, col = trait_gwas), alpha = 0.3) + geom_point(aes(Position_gwas, markerLogPVal_gwas, col = trait_gwas), data = annotatedGWASresults[annotatedGWASresults$markerLogPVal_gwas > annotatedGWASresults$sigTreshold_gwas,])  + geom_hline(aes(yintercept = sigTreshold_gwas, col = trait_gwas), lty = "dashed") + theme(axis.text.x = element_text(angle = 45, hjust = 1)) + scale_color_brewer(palette = "Set2") + xlab("Position by Chr") + ylab("-Log10Pval") + geom_label_repel(aes(x = Position_gwas, y = markerLogPVal_gwas, label = Gene_label), inherit.aes = T, box.padding = 2) + geom_label_repel(aes(x = Position_gwas, y = markerLogPVal_gwas, label = distanceToNearestAnnot_label), inherit.aes = T, box.padding = 2)  + facet_wrap(~seqnames, scales = "free_x")
+##requires annotated gwas object. basically, each SNP assigned an annotation in the same row
+manhattan_annot_plot <- function(annotatedGWASresults, traitIDcol = "trait_gwas", genomicSeqIDcol =  "seqnames", posIDcol = "Position_gwas", sigIDcol = "markerLogPVal_gwas" , sigTresholdIDcol = "sigTreshold_gwas", annotNameIDcol = "Gene", annotTypeIDcol = "annotType", annotDistanceIDcol = "distanceToNearestAnnot", annotStartIDcol = "start", annotEndIDcol = "end", labelType = "composite", colorPal = "Dark2", zoomGR = "none"){
+
+  if(labelType %in% c("annotationName", "composite") == F){
+    stop("label parameter must be one of 'annotationName', or 'composite'")
   }
   
-  if(label == "composite"){
-  annotatedGWASresults$single_label <- paste(annotatedGWASresults$Gene_label, annotatedGWASresults$distanceToNearestAnnot_label, sep = ": ")
-  annotatedGWASresults$single_label <- gsub("^: $", "" ,annotatedGWASresults$single_label)
+  annotatedGWASresults <- data.frame(trait =  annotatedGWASresults[,traitIDcol], genomicSeq =  annotatedGWASresults[,genomicSeqIDcol], position = annotatedGWASresults[,posIDcol], sig = annotatedGWASresults[,sigIDcol], sigTreshold = annotatedGWASresults[,sigTresholdIDcol], annotationName = annotatedGWASresults[,annotNameIDcol], annotStart = annotatedGWASresults[,annotStartIDcol], annotEnd = annotatedGWASresults[,annotEndIDcol], annotationDistance = annotatedGWASresults[,annotDistanceIDcol], annotType = annotatedGWASresults[,annotTypeIDcol])
   
-  ggplot(annotatedGWASresults) + geom_point(aes(Position_gwas, markerLogPVal_gwas, col = trait_gwas), alpha = 0.3) + geom_point(aes(Position_gwas, markerLogPVal_gwas, col = trait_gwas), data = annotatedGWASresults[annotatedGWASresults$markerLogPVal_gwas > annotatedGWASresults$sigTreshold_gwas,])  + geom_hline(aes(yintercept = sigTreshold_gwas, col = trait_gwas), lty = "dashed") + theme(axis.text.x = element_text(angle = 45, hjust = 1)) + scale_color_brewer(palette = "Set2") + xlab("Position by Chr") + ylab("-Log10Pval") + geom_label_repel(aes(x = Position_gwas, y = markerLogPVal_gwas, label = single_label), inherit.aes = T, box.padding = 2) + facet_wrap(~seqnames, scales = "free_x")
+  if(annotTypeIDcol == ""){
+    annotatedGWASresults$annotType <- "default"
+  }
+  
+  annotatedGWASresults$annotationName_label <- as.character(annotatedGWASresults$annotationName)
+  
+  annotatedGWASresults$annotationName_label[annotatedGWASresults$sig <= annotatedGWASresults$sigTreshold] <- "" #mark not significant
+  annotatedGWASresults$annotationName_label <- as.factor(annotatedGWASresults$annotationName_label)
+  #summary(annotatedGWASresults$annotationName_label)
+  
+  annotatedGWASresults$annotationDistance_label <- annotatedGWASresults$annotationDistance
+  annotatedGWASresults$annotationDistance_label[annotatedGWASresults$sig <= annotatedGWASresults$sigTreshold] <- "" #mark not significant
+  
+  if(labelType == "annotationName"){
+    annotatedGWASresults$annotation_label <- annotatedGWASresults$annotationName_label
+  }
+  
+  if(labelType == "composite"){
+    annotatedGWASresults$annotation_label <- paste(annotatedGWASresults$annotationName_label, annotatedGWASresults$annotationDistance_label, sep = ": ")
+    annotatedGWASresults$annotation_label <- gsub("^: $", "" ,annotatedGWASresults$annotation_label)
+  }
+  
+  if(zoomGR == "auto"){
+    zoomDF <- annotatedGWASresults[annotatedGWASresults$annotationName %in% unique(annotatedGWASresults$annotationName[annotatedGWASresults$sig >= annotatedGWASresults$sigTreshold]), ]
+    message(nrow(zoomDF))
+    message(ncol(zoomDF))
+    g1 <- ggplot(zoomDF) + 
+      geom_point(aes(position, sig, col = trait), alpha = 0.3) + 
+      geom_point(aes(position, sig, col = trait), data = zoomDF[zoomDF$sig >= zoomDF$sigTreshold,])  + 
+      geom_hline(aes(yintercept = sigTreshold, col = trait), lty = "dashed") + 
+      geom_rect(aes(xmin = annotStart, xmax = annotEnd, ymin=0, ymax = max(sig)/5, fill = annotType)) +
+      theme(axis.text.x = element_text(angle = 45, hjust = 1)) + 
+      scale_color_brewer(palette = colorPal) + 
+      xlab("Position by Chr") + ylab("-Log10Pval") + 
+      geom_label_repel(aes(x = position, y = sig, label = annotation_label), 
+                       inherit.aes = T, box.padding = 2) + 
+      facet_wrap(~paste(genomicSeq,annotationName, sep = ": "), scales = "free_x")  
+  }
+  
+  if(zoomGR == "none"){
+    g1 <- ggplot(annotatedGWASresults) + 
+      geom_point(aes(position, sig, col = trait), alpha = 0.3) + 
+      geom_point(aes(position, sig, col = trait), data = annotatedGWASresults[annotatedGWASresults$sig >= annotatedGWASresults$sigTreshold,])  + 
+      geom_hline(aes(yintercept = sigTreshold, col = trait), lty = "dashed") + 
+      theme(axis.text.x = element_text(angle = 45, hjust = 1)) + 
+      scale_color_brewer(palette = colorPal) + 
+      xlab("Position by Chr") + ylab("-Log10Pval") + 
+      geom_label_repel(aes(x = position, y = sig, label = annotation_label), 
+                       inherit.aes = T, box.padding = 2) + 
+      facet_wrap(~genomicSeq, scales = "free_x")  
+  }
+  
+  
+  return(g1)
+  
 }
-  }
   
 ```
 
@@ -345,8 +388,7 @@ genesNearestToGWASranges$distanceToNearestAnnot_label <- genesNearestToGWASrange
 genesNearestToGWASranges$distanceToNearestAnnot_label[genesNearestToGWASranges$bestHitPval != genesNearestToGWASranges$markerpVal_gwas] <- ""
 
 #to only plot gene names for significant SNPs 
-multiple_trait_manhattan_annot(annotatedGWASresults = genesNearestToGWASranges, label = "composite")
-#+ geom_rect(aes(xmin = seqRangeStart, xmax = seqRangeEnd, ymin = 0, ymax=1), fill = "black", data=annotationsDF) + geom_rect(aes(xmin=annotationStart, xmax=annotationEnd, ymin=annotationNum, ymax=annotationNum+1, fill = annotationName), data = annotationsDF) 
+manhattan_annot_plot(annotatedGWASresults = genesNearestToGWASranges, labelType = "composite", zoomGR = "auto")
 
 
 ```
