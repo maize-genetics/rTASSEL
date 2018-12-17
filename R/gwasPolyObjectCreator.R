@@ -38,7 +38,8 @@ se_createGWASpolyObject <- function(ploidy, phenoDF, SummarizedExperimentObject,
   geno <- data.frame(markerName = paste("dummy", 1:length(ranges(SummarizedExperimentObject@rowRanges)), sep = "-"), # dummy name as current summarizeExperimentFromGenotypeTable doesn't keep
                      chr = seqnames(SummarizedExperimentObject@rowRanges),
                      pos = start(ranges(SummarizedExperimentObject@rowRanges)),
-                     as.data.frame(SummarizedExperimentObject@assays$data@listData) # same as assay(SummarizedExperimentObject)
+                     as.data.frame(SummarizedExperimentObject@assays$data@listData), # same as assay(SummarizedExperimentObject)
+                    stringsAsFactors = F
   )
   colnames(geno)[4:ncol(geno)] <- as.character(SummarizedExperimentObject$Sample)
 

@@ -288,6 +288,8 @@ dim(genoDF)
 
 genoDF[1:4, 1:8]
 
+write.table(genoDF, "~/Downloads/GWASpoly_download/maizeGenotypes_GWASpoly.txt", sep = "\t", col.names = T, row.names = F, quote = F)
+
 markers_rrblup_mat <- apply(genoDF[,-(1:3)],1,convert.snp)
 
 dim(markers_rrblup_mat)
@@ -315,6 +317,8 @@ rownames(phenosOneLoc) <- phenosOneLoc$Taxa
 ###Also, GWASpoly expects all traits as initial columns, and fixed effect covariates last
 phenosOneLoc <- phenosOneLoc[,-c(2)]
 
+write.table(phenosOneLoc, "~/Downloads/GWASpoly_download/maizePhenotypes_GWASpoly.txt", sep = "\t", col.names = T, row.names = F, quote = F)
+
 summary(phenosOneLoc)
 ```
 
@@ -325,6 +329,8 @@ Run GWAS
 data_gwasPoly <- se_createGWASpolyObject(ploidy = 2, phenoDF = phenosOneLoc, 
                                          SummarizedExperimentObject =  tas_se, 
                                          format = "numeric", n.traits = 3)
+
+data_gwasPoly <- read.GWASpoly(ploidy = 2, pheno.file = "~/Downloads/GWASpoly_download/maizePhenotypes_GWASpoly.txt", geno.file = "~/Downloads/GWASpoly_download/maizeGenotypes_GWASpoly.txt", format = "numeric", n.traits = 3, delim = "\t")
 
 ## add kinship information to object
 data_gwasPoly <- set.K(data_gwasPoly)
@@ -350,7 +356,7 @@ Create GWASpoly plots and set thresholds to get QTLs
 ```{r}
 qq.plot(data_gwasPoly_res, trait = "EarDia", model = "additive")
 
-#can set Bonferroni and own pvalue
+#can set Bonferroni|FDR and own pvalue
 data_gwasPoly_res <- set.threshold(data_gwasPoly_res, method = "FDR", level=0.05)
 
 #can set any of the 3 traits
@@ -358,15 +364,13 @@ manhattan.plot(data_gwasPoly_res, trait = "EarDia", model = "additive")
 
 get.QTL(data = data_gwasPoly_res)
 
-#issue with gwasPoly output. 
-#Effect sizes of QTL don't match the self-contained effect sizes
-data_gwasPoly_res@scores$EarHT[rownames(data_gwasPoly_res@scores$EarDia) %in% 
-                                 get.QTL(data = data_gwasPoly_res)$Marker,1]
+head(data_gwasPoly_res@scores$EarDia)
 
-#when checking with my code for unwrapping the gwas poly output 
-#you can find that there are effectively two QTL
-#with the effect sizes that the self reported gwaspoly shows
-#but not in the position that they were supposed to be
+head(data_gwasPoly_res@map)
+
+#issue with gwasPoly output. Effect sizes of QTL don't match the self-contained effect sizes
+#data_gwasPoly_res@effects$EarDia[rownames(data_gwasPoly_res@effects$EarDia) %in% c("dummy-1",as.character(get.QTL(data = data_gwasPoly_res)$Marker)),]
+
 traitGWASresults <- gwasPolyToDF(data_gwasPoly_res)
 traitGWASresults[traitGWASresults$markerLogPVal > traitGWASresults$sigTreshold,]
 
