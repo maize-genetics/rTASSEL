@@ -110,3 +110,37 @@ setMethod(
     cat("Taxa: ",object@jtsTaxaList$size(),"\n")
   }
 )
+
+## A R Wrapper for the TasselObjWrapper class
+setClass(
+  Class = "TasselObjWrapper",
+  representation = representation(
+    name = "character",
+    jtsObj = "jobjRef"
+  )
+  #todo - this class seems like it should inherit from jobjRef
+  #contains = "jobjRef"
+)
+
+## Show method for TasselObjWrapper class objects
+setMethod(
+  f = "show",
+  signature = "TasselObjWrapper",
+  definition = function(object) {
+    #SummarizeTaxa
+    
+    #Summarize Genotypic side if applicable
+    cat("GenotypePhenotype Name: ",object@name,"\n")
+    cat(is(object)," wraps ", show(object@jtsObj) ,"\n")
+    cat("Taxa: ",object@jtsObj$size(),"\n")
+    #Summarize Phenotypic side if applicable
+  }
+)
+
+#other methods
+#taxa -> vector
+#phenotype -> dataframe or tassel obj in wrapper
+#genotype -> dataframe or tassel obj in wrapper
+#position -> granges or or tassel obj in wrapper
+
+

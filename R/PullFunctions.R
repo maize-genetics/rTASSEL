@@ -172,3 +172,17 @@ dataSetToListOfDataFrame <- function(jtsDataSet) {
 
 
 
+#These should all be vectorized
+
+tasselObjToRWrapper <- function(tasselObj) {
+  #If already a TASSEL object just return it
+  
+}
+
+rObjToTasselObj <- function(rObj) {
+  #If already a TASSEL object just return it
+  
+}
+
+
+
