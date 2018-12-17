@@ -67,3 +67,13 @@ tasDF <- sampleDataFrame(tasGenoTable)
 ## Make genomic ranges
 tasGRanges <- genomicRanges(tasGenoTable)
 tasGRanges
+
+
+## TASSELDataSet test
+phenotypePath <- paste0(
+    getwd(),
+    "/data/mdp_traits.txt"
+)
+
+
+tasDS <- TASSELDataSet(vcfPath)

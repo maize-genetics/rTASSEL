@@ -30,6 +30,7 @@ haplotypeGraphBuilderPlugin <- function(configFile, myMethods
   plugin$setParameter("methods",toString(myMethods))
   plugin$setParameter("includeSequences",toString(FALSE))
   plugin$setParameter("includeVariantContexts",toString(TRUE))
+  plugin$setParameter("chromosomes", toString(chrom_list)) #comma separated list of chromosomes, taken as a string
   plugin$build()
 }
 
