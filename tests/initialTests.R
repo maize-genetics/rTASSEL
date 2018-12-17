@@ -50,6 +50,7 @@ source("R/AllGenerics.R")
 source("R/AllClasses.R")
 source("R/TasselPluginWrappers.R")
 source("R/PullFunctions.R")
+source("R/PushFunctions.R")
 
 
 ## VCF file path exmaple...
@@ -112,11 +113,6 @@ phenotypePath <- paste0(
   getwd(),
   "/data/mdp_traits.txt"
 )
-phenotypePathWithNaN <- paste0(
-  getwd(),
-  "/data/mdp_traits_wNAN.txt"
-)
-
 genotypePath <- paste0(
   getwd(),
   "/data/mdp_genotype.hmp.txt.gz"
@@ -124,20 +120,13 @@ genotypePath <- paste0(
 gwasGeno <- readGenotypeTable(genotypePath)
 
 #Need to convert to Pull function
-jtsPhenotype <- new(J("net/maizegenetics/phenotype/PhenotypeBuilder"))$fromFile(phenotypePath)$build()$get(0L)
 phenotypeDF <- read.table(phenotypePath, skip = 1, na.strings = "-999", col.names = c("Taxon","EarHT","dpoll","EarDia"))
-# phenotypeDF <- read.table(phenotypePath, skip = 1, col.names = c("Taxon","EarHT","dpoll","EarDia"))
-# phenotypeDF <- read.table(phenotypePathWithNaN, skip = 1, col.names = c("Taxon","EarHT","dpoll","EarDia"))
 tasselPhenotypeFromRDF <- createTasselPhenotypeFromDataFrame(phenotypeDF)
 
-
-
 #Estimates BLUEs - not working anymore at boolean passing messed UP
-blueReports <- fixedEffectLMPlugin(jtsPhenotype, phenoOnly=TRUE)
 blueReports <- fixedEffectLMPlugin(tasselPhenotypeFromRDF, phenoOnly=TRUE)
 
 #Does GWAS after combining phenotype and genotype
-genoPhenoCombined <- combineTasselGenotypePhenotype(gwasGeno@jtsGenotypeTable,jtsPhenotype)
 genoPhenoCombined <- combineTasselGenotypePhenotype(gwasGeno@jtsGenotypeTable,tasselPhenotypeFromRDF)
 gwasReports <- fixedEffectLMPlugin(genoPhenoCombined)
 
