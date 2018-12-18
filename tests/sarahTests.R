@@ -22,7 +22,7 @@ rJava::.jaddClassPath(path_lib)
 print(.jclassPath())
 
 # Same function as in PHGPluginWrappers.R
-haplotypeGraphBuilderPlugin <- function(configFile, myMethods
+haplotypeGraphBuilderPlugin <- function(configFile, myMethods, chrom_list=NULL
 ) {
   plugin <- new(J("net.maizegenetics.pangenome.api.HaplotypeGraphBuilderPlugin"), .jnull(), FALSE)
   plugin$setParameter("configFile",toString(configFile))
@@ -33,6 +33,7 @@ haplotypeGraphBuilderPlugin <- function(configFile, myMethods
   plugin$build()
 }
 
+#Create graph
 configFilePath <- paste0(getwd(),"/data/configSQLiteR.txt")
 method <- "mummer4,refRegionGroup"
 test_graph <- haplotypeGraphBuilderPlugin(configFilePath,method)
@@ -43,9 +44,16 @@ generateRforPHG <- .jnew("net.maizegenetics.pangenome/pipelineTests.GenerateRFor
 hapDataVecs <- rJava::.jcall(generateRforPHG, "Lnet/maizegenetics/pangenome/pipelineTests/HaplotypesDataVectors;", "graphToHapsInRefRangeVectors", test_graph, rrIds2, FALSE, TRUE)
 hapDataVecs$variantInfo
 
-#Get genotype table - doesn't work yet
-#taxalist <- c("B104_Assembly")
-#chrom_list <- c(9,10)
-#genotypeTable <- J("net.maizegenetics/pangenome/api/GraphToGenotypeTable")$genotypeTable(test_graph, 1L)
+#Get genotype table
+taxalist <- c("B104_Assembly")
+chrom_list <- c(1)
+genotypeTable <- J("net.maizegenetics/pangenome/api/GraphToGenotypeTable")$genotypeTable(test_graph, 1L, NULL)
+genotypeTable2 <- J("net.maizegenetics/pangenome/api/GraphToGenotypeTable")$genotypeTable(test_graph, 2L, NULL)
 
+# Convert genotype table to snpMatrix via RangedSummarizedExperiment class
+# SNP_mx = snpMatrixFromGenotypeTable(genotypeTable) --> doesn't work see error
+SumExp = summarizeExperimentFromGenotypeTable(genotypeTable = genotypeTable)
+SNP_mx = assay(SumExp, 1)
 
+SumExp2 = summarizeExperimentFromGenotypeTable(genotypeTable = genotypeTable2)
+SNP_mx2 = assay(SumExp2, 1)
