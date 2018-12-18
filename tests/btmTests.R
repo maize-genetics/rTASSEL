@@ -73,25 +73,3 @@ tasDF <- sampleDataFrame(tasGenoTable)
 ## Make genomic ranges
 tasGRanges <- genomicRanges(tasGenoTable)
 tasGRanges
-
-
-## TasselGenotypePhenotype test
-phenotypePath <- paste0(
-    getwd(),
-    "/data/mdp_traits.txt"
-)
-genotypePath <- paste0(
-    getwd(),
-    "/data/mdp_genotype.hmp.txt.gz"
-)
-
-tasDS <- TasselGenotypePhenotype(
-    genotypePath = genotypePath,
-    phenotypePath = phenotypePath
-)
-
-### Getter function for TasselGenotypePhenotype class
-tasGT <- genotypeTable(tasDS)
-tasPT <- phenotypeTable(tasPT)
-
-
