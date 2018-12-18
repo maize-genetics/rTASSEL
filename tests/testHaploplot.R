@@ -2,17 +2,16 @@ library(ggplot2)
 library(GenomicRanges)
 library(rJava)
 
-# Parameters
-setwd("~/Code/rtassel")
-path_jar_dir <- "./inst/java"
-# ---
+# load rtassel
+setwd(paste(fs::path_home(), "Code", "rtassel", sep = .Platform$file.sep))
 
 # initialize java
-rJava::.jinit(parameters="-Xmx6g")
-rJava::.jaddClassPath(paste0(path_jar_dir, .Platform$file.sep, "sTASSEL.jar"))
-rJava::.jaddClassPath(paste0(path_jar_dir, .Platform$file.sep, "phg.jar"))
-rJava::.jaddClassPath(paste0(path_jar_dir, .Platform$file.sep, "kotlin-stdlib-1.3.10.jar"))
-rJava::.jaddClassPath(paste0(path_jar_dir, .Platform$file.sep, "lib"))
+.jinit(parameters="-Xmx6g")
+path_jar_dir <- "inst/java"
+.jaddClassPath(paste0(path_jar_dir, .Platform$file.sep, "sTASSEL.jar"))
+.jaddClassPath(paste0(path_jar_dir, .Platform$file.sep, "phg.jar"))
+.jaddClassPath(paste0(path_jar_dir, .Platform$file.sep, "kotlin-stdlib-1.3.10.jar"))
+.jaddClassPath(paste0(path_jar_dir, .Platform$file.sep, "lib"))
 
 haplotypeGraphBuilderPlugin <- function(configFile, myMethods) {
   plugin <- new(J("net.maizegenetics.pangenome.api.HaplotypeGraphBuilderPlugin"), .jnull(), FALSE)
@@ -22,7 +21,7 @@ haplotypeGraphBuilderPlugin <- function(configFile, myMethods) {
   plugin$build()
 }
 
-configFilePath <- "./data/configSQLiteR.txt"
+configFilePath <- "data/configSQLiteR.txt"
 method <- "mummer4,*"
 phg_hap_graph <- haplotypeGraphBuilderPlugin(configFilePath, method)
 generateRforPHG <- .jnew("net.maizegenetics.pangenome/pipelineTests.GenerateRForPHG")
@@ -41,6 +40,7 @@ hap_df <- data.frame(
 )
 
 hap_df <- cbind(hap_df, rr_df[match(hap_df$ref_range_id, rr_df$ref_range_id), c("chrom", "range_start", "range_end")])
+rm(rr_df, rr_vecs, hap_vecs, phg_hap_graph)
 
 hap_df$chrom <- as.integer(hap_df$chrom)
 hap_df$y <- match(hap_df$line_name, levels(hap_df$line_name)) # generate y values for haplotypes based on taxa
@@ -59,8 +59,6 @@ hap_g_ranges <- GRanges(
   y = hap_df$y,
   anchor = hap_df$anchor
 )
-seqlengths(hap_g_ranges) <- aggregate(hap_df$range_end, by = list(hap_df$chrom), max)$x
-genome(hap_g_ranges) <- "AGPv4"
 
 window_start <- 1
 window_end <- 100000
@@ -76,6 +74,7 @@ window_g_range <- GRanges(
 
 y_breaks <- seq(levels(hap_df$line_name))
 y_labels <- levels(hap_df$line_name)
+rm(hap_df)
 
 plot_hap_ranges <- subsetByOverlaps(hap_g_ranges, window_g_range)
 plot_haps <- data.frame(
