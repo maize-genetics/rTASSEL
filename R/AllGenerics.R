@@ -25,3 +25,17 @@ setGeneric(
     standardGeneric("taxa")
   }
 )
+
+setGeneric(
+    name = "genotypeTable",
+    def = function(object) {
+        standardGeneric("genotypeTable")
+    }
+)
+
+setGeneric(
+    name = "phenotypeTable",
+    def = function(object) {
+        standardGeneric("phenotypeTable")
+    }
+)

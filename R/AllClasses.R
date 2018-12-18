@@ -124,7 +124,6 @@ setClass(
 
 ## TasselGenotypePhenotype Object and constructors
 TasselGenotypePhenotype <- function(genotypePath, phenotypePath) {
-
     if (missing(genotypePath) & missing(phenotypePath)) {
         stop("Need at least one path.")
     } else if (missing(genotypePath)) {
@@ -181,9 +180,7 @@ TasselGenotypePhenotype <- function(genotypePath, phenotypePath) {
             jtsGenotypeTable = jtsGenotypeTable
         )
     }
-
     return(object)
-
 }
 
 ## TasselGenotypePhenotype Show Method
@@ -199,9 +196,23 @@ setMethod(
     }
 )
 
+## TasselGenotypePhenotype Getters - genotypeTable
+setMethod(
+    f = "genotypeTable",
+    signature = "TasselGenotypePhenotype",
+    definition = function(object) {
+        object@genotypeTable
+    }
+)
 
-
-
+## TasselGenotypePhenotype Getters - phenotypeTable
+setMethod(
+    f = "phenotypeTable",
+    signature = "TasselGenotypePhenotype",
+    definition = function(object) {
+        object@phenotypeTable
+    }
+)
 
 
 

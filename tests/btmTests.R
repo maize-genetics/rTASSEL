@@ -85,8 +85,13 @@ genotypePath <- paste0(
     "/data/mdp_genotype.hmp.txt.gz"
 )
 
-
 tasDS <- TasselGenotypePhenotype(
     genotypePath = genotypePath,
     phenotypePath = phenotypePath
 )
+
+### Getter function for TasselGenotypePhenotype class
+tasGT <- genotypeTable(tasDS)
+tasPT <- phenotypeTable(tasPT)
+
+
