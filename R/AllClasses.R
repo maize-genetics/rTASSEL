@@ -112,9 +112,9 @@ setMethod(
 )
 
 
-## TASSELDataSet Class
+## TasselGenotypePhenotype Class
 setClass(
-    Class = "TASSELDataSet",
+    Class = "TasselGenotypePhenotype",
     representation = representation(
         genotypeTable = "RangedSummarizedExperiment",
         phenotypeTable = "DataTable",
@@ -122,20 +122,11 @@ setClass(
     )
 )
 
-## TASSELDataSet Object and constructors
-TASSELDataSet <- function(genotypePath, phenotypePath) {
+## TasselGenotypePhenotype Object and constructors
+TasselGenotypePhenotype <- function(genotypePath, phenotypePath) {
 
-    if (missing(phenotypePath)) {
-        phenotypeTable <- S4Vectors::DataFrame()
-        jtsGenotypeTable <- rJava::.jcall(
-            "net/maizegenetics/dna/snp/ImportUtils",
-            "Lnet/maizegenetics/dna/snp/GenotypeTable;",
-            "read",
-            genotypePath
-        )
-        genotypeTable <- summarizeExperimentFromGenotypeTable(
-            genotypeTable = jtsGenotypeTable
-        )
+    if (missing(genotypePath) & missing(phenotypePath)) {
+        stop("Need at least one path.")
     } else if (missing(genotypePath)) {
         phenotypeTable <- S4Vectors::DataFrame(
             read.table(
@@ -145,32 +136,66 @@ TASSELDataSet <- function(genotypePath, phenotypePath) {
             )
         )
         colnames(phenotypeTable)[1] <- "Taxon"
-        genotypeTable <- GenomicRanges::GRanges()
-        jtsGenotypeTable <- NULL
-    } else if (missing(genotypePath) & missing(phenotypePath)) {
-        stop("At least one path is needed.")
+        object <- new(
+            "TasselGenotypePhenotype",
+            phenotypeTable = phenotypeTable
+        )
+    } else if (missing(phenotypePath)) {
+        jtsGenotypeTable <- rJava::.jcall(
+            "net/maizegenetics/dna/snp/ImportUtils",
+            "Lnet/maizegenetics/dna/snp/GenotypeTable;",
+            "read",
+            genotypePath
+        )
+        genotypeTable <- summarizeExperimentFromGenotypeTable(
+            genotypeTable = jtsGenotypeTable
+        )
+        object <- new(
+            "TasselGenotypePhenotype",
+            phenotypeTable = S4Vectors::DataFrame(),
+            genotypeTable = genotypeTable,
+            jtsGenotypeTable = jtsGenotypeTable
+        )
+    } else {
+        jtsGenotypeTable <- rJava::.jcall(
+            "net/maizegenetics/dna/snp/ImportUtils",
+            "Lnet/maizegenetics/dna/snp/GenotypeTable;",
+            "read",
+            genotypePath
+        )
+        genotypeTable <- summarizeExperimentFromGenotypeTable(
+            genotypeTable = jtsGenotypeTable
+        )
+        phenotypeTable <- S4Vectors::DataFrame(
+            read.table(
+                phenotypePath, 
+                na.strings = "-999",
+                header = TRUE
+            )
+        )
+        colnames(phenotypeTable)[1] <- "Taxon"
+        object <- new(
+            "TasselGenotypePhenotype",
+            genotypeTable = genotypeTable,
+            phenotypeTable = phenotypeTable,
+            jtsGenotypeTable = jtsGenotypeTable
+        )
     }
-    
-    
-    
-    object <- new(
-        "TASSELDataSet",
-        genotypeTable = genotypeTable,
-        phenotypeTable = phenotypeTable,
-        jtsGenotypeTable = jtsGenotypeTable
-    )
-    
+
     return(object)
-    
+
 }
 
+## TasselGenotypePhenotype Show Method
 setMethod(
     f = "show",
-    signature = "TASSELDataSet",
+    signature = "TasselGenotypePhenotype",
     definition = function(object) {
         cat("Class: ", class(object),"\n")
-        cat("\n\n")
+        cat("\n\nGenotype Info:\n")
         print(object@genotypeTable)
+        cat("\n\nPhenotype Info:\n")
+        print(object@phenotypeTable)
     }
 )
 
