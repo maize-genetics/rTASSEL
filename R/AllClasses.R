@@ -43,16 +43,33 @@ setMethod(
     f = "show",
     signature = "TasselGenotypePhenotype",
     definition = function(object) {
-        cat("Class:   ", object@name, "\n")
+        cat("A TasselGenotypePhenotype Dataset\n")
+        cat("  Class..............", object@name, "\n")
         if (!is.jnull(object@jTaxaList)) {
-            cat("Taxa:    ", as.character(object@jTaxaList$size()), "\n")
+            cat("  Taxa...............", as.character(object@jTaxaList$size()), "\n")
         } else {
-            cat("Taxa:    ", "NA", "\n")
+            cat("  Taxa...............", "NA", "\n")
         }
         if (!is.jnull(object@jPositionList)) {
-            cat("Positions:", as.character(object@jPositionList$numberOfSites()), "\n")
+            cat("  Positions..........", as.character(object@jPositionList$numberOfSites()), "\n")
         } else {
-            cat("Postions: NA", "\n")
+            cat("  Positions..........", "NA", "\n")
+        }
+        if (!is.jnull(object@jTaxaList) & !is.jnull(object@jPositionList)) {
+            cat("  Taxa x Positions...", as.numeric(object@jTaxaList$size()) * as.numeric(object@jPositionList$numberOfSites()), "\n")
+        } else {
+            cat("  Taxa x Positions...", "NA", "\n")
+        }
+        cat("---\n")
+        if (!is.jnull(object@jGenotypeTable)) {
+            cat("  Genotype Table.... [x]\n")
+        } else {
+            cat("  Genotype Table.... [ ]\n")
+        }
+        if (!is.jnull(object@jPhenotypeTable)) {
+            cat("  Phenotype Table... [x]\n")
+        } else {
+            cat("  Phenotype Table... [ ]\n")
         }
     }
 )
@@ -174,8 +191,7 @@ readGenotypeTable <- function(path) {
 
 ## Constructor for GenotypeTable class object - Terry
 readPhenotypeTable <- function(path) {
-  jObj <- new(J("net.maizegenetics.phenotype.PhenotypeBuilder"))
-  jObj <- jObj$fromFile(path)
+  jObj <- new(J("net.maizegenetics.phenotype.PhenotypeBuilder"))$fromFile(path)
   .tasselObjectConstructor(jObj$build()$get(0L))
 }
 
@@ -186,35 +202,4 @@ readGenotypePhenotype <- function(genoPath, phenoPath) {
         new(J("net.maizegenetics.phenotype.GenotypePhenotypeBuilder"))$genotype(genoPath)$phenotype(phenoPath)$intersect()$build()
     )
 }
-
-# ## TasselGenotypePhenotype Show Method
-# setMethod(
-#     f = "show",
-#     signature = "TasselGenotypePhenotype",
-#     definition = function(object) {
-#         cat("Class: ", class(object),"\n")
-#         cat("\n\nGenotype Info:\n")
-#         print(object@genotypeTable)
-#         cat("\n\nPhenotype Info:\n")
-#         print(object@phenotypeTable)
-#     }
-# )
-
-# ## TasselGenotypePhenotype Getters - genotypeTable
-# setMethod(
-#     f = "genotypeTable",
-#     signature = "TasselGenotypePhenotype",
-#     definition = function(object) {
-#         object@genotypeTable
-#     }
-# )
-
-# ## TasselGenotypePhenotype Getters - phenotypeTable
-# setMethod(
-#     f = "phenotypeTable",
-#     signature = "TasselGenotypePhenotype",
-#     definition = function(object) {
-#         object@phenotypeTable
-#     }
-# )
 

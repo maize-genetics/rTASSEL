@@ -87,6 +87,7 @@ library(stringr)
 library(SummarizedExperiment)
 library(snpStats)
 library(hexbin)
+library(S4Vectors)
 
 ## Set WD
 setwd("~/Projects/rtassel")
@@ -127,6 +128,10 @@ phenoPath <- paste0(
     getwd(),
     "/data/mdp_traits.txt"
 )
+
+## Phenotype data frame example
+phenoDF <- read.table(phenoPath, header = TRUE)
+colnames(phenoDF)[1] <- "Taxon"
 
 ## Read GenotypeTable - Returns error due to NULL object going into phenotype slot
 tasGeno <- readGenotypeTable(genoPath)
