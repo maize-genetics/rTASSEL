@@ -44,11 +44,16 @@ setMethod(
     signature = "TasselGenotypePhenotype",
     definition = function(object) {
         cat("Class:     ", object@name, "\n")
-        cat("Taxa:      ", as.character(object@jTaxaList$size()), "\n")
-        cat("Positions: ", as.character(object@jPositionList$numberOfSites()))
-        # if (!is.null(getTaxaList(object))) {
-        #     cat("Taxa:", as.character(object$jTaxaList$size()), "\n")
-        # }
+        if (!is.jnull(object@jTaxaList)) {
+            cat("Taxa:      ", as.character(object@jTaxaList$size()), "\n")
+        } else {
+            cat("Taxa:      ", "NA", "\n")
+        }
+        if (!is.jnull(object@jPositionList)) {
+            cat("Positions: ", as.character(object@jPositionList$numberOfSites()), "\n")
+        } else {
+            cat("Postions: ", "NA", "\n")
+        }
     }
 )
 # ## Show method for TasselObjWrapper class objects
