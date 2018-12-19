@@ -23,7 +23,7 @@ print(.jclassPath())
 
 
 
-haplotypeGraphBuilderPlugin <- function(configFile, myMethods, chrom_list
+haplotypeGraphBuilderPlugin <- function(configFile, myMethods, chrom_list=NULL
 ) {
   plugin <- new(J("net.maizegenetics.pangenome.api.HaplotypeGraphBuilderPlugin"), .jnull(), FALSE)
   plugin$setParameter("configFile",toString(configFile))
