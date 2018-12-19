@@ -159,6 +159,12 @@ setClass(
 #--------------------------------------------------------------------
 # PSEUDO CODE - TasselGenotypePhenotype Object and constructors
 #--------------------------------------------------------------------
+
+# TODO - Ed or Terry - Make function to convert object path to Java object
+createJPhenotypeFromPath <- function(phenotypePath) {
+    
+}
+
 TasselGenotypePhenotype <- function(genotype, phenotype) {
     if (missing(genotype) & missing(phenotype)) {
         stop("Need at least one path.")
