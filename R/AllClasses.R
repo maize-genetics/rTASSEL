@@ -91,7 +91,7 @@ getTaxaList <- function(jtsObject) {
   } else if(jtsObject %instanceof% "net.maizegenetics.phenotype.GenotypePhenotype") {
     return(jtsObject$genotypeTable()$taxa())
   } else {
-    return(NULL)
+    return(rJava::.jnull())
   }
 }
 
@@ -101,7 +101,7 @@ getPositionList <- function(jtsObject) {
   } else if(jtsObject %instanceof% "net.maizegenetics.phenotype.GenotypePhenotype") {
     return(jtsObject$genotypeTable()$positions())
   } else {
-    return(NULL)
+    return(rJava::.jnull())
   }
 }
 
@@ -111,7 +111,7 @@ getGenotypeTable <- function(jtsObject) {
   } else if(jtsObject %instanceof% "net.maizegenetics.phenotype.GenotypePhenotype") {
     return(jtsObject$genotypeTable())
   } else {
-    return(NULL)
+    return(rJava::.jnull())
   }
 }
 
@@ -121,7 +121,7 @@ getPhenotypeTable <- function(jtsObject) {
   } else if(jtsObject %instanceof% "net.maizegenetics.phenotype.GenotypePhenotype") {
     return(jtsObject$genotypeTable())
   } else {
-    return(NULL)
+    return(rJava::.jnull())
   }
 }
 
@@ -129,10 +129,7 @@ getPhenotypeTable <- function(jtsObject) {
 # PSEUDO CODE - TasselGenotypePhenotype Object and constructors
 #--------------------------------------------------------------------
 
-# TODO - Ed or Terry - Make function to convert object path to Java object
-createJPhenotypeFromPath <- function(phenotypePath) {
-    
-}
+
 
 TasselGenotypePhenotype <- function(genotype, phenotype) {
     if (missing(genotype) & missing(phenotype)) {
@@ -173,9 +170,8 @@ readGenotypeTable <- function(path) {
 ## Constructor for GenotypeTable class object - Terry
 readPhenotypeTable <- function(path) {
   jObj <- new(J("net.maizegenetics.phenotype.PhenotypeBuilder"))
-  jObj <- jObj$fromFile(path)$build()
-  jObj <- .tasselObject(jObj)
-  return(jObj)
+  jObj <- jObj$fromFile(path)
+  .tasselObjectConstructor(jObj$build()$get(0L))
 }
 
 
