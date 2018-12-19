@@ -62,47 +62,25 @@ setMethod(
         }
         cat("---\n")
         if (!is.jnull(object@jGenotypeTable)) {
-            cat("  Genotype Table.... [x]\n")
+            cat("  Genotype Table..... [x]\n")
         } else {
-            cat("  Genotype Table.... [ ]\n")
+            cat("  Genotype Table..... [ ]\n")
         }
         if (!is.jnull(object@jPhenotypeTable)) {
-            cat("  Phenotype Table... [x]\n")
+            cat("  Phenotype Table.... [x]\n")
         } else {
-            cat("  Phenotype Table... [ ]\n")
+            cat("  Phenotype Table.... [ ]\n")
         }
     }
 )
-# ## Show method for TasselObjWrapper class objects
-# setMethod(
-#   f = "show",
-#   signature = "TasselGenotypePhenotype",
-#   definition = function(object) {
-#     cat("GenotypePhenotype Name: ",object@name,is(object)," wraps ", show(object@jtsObj),"\n")
-#     
-#     if(!is.null(getTaxaList(object))) {
-#       cat("Taxa: ",object@jtsObj$size(),"\n")
-#     }
-#     #repeat about for position
-#     cat("Sites: ",object@jtsPositionList$size(),"\n")
-#     #repeat about for call table
-#     #repeat for phenotypes
-#   }
-# )
 
-.tasselObjectConstructor <- function(jTasselObj) {
-  new(
-    Class = "TasselGenotypePhenotype",
-    name = "TasselGenotypePhenotype",
-    jTasselObj = jTasselObj,
-    jTaxaList = getTaxaList(jTasselObj),
-    jPositionList = getPositionList(jTasselObj),
-    jGenotypeTable = getGenotypeTable(jTasselObj),
-    jPhenotypeTable = getPhenotypeTable(jTasselObj)
-  )
-}
 
-#can return null if missing, otherwise
+
+
+
+# "get" functions
+
+## Get Taxa
 getTaxaList <- function(jtsObject) {
   if(jtsObject %instanceof% "net.maizegenetics.taxa.TaxaList") {
     return(jtsObject)
@@ -117,6 +95,7 @@ getTaxaList <- function(jtsObject) {
   }
 }
 
+## Get Positions
 getPositionList <- function(jtsObject) {
   if(jtsObject %instanceof% "net.maizegenetics.dna.snp.GenotypeTable") {
     return(jtsObject$positions())
@@ -127,6 +106,7 @@ getPositionList <- function(jtsObject) {
   }
 }
 
+## Get a GenotypeTable
 getGenotypeTable <- function(jtsObject) {
   if(jtsObject %instanceof% "net.maizegenetics.dna.snp.GenotypeTable") {
     return(jtsObject)
@@ -137,6 +117,7 @@ getGenotypeTable <- function(jtsObject) {
   }
 }
 
+## Get a Phenotype object
 getPhenotypeTable <- function(jtsObject) {
   if(jtsObject %instanceof% "net.maizegenetics.phenotype.Phenotype") {
     return(jtsObject)
@@ -147,35 +128,21 @@ getPhenotypeTable <- function(jtsObject) {
   }
 }
 
-#--------------------------------------------------------------------
-# PSEUDO CODE - TasselGenotypePhenotype Object and constructors
-#--------------------------------------------------------------------
 
 
+# TasselGenotypePhenotype Object constructors
 
-TasselGenotypePhenotype <- function(genotype, phenotype) {
-    if (missing(genotype) & missing(phenotype)) {
-        stop("Need at least one path.")
-    } else if (missing(genotype)) {
-        if (isPathOrRObj(phenotype) == "path") {
-            javaObj <- "createJPhenotypeFromPath(phenotype)"
-        } else {
-            javaObj <- "createJPhenotypeFromRObj(phenotype)"
-        }
-    } else if (missing(phenotype)) {
-        if (isPathOrRObj(genotype) == "path") {
-            javaObj <- "createJGenotypeFromPath(genotype)"
-        } else {
-            javaObj <- "createJGenotypeFromRObj(genotype)"
-        }
-    } else {
-        if (isCombinedPathOrRObj(genotype, phenotype) == "path") {
-            javaObj <- "createJGenotypePhenotypeFromPath(genotype, phenotype)"
-        } else {
-            javaObj <- "createJGenotypePhenotypeFromRObj(genotype, phenotype)"
-        }
-    }
-    
+## main constructor 
+.tasselObjectConstructor <- function(jTasselObj) {
+  new(
+    Class = "TasselGenotypePhenotype",
+    name = "TasselGenotypePhenotype",
+    jTasselObj = jTasselObj,
+    jTaxaList = getTaxaList(jTasselObj),
+    jPositionList = getPositionList(jTasselObj),
+    jGenotypeTable = getGenotypeTable(jTasselObj),
+    jPhenotypeTable = getPhenotypeTable(jTasselObj)
+  )
 }
 
 ## Constructor for GenotypeTable class object
@@ -189,17 +156,39 @@ readGenotypeTable <- function(path) {
   )
 }
 
-## Constructor for GenotypeTable class object - Terry
+## Constructor for PhenotypeTable class object
 readPhenotypeTable <- function(path) {
   jObj <- new(J("net.maizegenetics.phenotype.PhenotypeBuilder"))$fromFile(path)
   .tasselObjectConstructor(jObj$build()$get(0L))
 }
 
-## Constructor for GenotypePhenotype
-# TODO - Brandon
-readGenotypePhenotype <- function(genoPath, phenoPath) {
+
+## TODO Ed
+#' @title Constructor for GenotypePhenotype combined object
+
+#' @description Creates a Java GenotypePhenotype object which is used for 
+#'    \code{TasselGenotypePhenotype} object construction
+#' 
+#' @param genoPath a path to a genotype file (e.g. VCF, hmp, etc.)
+#' @param phenoDF a data frame of phenotypic data
+
+# Perhaps add an if statement to determine if phenotype is a data frame or a
+#   path
+readGenotypePhenotype <- function(genoPath, phenoDF) {
+    genoJTSObj <- rJava::.jcall(
+        "net/maizegenetics/dna/snp/ImportUtils",
+        "Lnet/maizegenetics/dna/snp/GenotypeTable;",
+        "read",
+        genoPath
+    )
+    phenoJTSObj <- createTasselPhenotypeFromDataFrame(phenoDF)
+    
     .tasselObjectConstructor(
-        new(J("net.maizegenetics.phenotype.GenotypePhenotypeBuilder"))$genotype(genoPath)$phenotype(phenoPath)$intersect()$build()
+        new(J("net.maizegenetics.phenotype.GenotypePhenotypeBuilder"))$genotype(genoJTSObj)$phenotype(phenoJTSObj)$intersect()$build()
     )
 }
+
+
+
+
 
