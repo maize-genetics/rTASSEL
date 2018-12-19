@@ -144,3 +144,78 @@ setMethod(
 #position -> granges or or tassel obj in wrapper
 
 
+
+#--------------------------------------------------------------------
+# TasselGenotypePhenotype Class
+#--------------------------------------------------------------------
+setClass(
+    Class = "TasselGenotypePhenotype",
+    representation = representation(
+        name = "character",
+        jtsGenotypePhenotypeTable = "jobjRef"
+    )
+)
+
+#--------------------------------------------------------------------
+# PSEUDO CODE - TasselGenotypePhenotype Object and constructors
+#--------------------------------------------------------------------
+TasselGenotypePhenotype <- function(genotype, phenotype) {
+    if (missing(genotype) & missing(phenotype)) {
+        stop("Need at least one path.")
+    } else if (missing(genotype)) {
+        if (isPathOrRObj(phenotype) == "path") {
+            javaObj <- "createJPhenotypeFromPath(phenotype)"
+        } else {
+            javaObj <- "createJPhenotypeFromRObj(phenotype)"
+        }
+    } else if (missing(phenotype)) {
+        if (isPathOrRObj(genotype) == "path") {
+            javaObj <- "createJGenotypeFromPath(genotype)"
+        } else {
+            javaObj <- "createJGenotypeFromRObj(genotype)"
+        }
+    } else {
+        if (isCombinedPathOrRObj(genotype, phenotype) == "path") {
+            javaObj <- "createJGenotypePhenotypeFromPath(genotype, phenotype)"
+        } else {
+            javaObj <- "createJGenotypePhenotypeFromRObj(genotype, phenotype)"
+        }
+    }
+    new(
+        Class = "TasselGenotypePhenotype",
+        name = "TasselGenotypePhenotype",
+        jtsGenotypePhenotypeTable = javaObj
+    )
+}
+
+# ## TasselGenotypePhenotype Show Method
+# setMethod(
+#     f = "show",
+#     signature = "TasselGenotypePhenotype",
+#     definition = function(object) {
+#         cat("Class: ", class(object),"\n")
+#         cat("\n\nGenotype Info:\n")
+#         print(object@genotypeTable)
+#         cat("\n\nPhenotype Info:\n")
+#         print(object@phenotypeTable)
+#     }
+# )
+
+# ## TasselGenotypePhenotype Getters - genotypeTable
+# setMethod(
+#     f = "genotypeTable",
+#     signature = "TasselGenotypePhenotype",
+#     definition = function(object) {
+#         object@genotypeTable
+#     }
+# )
+
+# ## TasselGenotypePhenotype Getters - phenotypeTable
+# setMethod(
+#     f = "phenotypeTable",
+#     signature = "TasselGenotypePhenotype",
+#     definition = function(object) {
+#         object@phenotypeTable
+#     }
+# )
+
