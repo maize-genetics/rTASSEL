@@ -54,7 +54,11 @@ vcfPath <- paste0(
     "maize_chr9_10thin100.recode.vcf"
 )
 
-
+## Add Phenotype path
+phenotypePath <- paste0(
+  getwd(),
+  "/data/mdp_traits.txt"
+)
 
 # Tests
 
@@ -67,3 +71,53 @@ tasDF <- sampleDataFrame(tasGenoTable)
 ## Make genomic ranges
 tasGRanges <- genomicRanges(tasGenoTable)
 tasGRanges
+
+
+
+# -----------------------
+
+
+
+# Tests (post-Single-R-Wrapper)
+
+## Load packages
+library(rJava) 
+library(GenomicRanges)
+library(stringr)
+library(SummarizedExperiment)
+library(snpStats)
+library(hexbin)
+
+## Set WD
+setwd("~/Projects/rtassel")
+
+## jinit
+rJava::.jinit(parameters="-Xmx6g")
+.jcall(.jnew("java/lang/Runtime"), "J", "totalMemory")
+.jcall(.jnew("java/lang/Runtime"), "J", "maxMemory")
+
+## Add class path
+# Note the file class paths may differ between Windows and Macs.
+homeloc <- Sys.getenv("HOME")
+path_tassel <- paste0(getwd(),"/inst/java/sTASSEL.jar")
+rJava::.jaddClassPath(path_tassel)
+print(.jclassPath())
+
+tasselVersion <- rJava::.jfield("net/maizegenetics/tassel/TASSELMainFrame","S","version")
+str_c("Using TASSEL version: ",tasselVersion)
+
+# rJava::.jaddClassPath("/Users/edwardbuckler/Code/tassel-5-source/dist/sTASSEL.jar")
+
+## Source files
+source("R/AllGenerics.R")
+source("R/AllClasses.R")
+source("R/TasselPluginWrappers.R")
+source("R/PullFunctions.R")
+source("R/PushFunctions.R")
+
+
+## VCF file path exmaple...
+vcfPath <- paste0(
+  getwd(),
+  "/data/maize_chr9_10thin40000.recode.vcf"
+)

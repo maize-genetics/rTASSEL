@@ -56,64 +56,63 @@ setMethod(
   }
 )
 
-.tasselObjectConstructor <- function(javaObj) {
+.tasselObjectConstructor <- function(jTasselObj) {
   new(
     Class = "TasselGenotypePhenotype",
     name = "TasselGenotypePhenotype",
-    jTasselObj = javaObj,
-    jTaxaList = getTaxaList(jTasselObj),
-    # continue for rest
+    jTasselObj = jTasselObj,
+    jTaxaList = getTaxaList(jTasselObj)
+    # jPositionList = getPositionList(jTasselObj),
+    # jGenotypeTable = getGenotypeTable(jTasselObj),
+    # jPhenotypeTable = getPhenotypeTable(jTasselObj)
   )
 }
 
-#can return null if missing, otherwise 
+#can return null if missing, otherwise
 getTaxaList <- function(jtsObject) {
-  if(jtsObject %instanceof% TaxaList) {
-    return jtsObject
+  if(jtsObject %instanceof% "net.maizegenetics.taxa.TaxaList") {
+    return(jtsObject)
+  } else if(jtsObject %instanceof% "net.maizegenetics.dna.snp.GenotypeTable") {
+    return(jtsObject$taxa())
+  } else if(jtsObject %instanceof% "net.maizegenetics.phenotype.Phenotype") {
+    return(jtsObject$taxa())
+  } else if(jtsObject %instanceof% "net.maizegenetics.phenotype.GenotypePhenotype") {
+    return(jtsObject$genotypeTable()$taxa())
+  } else {
+    return(NULL)
   }
-  if(jtsObject %instanceof% GenotypeTable) {
-    return jtsObject$taxa()
-  }
-  if(jtsObject %instanceof% Phenotype) {
-    return jtsObject$taxa()
-  }
-  #something for GenotypePhenotype
-  if(jtsObject %instanceof% GenotypePhenotype) {
-    return jtsObject$genotypeTable()$taxa()
-  }
-  return NULL
 }
-
-getPositionList <- function(jtsObject) {
-  if(jtsObject %instanceof% GenotypeTable) {
-    return jtsObject$positions()
-  }
-  if(jtsObject %instanceof% GenotypePhenotype) {
-    return jtsObject$genotypeTable()$positions()
-  }
-  return NULL
-}
-
-getGenotypeTable <- function(jtsObject) {
-  if(jtsObject %instanceof% GenotypeTable) {
-    return jtsObject
-  }
-  if(jtsObject %instanceof% GenotypePhenotype) {
-    return jtsObject$genotypeTable()
-  }
-  return NULL
-}
-
-getPhenotypeTable <- function(jtsObject) {
-  if(jtsObject %instanceof% Phenotype) {
-    return jtsObject
-  }
-  #something for GenotypePhenotype
-  if(jtsObject %instanceof% GenotypePhenotype) {
-    return jtsObject$genotypeTable()
-  }
-  return NULL
-}
+# 
+# getPositionList <- function(jtsObject) {
+#   if(jtsObject %instanceof% GenotypeTable) {
+#     return(jtsObject$positions())
+#   }
+#   if(jtsObject %instanceof% GenotypePhenotype) {
+#     return(jtsObject$genotypeTable()$positions())
+#   }
+#   return(NULL)
+# }
+# 
+# getGenotypeTable <- function(jtsObject) {
+#   if(jtsObject %instanceof% GenotypeTable) {
+#     return(jtsObject)
+#   }
+#   if(jtsObject %instanceof% GenotypePhenotype) {
+#     return(jtsObject$genotypeTable())
+#   }
+#   return(NULL)
+# }
+# 
+# getPhenotypeTable <- function(jtsObject) {
+#   if(jtsObject %instanceof% Phenotype) {
+#     return(jtsObject)
+#   }
+#   #something for GenotypePhenotype
+#   if(jtsObject %instanceof% GenotypePhenotype) {
+#     return(jtsObject$genotypeTable())
+#   }
+#   return(NULL)
+# }
 
 #--------------------------------------------------------------------
 # PSEUDO CODE - TasselGenotypePhenotype Object and constructors
@@ -151,7 +150,7 @@ TasselGenotypePhenotype <- function(genotype, phenotype) {
 
 ## Constructor for GenotypeTable class object
 readGenotypeTable <- function(path) {
-  .tasselObject(rJava::.jcall(
+  .tasselObjectConstructor(rJava::.jcall(
       "net/maizegenetics/dna/snp/ImportUtils",
       "Lnet/maizegenetics/dna/snp/GenotypeTable;",
       "read",
@@ -160,15 +159,12 @@ readGenotypeTable <- function(path) {
   )
 }
 
-## Constructor for GenotypeTable class object
+## Constructor for GenotypeTable class object - Terry
 readPhenotypeTable <- function(path) {
-  # .tasselObject(rJava::.jcall(
-  #     "net/maizegenetics/dna/snp/ImportUtils",
-  #     "Lnet/maizegenetics/dna/snp/GenotypeTable;",
-  #     "read",
-  #     path
-  #   )
-  )
+  jObj <- new(J("net.maizegenetics.phenotype.PhenotypeBuilder"))
+  jObj <- jObj$fromFile(path)$build()
+  jObj <- .tasselObject(jObj)
+  return(jObj)
 }
 
 
