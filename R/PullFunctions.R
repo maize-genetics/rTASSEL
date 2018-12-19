@@ -80,7 +80,8 @@ summarizeExperimentFromGenotypeTable <- function(genotypeTable) {
     "net/maizegenetics/plugindef/GenerateRCode",
     "[I",
     "genotypeTableToDosageIntArray",
-    jGT
+    jGT,
+    FALSE
   )
 
  SummarizedExperiment(assays=matrix(genoCallIntArray,length(genomicRangesDF), byrow=TRUE), rowRanges=genomicRangesDF, colData=sampleDF)
@@ -114,7 +115,8 @@ snpMatrixFromGenotypeTable <- function(genotypeTable) {
     "net/maizegenetics/plugindef/GenerateRCode",
     "[I",
     "genotypeTableToDosageIntArray",
-    jGT
+    jGT,
+    FALSE
   )
   aMatrix <- matrix(genoCallIntArray,length(genomicRangesDF))
   colnames(aMatrix) <- sampleDF[["Sample"]]
