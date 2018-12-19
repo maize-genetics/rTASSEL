@@ -154,12 +154,29 @@ gwasPolyToDF <- function(gwasPolyRes=NA, model = "additive"){
 
     sigTreshold <- gwasPolyRes@threshold[rownames(gwasPolyRes@threshold)==trait]
 
-    oneTraitGWAS <- data.frame(Marker = rownames(gwasPolyRes@scores[[trait]]), markerpVal = exp(gwasPolyRes@scores[[trait]][,model]*-1), markerLogPVal = gwasPolyRes@scores[[trait]][,model], markerEffect = gwasPolyRes@effects[[trait]][,model], trait, sigTreshold)
+    oneTraitGWAS <- data.frame(Marker = rownames(gwasPolyRes@scores[[trait]]),
+                               markerpVal = 10^-gwasPolyRes@scores[[trait]][,model],
+                               markerLogPVal = gwasPolyRes@scores[[trait]][,model],
+                               markerEffect = gwasPolyRes@effects[[trait]][,model],
+                               trait, sigTreshold)
 
     traitGWASresults <- rbind(traitGWASresults, oneTraitGWAS)
   }
   traitGWASresults <- merge(traitGWASresults, gwasPolyRes@map, by = "Marker")
   traitGWASresults
+}
+
+
+tasselGWASPluginResToSingleDF <- function(gwasPluginResultDF, pluginName="fixedEffectLMPlugin"){
+  gwasRes <- data.frame()
+  if(pluginName == "fixedEffectLMPlugin"){
+    gwasRes <- gwasPluginResultDF$"GLM_Stats_FromR"
+    gwasRes <- merge(gwasRes, gwasPluginResultDF$"GLM_Genotypes_FromR", by = c("Trait", "Marker", "Pos", "Chr"))
+  }
+  NAs <- sum(is.na(gwasRes$p))
+  warning(paste("Removed", NAs, "Marker-Trait entries due to having 0 df and NA p value"))
+  gwasRes <- gwasRes[-which(is.na(gwasRes$p)),]
+  gwasRes
 }
 
 manhattan_trait_plot <-function(traitGWASresults, traitIDcol = "trait", positionIDcol = "Position", chromIDcol = "Chrom", pValIDcol = "markerpVal", sigTresholdIDcol = "sigTreshold", colorPal = "Dark2"){
