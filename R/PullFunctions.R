@@ -83,7 +83,7 @@ summarizeExperimentFromGenotypeTable <- function(genotypeTable) {
     jGT
   )
 
- SummarizedExperiment(assays=matrix(genoCallIntArray,length(genomicRangesDF)), rowRanges=genomicRangesDF, colData=sampleDF)
+ SummarizedExperiment(assays=matrix(genoCallIntArray,length(genomicRangesDF), byrow=TRUE), rowRanges=genomicRangesDF, colData=sampleDF)
 }
 
 ## Create GWASpoly geno dataframe from SimplifiedExperiment object
