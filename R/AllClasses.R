@@ -43,16 +43,16 @@ setMethod(
     f = "show",
     signature = "TasselGenotypePhenotype",
     definition = function(object) {
-        cat("Class:     ", object@name, "\n")
+        cat("Class:   ", object@name, "\n")
         if (!is.jnull(object@jTaxaList)) {
-            cat("Taxa:      ", as.character(object@jTaxaList$size()), "\n")
+            cat("Taxa:    ", as.character(object@jTaxaList$size()), "\n")
         } else {
-            cat("Taxa:      ", "NA", "\n")
+            cat("Taxa:    ", "NA", "\n")
         }
         if (!is.jnull(object@jPositionList)) {
-            cat("Positions: ", as.character(object@jPositionList$numberOfSites()), "\n")
+            cat("Positions:", as.character(object@jPositionList$numberOfSites()), "\n")
         } else {
-            cat("Postions: ", "NA", "\n")
+            cat("Postions: NA", "\n")
         }
     }
 )
@@ -179,6 +179,13 @@ readPhenotypeTable <- function(path) {
   .tasselObjectConstructor(jObj$build()$get(0L))
 }
 
+## Constructor for GenotypePhenotype
+# TODO - Brandon
+readGenotypePhenotype <- function(genoPath, phenoPath) {
+    .tasselObjectConstructor(
+        new(J("net.maizegenetics.phenotype.GenotypePhenotypeBuilder"))$genotype(genoPath)$phenotype(phenoPath)$intersect()$build()
+    )
+}
 
 # ## TasselGenotypePhenotype Show Method
 # setMethod(
