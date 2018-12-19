@@ -39,32 +39,44 @@ setClass(
     )
 )
 
-## Show method for TasselObjWrapper class objects
 setMethod(
-  f = "show",
-  signature = "TasselGenotypePhenotype",
-  definition = function(object) {
-    cat("GenotypePhenotype Name: ",object@name,is(object)," wraps ", show(object@jtsObj),"\n")
-    
-    if(!is.null(getTaxaList(object))) {
-      cat("Taxa: ",object@jtsObj$size(),"\n")
+    f = "show",
+    signature = "TasselGenotypePhenotype",
+    definition = function(object) {
+        cat("Class:     ", object@name, "\n")
+        cat("Taxa:      ", as.character(object@jTaxaList$size()), "\n")
+        cat("Positions: ", as.character(object@jPositionList$numberOfSites()))
+        # if (!is.null(getTaxaList(object))) {
+        #     cat("Taxa:", as.character(object$jTaxaList$size()), "\n")
+        # }
     }
-    #repeat about for position
-    cat("Sites: ",object@jtsPositionList$size(),"\n")
-    #repeat about for call table
-    #repeat for phenotypes
-  }
 )
+# ## Show method for TasselObjWrapper class objects
+# setMethod(
+#   f = "show",
+#   signature = "TasselGenotypePhenotype",
+#   definition = function(object) {
+#     cat("GenotypePhenotype Name: ",object@name,is(object)," wraps ", show(object@jtsObj),"\n")
+#     
+#     if(!is.null(getTaxaList(object))) {
+#       cat("Taxa: ",object@jtsObj$size(),"\n")
+#     }
+#     #repeat about for position
+#     cat("Sites: ",object@jtsPositionList$size(),"\n")
+#     #repeat about for call table
+#     #repeat for phenotypes
+#   }
+# )
 
 .tasselObjectConstructor <- function(jTasselObj) {
   new(
     Class = "TasselGenotypePhenotype",
     name = "TasselGenotypePhenotype",
     jTasselObj = jTasselObj,
-    jTaxaList = getTaxaList(jTasselObj)
-    # jPositionList = getPositionList(jTasselObj),
-    # jGenotypeTable = getGenotypeTable(jTasselObj),
-    # jPhenotypeTable = getPhenotypeTable(jTasselObj)
+    jTaxaList = getTaxaList(jTasselObj),
+    jPositionList = getPositionList(jTasselObj),
+    jGenotypeTable = getGenotypeTable(jTasselObj),
+    jPhenotypeTable = getPhenotypeTable(jTasselObj)
   )
 }
 
@@ -82,37 +94,36 @@ getTaxaList <- function(jtsObject) {
     return(NULL)
   }
 }
-# 
-# getPositionList <- function(jtsObject) {
-#   if(jtsObject %instanceof% GenotypeTable) {
-#     return(jtsObject$positions())
-#   }
-#   if(jtsObject %instanceof% GenotypePhenotype) {
-#     return(jtsObject$genotypeTable()$positions())
-#   }
-#   return(NULL)
-# }
-# 
-# getGenotypeTable <- function(jtsObject) {
-#   if(jtsObject %instanceof% GenotypeTable) {
-#     return(jtsObject)
-#   }
-#   if(jtsObject %instanceof% GenotypePhenotype) {
-#     return(jtsObject$genotypeTable())
-#   }
-#   return(NULL)
-# }
-# 
-# getPhenotypeTable <- function(jtsObject) {
-#   if(jtsObject %instanceof% Phenotype) {
-#     return(jtsObject)
-#   }
-#   #something for GenotypePhenotype
-#   if(jtsObject %instanceof% GenotypePhenotype) {
-#     return(jtsObject$genotypeTable())
-#   }
-#   return(NULL)
-# }
+
+getPositionList <- function(jtsObject) {
+  if(jtsObject %instanceof% "net.maizegenetics.dna.snp.GenotypeTable") {
+    return(jtsObject$positions())
+  } else if(jtsObject %instanceof% "net.maizegenetics.phenotype.GenotypePhenotype") {
+    return(jtsObject$genotypeTable()$positions())
+  } else {
+    return(NULL)
+  }
+}
+
+getGenotypeTable <- function(jtsObject) {
+  if(jtsObject %instanceof% "net.maizegenetics.dna.snp.GenotypeTable") {
+    return(jtsObject)
+  } else if(jtsObject %instanceof% "net.maizegenetics.phenotype.GenotypePhenotype") {
+    return(jtsObject$genotypeTable())
+  } else {
+    return(NULL)
+  }
+}
+
+getPhenotypeTable <- function(jtsObject) {
+  if(jtsObject %instanceof% "net.maizegenetics.phenotype.Phenotype") {
+    return(jtsObject)
+  } else if(jtsObject %instanceof% "net.maizegenetics.phenotype.GenotypePhenotype") {
+    return(jtsObject$genotypeTable())
+  } else {
+    return(NULL)
+  }
+}
 
 #--------------------------------------------------------------------
 # PSEUDO CODE - TasselGenotypePhenotype Object and constructors

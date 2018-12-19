@@ -116,8 +116,17 @@ source("R/PullFunctions.R")
 source("R/PushFunctions.R")
 
 
-## VCF file path exmaple...
-vcfPath <- paste0(
+## Genotype file path example
+genoPath <- paste0(
   getwd(),
   "/data/maize_chr9_10thin40000.recode.vcf"
 )
+
+## Phenotype file path example
+phenoPath <- paste0(
+    getwd(),
+    "/data/mdp_traits.txt"
+)
+
+## Read GenotypeTable - Returns error due to NULL object going into phenotype slot
+tasGeno <- readGenotypeTable(genoPath)
