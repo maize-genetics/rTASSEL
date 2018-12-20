@@ -138,8 +138,8 @@ getPhenotypeTable <- function(jtsObject) {
 
 
 
-# TasselGenotypePhenotype Object constructors
-
+#' TasselGenotypePhenotype Object constructors
+#' @
 ## main constructor 
 .tasselObjectConstructor <- function(jTasselObj) {
   new(
@@ -155,13 +155,19 @@ getPhenotypeTable <- function(jtsObject) {
 
 .getTASSELClass <- function(object, tasselClassName, throwErrorOnNull = TRUE) {
   jtsObject <- switch(tasselClassName,
-                      "GenotypeClass" = getGenotypeTable(object),
+                      "GenotypeTable" = getGenotypeTable(object),
                       "Phenotype" = getPhenotypeTable(object),
                       "TaxaList" = getTaxaList(object),
                       "PositionList" = getPositionList(object)
                       )
+  if(is.null(jtsObject)) {
+    stop("Unknown TASSEL class:",tasselClassName)
+  }
   if(throwErrorOnNull & is.jnull(jtsObject)) {
-    stop(object," does not contain a TASSEL ",tasselClassName," object")
+    print("hi")
+    print(object)
+    stop(paste(object)," does not contain a TASSEL ",tasselClassName," object")
+    #stop(" does not contain a TASSEL ",tasselClassName," object")
   }
   jtsObject
 }
@@ -190,11 +196,8 @@ readPhenotypeTable <- function(path) {
 #' @description Creates a Java GenotypePhenotype object which is used for 
 #'    \code{TasselGenotypePhenotype} object construction
 #' 
-#' @param genoPath a path to a genotype file (e.g. VCF, hmp, etc.) or TASSEL Genotype Obj
-#' @param phenoDF a path, a data frame of phenotypic data, or TASSEL Phenotype Obj
-
-# Perhaps add an if statement to determine if phenotype is a data frame or a
-#   path
+#' @param genoPathOrObj a path to a genotype file (e.g. VCF, hmp, etc.) or TASSEL Genotype Obj
+#' @param phenoPathDFOrObj a path, a data frame of phenotypic data, or TASSEL Phenotype Obj
 readGenotypePhenotype <- function(genoPathOrObj, phenoPathDFOrObj) {
     genoObj <- getGenotypeTable(genoPathOrObj)
     if(is.jnull(genoObj)) {

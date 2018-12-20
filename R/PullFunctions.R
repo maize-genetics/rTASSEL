@@ -161,11 +161,16 @@ convertTableReportToDataFrame <- function(tableReport) {
   aDF
 }
 
-dataSetToListOfDataFrame <- function(jtsDataSet) {
+#' Converts TASSEL dataset to List of R objects - either DataFrames or TasselGenotypePhenotype S4 Class
+.dataSetToListOfRObjects <- function(jtsDataSet) {
   result <- c()
   for(i in 1:(jtsDataSet$getSize())) {
     name <- jtsDataSet$getData(i-1L)$getName()
-    result[[name]] <- convertTableReportToDataFrame(jtsDataSet$getData(i-1L)$getData())
+    if(jtsDataSet$getData(i-1L)$getData() %instanceof% "TableReport") {
+      result[[name]] <- convertTableReportToDataFrame(jtsDataSet$getData(i-1L)$getData())
+    } else {
+      result[[name]] <- .tasselObjectConstructor(jtsDataSet$getData(i-1L)$getData())
+    }
   }
   result
 }

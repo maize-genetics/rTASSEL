@@ -8,6 +8,8 @@
 # With R closed, run this to let R know what Java is available.  Close the term when done
 # from terminal: R CMD javareconf
 # install.packages("rJava", dependencies=TRUE, type="source")
+# install.packages("devtools")
+# install.packages("roxygen2")
 # if (!requireNamespace("BiocManager")) {
 #   install.packages("BiocManager")
 # }
@@ -67,10 +69,10 @@ expect_equal(aGenoTable@jGenotypeTable$numberOfTaxa(), 189)
 
 #Filter a genotype table based minimum count
 # TODO fix
-# siteFiltGenoTable <- filterSiteBuilderPlugin(aGenoTable, siteMinCount = 40)
-# show(siteFiltGenoTable)
-# expect_equal(siteFiltGenoTable@jtsGenotypeTable$numberOfSites(), 389)
-# expect_equal(siteFiltGenoTable@jtsGenotypeTable$numberOfTaxa(), 189)
+siteFiltGenoTable <- filterSiteBuilderPlugin(aGenoTable, siteMinCount = 40)
+show(siteFiltGenoTable)
+expect_equal(siteFiltGenoTable@jtsGenotypeTable$numberOfSites(), 389)
+expect_equal(siteFiltGenoTable@jtsGenotypeTable$numberOfTaxa(), 189)
 
 
 #Extracting the positions wrapper from a GenotypeTable

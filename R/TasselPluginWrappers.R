@@ -24,10 +24,9 @@ filterSiteBuilderPlugin <- function(genotypeTable,
                                     startSite=0,
                                     endSite=0
 ) {
-  jtsGenotypeTable <- getGenotypeTable(genotypeTable)
-  if(is.jnull(jtsGenotypeTable)) {
-    stop("The genotype table needs to be or contain a TASSEL GenotypeTable")
-  }
+  inputDataSet <- createTasselDataSet(
+    .getTASSELClass(genotypeTable, "GenotypeTable")
+  )
   plugin <- new(J("net.maizegenetics.analysis.filter.FilterSiteBuilderPlugin"), .jnull(), FALSE)
   plugin$setParameter("siteMinCount",toString(siteMinCount))
   plugin$setParameter("siteMinAlleleFreq",toString(siteMinAlleleFreq))
@@ -37,8 +36,8 @@ filterSiteBuilderPlugin <- function(genotypeTable,
   plugin$setParameter("siteRangeFilterType",toString(siteRangeFilterType))
   plugin$setParameter("startSite",toString(startSite))
   plugin$setParameter("endSite",toString(endSite))
-  filteredGT <- plugin$runPlugin(jtsGenotypeTable)
-  .tasselObjectConstructor(filteredGT)
+  resultDataSet <- plugin$performFunction(inputDataSet)
+  .dataSetToListOfRObjects(resultDataSet)
 }
 
 filterTaxaBuilderPlugin <- function(genotypeTable,
