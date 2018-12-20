@@ -166,7 +166,8 @@ getPhenotypeTable <- function(jtsObject) {
   if(throwErrorOnNull & is.jnull(jtsObject)) {
     print("hi")
     print(object)
-    stop(paste(object)," does not contain a TASSEL ",tasselClassName," object")
+    errObj <- paste0("Java-Object{", rJava::.jstrVal(object), "}")
+    stop(errObj," does not contain a TASSEL ",tasselClassName," object")
     #stop(" does not contain a TASSEL ",tasselClassName," object")
   }
   jtsObject
