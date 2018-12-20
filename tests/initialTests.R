@@ -131,6 +131,7 @@ blueReports <- fixedEffectLMPlugin(tasselPhenotypeFromRDF, phenoOnly=TRUE)
 #Does GWAS after combining phenotype and genotype
 genoPhenoCombined1 <- readGenotypePhenotype(genotypePath,phenotypeDF)
 genoPhenoCombined <- combineTasselGenotypePhenotype(gwasGeno@jtsGenotypeTable,tasselPhenotypeFromRDF)
-gwasReports <- fixedEffectLMPlugin(genoPhenoCombined)
+gwasReports <- fixedEffectLMPlugin(genoPhenoCombined1)
+
 
 #GWAS reports contains two dataframes - one with marker tests, other with allele effects.

@@ -153,6 +153,19 @@ getPhenotypeTable <- function(jtsObject) {
   )
 }
 
+.getTASSELClass <- function(object, tasselClassName, throwErrorOnNull = TRUE) {
+  jtsObject <- switch(tasselClassName,
+                      "GenotypeClass" = getGenotypeTable(object),
+                      "Phenotype" = getPhenotypeTable(object),
+                      "TaxaList" = getTaxaList(object),
+                      "PositionList" = getPositionList(object)
+                      )
+  if(throwErrorOnNull & is.jnull(jtsObject)) {
+    stop(object," does not contain a TASSEL ",tasselClassName," object")
+  }
+  jtsObject
+}
+
 ## Constructor for GenotypeTable class object
 readGenotypeTable <- function(path) {
   .tasselObjectConstructor(rJava::.jcall(
@@ -185,7 +198,7 @@ readPhenotypeTable <- function(path) {
 readGenotypePhenotype <- function(genoPathOrObj, phenoPathDFOrObj) {
     genoObj <- getGenotypeTable(genoPathOrObj)
     if(is.jnull(genoObj)) {
-      genoObj <- getGenotypeTable(readGenotypeTable(genoPath))
+      genoObj <- getGenotypeTable(readGenotypeTable(genoPathOrObj))
     }
     phenoObj <- getPhenotypeTable(phenoPathDFOrObj)
     if(is.jnull(phenoObj) & is.data.frame(phenoPathDFOrObj)) {
