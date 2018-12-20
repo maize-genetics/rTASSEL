@@ -174,35 +174,27 @@ dataSetToListOfDataFrame <- function(jtsDataSet) {
 
 
 convertHaplotypesDataVectorsToDataFrame <- function(graph, refRanges, includeSequence, includeVariants) {
-  print("begin convertHaplotypesDataVectorsToDataFrame ... create hapDataVectors via J " )
   hapDataVectors <- J("net.maizegenetics.pangenome.pipelineTests.GenerateRForPHG")$graphToHapsInRefRangeVectors(graph, refRanges, includeSequence, includeVariants)
-  print("created hapDataVectors")
   cnames <- unlist(strsplit("hapids,refRangeIds,methodIds,taxa,sequence,variantInfo", ","))
   colNum <- length(cnames)
   colNum
-  print("attempt to get a data.frame from hapDataVEctors")
   aDF <- data.frame(hapDataVectors$dataVector$get(0L))
   for(i in 2:(colNum)) {
     aDF[[i]] <- hapDataVectors$dataVector$get(i-1L)
   }
-  print("after for loop, create cnames ")
   colnames(aDF) <- cnames
   aDF
 }
 
 convertRefRangeVectorsToDataFrame <- function(graph, refRanges) {
-  print("begin convertRefRangeVectorsToDataFrame ... create hapDataVectors via J " )
   refRangeVectors <- J("net.maizegenetics.pangenome.pipelineTests.GenerateRForPHG")$graphToRefRangeVectors(graph, refRanges)
-  print("created refRangeVectors")
   cnames <- unlist(strsplit("refRangeIds,chromosomes,startPos,endPos,refLineName,numberOfNodes", ","))
   colNum <- length(cnames)
   colNum
-  print("attempt to get a data.frame from refRangeVectors")
   aDF <- data.frame(refRangeVectors$dataVector$get(0L))
   for(i in 2:(colNum)) {
     aDF[[i]] <- refRangeVectors$dataVector$get(i-1L)
   }
-  print("after for loop, create cnames ")
   colnames(aDF) <- cnames
   aDF
 }
