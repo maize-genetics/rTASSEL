@@ -36,19 +36,12 @@ sampleDataFrame <- function(jtsGenoTableOrTaxaList) {
                         matrix(unlist(fourNewCols), nrow = length(fourNewCols), byrow=T))
 }
 
+taxaVectorFromTassel <- function()
 
 ## Constructor for GRanges (GenomicRanges) class object
 genomicRanges <- function(genoTable) {
-   if(is(genoTable,"GenotypeTable")) {
-        jtsPL <- positions(genoTable)@jtsPositionList
-    } else if(genoTable %instanceof% "net.maizegenetics.dna.snp.GenotypeTable") {
-      jtsPL <- genoTable$positions()
-    } else if(genoTable %instanceof% "net.maizegenetics.dna.map.PositionList") {
-      jtsPL <- genoTable
-    } else {
-        stop("Object is not of \"GenotypeTable\" class")
-    }
-    
+    jtsPL <- .getTASSELClass(genoTable, "PositionList")
+
     genoPositionVector <- J("net/maizegenetics/plugindef/GenerateRCode")$genotypeTableToPositionListOfArrays(jtsPL)
     
   
@@ -163,10 +156,10 @@ convertTableReportToDataFrame <- function(tableReport) {
 
 #' Converts TASSEL dataset to List of R objects - either DataFrames or TasselGenotypePhenotype S4 Class
 .dataSetToListOfRObjects <- function(jtsDataSet) {
-  result <- c()
+  result <- list()
   for(i in 1:(jtsDataSet$getSize())) {
     name <- jtsDataSet$getData(i-1L)$getName()
-    if(jtsDataSet$getData(i-1L)$getData() %instanceof% "TableReport") {
+    if(jtsDataSet$getData(i-1L)$getData() %instanceof% "net.maizegenetics.util.TableReport") {
       result[[name]] <- convertTableReportToDataFrame(jtsDataSet$getData(i-1L)$getData())
     } else {
       result[[name]] <- .tasselObjectConstructor(jtsDataSet$getData(i-1L)$getData())

@@ -69,10 +69,10 @@ expect_equal(aGenoTable@jGenotypeTable$numberOfTaxa(), 189)
 
 #Filter a genotype table based minimum count
 # TODO fix
-siteFiltGenoTable <- filterSiteBuilderPlugin(aGenoTable, siteMinCount = 40)
+siteFiltGenoTableAndFilter <- filterSiteBuilderPlugin(aGenoTable, siteMinCount = 40)
 show(siteFiltGenoTable)
-expect_equal(siteFiltGenoTable@jtsGenotypeTable$numberOfSites(), 389)
-expect_equal(siteFiltGenoTable@jtsGenotypeTable$numberOfTaxa(), 189)
+expect_equal(siteFiltGenoTableAndFilter$FromR_Filter@jGenotypeTable$numberOfSites(), 389)
+expect_equal(siteFiltGenoTableAndFilter$FromR_Filter@jGenotypeTable$numberOfTaxa(), 189)
 
 
 #Extracting the positions wrapper from a GenotypeTable

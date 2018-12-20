@@ -82,6 +82,10 @@ setMethod(
 
 ## Get Taxa
 getTaxaList <- function(jtsObject) {
+  if(is(jtsObject, "TasselGenotypePhenotype")) {
+    return(jtsObject@jTaxaList)
+  }
+  if(!is(jtsObject,"jobjRef")) return(rJava::.jnull())
   if(jtsObject %instanceof% "net.maizegenetics.taxa.TaxaList") {
     return(jtsObject)
   } else if(jtsObject %instanceof% "net.maizegenetics.dna.snp.GenotypeTable") {
@@ -97,7 +101,13 @@ getTaxaList <- function(jtsObject) {
 
 ## Get Positions
 getPositionList <- function(jtsObject) {
-  if(jtsObject %instanceof% "net.maizegenetics.dna.snp.GenotypeTable") {
+  if(is(jtsObject, "TasselGenotypePhenotype")) {
+    return(jtsObject@jPositionList)
+  }
+  if(!is(jtsObject,"jobjRef")) return(rJava::.jnull())
+  if(jtsObject %instanceof% "net.maizegenetics.dna.map.PositionList") {
+    return(jtsObject)
+  } else if(jtsObject %instanceof% "net.maizegenetics.dna.snp.GenotypeTable") {
     return(jtsObject$positions())
   } else if(jtsObject %instanceof% "net.maizegenetics.phenotype.GenotypePhenotype") {
     return(jtsObject$genotypeTable()$positions())
@@ -166,9 +176,8 @@ getPhenotypeTable <- function(jtsObject) {
   if(throwErrorOnNull & is.jnull(jtsObject)) {
     print("hi")
     print(object)
-    errObj <- paste0("Java-Object{", rJava::.jstrVal(object), "}")
+    errObj <- if(is(object,'jobjRef')) .jstrVal(object) else class(object)
     stop(errObj," does not contain a TASSEL ",tasselClassName," object")
-    #stop(" does not contain a TASSEL ",tasselClassName," object")
   }
   jtsObject
 }
