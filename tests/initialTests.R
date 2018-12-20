@@ -84,8 +84,10 @@ grdf <- as.data.frame(gr)
 grdf
 
 #Extracting the taxa(sample) wrapper from a GenotypeTable
-aTaxa <- taxa(aGenoTable)
+aTaxa <- sampleVectorFromTassel(aGenoTable)
 aTaxa
+aTaxaDF <- sampleDataFrame(aGenoTable)
+aTaxaDF
 #Extract dataframe of taxa from GenotypeTable, then convert to data.frame
 sampleDF <- sampleDataFrame(aGenoTable)
 sampleDF
