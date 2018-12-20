@@ -14,71 +14,12 @@
 #    capabilities for rTASSEL in generating GenomicRanges class
 #--------------------------------------------------------------------
 
+# Create log file and output messages from console
+if (!exists("~/Temporary/rtassel_output")) system("touch ~/Temporary/rtassel_output")
+rJava::.jcall("net.maizegenetics/util/LoggingUtils", "V", "setupLogfile", "/home/bm646/Temporary/rtassel_output")
+
+
 # Preamble
-
-## Load packages
-library(rJava) 
-library(GenomicRanges)
-library(stringr)
-library(SummarizedExperiment)
-library(snpStats)
-library(hexbin)
-
-
-## Set WD
-setwd("~/Projects/rtassel/")
-
-## jinit
-rJava::.jinit()
-
-## Add class path
-homeloc <- Sys.getenv("HOME")
-rJava::.jaddClassPath(
-    paste0(homeloc, "/Development/tassel_5_standalone/lib")
-)
-rJava::.jaddClassPath(
-    paste0(homeloc, "/Development/tassel_5_standalone/sTASSEL.jar")
-)
-
-## Source files
-source("R/AllClasses.R")
-source("R/AllGenerics.R")
-source("R/TasselPluginWrappers.R")
-source("R/PullFunctions.R")
-
-## Add VCF path
-devloc <- paste0(homeloc, "/Development")
-vcfPath <- paste0(
-    devloc,
-    "/tassel_5_test/dataFiles/GenotypeTableTests/",
-    "maize_chr9_10thin100.recode.vcf"
-)
-
-## Add Phenotype path
-phenotypePath <- paste0(
-  getwd(),
-  "/data/mdp_traits.txt"
-)
-
-# Tests
-
-## Make genotype table
-tasGenoTable <- readGenotypeTable(vcfPath)
-
-## Make sample data frame of Taxa
-tasDF <- sampleDataFrame(tasGenoTable)
-
-## Make genomic ranges
-tasGRanges <- genomicRanges(tasGenoTable)
-tasGRanges
-
-
-
-# -----------------------
-
-
-
-# Tests (post-Single-R-Wrapper)
 
 ## Load packages
 library(rJava) 
@@ -117,6 +58,9 @@ source("R/PullFunctions.R")
 source("R/PushFunctions.R")
 
 
+
+# Tests
+
 ## Genotype file path example
 genoPath <- paste0(
   getwd(),
@@ -133,5 +77,8 @@ phenoPath <- paste0(
 phenoDF <- read.table(phenoPath, header = TRUE)
 colnames(phenoDF)[1] <- "Taxon"
 
-## Read GenotypeTable - Returns error due to NULL object going into phenotype slot
+## Read GenotypeTable
 tasGeno <- readGenotypeTable(genoPath)
+
+## Read PhenotypeTable
+tasPheno <- readPhenotypeTable(phenoPath)
