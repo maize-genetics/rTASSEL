@@ -5,7 +5,7 @@
 # Description:   GenomicRanges test for rTASSEL
 # Author:        Brandon Monier
 # Created:       2018-12-04 at 16:46:06
-# Last Modified: 2018-12-04 at 19:00:38
+# Last Modified: 2018-12-20 at 15:11:42
 #--------------------------------------------------------------------
 
 #--------------------------------------------------------------------
@@ -14,22 +14,43 @@
 #    capabilities for rTASSEL in generating GenomicRanges class
 #--------------------------------------------------------------------
 
-# Preamble
+# === Create log file and output messages from console ==============
+
+## NOTE: For my use only (START AT PREAMBLE)
+setwd("~/Projects/rtassel")
+path_tassel <- paste0(getwd(),"/inst/java/sTASSEL.jar")
+rJava::.jinit(parameters="-Xmx6g")
+rJava::.jaddClassPath(path_tassel)
+
+## Make rtassel_output file
+rtOut <- paste0(Sys.getenv("HOME"), "/Temporary/rtassel_output")
+if (!exists(rtOut)) {
+    system(paste("touch", rtOut))
+}
+
+## Send TASSEL console output messages to file
+rJava::.jcall(
+    "net.maizegenetics/util/LoggingUtils", 
+    "V",
+    "setupLogfile",
+    rtOut
+)
+
+
+
+# === Preamble ======================================================
+
+## Set WD (local use only)
+setwd("~/Projects/rtassel")
 
 ## Load packages
-library(rJava) 
+library(rJava)
 library(GenomicRanges)
 library(stringr)
 library(SummarizedExperiment)
 library(snpStats)
 library(hexbin)
-
-
-## Set WD
-setwd("~/Projects/rtassel/")
-
-## Set Java jar path
-path_tassel <- paste0(getwd(),"/inst/java/sTASSEL.jar")
+library(S4Vectors)
 
 ## jinit
 rJava::.jinit(parameters="-Xmx6g")
@@ -37,14 +58,12 @@ rJava::.jinit(parameters="-Xmx6g")
 .jcall(.jnew("java/lang/Runtime"), "J", "maxMemory")
 
 ## Add class path
-# Note the file class paths may differ between Windows and Macs.
-homeloc <- Sys.getenv("HOME")
-
+path_tassel <- "inst/java/sTASSEL.jar"
 rJava::.jaddClassPath(path_tassel)
-print(.jclassPath())
 
+## Which Tassel version
 tasselVersion <- rJava::.jfield("net/maizegenetics/tassel/TASSELMainFrame","S","version")
-str_c("Using TASSEL version: ",tasselVersion)
+paste0("Using TASSEL version: ", tasselVersion)
 
 ## Source files
 source("R/AllGenerics.R")
@@ -52,24 +71,29 @@ source("R/AllClasses.R")
 source("R/TasselPluginWrappers.R")
 source("R/PullFunctions.R")
 source("R/PushFunctions.R")
-source("R/gwasPolyObjectCreator.R")
 
-## Add VCF path
-vcfPath <- paste0(
-    getwd(),
-    "/data/maize_chr9_10thin40000.recode.vcf"
+
+
+# === Tests =========================================================
+
+## Genotype file path example
+genoPath <- "data/mdp_genotype.hmp.txt"
+
+## Phenotype file path example
+phenoPath <- "data/mdp_traits.txt"
+
+## Phenotype data frame example
+phenoDF <- read.table(phenoPath, header = TRUE)
+colnames(phenoDF)[1] <- "Taxon"
+
+## Read GenotypeTable
+tasGeno <- readGenotypeTable(genoPath)
+
+## Read PhenotypeTable
+tasPheno <- readPhenotypeTable(phenoPath)
+
+## Read Genotype and Phenotype
+tasGenoPheno <- readGenotypePhenotype(
+    genoPathOrObj = genoPath,
+    phenoPathDFOrObj = phenoPath
 )
-
-
-
-# Tests
-
-## Make genotype table
-tasGenoTable <- readGenotypeTable(vcfPath)
-
-## Make sample data frame of Taxa
-tasDF <- sampleDataFrame(tasGenoTable)
-
-## Make genomic ranges
-tasGRanges <- genomicRanges(tasGenoTable)
-tasGRanges

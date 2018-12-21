@@ -15,43 +15,25 @@
 source("R/AllClasses.R")
 
 
-## Constructor for GenotypeTable class object
-sampleDataFrame <- function(jtsGenoTableOrTaxaList) {
-  if(is(jtsGenoTableOrTaxaList,"GenotypeTable")) {
-    jtsTL <- taxa(jtsGenoTableOrTaxaList)@jtsTaxaList
-  } else if(is(jtsGenoTableOrTaxaList,"TaxaList")) {
-    jtsTL <- jtsGenoTableOrTaxaList@jtsTaxaList
-  } else if(jtsGenoTableOrTaxaList %instanceof% "net.maizegenetics.dna.snp.GenotypeTable") {
-    jtsTL <- jtsGenoTableOrTaxaList$taxa()
-  } else if(jtsGenoTableOrTaxaList %instanceof% "net.maizegenetics.taxa.TaxaList") {
-    jtsTL <- jtsGenoTableOrTaxaList
-  } else {
-    stop("Object is not of \"TaxaList\" class")
-  }
+## Methods for pull Taxa or Samples
+sampleVectorFromTassel <- function(ObjWithTasselTaxaList) {
+  jtsTL <- .getTASSELClass(ObjWithTasselTaxaList, "TaxaList")
+  J("net/maizegenetics/plugindef/GenerateRCode")$genotypeTableToSampleNameArray(jtsTL)
+}
 
-  taxaArray <- J("net/maizegenetics/plugindef/GenerateRCode")$genotypeTableToSampleNameArray(jtsTL)
-  
+sampleDataFrame <- function(ObjWithTasselTaxaList) {
+  taxaArray <- sampleVectorFromTassel(ObjWithTasselTaxaList)
   fourNewCols <- str_split(taxaArray,":")
   colData <- data.frame(Sample=taxaArray, TasselIndex = 0:(length(taxaArray)-1L), row.names = taxaArray,
                         matrix(unlist(fourNewCols), nrow = length(fourNewCols), byrow=T))
 }
 
-
 ## Constructor for GRanges (GenomicRanges) class object
 genomicRanges <- function(genoTable) {
-   if(is(genoTable,"GenotypeTable")) {
-        jtsPL <- positions(genoTable)@jtsPositionList
-    } else if(genoTable %instanceof% "net.maizegenetics.dna.snp.GenotypeTable") {
-      jtsPL <- genoTable$positions()
-    } else if(genoTable %instanceof% "net.maizegenetics.dna.map.PositionList") {
-      jtsPL <- genoTable
-    } else {
-        stop("Object is not of \"GenotypeTable\" class")
-    }
-    
+    jtsPL <- .getTASSELClass(genoTable, "PositionList")
+
     genoPositionVector <- J("net/maizegenetics/plugindef/GenerateRCode")$genotypeTableToPositionListOfArrays(jtsPL)
     
-  
     gr2 <- GenomicRanges::GRanges(
       seqnames = S4Vectors::Rle(genoPositionVector$chromosomes),
       ranges = IRanges::IRanges(start = genoPositionVector$startPos, end = genoPositionVector$startPos),
@@ -65,14 +47,7 @@ genomicRanges <- function(genoTable) {
 
 ## Create Summarized Experiment from a TASSEL Genotype Table
 summarizeExperimentFromGenotypeTable <- function(genotypeTable) {
-  if(is(genotypeTable,"GenotypeTable")) {
-    jGT <- genotypeTable@jtsGenotypeTable
-  } else if(genotypeTable %instanceof% "net.maizegenetics.dna.snp.GenotypeTable") {
-    jGT <- genotypeTable
-  } else {
-    stop("Object is not of \"GenotypeTable\" class")
-  }
-
+  jGT <- .getTASSELClass(genotypeTable, "GenotypeTable")
   sampleDF <- sampleDataFrame(jGT)
   genomicRangesDF <- genomicRanges(jGT)
 
@@ -100,13 +75,7 @@ GWASpolyGenoFromSummarizedExperiment <- function(SummarizedExperimentObject){
 
 ## Create Summarized Experiment from a TASSEL Genotype Table
 snpMatrixFromGenotypeTable <- function(genotypeTable) {
-  if(is(genotypeTable,"GenotypeTable")) {
-    jGT <- genotypeTable@jtsGenotypeTable
-  } else if(genotypeTable %instanceof% "net.maizegenetics.dna.snp.GenotypeTable") {
-    jGT <- genotypeTable
-  } else {
-    stop("Object is not of \"GenotypeTable\" class")
-  }
+  jGT <- .getTASSELClass(genotypeTable, "GenotypeTable")
   
   sampleDF <- sampleDataFrame(jGT)
   genomicRangesDF <- genomicRanges(jGT)
@@ -163,11 +132,19 @@ convertTableReportToDataFrame <- function(tableReport) {
   aDF
 }
 
-dataSetToListOfDataFrame <- function(jtsDataSet) {
-  result <- c()
+#' Converts TASSEL dataset to List of R objects - either DataFrames or TasselGenotypePhenotype S4 Class
+.dataSetToListOfRObjects <- function(jtsDataSet) {
+  result <- list()
   for(i in 1:(jtsDataSet$getSize())) {
     name <- jtsDataSet$getData(i-1L)$getName()
-    result[[name]] <- convertTableReportToDataFrame(jtsDataSet$getData(i-1L)$getData())
+    if(jtsDataSet$getData(i-1L)$getData() %instanceof% "net.maizegenetics.util.TableReport") {
+      result[[name]] <- convertTableReportToDataFrame(jtsDataSet$getData(i-1L)$getData())
+    } else {
+      tasselRObj <- .tasselObjectConstructor(jtsDataSet$getData(i-1L)$getData())
+      if(!is.null(tasselRObj)){
+        result[[name]] <- .tasselObjectConstructor(jtsDataSet$getData(i-1L)$getData())
+      }
+    }
   }
   result
 }
@@ -198,4 +175,18 @@ convertRefRangeVectorsToDataFrame <- function(graph, refRanges) {
   colnames(aDF) <- cnames
   aDF
 }
+
+#These should all be vectorized
+
+tasselObjToRWrapper <- function(tasselObj) {
+  #If already a TASSEL object just return it
+  
+}
+
+rObjToTasselObj <- function(rObj) {
+  #If already a TASSEL object just return it
+  
+}
+
+
 

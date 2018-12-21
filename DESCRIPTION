@@ -4,22 +4,23 @@ Date: 2018-12-04
 Title: R front-end for TASSEL
 Authors@R: c(
     person(
-        given = "Ed",
-        family = "Buckler",
-        role = c("aut", "cre")
-    ),
-    person(
         given = "Brandon",
         family = "Monier",
         email = "brandon.monier@gmail.com",
         role = c("aut")
-    ))
+    ),
+    person(
+        given = "Ed",
+        family = "Buckler",
+        email = "esb33@cornell.edu",
+        role = c("aut", "cre")
+    )
+    )
 Description:
     The aim of rTASSEL is to provide an R front-end for the
     Java program, TASSEL.
 URL:
     https://bitbucket.org/bucklerlab/rtassel/src/master/
-Depends:
-    R (>=3.3)
+Depends: R (>= 3.3)
 Encoding: UTF-8
 LazyData: true

@@ -12,30 +12,16 @@
 #    TASSEL S4 generics
 #--------------------------------------------------------------------
 
-setGeneric(
-    name = "positions",
-    def = function(object) {
-        standardGeneric("positions")
-    }
-)
-
-setGeneric(
-  name = "taxa",
-  def = function(object) {
-    standardGeneric("taxa")
-  }
-)
-
-setGeneric(
-    name = "genotypeTable",
-    def = function(object) {
-        standardGeneric("genotypeTable")
-    }
-)
-
-setGeneric(
-    name = "phenotypeTable",
-    def = function(object) {
-        standardGeneric("phenotypeTable")
-    }
-)
+# setGeneric(
+#     name = "positions",
+#     def = function(object) {
+#         standardGeneric("positions")
+#     }
+# )
+# 
+# setGeneric(
+#   name = "taxa",
+#   def = function(object) {
+#     standardGeneric("taxa")
+#   }
+# )

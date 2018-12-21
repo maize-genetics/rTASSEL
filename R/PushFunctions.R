@@ -29,5 +29,6 @@ createTasselPhenotypeFromDataFrame <- function(phenotypeDF, attributeTypes = NUL
     
   }
   jc <- J("net/maizegenetics/plugindef/GenerateRCode")$createPhenotypeFromRDataFrameElements(taxaNames,notTaxaCols,atttype,jList)
+  .tasselObjectConstructor(jc)
 }
 

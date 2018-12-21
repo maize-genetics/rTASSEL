@@ -8,6 +8,8 @@
 # With R closed, run this to let R know what Java is available.  Close the term when done
 # from terminal: R CMD javareconf
 # install.packages("rJava", dependencies=TRUE, type="source")
+# install.packages("devtools")
+# install.packages("roxygen2")
 # if (!requireNamespace("BiocManager")) {
 #   install.packages("BiocManager")
 # }
@@ -51,6 +53,7 @@ source("R/AllClasses.R")
 source("R/TasselPluginWrappers.R")
 source("R/PullFunctions.R")
 source("R/PushFunctions.R")
+source("R/PluginSupport.R")
 
 
 ## VCF file path exmaple...
@@ -62,26 +65,24 @@ vcfPath <- paste0(
 #Load a VCF file from disk and a R wrapped TASSEL GenotypeTable
 aGenoTable <- readGenotypeTable(vcfPath)
 show(aGenoTable)
-expect_equal(aGenoTable@jtsGenotypeTable$numberOfSites(), 493)
-expect_equal(aGenoTable@jtsGenotypeTable$numberOfTaxa(), 189)
+expect_equal(aGenoTable@jGenotypeTable$numberOfSites(), 493)
+expect_equal(aGenoTable@jGenotypeTable$numberOfTaxa(), 189)
 
 #Filter a genotype table based minimum count
+# TODO fix
 siteFiltGenoTable <- filterSiteBuilderPlugin(aGenoTable, siteMinCount = 40)
 show(siteFiltGenoTable)
-expect_equal(siteFiltGenoTable@jtsGenotypeTable$numberOfSites(), 389)
-expect_equal(siteFiltGenoTable@jtsGenotypeTable$numberOfTaxa(), 189)
+expect_equal(siteFiltGenoTable$FromR_Filter@jGenotypeTable$numberOfSites(), 389)
+expect_equal(siteFiltGenoTable$FromR_Filter@jGenotypeTable$numberOfTaxa(), 189)
 
 
-#Extracting the positions wrapper from a GenotypeTable
-aPositions <- positions(aGenoTable)
-aPositions
 #Extract genomicRanges from GenotypeTable, then convert to data.frame
 gr <- genomicRanges(aGenoTable)
 grdf <- as.data.frame(gr)
 grdf
 
 #Extracting the taxa(sample) wrapper from a GenotypeTable
-aTaxa <- taxa(aGenoTable)
+aTaxa <- sampleVectorFromTassel(aGenoTable)
 aTaxa
 #Extract dataframe of taxa from GenotypeTable, then convert to data.frame
 sampleDF <- sampleDataFrame(aGenoTable)
@@ -103,7 +104,7 @@ evals
 plot(pcs[,1],pcs[,2])
 
 testTaxaFilterGT <- filterTaxaBuilderPlugin(aGenoTable,0.3, includeTaxa=TRUE)
-taxa(testTaxaFilterGT)
+sampleVectorFromTassel(testTaxaFilterGT)
 
 testTaxaFilterGT <- filterTaxaBuilderPlugin(aGenoTable,0.3, includeTaxa=TRUE, taxaList ="M0297:C05F2ACXX:5:250021042,A659:C08L7ACXX:6:250048004")
 
@@ -120,14 +121,25 @@ genotypePath <- paste0(
 gwasGeno <- readGenotypeTable(genotypePath)
 
 #Need to convert to Pull function
+phenotypeWTS <- readPhenotypeTable(phenotypePath)
 phenotypeDF <- read.table(phenotypePath, skip = 1, na.strings = "-999", col.names = c("Taxon","EarHT","dpoll","EarDia"))
+# TODO implement methods for setting co-variate
+# TODO if only two columns and one is Taxa - assume other is data
+# Throw error otherwise
+phenoToAttributeMap <- list("EarHT" = "data", "dpoll" = "covariate")
 tasselPhenotypeFromRDF <- createTasselPhenotypeFromDataFrame(phenotypeDF)
 
 #Estimates BLUEs - not working anymore at boolean passing messed UP
 blueReports <- fixedEffectLMPlugin(tasselPhenotypeFromRDF, phenoOnly=TRUE)
+#Could we make this work
+blueReports2 <- fixedEffectLMPlugin(EarHT ~ Taxon, tasselPhenotypeFromRDF)
 
 #Does GWAS after combining phenotype and genotype
+genoPhenoCombined1 <- readGenotypePhenotype(genotypePath,phenotypeDF)
 genoPhenoCombined <- combineTasselGenotypePhenotype(gwasGeno@jtsGenotypeTable,tasselPhenotypeFromRDF)
-gwasReports <- fixedEffectLMPlugin(genoPhenoCombined)
+gwasReports <- fixedEffectLMPlugin(genoPhenoCombined1)
+
+#Could we make this work
+blueReports2 <- fixedEffectLMPlugin(EarHT,EarDia ~ dpoll + SNP, tasselPhenotypeFromRDF)
 
 #GWAS reports contains two dataframes - one with marker tests, other with allele effects.
