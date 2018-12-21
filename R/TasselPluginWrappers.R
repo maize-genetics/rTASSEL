@@ -91,6 +91,10 @@ fixedEffectLMPlugin <- function(phenotypeOrGenotypeTable,
                                 siteStatsOut= FALSE,
                                 appendAddDom= FALSE
 ) {
+  inputDataSet <- createTasselDataSet(
+    # TODO  Ed need to support GenotypePhenotype or just Genotype
+    .getTASSELClass(phenotypeOrGenotypeTable, "GenotypeTable")
+  )
   plugin <- new(J("net.maizegenetics.analysis.association.FixedEffectLMPlugin"), .jnull(), FALSE)
   plugin$setParameter("phenoOnly",toString(phenoOnly))
   plugin$setParameter("saveToFile",toString(saveToFile))

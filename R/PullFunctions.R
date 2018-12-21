@@ -47,7 +47,7 @@ genomicRanges <- function(genoTable) {
 
 ## Create Summarized Experiment from a TASSEL Genotype Table
 summarizeExperimentFromGenotypeTable <- function(genotypeTable) {
-  jGT <- .getTASSELClass(genoTable, "GenotypeTable")
+  jGT <- .getTASSELClass(genotypeTable, "GenotypeTable")
   sampleDF <- sampleDataFrame(jGT)
   genomicRangesDF <- genomicRanges(jGT)
 
@@ -74,7 +74,7 @@ GWASpolyGenoFromSummarizedExperiment <- function(SummarizedExperimentObject){
 
 ## Create Summarized Experiment from a TASSEL Genotype Table
 snpMatrixFromGenotypeTable <- function(genotypeTable) {
-  jGT <- .getTASSELClass(genoTable, "GenotypeTable")
+  jGT <- .getTASSELClass(genotypeTable, "GenotypeTable")
   
   sampleDF <- sampleDataFrame(jGT)
   genomicRangesDF <- genomicRanges(jGT)
@@ -138,7 +138,10 @@ convertTableReportToDataFrame <- function(tableReport) {
     if(jtsDataSet$getData(i-1L)$getData() %instanceof% "net.maizegenetics.util.TableReport") {
       result[[name]] <- convertTableReportToDataFrame(jtsDataSet$getData(i-1L)$getData())
     } else {
-      result[[name]] <- .tasselObjectConstructor(jtsDataSet$getData(i-1L)$getData())
+      tasselRObj <- .tasselObjectConstructor(jtsDataSet$getData(i-1L)$getData())
+      if(!is.null(tasselRObj)){
+        result[[name]] <- .tasselObjectConstructor(jtsDataSet$getData(i-1L)$getData())
+      }
     }
   }
   result

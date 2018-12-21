@@ -69,15 +69,12 @@ expect_equal(aGenoTable@jGenotypeTable$numberOfTaxa(), 189)
 
 #Filter a genotype table based minimum count
 # TODO fix
-siteFiltGenoTableAndFilter <- filterSiteBuilderPlugin(aGenoTable, siteMinCount = 40)
+siteFiltGenoTable <- filterSiteBuilderPlugin(aGenoTable, siteMinCount = 40)
 show(siteFiltGenoTable)
-expect_equal(siteFiltGenoTableAndFilter$FromR_Filter@jGenotypeTable$numberOfSites(), 389)
-expect_equal(siteFiltGenoTableAndFilter$FromR_Filter@jGenotypeTable$numberOfTaxa(), 189)
+expect_equal(siteFiltGenoTable$FromR_Filter@jGenotypeTable$numberOfSites(), 389)
+expect_equal(siteFiltGenoTable$FromR_Filter@jGenotypeTable$numberOfTaxa(), 189)
 
 
-#Extracting the positions wrapper from a GenotypeTable
-aPositions <- positions(aGenoTable)
-aPositions
 #Extract genomicRanges from GenotypeTable, then convert to data.frame
 gr <- genomicRanges(aGenoTable)
 grdf <- as.data.frame(gr)
@@ -86,8 +83,6 @@ grdf
 #Extracting the taxa(sample) wrapper from a GenotypeTable
 aTaxa <- sampleVectorFromTassel(aGenoTable)
 aTaxa
-aTaxaDF <- sampleDataFrame(aGenoTable)
-aTaxaDF
 #Extract dataframe of taxa from GenotypeTable, then convert to data.frame
 sampleDF <- sampleDataFrame(aGenoTable)
 sampleDF
@@ -108,7 +103,7 @@ evals
 plot(pcs[,1],pcs[,2])
 
 testTaxaFilterGT <- filterTaxaBuilderPlugin(aGenoTable,0.3, includeTaxa=TRUE)
-taxa(testTaxaFilterGT)
+sampleVectorFromTassel(testTaxaFilterGT)
 
 testTaxaFilterGT <- filterTaxaBuilderPlugin(aGenoTable,0.3, includeTaxa=TRUE, taxaList ="M0297:C05F2ACXX:5:250021042,A659:C08L7ACXX:6:250048004")
 

@@ -81,6 +81,19 @@ setMethod(
 # "get" functions
 
 ## Get Taxa
+getGenotypePhenotype <- function(jtsObject) {
+  if(is(jtsObject, "TasselGenotypePhenotype")) {
+    jtsObject <- jtsObject@jTasselObj
+  }
+  if(!is(jtsObject,"jobjRef")) return(rJava::.jnull())
+  if(jtsObject %instanceof% "net.maizegenetics.phenotype.GenotypePhenotype") {
+    return(jtsObject)
+  } else {
+    return(rJava::.jnull())
+  }
+}
+
+## Get Taxa
 getTaxaList <- function(jtsObject) {
   if(is(jtsObject, "TasselGenotypePhenotype")) {
     return(jtsObject@jTaxaList)
@@ -152,7 +165,7 @@ getPhenotypeTable <- function(jtsObject) {
 #' @
 ## main constructor 
 .tasselObjectConstructor <- function(jTasselObj) {
-  new(
+  tobj <- new(
     Class = "TasselGenotypePhenotype",
     name = "TasselGenotypePhenotype",
     jTasselObj = jTasselObj,
@@ -161,10 +174,16 @@ getPhenotypeTable <- function(jtsObject) {
     jGenotypeTable = getGenotypeTable(jTasselObj),
     jPhenotypeTable = getPhenotypeTable(jTasselObj)
   )
+  if(is.jnull(tobj@jTaxaList) & is.jnull(tobj@jPositionList) & 
+     is.jnull(tobj@jGenotypeTable) & is.jnull(tobj@jPhenotypeTable)) {
+    return (NULL)
+  }
+  tobj
 }
 
 .getTASSELClass <- function(object, tasselClassName, throwErrorOnNull = TRUE) {
   jtsObject <- switch(tasselClassName,
+                      "GenotypePhenotype" = getGenotypePhenotype(object),
                       "GenotypeTable" = getGenotypeTable(object),
                       "Phenotype" = getPhenotypeTable(object),
                       "TaxaList" = getTaxaList(object),
@@ -174,8 +193,6 @@ getPhenotypeTable <- function(jtsObject) {
     stop("Unknown TASSEL class:",tasselClassName)
   }
   if(throwErrorOnNull & is.jnull(jtsObject)) {
-    print("hi")
-    print(object)
     errObj <- if(is(object,'jobjRef')) .jstrVal(object) else class(object)
     stop(errObj," does not contain a TASSEL ",tasselClassName," object")
   }
