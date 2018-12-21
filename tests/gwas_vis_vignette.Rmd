@@ -58,6 +58,8 @@ source("R/AllGenerics.R")
 source("R/AllClasses.R")
 source("R/TasselPluginWrappers.R")
 source("R/PullFunctions.R")
+source("R/PushFunctions.R")
+
 source("R/GWASVisAnnotFuncs.R")
 ```
 
@@ -103,7 +105,7 @@ summary(phenosOneLoc)
 write.table(phenosOneLoc, "~/Downloads/GWASpoly_download/maizePhenotypes_GWASpoly.txt", sep = "\t", col.names = T, row.names = F, quote = F)
 ```
 
-Run GWAS
+Run GWAS with GWAS poly
 ```{r}
 ## create GWASpoly object with coopted read.GWASpoly function
 #uses tassel created summarizedExperiment for genotypes
@@ -148,19 +150,62 @@ get.QTL(data = data_gwasPoly_res)
 
 ```
 
-
-Unwrap gwaspoly results class object
+Run GWAS with TASSEL
 ```{r}
-traitGWASresults <- gwasPolyToDF(data_gwasPoly_res)
-traitGWASresults[traitGWASresults$markerLogPVal> traitGWASresults$sigTreshold,]
-summary(traitGWASresults)
+phenotypePath <- paste0(
+  getwd(),
+  "/data/mdp_traits.txt"
+)
+genotypePath <- paste0(
+  getwd(),
+  "/data/mdp_genotype.hmp.txt.gz"
+)
+gwasGeno <- readGenotypeTable(genotypePath)
+
+#Need to convert to Pull function
+phenotypeDF <- read.table(phenotypePath, skip = 1, na.strings = "-999", col.names = c("Taxon","EarHT","dpoll","EarDia"))
+summary(phenotypeDF)
+tasselPhenotypeFromRDF <- createTasselPhenotypeFromDataFrame(phenotypeDF)
+summary(tasselPhenotypeFromRDF)
+#Estimates BLUEs - not working anymore at boolean passing messed UP
+blueReports <- fixedEffectLMPlugin(tasselPhenotypeFromRDF, phenoOnly=TRUE)
+summary(blueReports)
+summary(blueReports$BLUEs_FromR)
+summary(blueReports$Phenotype_ANOVA_FromR)
+#Does GWAS after combining phenotype and genotype
+genoPhenoCombined <- combineTasselGenotypePhenotype(gwasGeno@jtsGenotypeTable,tasselPhenotypeFromRDF)
+
+gwasReports <- fixedEffectLMPlugin(genoPhenoCombined)
 
 ```
 
+
+Unwrap GWAS results objects
+```{r}
+traitGWASresults <- gwasPolyToDF(data_gwasPoly_res)
+traitGWASresults[traitGWASresults$MarkerLogpVal> traitGWASresults$SigTreshold,]
+summary(traitGWASresults)
+
+traitGWASresultsTassel <- tasselGWASPluginResDFToManhattanDF(gwasPluginResultDF = gwasReports, pluginName = "fixedEffectLMPlugin")
+summary(traitGWASresultsTassel)
+ddply(traitGWASresultsTassel, .(Trait), summarize, nMarkers=length(unique(Marker)))
+```
+
+Create qq-plots
+```{r}
+qq.plot(data_gwasPoly_res, trait = "EarHT", model = "additive")
+
+qqPlot_multi_trait(traitGWASresults, fancy = F)
+
+qqPlot_multi_trait(traitGWASresults, fancy = T)
+
+```
+
+
 Create simple manhattan like plot for all traits
 ```{r, fig.height=4, fig.width=7}
-manhattan_trait_plot(traitGWASresults = traitGWASresults, traitIDcol = "trait", 
-                     positionIDcol = "Position", chromIDcol = "Chrom", pValIDcol = "markerpVal")
+manhattan_trait_plot(traitGWASresults = traitGWASresults, traitIDcol = "Trait", 
+                     positionIDcol = "Position", chromIDcol = "Chrom", pValIDcol = "MarkerpVal")
 ```
 
 
@@ -175,7 +220,7 @@ Annotating SNPs with their closest gene. Best for annotating purposes.
 traitGWASresults_annotated <- annotate_gwasRes_byNearest(gwasResDF = traitGWASresults, 
                   annotationGR = maizeGFFgenesGR, positionIDcol_gwas = "Position",  
                   chromIDcol_gwas = "Chrom", outFmt = "data.frame")
-summary(traitGWASresults_annotated)
+head(traitGWASresults_annotated[,-21]) #just hiding column with long IDs 
 ```
 
 Plot manhattan with nearest annotation on significant SNPs or by genomicRange set
