@@ -79,7 +79,8 @@ kinshipPlugin <- function(genotypeTable,
 }
 
 
-fixedEffectLMPlugin <- function(phenotypeOrGenotypeTable,
+fixedEffectLMPlugin <- function(formula,
+                                genotypePhenotypeTable,
                                 phenoOnly= FALSE,
                                 saveToFile= FALSE,
                                 maxP=1.0,
@@ -93,7 +94,7 @@ fixedEffectLMPlugin <- function(phenotypeOrGenotypeTable,
 ) {
   inputDataSet <- createTasselDataSet(
     # TODO  Ed need to support GenotypePhenotype or just Phenotype
-    .getTASSELClass(phenotypeOrGenotypeTable, "GenotypeTable")
+    createPhenoGenoBasedOnFormula(formula, genotypePhenotypeTable)
   )
   plugin <- new(J("net.maizegenetics.analysis.association.FixedEffectLMPlugin"), .jnull(), FALSE)
   plugin$setParameter("phenoOnly",toString(phenoOnly))

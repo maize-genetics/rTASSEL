@@ -53,6 +53,7 @@ source("R/AllClasses.R")
 source("R/TasselPluginWrappers.R")
 source("R/PullFunctions.R")
 source("R/PushFunctions.R")
+source("R/PluginSupport.R")
 
 
 ## VCF file path exmaple...
