@@ -92,7 +92,7 @@ fixedEffectLMPlugin <- function(phenotypeOrGenotypeTable,
                                 appendAddDom= FALSE
 ) {
   inputDataSet <- createTasselDataSet(
-    # TODO  Ed need to support GenotypePhenotype or just Genotype
+    # TODO  Ed need to support GenotypePhenotype or just Phenotype
     .getTASSELClass(phenotypeOrGenotypeTable, "GenotypeTable")
   )
   plugin <- new(J("net.maizegenetics.analysis.association.FixedEffectLMPlugin"), .jnull(), FALSE)
@@ -106,7 +106,9 @@ fixedEffectLMPlugin <- function(phenotypeOrGenotypeTable,
   plugin$setParameter("biallelicOnly",toString(biallelicOnly))
   plugin$setParameter("siteStatsOut",toString(siteStatsOut))
   plugin$setParameter("appendAddDom",toString(appendAddDom))
-  jtsDataSet <- createTasselDataSet(phenotypeOrGenotypeTable)
-  jtsResultSet <- plugin$processData(jtsDataSet)
-  dataSetToListOfDataFrame(jtsResultSet)
+  resultDataSet <- plugin$performFunction(inputDataSet)
+  .dataSetToListOfRObjects(resultDataSet)
+  # jtsDataSet <- createTasselDataSet(phenotypeOrGenotypeTable)
+  # jtsResultSet <- plugin$processData(jtsDataSet)
+  # dataSetToListOfDataFrame(jtsResultSet)
 }

@@ -122,15 +122,23 @@ gwasGeno <- readGenotypeTable(genotypePath)
 #Need to convert to Pull function
 phenotypeWTS <- readPhenotypeTable(phenotypePath)
 phenotypeDF <- read.table(phenotypePath, skip = 1, na.strings = "-999", col.names = c("Taxon","EarHT","dpoll","EarDia"))
+# TODO implement methods for setting co-variate
+# TODO if only two columns and one is Taxa - assume other is data
+# Throw error otherwise
+phenoToAttributeMap <- list("EarHT" = "data", "dpoll" = "covariate")
 tasselPhenotypeFromRDF <- createTasselPhenotypeFromDataFrame(phenotypeDF)
 
 #Estimates BLUEs - not working anymore at boolean passing messed UP
 blueReports <- fixedEffectLMPlugin(tasselPhenotypeFromRDF, phenoOnly=TRUE)
+#Could we make this work
+blueReports2 <- fixedEffectLMPlugin(EarHT ~ Taxon, tasselPhenotypeFromRDF)
 
 #Does GWAS after combining phenotype and genotype
 genoPhenoCombined1 <- readGenotypePhenotype(genotypePath,phenotypeDF)
 genoPhenoCombined <- combineTasselGenotypePhenotype(gwasGeno@jtsGenotypeTable,tasselPhenotypeFromRDF)
 gwasReports <- fixedEffectLMPlugin(genoPhenoCombined1)
 
+#Could we make this work
+blueReports2 <- fixedEffectLMPlugin(EarHT,EarDia ~ dpoll + SNP, tasselPhenotypeFromRDF)
 
 #GWAS reports contains two dataframes - one with marker tests, other with allele effects.
