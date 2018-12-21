@@ -1,3 +1,11 @@
 .onLoad <- function(libname, pkgname) {
-  .jpackage(name = pkgname, jars = "*")
+  rJava::.jpackage(pkgname, lib.loc = libname)
+}
+
+.onAttach <- function(libname, pkgname){
+  msg <- paste0(
+    "rTASSEL (experimental)\n",
+    "Use with caution!\n"
+  )
+  packageStartupMessage(msg)
 }
