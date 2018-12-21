@@ -1,6 +1,6 @@
 Package: rTASSEL
-Version: 0.0.1
-Date: 2018-12-04
+Version: 0.0.2
+Date: 2018-12-21
 Title: R front-end for TASSEL
 Authors@R: c(
     person(
@@ -14,14 +14,21 @@ Authors@R: c(
         family = "Buckler",
         email = "esb33@cornell.edu",
         role = c("aut", "cre")
-    )
-    )
+    ))
 Description:
     The aim of rTASSEL is to provide an R front-end for the
     Java program, TASSEL.
 License: GPL-3 | file LICENSE
 URL:
     https://bitbucket.org/bucklerlab/rtassel/src/master/
-Depends: R (>= 3.3)
+Depends:
+    rJava,
+    GenomicRanges,
+    IRanges,
+    S4Vectors,
+    stringr
+Imports:
+    methods
 Encoding: UTF-8
 LazyData: true
+RoxygenNote: 6.1.1
