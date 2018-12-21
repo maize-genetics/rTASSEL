@@ -19,6 +19,7 @@ Authors@R: c(
 Description:
     The aim of rTASSEL is to provide an R front-end for the
     Java program, TASSEL.
+License: GPL-3 | file LICENSE
 URL:
     https://bitbucket.org/bucklerlab/rtassel/src/master/
 Depends: R (>= 3.3)
