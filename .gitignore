@@ -1,5 +1,7 @@
 *.swp
 *.swo
+*.html
+*.pdf
 .DS_Store
 .RData
 .Rhistory
