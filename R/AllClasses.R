@@ -58,6 +58,7 @@ setClass(
 #' 
 #' @param path a genotype data path (e.g. \code{*.VCF, *.hmp}, etc.)
 #' 
+#' @importFrom rJava .jcall
 #' @export
 readGenotypeTable <- function(path) {
   .tasselObjectConstructor(rJava::.jcall(
@@ -82,6 +83,7 @@ readGenotypeTable <- function(path) {
 #' 
 #' @param path a phenotype data path or \code{R} data frame
 #' 
+#' @importFrom rJava J
 #' @export
 readPhenotypeTable <- function(path) {
   jObj <- new(J("net.maizegenetics.phenotype.PhenotypeBuilder"))$fromFile(path)
@@ -103,6 +105,7 @@ readPhenotypeTable <- function(path) {
 #' @param phenoPathDFOrObj a path, a data frame of phenotypic data, or TASSEL 
 #'    Phenotype Obj
 #'
+#' @importFrom rJava J
 #' @export
 readGenotypePhenotype <- function(genoPathOrObj, phenoPathDFOrObj) {
     genoObj <- getGenotypeTable(genoPathOrObj)
@@ -130,6 +133,8 @@ readGenotypePhenotype <- function(genoPathOrObj, phenoPathDFOrObj) {
 #'
 #' @rdname show-methods
 #' @aliases show,TasselGenotypePhenotype-method
+#' 
+#' @importFrom rJava .jnull
 #' @exportMethod show
 setMethod(
     f = "show",
