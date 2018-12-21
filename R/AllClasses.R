@@ -234,7 +234,7 @@ readGenotypePhenotype <- function(genoPathOrObj, phenoPathDFOrObj) {
     if(is.jnull(phenoObj) & is.data.frame(phenoPathDFOrObj)) {
       phenoObj <- createTasselPhenotypeFromDataFrame(phenoPathDFOrObj)
     } else {
-      phenoObj <- new(J("net/maizegenetics/phenotype/PhenotypeBuilder"))$fromFile(phenotypePath)$build()$get(0L)
+      phenoObj <- new(J("net/maizegenetics/phenotype/PhenotypeBuilder"))$fromFile(phenoPathDFOrObj)$build()$get(0L)
     }
       
     
