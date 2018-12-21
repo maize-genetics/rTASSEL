@@ -3,6 +3,9 @@
 ### Objective
 To creat an R front-end for the Java program, `TASSEL` using `rJava`
 
+**NOTE**: Main branch functionalities are currently broken as we implement new
+methods.
+
 ### Installation
 *TBD*
 
@@ -10,4 +13,4 @@ To creat an R front-end for the Java program, `TASSEL` using `rJava`
 *TBD*
 
 - - -
-*Last Modified:* 2018-12-03 at 11:25:52
+*Last Modified:* 2018-12-21 at 15:26:30

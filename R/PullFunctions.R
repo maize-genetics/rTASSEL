@@ -3,7 +3,7 @@
 # Description:   Various tests with rJava
 # Author:        Brandon Monier & Ed buckler
 # Created:       2018-11-26 at 11:14:36
-# Last Modified: 2018-12-03 at 17:58:46
+# Last Modified: 2018-12-21 at 15:16:56
 #--------------------------------------------------------------------
 
 #--------------------------------------------------------------------
@@ -11,9 +11,6 @@
 #    The main purpose of this Rscript produce wrapper classes for
 #    TASSEL classes
 #--------------------------------------------------------------------
-
-source("R/AllClasses.R")
-
 
 ## Methods for pull Taxa or Samples
 sampleVectorFromTassel <- function(ObjWithTasselTaxaList) {
