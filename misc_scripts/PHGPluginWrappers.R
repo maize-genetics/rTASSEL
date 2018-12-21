@@ -12,6 +12,10 @@
 #   for TASSEL plugins
 #--------------------------------------------------------------------
 
+# TODO Lynn
+#   1) Clean up file
+#   2) Assign only functions to file; move testing procedures to a test file
+#   3) Once clean, move back to `R/` directory
 
 #Test PHG usage in R
 ## Set WD
@@ -20,7 +24,6 @@ path_exp_PHG <- paste0(getwd(),"/inst/java/PHG.jar")
 
 rJava::.jaddClassPath(path_exp_PHG)
 print(.jclassPath())
-
 
 
 haplotypeGraphBuilderPlugin <- function(configFile, myMethods, chrom_list=NULL

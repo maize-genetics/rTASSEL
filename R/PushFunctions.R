@@ -3,7 +3,7 @@
 # Description:   Functions to create TASSEL objects from rJava
 # Author:        Ed Buckler
 # Created:       2018-11-26 at 11:14:36
-# Last Modified: 2018-12-03 at 17:58:46
+# Last Modified: 2018-12-21 at 15:17:07
 #--------------------------------------------------------------------
 
 #--------------------------------------------------------------------
@@ -11,8 +11,6 @@
 #    The main purpose of this Rscript produce wrapper classes for
 #    TASSEL classes
 #--------------------------------------------------------------------
-
-source("R/AllClasses.R")
 
 createTasselPhenotypeFromDataFrame <- function(phenotypeDF, attributeTypes = NULL) {
   taxaNames <- as.vector(phenotypeDF$Taxon)
