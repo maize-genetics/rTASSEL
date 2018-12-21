@@ -12,16 +12,4 @@
 #    TASSEL S4 generics
 #--------------------------------------------------------------------
 
-# setGeneric(
-#     name = "positions",
-#     def = function(object) {
-#         standardGeneric("positions")
-#     }
-# )
-# 
-# setGeneric(
-#   name = "taxa",
-#   def = function(object) {
-#     standardGeneric("taxa")
-#   }
-# )
+# Placeholder for potential rTASSEL generics
