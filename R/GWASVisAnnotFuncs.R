@@ -386,7 +386,6 @@ manhattan_annot_plot <- function(annotatedGWASresults, traitIDcol = "Trait_gwas"
   annotatedGWASres$annotationDistance_label <- annotatedGWASres$annotationDistance
   annotatedGWASres$annotationDistance_label[annotatedGWASres$sig > annotatedGWASres$sigTreshold] <- "" #mark not significant
 
-  print(length(unique(annotatedGWASres$annotationDistance_label)))
 
   if(sum(annotatedGWASres$sig <= annotatedGWASres$sigTreshold) > 10) warning("More than 10 significant SNPs")
 
