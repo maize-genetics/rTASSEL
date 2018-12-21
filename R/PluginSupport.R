@@ -22,3 +22,38 @@ settingPhenotypeAttr <- function(formula, phenotypeNameVector) {
 createPhenoGenoBasedOnFormula <- function(formula, phenotypeGenotype) {
   
 }
+
+
+createTasselDataSet <- function(...) {
+  arguments <- list(...)
+  jList <- new(J("java/util/ArrayList"))
+  for(javaObj in arguments) {
+    #check if they are all TASSEL jobj
+    if(is(javaObj, "jobjRef") == FALSE) {
+      stop(paste0("Object ",javaObj," is not of class"))
+    }
+    jList$add(new(J("net/maizegenetics/plugindef/Datum"),"FromR",javaObj,NULL))
+  }
+  new(J("net/maizegenetics/plugindef/DataSet"),jList,NULL)
+}
+
+combineTasselGenotypePhenotype <- function(genotypeTable, phenotype) {
+  new(J("net.maizegenetics.phenotype.GenotypePhenotypeBuilder"))$genotype(genotypeTable)$phenotype(phenotype)$intersect()$build()
+}
+
+#' Converts TASSEL dataset to List of R objects - either DataFrames or TasselGenotypePhenotype S4 Class
+.dataSetToListOfRObjects <- function(jtsDataSet) {
+  result <- list()
+  for(i in 1:(jtsDataSet$getSize())) {
+    name <- jtsDataSet$getData(i-1L)$getName()
+    if(jtsDataSet$getData(i-1L)$getData() %instanceof% "net.maizegenetics.util.TableReport") {
+      result[[name]] <- convertTableReportToDataFrame(jtsDataSet$getData(i-1L)$getData())
+    } else {
+      tasselRObj <- .tasselObjectConstructor(jtsDataSet$getData(i-1L)$getData())
+      if(!is.null(tasselRObj)){
+        result[[name]] <- .tasselObjectConstructor(jtsDataSet$getData(i-1L)$getData())
+      }
+    }
+  }
+  result
+}

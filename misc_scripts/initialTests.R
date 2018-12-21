@@ -50,16 +50,20 @@ str_c("Using TASSEL version: ",tasselVersion)
 ## Source files
 source("R/AllGenerics.R")
 source("R/AllClasses.R")
+source("R/GenotypePhenotypeFunctions.R")
 source("R/TasselPluginWrappers.R")
-source("R/PullFunctions.R")
-source("R/PushFunctions.R")
+source("R/GenotypeTableFunctions.R")
+source("R/PhenotypeFunctions.R")
+source("R/PositionListFunctions.R")
+source("R/TaxaListFunctions.R")
+source("R/TableReportFunctions.R")
 source("R/PluginSupport.R")
 
 
 ## VCF file path exmaple...
 vcfPath <- paste0(
   getwd(),
-  "/data/maize_chr9_10thin40000.recode.vcf"
+  "/inst/extdata/maize_chr9_10thin40000.recode.vcf"
 )
 
 #Load a VCF file from disk and a R wrapped TASSEL GenotypeTable
@@ -112,11 +116,11 @@ testTaxaFilterGT <- filterTaxaBuilderPlugin(aGenoTable,0.3, includeTaxa=TRUE, ta
 ## VCF file path exmaple...
 phenotypePath <- paste0(
   getwd(),
-  "/data/mdp_traits.txt"
+  "/inst/extdata/mdp_traits.txt"
 )
 genotypePath <- paste0(
   getwd(),
-  "/data/mdp_genotype.hmp.txt.gz"
+  "/inst/extdata/mdp_genotype.hmp.txt.gz"
 )
 gwasGeno <- readGenotypeTable(genotypePath)
 
@@ -143,3 +147,4 @@ gwasReports <- fixedEffectLMPlugin(genoPhenoCombined1)
 blueReports2 <- fixedEffectLMPlugin(EarHT,EarDia ~ dpoll + SNP, tasselPhenotypeFromRDF)
 
 #GWAS reports contains two dataframes - one with marker tests, other with allele effects.
+
