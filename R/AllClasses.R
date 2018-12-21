@@ -177,7 +177,7 @@ setMethod(
 # "get" functions for Core functions
 #--------------------------------------------------------------------
 
-## Get Taxa - not exported
+## Get GenotypePhenotype - not exported
 getGenotypePhenotype <- function(jtsObject) {
   if(is(jtsObject, "TasselGenotypePhenotype")) {
     jtsObject <- jtsObject@jTasselObj
