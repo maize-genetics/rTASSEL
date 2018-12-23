@@ -19,11 +19,58 @@ settingPhenotypeAttr <- function(formula, phenotypeNameVector) {
   
 }
 
+
+#' Title
+#'
+#' @param formula Using R formula (lm) notation 
+#' @param phenotypeGenotype 
+#'
+#' @return
+#' @export
+#' @details . is used for all variable, + to add one, - to exclude
+#'
+#' @examples
 createPhenoGenoBasedOnFormula <- function(formula, phenotypeGenotype) {
+  # Digest a formula to set the phenotypes to one of these ATTRIBUTE_TYPE
+  #enum ATTRIBUTE_TYPE {data, covariate, factor, taxa};
+  #PhenotypeBuilder changeAttributeType(Map<PhenotypeAttribute, ATTRIBUTE_TYPE> changeMap) {
+  jtsPheno <- getPhenotypeTable(phenotypeGenotype)
+  phenoAttDf <- extractPhenotypeAttDf(jtsPheno)
+
+  phenoNames <- phenoAttDf %>% filter(traitAttribute != "TaxaAttribute") %>% pull(traitNames)
+  #consider adding G or SNP as reserved if GenotypeTable present, 
+  # NA could also be used if no co-variate, or perhaps Taxa, e.g. dpoll ~ Taxa
+  df <- emptyDFWithPhenotype(phenoAttDf)
+  term <- terms(formula, data=df)
+  varNames <- as.list(attr(term,"variables"))
+  varNames[[1]] <- NULL
+  if(attr(term,"response") == 0) {
+    stop("Define a response variable (a trait name in the phenotypes) or . for all traits")
+  }
+  response <- varNames[[attr(term,"response")]]
+  if(response == '.') {
+    response = phenoNames
+  } else if(str_detect(response,"c\\([:graph:]+\\)")) {
+    print("vector response")
+  }
   
+  covarAndFactors = setdiff(varNames, response) 
+  print(formula)
+  print(response)
+  print(covarAndFactors)
+  
+  #does it contain a ~
+  # formula
+  # print(formula)
+  # print(phenotypeGenotype)
+  # print(str_detect(formula,"~"))
 }
 
 
+#' @title Method for wrapping TASSEL objects in Datum and Dataset
+#' @param ... a collection of TASSEL objects
+#' @return a TASSEL Dataset
+#' @examples 
 createTasselDataSet <- function(...) {
   arguments <- list(...)
   jList <- new(J("java/util/ArrayList"))
@@ -37,9 +84,6 @@ createTasselDataSet <- function(...) {
   new(J("net/maizegenetics/plugindef/DataSet"),jList,NULL)
 }
 
-combineTasselGenotypePhenotype <- function(genotypeTable, phenotype) {
-  new(J("net.maizegenetics.phenotype.GenotypePhenotypeBuilder"))$genotype(genotypeTable)$phenotype(phenotype)$intersect()$build()
-}
 
 #' Converts TASSEL dataset to List of R objects - either DataFrames or TasselGenotypePhenotype S4 Class
 .dataSetToListOfRObjects <- function(jtsDataSet) {

@@ -49,7 +49,7 @@ readGenotypePhenotype <- function(genoPathOrObj, phenoPathDFOrObj) {
   }
   phenoObj <- getPhenotypeTable(phenoPathDFOrObj)
   if(is.jnull(phenoObj) & is.data.frame(phenoPathDFOrObj)) {
-    phenoObj <- createTasselPhenotypeFromDataFrame(phenoPathDFOrObj)
+    phenoObj <- getPhenotypeTable(createTasselPhenotypeFromDataFrame(phenoPathDFOrObj))
   } else {
     phenoObj <- new(J("net/maizegenetics/phenotype/PhenotypeBuilder"))$fromFile(phenoPathDFOrObj)$build()$get(0L)
   }
@@ -58,4 +58,19 @@ readGenotypePhenotype <- function(genoPathOrObj, phenoPathDFOrObj) {
     new(J("net.maizegenetics.phenotype.GenotypePhenotypeBuilder"))
     $genotype(genoObj)$phenotype(phenoObj)$intersect()$build()
   )
+}
+
+#' @title Function for combining TASSEL GenotypeTable and Phenotype to GenotypePhenotype class
+#' @param genotypeTable Java object of GenotypeTable
+#' @param phenotype Java object of Phenotype
+#'
+#' @return a TASSEL GenotypePhenotype object
+#' @export
+#'
+#' @examples
+combineTasselGenotypePhenotype <- function(genotypeTable, phenotype) {
+  genotypeTable <- getGenotypeTable(genotypeTable)
+  phenotype <- getPhenotypeTable(phenotype)
+  new(J("net.maizegenetics.phenotype.GenotypePhenotypeBuilder"))$
+    genotype(genotypeTable)$phenotype(phenotype)$intersect()$build()
 }

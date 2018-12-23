@@ -136,15 +136,15 @@ tasselPhenotypeFromRDF <- createTasselPhenotypeFromDataFrame(phenotypeDF)
 #Estimates BLUEs - not working anymore at boolean passing messed UP
 blueReports <- fixedEffectLMPlugin(tasselPhenotypeFromRDF, phenoOnly=TRUE)
 #Could we make this work
-blueReports2 <- fixedEffectLMPlugin(EarHT ~ Taxon, tasselPhenotypeFromRDF)
+blueReports2 <- fixedEffectLMPlugin(EarHT, tasselPhenotypeFromRDF)
 
 #Does GWAS after combining phenotype and genotype
 genoPhenoCombined1 <- readGenotypePhenotype(genotypePath,phenotypeDF)
-genoPhenoCombined <- combineTasselGenotypePhenotype(gwasGeno@jtsGenotypeTable,tasselPhenotypeFromRDF)
-gwasReports <- fixedEffectLMPlugin(genoPhenoCombined1)
+genoPhenoCombined <- combineTasselGenotypePhenotype(gwasGeno,tasselPhenotypeFromRDF)
+gwasReports <- fixedEffectLMPlugin(EarHT, genoPhenoCombined1)
 
 #Could we make this work
-blueReports2 <- fixedEffectLMPlugin(EarHT,EarDia ~ dpoll + SNP, tasselPhenotypeFromRDF)
+blueReports2 <- fixedEffectLMPlugin(c(EarHT,EarDia) ~ dpoll, genoPhenoCombined1)
 
 #GWAS reports contains two dataframes - one with marker tests, other with allele effects.
 
