@@ -12,6 +12,8 @@
 #   for TASSEL plugins in TasselPluginWrappers
 #--------------------------------------------------------------------
 
+#Uses install.packages("pryr")
+
 settingPhenotypeAttr <- function(formula, phenotypeNameVector) {
   #formula <- y ~ x1*x2
   theTerms <- terms(formula)
@@ -30,40 +32,64 @@ settingPhenotypeAttr <- function(formula, phenotypeNameVector) {
 #' @details . is used for all variable, + to add one, - to exclude
 #'
 #' @examples
-createPhenoGenoBasedOnFormula <- function(formula, phenotypeGenotype) {
+
+# phenotypeGenotype <- genoPhenoCombined1
+# assocFormula <- . ~ dpoll
+# assocFormula <- list(EarHT,EarDia) ~ dpoll 
+# assocFormula <- list(EarHT,EarDia) ~ dpoll + Taxa
+# assocFormula <- list(.) ~ dpoll
+# assocFormula <- list(EarHT,EarDia) ~ .
+# assocFormula <- list(dpoll,EarHT) ~ .
+# assocFormula <- list(.) ~ . # poorly defined what is on what side - throw error
+createPhenoGenoBasedOnFormula <- function(phenotypeGenotype, assocFormula) {
   # Digest a formula to set the phenotypes to one of these ATTRIBUTE_TYPE
   #enum ATTRIBUTE_TYPE {data, covariate, factor, taxa};
   #PhenotypeBuilder changeAttributeType(Map<PhenotypeAttribute, ATTRIBUTE_TYPE> changeMap) {
   jtsPheno <- getPhenotypeTable(phenotypeGenotype)
   phenoAttDf <- extractPhenotypeAttDf(jtsPheno)
-
-  phenoNames <- phenoAttDf %>% filter(traitAttribute != "TaxaAttribute") %>% pull(traitNames)
-  #consider adding G or SNP as reserved if GenotypeTable present, 
-  # NA could also be used if no co-variate, or perhaps Taxa, e.g. dpoll ~ Taxa
   df <- emptyDFWithPhenotype(phenoAttDf)
-  term <- terms(formula, data=df)
+  
+  
+  taxaAttNames <- phenoAttDf %>% filter(traitAttribute == "TaxaAttribute") %>% pull(traitNames)
+  catAttNames <- phenoAttDf %>% filter(traitAttribute == "CategoricalAttribute") %>% pull(traitNames)
+  numericAttNames <- phenoAttDf %>% filter(traitAttribute == "NumericAttribute") %>% pull(traitNames)
+  labelsUsed <- terms(as.formula(assocFormula), data=df) %>% attr("term.labels")
+  # cat("predictorsUsed=",predictorsUsed,"\n")
+  unusedNumericNames <- setdiff(numericAttNames,labelsUsed)
+
+  #List is used to indicate all the traits used for response
+  #The list(.) is used to indicate all numeric traits available
+  formulaStr <- deparse(assocFormula)
+  numericAttNamesStr <- paste0("list(",paste(unusedNumericNames, collapse=","),")")
+  formulaStr <- str_replace(formulaStr, "list\\(\\.\\)",numericAttNamesStr)
+  assocFormula <- formula(formulaStr)
+  print(assocFormula)
+  
+  #consider adding G or SNP as reserved if GenotypeTable present, 
+  # Taxa could also be used if no co-variate, e.g. dpoll ~ Taxa
+  
+  term <- terms(as.formula(assocFormula), data=df)
   varNames <- as.list(attr(term,"variables"))
   varNames[[1]] <- NULL
   if(attr(term,"response") == 0) {
-    stop("Define a response variable (a trait name in the phenotypes) or . for all traits")
-  }
-  response <- varNames[[attr(term,"response")]]
-  if(response == '.') {
-    response = phenoNames
-  } else if(str_detect(response,"c\\([:graph:]+\\)")) {
-    print("vector response")
+    stop("Define a response variable (a trait name in the phenotypes), 
+         list(trait1, trait2) or list(.) for all traits")
   }
   
-  covarAndFactors = setdiff(varNames, response) 
-  print(formula)
-  print(response)
-  print(covarAndFactors)
+  responseStrV <- as.character(varNames[[attr(term,"response")]])
+  responseStrV <- intersect(numericAttNames, responseStrV)
   
-  #does it contain a ~
-  # formula
-  # print(formula)
-  # print(phenotypeGenotype)
-  # print(str_detect(formula,"~"))
+  covariateStrV = intersect(numericAttNames, attr(term,"term.labels"))
+  categoricalStrV = intersect(catAttNames, attr(term,"term.labels"))
+  taxaStrV = intersect(taxaAttNames, attr(term,"term.labels"))
+  
+  print(assocFormula)
+  cat("Response=",responseStrV,"\n")
+  cat("Covariate=",covariateStrV,"\n")
+  cat("Categorical=",categoricalStrV,"\n")
+  cat("Taxa=",taxaStrV,"\n")
+  #TODO need to throw errors for unrecognized terms
+  #TODO write code on TASSEL side to set data, covariate, etc.
 }
 
 

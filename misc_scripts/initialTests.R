@@ -141,6 +141,13 @@ blueReports2 <- fixedEffectLMPlugin(EarHT, tasselPhenotypeFromRDF)
 #Does GWAS after combining phenotype and genotype
 genoPhenoCombined1 <- readGenotypePhenotype(genotypePath,phenotypeDF)
 genoPhenoCombined <- combineTasselGenotypePhenotype(gwasGeno,tasselPhenotypeFromRDF)
+
+# some concepts for creating the model statement
+createPhenoGenoBasedOnFormula(genoPhenoCombined, list(.) ~ dpoll)
+createPhenoGenoBasedOnFormula(genoPhenoCombined, EarHT ~ dpoll)
+createPhenoGenoBasedOnFormula(genoPhenoCombined, EarHT ~ G)
+createPhenoGenoBasedOnFormula(genoPhenoCombined, EarHT ~ Taxa)
+
 gwasReports <- fixedEffectLMPlugin(EarHT, genoPhenoCombined1)
 
 #Could we make this work
