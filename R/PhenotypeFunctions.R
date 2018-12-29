@@ -71,22 +71,22 @@ createDataFrameFromPhenotype <- function(phenotype) {
 }
 
 extractPhenotypeAttDf <- function(phenotype) {
-  traitNames = phenotype$getTableColumnNames()
-  traitTypes = unlist(lapply(as.list(phenotype$typeListCopy()), 
+  traitName = phenotype$getTableColumnNames()
+  traitType = unlist(lapply(as.list(phenotype$typeListCopy()), 
                              function(tc) tc$toString()))
   #This is pulling the java class and return the class without the whole path
   traitAttribute = unlist(lapply(as.list(phenotype$attributeListCopy()), 
                                  function(tc) str_split(tc$getClass()$toString(),"\\.")[[1]][4]))
-  data_frame(traitNames, traitTypes, traitAttribute)
+  data_frame(traitName, traitType, traitAttribute)
 }
 
 emptyDFWithPhenotype <- function(phenotypeAttDf) {
   t <- tibble()
   for(tn in seq_along(1:nrow(phenotypeAttDf))) {
     switch(phenotypeAttDf[tn,'traitAttribute'][[1]],
-        NumericAttribute = t <- add_column(t, !! phenotypeAttDf[tn,'traitNames'][[1]] := numeric()),
-        TaxaAttribute = t <- add_column(t, !! phenotypeAttDf[tn,'traitNames'][[1]] := character()),
-        CategoricalAttribute = t <- add_column(t, !! phenotypeAttDf[tn,'traitNames'][[1]] := factor())
+        NumericAttribute = t <- add_column(t, !! phenotypeAttDf[tn,'traitName'][[1]] := numeric()),
+        TaxaAttribute = t <- add_column(t, !! phenotypeAttDf[tn,'traitName'][[1]] := character()),
+        CategoricalAttribute = t <- add_column(t, !! phenotypeAttDf[tn,'traitName'][[1]] := factor())
         )
   }
   return(t)
