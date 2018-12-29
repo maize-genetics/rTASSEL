@@ -19,6 +19,7 @@
 
 ## Load packages
 library(rJava) 
+library(tidyverse)
 library(GenomicRanges)
 library(stringr)
 library(SummarizedExperiment)

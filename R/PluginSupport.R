@@ -44,25 +44,22 @@ settingPhenotypeAttr <- function(formula, phenotypeNameVector) {
 createPhenoGenoBasedOnFormula <- function(phenotypeGenotype, assocFormula) {
   # Digest a formula to set the phenotypes to one of these ATTRIBUTE_TYPE
   #enum ATTRIBUTE_TYPE {data, covariate, factor, taxa};
-  #PhenotypeBuilder changeAttributeType(Map<PhenotypeAttribute, ATTRIBUTE_TYPE> changeMap) {
   jtsPheno <- getPhenotypeTable(phenotypeGenotype)
   phenoAttDf <- extractPhenotypeAttDf(jtsPheno)
+  phenoAttDf <- add_case(phenoAttDf,traitNames="G",traitTypes="g",traitAttribute="Genotype")
   df <- emptyDFWithPhenotype(phenoAttDf)
   
-  
-  taxaAttNames <- phenoAttDf %>% filter(traitAttribute == "TaxaAttribute") %>% pull(traitNames)
-  catAttNames <- phenoAttDf %>% filter(traitAttribute == "CategoricalAttribute") %>% pull(traitNames)
-  numericAttNames <- phenoAttDf %>% filter(traitAttribute == "NumericAttribute") %>% pull(traitNames)
+  # find the unused numeric attributes so they can be used with . 
   labelsUsed <- terms(as.formula(assocFormula), data=df) %>% attr("term.labels")
-  # cat("predictorsUsed=",predictorsUsed,"\n")
-  unusedNumericNames <- setdiff(numericAttNames,labelsUsed)
-
+  unusedNumericNames <- phenoAttDf %>% filter(traitAttribute == "NumericAttribute") %>% 
+    filter(!traitNames %in% labelsUsed) %>% pull(traitNames)
+  
   #List is used to indicate all the traits used for response
   #The list(.) is used to indicate all numeric traits available
-  formulaStr <- deparse(assocFormula)
-  numericAttNamesStr <- paste0("list(",paste(unusedNumericNames, collapse=","),")")
-  formulaStr <- str_replace(formulaStr, "list\\(\\.\\)",numericAttNamesStr)
-  assocFormula <- formula(formulaStr)
+  listDotReplacementStr <- paste0("list(",paste(unusedNumericNames, collapse=","),")")
+  assocFormula <- deparse(assocFormula) %>% 
+    str_replace("list\\(\\.\\)",listDotReplacementStr) %>% 
+    formula()
   print(assocFormula)
   
   #consider adding G or SNP as reserved if GenotypeTable present, 
@@ -70,26 +67,34 @@ createPhenoGenoBasedOnFormula <- function(phenotypeGenotype, assocFormula) {
   
   term <- terms(as.formula(assocFormula), data=df)
   varNames <- as.list(attr(term,"variables"))
-  varNames[[1]] <- NULL
+  varNames[[1]] <- NULL #removes the first one, which is a list
   if(attr(term,"response") == 0) {
     stop("Define a response variable (a trait name in the phenotypes), 
          list(trait1, trait2) or list(.) for all traits")
   }
-  
-  responseStrV <- as.character(varNames[[attr(term,"response")]])
-  responseStrV <- intersect(numericAttNames, responseStrV)
-  
-  covariateStrV = intersect(numericAttNames, attr(term,"term.labels"))
-  categoricalStrV = intersect(catAttNames, attr(term,"term.labels"))
-  taxaStrV = intersect(taxaAttNames, attr(term,"term.labels"))
-  
-  print(assocFormula)
-  cat("Response=",responseStrV,"\n")
-  cat("Covariate=",covariateStrV,"\n")
-  cat("Categorical=",categoricalStrV,"\n")
-  cat("Taxa=",taxaStrV,"\n")
+  np <- mutate(phenoAttDf, 
+         isReponse = traitNames %in% as.character(varNames[[attr(term,"response")]]),
+         isPredictor = traitNames %in% attr(term,"term.labels"),
+         newType = pmap_chr(list(traitAttribute, isReponse, isPredictor), tasselTypeMap)
+         )
+  np
   #TODO need to throw errors for unrecognized terms
   #TODO write code on TASSEL side to set data, covariate, etc.
+}
+
+tasselTypeMap <- function(traitAttribute, isResponse, isPredictor) {
+  if(isResponse) {
+    ifelse(traitAttribute == "NumericAttribute",return("data"),return(NULL))
+  } else if(isPredictor == FALSE) {
+      return(NA)
+    } else {
+    return(switch(traitAttribute,
+      "TaxaAttribute" = "taxa",
+      "NumericAttribute" = "covariate",
+      "CategoricalAttribute" = "factor",
+      "Genotype" = "genotype")
+    )
+  }
 }
 
 
