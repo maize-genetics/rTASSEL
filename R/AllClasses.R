@@ -51,6 +51,8 @@ setClass(
 #' @description Prints out information related taxa, positions, genotype, and
 #'    phenotype information.
 #'
+#' @param object a \code{TasselGenotypePhenotype} class object
+#'
 #' @rdname show-methods
 #' @aliases show,TasselGenotypePhenotype-method
 #' 
@@ -115,7 +117,7 @@ setMethod(
 }
 
 
-#' get TASSEL class - not exported
+## get TASSEL class - not exported
 .getTASSELClass <- function(object, tasselClassName, throwErrorOnNull = TRUE) {
   jtsObject <- switch(tasselClassName,
                       "GenotypePhenotype" = getGenotypePhenotype(object),

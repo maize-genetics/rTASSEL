@@ -25,7 +25,7 @@ settingPhenotypeAttr <- function(formula, phenotypeNameVector) {
 #' Title Converts a formula into a GWAS model design that can be used by TASSEL PhenotypeGenotype
 #'
 #' @param phenotypeGenotype TASSEL PhenotypeGenotype Object
-#' @param formula Using R formula (lm) notation 
+#' @param assocFormula Using R formula (lm) notation 
 #' 
 #'
 #' @return tibble dataframe defining data, covariates, factors, taxa, and genotypes to be used

@@ -7,6 +7,9 @@
 \usage{
 \S4method{show}{TasselGenotypePhenotype}(object)
 }
+\arguments{
+\item{object}{a \code{TasselGenotypePhenotype} class object}
+}
 \description{
 Prints out information related taxa, positions, genotype, and
    phenotype information.

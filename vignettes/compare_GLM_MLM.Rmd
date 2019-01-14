@@ -1,7 +1,13 @@
 ---
-title: "Vignette for GLM and MLM Comparison"
-output: html_document
+author: "Joe Gage"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteEngine{knitr::knitr}
+  %\VignetteIndexEntry{Compare GLM and MLM}
+  %\usepackage[UTF-8]{inputenc}
 ---
+
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, eval = FALSE)

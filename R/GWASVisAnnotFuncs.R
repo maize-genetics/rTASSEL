@@ -1,5 +1,5 @@
 GWASpolyGenoFromSummarizedExperiment <- function(SummarizedExperimentObject){
-  library(SummarizedExperiment)
+  ##library(SummarizedExperiment)
   geno <- data.frame(markerName = paste("dummy", 1:length(ranges(SummarizedExperimentObject@rowRanges)), sep = "-"), # dummy name as current summarizeExperimentFromGenotypeTable doesn't keep
                      chr = seqnames(SummarizedExperimentObject@rowRanges),
                      pos = start(ranges(SummarizedExperimentObject@rowRanges)),
@@ -234,7 +234,7 @@ manhattan_trait_plot <-function(traitGWASresults, traitIDcol = "Trait",
                                 positionIDcol = "Position", chromIDcol = "Chrom",
                                 pValIDcol = "MarkerpVal", sigTresholdIDcol = "SigTreshold",
                                 colorPal = "Dark2"){
-  library(ggplot2)
+  #library(ggplot2)
 
   traitGWASres <- data.frame(Chrom = traitGWASresults[,chromIDcol],
                              Position = traitGWASresults[,positionIDcol],
@@ -258,8 +258,8 @@ manhattan_trait_plot <-function(traitGWASresults, traitIDcol = "Trait",
 #expects first item, as separated by semicolons, on last (9th) column to define the gene name with an id identifier
 #e.g for content on 9th column with annotation names: "someGeneID=someGeneName-ver1.alt1;otherID=somethingElse;someMore=more things"
 gffToAnnotationGR <- function(gffFile){
-  library(stringr)
-  library(GenomicRanges)
+  #library(stringr)
+  #library(GenomicRanges)
 
   gffDF <- read.table(file = gffFile, quote = "", sep = "\t")
 
@@ -279,7 +279,7 @@ gffToAnnotationGR <- function(gffFile){
 #function to annotate a gwas results table with genomicRanges annotations.
 #annotated by their closest annotation
 annotate_gwasRes_byNearest <- function(gwasResDF, annotationGR, positionIDcol_gwas = "Position",  chromIDcol_gwas = "Chrom", outFmt = "data.frame"){
-  library(GenomicRanges)
+  #library(GenomicRanges)
 
   if(outFmt %in% c("data.frame", "GenomicRanges")  == F){
     stop(paste("outFmt parameter must be 'data.frame' or 'GenomicRanges'"))
@@ -332,9 +332,9 @@ manhattan_annot_plot <- function(annotatedGWASresults, traitIDcol = "Trait_gwas"
                                  )
   {
 
-  library(ggplot2)
-  library(ggrepel)
-  library(plyr)
+  #library(ggplot2)
+  #library(ggrepel)
+  #library(plyr)
 
   if(labelType %in% c("annotationName", "annotationDistance", "composite") == F){
     stop("label parameter must be one of 'annotationName', or 'composite'")
