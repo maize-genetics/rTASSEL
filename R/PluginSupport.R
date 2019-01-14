@@ -119,7 +119,7 @@ createTasselDataSet <- function(...) {
 }
 
 
-#' Converts TASSEL dataset to List of R objects - either DataFrames or TasselGenotypePhenotype S4 Class
+# Converts TASSEL dataset to List of R objects - either DataFrames or TasselGenotypePhenotype S4 Class
 .dataSetToListOfRObjects <- function(jtsDataSet) {
   result <- list()
   for(i in 1:(jtsDataSet$getSize())) {
