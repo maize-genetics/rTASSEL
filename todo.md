@@ -1,7 +1,8 @@
 # rTASSEL TODO list
 
 ## Overview
-We currently have in total, 46 functions.
+* We currently have in total, 46 functions
+* Current package size is ~40 MB
 
 ## TASSEL Side
 - [ ] Console log output - silence output on TASSEL side - Terry
