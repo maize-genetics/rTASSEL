@@ -30,6 +30,7 @@ settingPhenotypeAttr <- function(formula, phenotypeNameVector) {
 #'
 #' @return tibble dataframe defining data, covariates, factors, taxa, and genotypes to be used
 #' @export
+#' @importFrom tibble add_case
 #' @details . is used for all variable, + to add one, - to exclude, list() used for multiple responses
 #'
 #' @examples
@@ -49,8 +50,8 @@ assocModelDesign <- function(phenotypeGenotype, assocFormula) {
     jtsPheno <- getPhenotypeTable(phenotypeGenotype)
     phenoAttDf <- extractPhenotypeAttDf(jtsPheno)
     attr(phenoAttDf,"phenotypeGenotype") <- phenotypeGenotype
-    phenoAttDf <-
-      add_case(phenoAttDf,
+    phenoAttDf <- tibble::add_case(
+        phenoAttDf,
         traitName = "G",
         traitType = "genotype",
         traitAttribute = "Genotype"
