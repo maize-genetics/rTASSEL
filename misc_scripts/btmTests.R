@@ -68,9 +68,14 @@ paste0("Using TASSEL version: ", tasselVersion)
 ## Source files
 source("R/AllGenerics.R")
 source("R/AllClasses.R")
+source("R/GenotypePhenotypeFunctions.R")
 source("R/TasselPluginWrappers.R")
-source("R/PullFunctions.R")
-source("R/PushFunctions.R")
+source("R/GenotypeTableFunctions.R")
+source("R/PhenotypeFunctions.R")
+source("R/PositionListFunctions.R")
+source("R/TaxaListFunctions.R")
+source("R/TableReportFunctions.R")
+source("R/PluginSupport.R")
 
 
 
