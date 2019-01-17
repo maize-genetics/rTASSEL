@@ -12,19 +12,23 @@
       can we get this down to around 5 MB?
 
 ## R Side
+- [ ] Filtration methods
+- [ ] implement methods for setting co-variate - Ed
+- [ ] if only two columns and one is Taxa - assume other is data - Ed
 - [ ] `createPhenoGenoBasedOnFormula()` - implement formula input
 - [ ] `fixedEffectLMPlugin()` - implement formula input
 - [x] `assocModelDesign()` error - "could not find function data_frame"
 - [x] `assocModelDesign()` error - "could not find function add_case"
-- [ ] `assocModelDesign()` error - `:=` must be a string or a symbol - dplyr
+- [ ] `assocModelDesign()` error - The LHS of `:=` must be a string or a symbol (dplyr)
 - [ ] GWAS wrapper
 - [ ] TasselGWAS class? - implement methods for visualization, extraction, etc.
 - [ ] Finalize function generation
-- [ ] Code cleanup / purging / function naming
-- [ ] Finish Roxygen2 documentation for all user functions
-- [ ] Finish R checks - no warnings or notes
-- [ ] Finish Bioconductor checks - no warnings or notes
-- [ ] Finalize vignettes
+- [ ] Code cleanup / purging / function naming - Brandon
+- [ ] Finish Roxygen2 documentation for all user functions - Brandon
+- [ ] Finish R checks - no warnings or notes - Brandon
+- [ ] Finish Bioconductor checks - no warnings or notes - Brandon
+- [ ] Finalize vignettes - Group
+- [ ] Submit to Bioconductor - Group
 
 ## Other things to consider
 - [ ] Rocker/Docker integration
