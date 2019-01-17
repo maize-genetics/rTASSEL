@@ -77,7 +77,7 @@ extractPhenotypeAttDf <- function(phenotype) {
   #This is pulling the java class and return the class without the whole path
   traitAttribute = unlist(lapply(as.list(phenotype$attributeListCopy()), 
                                  function(tc) str_split(tc$getClass()$toString(),"\\.")[[1]][4]))
-  data_frame(traitName, traitType, traitAttribute)
+  data.frame(traitName, traitType, traitAttribute)
 }
 
 emptyDFWithPhenotype <- function(phenotypeAttDf) {
