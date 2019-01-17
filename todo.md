@@ -12,11 +12,11 @@
       can we get this down to around 5 MB?
 
 ## R Side
-- [ ] Implement `createPhenoGenoBasedOnFormula()` function
+- [ ] `createPhenoGenoBasedOnFormula()` - implement formula input
+- [ ] `fixedEffectLMPlugin()` - implement formula input
 - [x] `assocModelDesign()` error - "could not find function data_frame"
 - [x] `assocModelDesign()` error - "could not find function add_case"
 - [ ] `assocModelDesign()` error - `:=` must be a string or a symbol - dplyr
-- [ ] `fixedEffectLMPlugin()` - implement formula input
 - [ ] GWAS wrapper
 - [ ] TasselGWAS class? - implement methods for visualization, extraction, etc.
 - [ ] Finalize function generation
