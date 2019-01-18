@@ -21,7 +21,7 @@
 - [x] `assocModelDesign()` error - "could not find function add_case"
 - [ ] `assocModelDesign()` error - The LHS of `:=` must be a string or a symbol (dplyr)
 - [ ] GWAS wrapper
-- [ ] TasselGWAS class? - implement methods for visualization, extraction, etc.
+- [ ] LD / Distance matrix class - Ed and Brandon
 - [ ] Finalize function generation
 - [ ] Code cleanup / purging / function naming - Brandon
 - [ ] Finish Roxygen2 documentation for all user functions - Brandon
