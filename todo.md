@@ -5,13 +5,15 @@
 * Current package size is ~40 MB
 
 ## TASSEL Side
-- [ ] Console log output - silence output on TASSEL side - Terry
+- [x] Console log output - silence output on TASSEL side - Terry
 - [ ] Formula generation for GWAS - Ed 
 - [ ] Dealing with random or fixed effects - Peter
-- [ ] Reduce size of jar files? - current size of package is around 40 MB
+- [-] Reduce size of jar files? - current size of package is around 40 MB
       can we get this down to around 5 MB?
 
 ## R Side
+- [x] Add options to control TASSEL logging information
+- [ ] Add file path slot to `TasselGenotypePhenotype` class - Brandon
 - [ ] Filtration methods
 - [ ] implement methods for setting co-variate - Ed
 - [ ] if only two columns and one is Taxa - assume other is data - Ed
