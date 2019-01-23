@@ -26,7 +26,8 @@ Depends:
     GenomicRanges,
     IRanges,
     S4Vectors,
-    stringr
+    stringr,
+    tibble
 Imports:
     methods
 Encoding: UTF-8
