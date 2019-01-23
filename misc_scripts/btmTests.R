@@ -5,7 +5,7 @@
 # Description:   GenomicRanges test for rTASSEL
 # Author:        Brandon Monier
 # Created:       2018-12-04 at 16:46:06
-# Last Modified: 2018-12-20 at 15:11:42
+# Last Modified: 2019-01-23 at 14:36:19
 #--------------------------------------------------------------------
 
 #--------------------------------------------------------------------
@@ -30,10 +30,9 @@ if (!exists(rtOut)) {
 
 ## Send TASSEL console output messages to file
 rJava::.jcall(
-    "net.maizegenetics/util/LoggingUtils", 
+    "net.maizegenetics/util/LoggingUtils",
     "V",
-    "setupLogfile",
-    rtOut
+    "setupLoggingOff"
 )
 
 
@@ -82,10 +81,10 @@ source("R/PluginSupport.R")
 # === Tests =========================================================
 
 ## Genotype file path example
-genoPath <- "data/mdp_genotype.hmp.txt"
+genoPath <- "inst/extdata/mdp_genotype.hmp.txt"
 
 ## Phenotype file path example
-phenoPath <- "data/mdp_traits.txt"
+phenoPath <- "inst/extdata/mdp_traits.txt"
 
 ## Phenotype data frame example
 phenoDF <- read.table(phenoPath, header = TRUE)
