@@ -8,7 +8,7 @@
 
 #--------------------------------------------------------------------
 # Detailed Purpose:
-#    The main purpose of this Rscript produce wrapper classes for 
+#    The main purpose of this Rscript produce wrapper classes for
 #    TASSEL classes
 #--------------------------------------------------------------------
 
@@ -23,10 +23,11 @@
 
 #--------------------------------------------------------------------
 # TasselGenotypePhenotype class and constructors
+# TODO - Add log file path slot (Brandon)
 #--------------------------------------------------------------------
 
 #' @title TasselGenotypePhenotype Class
-#' 
+#'
 #' @description Class \code{TasselGenotypePhenoty} defines a \code{rTASSEL}
 #'    Class for storing TASSEL genotype and phenotype objects.
 #'
@@ -47,7 +48,7 @@ setClass(
 
 
 #' @title Show method TasselGenotypePhenotype objects
-#' 
+#'
 #' @description Prints out information related taxa, positions, genotype, and
 #'    phenotype information.
 #'
@@ -55,7 +56,7 @@ setClass(
 #'
 #' @rdname show-methods
 #' @aliases show,TasselGenotypePhenotype-method
-#' 
+#'
 #' @importFrom rJava .jnull
 #' @exportMethod show
 setMethod(
@@ -109,7 +110,7 @@ setMethod(
     jGenotypeTable = getGenotypeTable(jTasselObj),
     jPhenotypeTable = getPhenotypeTable(jTasselObj)
   )
-  if(is.jnull(tobj@jTaxaList) & is.jnull(tobj@jPositionList) & 
+  if(is.jnull(tobj@jTaxaList) & is.jnull(tobj@jPositionList) &
      is.jnull(tobj@jGenotypeTable) & is.jnull(tobj@jPhenotypeTable)) {
     return (NULL)
   }
