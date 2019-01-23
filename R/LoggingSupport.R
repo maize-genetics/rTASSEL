@@ -7,7 +7,7 @@ startLogger <- function() {
         "net.maizegenetics/util/LoggingUtils",
         "V",
         "setupLogFile",
-        rtOut
+        rtlog
     )
 
     message("Logging file created at: ", rtlog)
