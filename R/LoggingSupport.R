@@ -6,7 +6,7 @@ startLogger <- function() {
     rJava::.jcall(
         "net.maizegenetics/util/LoggingUtils",
         "V",
-        "setupLogFile",
+        "setupLogfile",
         rtlog
     )
 
