@@ -1,5 +1,13 @@
 .onLoad <- function(libname, pkgname) {
-  rJava::.jpackage(pkgname, lib.loc = libname)
+    ## Initialize Jar
+    rJava::.jpackage(pkgname, lib.loc = libname)
+
+    ## Turn Logging off
+    rJava::.jpackage(
+        "net.maizegenetics/util/LoggingUtils",
+        "V",
+        "setupLoggingOff"
+    )
 }
 
 .onAttach <- function(libname, pkgname){
