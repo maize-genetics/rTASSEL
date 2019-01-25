@@ -25,5 +25,9 @@ commands:
 phenoPath <- system.file("extdata", "mdp_traits.txt", package = "rTASSEL")
 ```
 
+### Contacts
+* Brandon Monier (bm646@cornell.edu)
+* Ed Buckler
+
 - - -
-*Last Modified:* 2018-12-21 at 15:26:30
+*Last Modified:* 2019-01-25 at 13:48:14
