@@ -4,10 +4,14 @@
 * We currently have in total, 46 functions
 * Current package size is ~40 MB
 
+## Ed Consulation
+- [ ] `TasselPluginWrappers.R`: lines 85-88
+- [ ] `PluginSupport.R`: lines 45-49
+
 ## TASSEL Side
 - [x] Console log output - silence output on TASSEL side - Terry
-- [ ] Formula generation for GWAS - Ed 
-- [ ] Dealing with random or fixed effects - Peter
+- [x] Formula generation for GWAS - Ed 
+- [x] Dealing with random or fixed effects - Peter
 - [-] Reduce size of jar files? - current size of package is around 40 MB
       can we get this down to around 5 MB?
 
@@ -21,7 +25,7 @@
 - [ ] `fixedEffectLMPlugin()` - implement formula input
 - [x] `assocModelDesign()` error - "could not find function data_frame"
 - [x] `assocModelDesign()` error - "could not find function add_case"
-- [ ] `assocModelDesign()` error - The LHS of `:=` must be a string or a symbol (dplyr)
+- [x] `assocModelDesign()` error - The LHS of `:=` must be a string or a symbol (dplyr)
 - [ ] GWAS wrapper
 - [ ] LD / Distance matrix class - Ed and Brandon
 - [ ] Finalize function generation
