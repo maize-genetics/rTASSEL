@@ -3,7 +3,7 @@
 # Description:   Various tests with rJava
 # Author:        Brandon Monier & Ed buckler
 # Created:       2018-11-26 at 11:14:36
-# Last Modified: 2018-12-03 at 17:58:46
+# Last Modified: 2019-02-07 at 00:09:04
 #--------------------------------------------------------------------
 
 #--------------------------------------------------------------------
@@ -12,100 +12,127 @@
 #   for TASSEL plugins in TasselPluginWrappers
 #--------------------------------------------------------------------
 
-#Uses install.packages("pryr")
-
-settingPhenotypeAttr <- function(formula, phenotypeNameVector) {
-  #formula <- y ~ x1*x2
-  theTerms <- terms(formula)
-  
-  
-}
-
-
-#' Title Converts a formula into a GWAS model design that can be used by TASSEL PhenotypeGenotype
+#' @title Converts a formula into a GWAS model design that can be used by
+#'    TASSEL PhenotypeGenotype
+#'
+#' @details . is used for all variable, + to add one, - to exclude, list() used for multiple responses
 #'
 #' @param phenotypeGenotype TASSEL PhenotypeGenotype Object
-#' @param assocFormula Using R formula (lm) notation 
-#' 
+#' @param assocFormula Using R formula (lm) notation
+#' @param kinship A TASSEL kinship matrix
 #'
 #' @return tibble dataframe defining data, covariates, factors, taxa, and genotypes to be used
-#' @export
+#'
 #' @importFrom tibble add_case
-#' @details . is used for all variable, + to add one, - to exclude, list() used for multiple responses
+#' @importFrom magrittr %>%
+#' @importFrom dplyr mutate
+#' @importFrom dplyr filter
+#' @importFrom dplyr pull
+#' @importFrom purrr pmap_chr
+#' @export
+#'
 #'
 #' @examples
 # phenotypeGenotype <- genoPhenoCombined1
 # assocFormula <- . ~ dpoll
-# assocFormula <- list(EarHT,EarDia) ~ dpoll 
+# assocFormula <- list(EarHT,EarDia) ~ dpoll
 # assocFormula <- list(EarHT,EarDia) ~ dpoll + Taxa
 # assocFormula <- list(.) ~ dpoll
 # assocFormula <- list(EarHT,EarDia) ~ .
 # assocFormula <- list(dpoll,EarHT) ~ .
 # assocFormula <- list(.) ~ . # poorly defined what is on what side - throw error
-assocModelDesign <- function(phenotypeGenotype, assocFormula) {
+
+# TODO Add conditionals for incorrect formula entries (Brandon)
+# TODO Add stop or warning for `list(.) ~ .` formulas (Brandon)
+# TODO Support proper kinship data import `kinshipPlugin` from TASSEL (Ed)
+# TODO Create class for kinship/distance matrices? (Ed and Brandon)
+# TODO conduct BLUE/GLM/MLM based on design structure in TASSEL (Ed)
+assocModelDesign <- function(phenotypeGenotype,
+                             assocFormula,
+                             kinship = NULL) {
     #Digest a formula to set the phenotypes to one of these ATTRIBUTE_TYPE
     #enum ATTRIBUTE_TYPE {data, covariate, factor, taxa};
     #Use G for GenotypeTable present,
     #Taxa can be used for BLUEs, e.g. dpoll ~ Taxa
     jtsPheno <- getPhenotypeTable(phenotypeGenotype)
     phenoAttDf <- extractPhenotypeAttDf(jtsPheno)
-    attr(phenoAttDf,"phenotypeGenotype") <- phenotypeGenotype
+    # attr(phenoAttDf,"phenotypeGenotype") <- phenotypeGenotype
     phenoAttDf <- tibble::add_case(
         phenoAttDf,
         traitName = "G",
         traitType = "genotype",
         traitAttribute = "Genotype"
-      )
+    )
     df <- emptyDFWithPhenotype(phenoAttDf)
-    
+
     # replace list(.) with the unused numeric attributes
-    if (str_detect(assocFormula, "list\\(\\.\\)")[2] == TRUE) {
-      labelsUsed <- terms(as.formula(assocFormula), data = df) %>% attr("term.labels")
-      unusedNumericNames <- phenoAttDf %>% filter(traitAttribute == "NumericAttribute") %>%
-        filter(!traitName %in% labelsUsed) %>% pull(traitName)
-      listDotReplacementStr <- paste0("list(", paste(unusedNumericNames, collapse = ","), ")")
-      assocFormula <- deparse(assocFormula) %>%
-        str_replace("list\\(\\.\\)", listDotReplacementStr) %>%
-        formula()
+    if (any(grepl(pattern = "list\\(\\.\\)", assocFormula))) {
+        labelsUsed <- terms(as.formula(assocFormula), data = df) %>%
+            attr("term.labels")
+        unusedNumericNames <- phenoAttDf %>%
+            dplyr::filter(traitAttribute == "NumericAttribute") %>%
+            dplyr::filter(!traitName %in% labelsUsed) %>%
+            dplyr::pull(traitName)
+        listDotReplacementStr <- paste0(
+            "list(",
+            paste(unusedNumericNames, collapse = ", "),
+            ")"
+        )
+        assocFormula <- gsub(
+            pattern = "list\\(\\.\\)",
+            replacement = listDotReplacementStr,
+            x = deparse(assocFormula)
+        ) %>% formula()
     }
-    print(assocFormula)
-    
+    message("Formula: ", deparse(assocFormula))
+
     term <- terms(as.formula(assocFormula), data = df)
     if (attr(term, "response") == 0) {
-      stop(
-        "Define a response variable (a trait name in the phenotypes), e.g. list(trait1, trait2) or list(.) for all traits"
-      )
+        stop(
+            paste(
+                "Define a response variable (a trait name in the phenotypes),",
+                "e.g. list(trait1, trait2) or list(.) for all traits"
+            )
+        )
     }
     #Add three new columns to describe new model
-    newPhenoAttDf <- mutate(
-      phenoAttDf,
-      isReponse = traitName %in% as.character(assocFormula[[2]]),
-      isPredictor = traitName %in% attr(term, "term.labels"),
-      newType = pmap_chr(list(traitAttribute, isReponse, isPredictor), tasselTypeMap)
+    newPhenoAttDf <- dplyr::mutate(
+        phenoAttDf,
+        isReponse = traitName %in% as.character(assocFormula[[2]]),
+        isPredictor = traitName %in% attr(term, "term.labels"),
+        newType = purrr::pmap_chr(
+            list(traitAttribute, isReponse, isPredictor),
+            tasselTypeMap
+        )
     )
-    newPhenoAttDf
-    }
+    return(newPhenoAttDf)
+}
+
+
 
 tasselTypeMap <- function(traitAttribute, isResponse, isPredictor) {
-  if(isResponse) {
-    ifelse(traitAttribute == "NumericAttribute",return("data"), return(NA))
-  } else if(isPredictor == FALSE) {
-      return(NA)
+    if(isResponse) {
+        ifelse(traitAttribute == "NumericAttribute", return("data"), return(NA))
+    } else if(isPredictor == FALSE) {
+        return(NA)
     } else {
-    return(switch(traitAttribute,
-      "TaxaAttribute" = "taxa",
-      "NumericAttribute" = "covariate",
-      "CategoricalAttribute" = "factor",
-      "Genotype" = "genotype")
-    )
-  }
+        return(
+            switch(
+                EXPR = as.character(traitAttribute),
+                "TaxaAttribute" = "taxa",
+                "NumericAttribute" = "covariate",
+                "CategoricalAttribute" = "factor",
+                "Genotype" = "genotype"
+            )
+        )
+    }
 }
 
 
 #' @title Method for wrapping TASSEL objects in Datum and Dataset
 #' @param ... a collection of TASSEL objects
 #' @return a TASSEL Dataset
-#' @examples 
+#' @examples
 createTasselDataSet <- function(...) {
   arguments <- list(...)
   jList <- new(J("java/util/ArrayList"))
@@ -135,4 +162,13 @@ createTasselDataSet <- function(...) {
     }
   }
   result
+}
+
+
+
+settingPhenotypeAttr <- function(formula, phenotypeNameVector) {
+  #formula <- y ~ x1*x2
+  theTerms <- terms(formula)
+
+
 }
