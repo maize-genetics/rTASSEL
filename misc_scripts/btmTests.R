@@ -101,3 +101,21 @@ tasGenoPheno <- readGenotypePhenotype(
     genoPathOrObj = genoPath,
     phenoPathDFOrObj = phenoPath
 )
+
+## Test `assocModelDesign()`
+assocModelDesign(
+    phenotypeGenotype = tasGenoPheno,
+    assocFormula = list(.) ~ Taxa + G,
+    kinship = NULL
+)
+
+## `assocModelDesign()` debug
+jtsPheno <- rTASSEL:::getPhenotypeTable(tasGenoPheno)
+phenoAttDf <- rTASSEL:::extractPhenotypeAttDf(jtsPheno)
+phenoAttDf <- tibble::add_case(
+    phenoAttDf,
+    traitName = "G",
+    traitType = "genotype",
+    traitAttribute = "Genotype"
+)
+df <- rTASSEL:::emptyDFWithPhenotype(phenoAttDf)
