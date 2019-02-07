@@ -2,7 +2,8 @@
 % Please edit documentation in R/PluginSupport.R
 \name{assocModelDesign}
 \alias{assocModelDesign}
-\title{Title Converts a formula into a GWAS model design that can be used by TASSEL PhenotypeGenotype}
+\title{Converts a formula into a GWAS model design that can be used by
+   TASSEL PhenotypeGenotype}
 \usage{
 assocModelDesign(phenotypeGenotype, assocFormula)
 }
@@ -15,7 +16,8 @@ assocModelDesign(phenotypeGenotype, assocFormula)
 tibble dataframe defining data, covariates, factors, taxa, and genotypes to be used
 }
 \description{
-Title Converts a formula into a GWAS model design that can be used by TASSEL PhenotypeGenotype
+Converts a formula into a GWAS model design that can be used by
+   TASSEL PhenotypeGenotype
 }
 \details{
 . is used for all variable, + to add one, - to exclude, list() used for multiple responses

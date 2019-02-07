@@ -11,7 +11,7 @@ readPhenotypeTable(path)
 \item{path}{a phenotype data path or \code{R} data frame}
 }
 \description{
-This function is a wrapper for the 
+This function is a wrapper for the
    \code{TasselGenotypePhenotype} class. It is used for storing phenotype
    information into a class object.
 }
