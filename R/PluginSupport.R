@@ -48,12 +48,14 @@
 # TODO Create class for kinship/distance matrices? (Ed and Brandon)
 # TODO conduct BLUE/GLM/MLM based on design structure in TASSEL (Ed)
 assocModelDesign <- function(phenotypeGenotype,
-                             assocFormula,
+                             fixed,
+                             random = NULL,
                              kinship = NULL) {
     #Digest a formula to set the phenotypes to one of these ATTRIBUTE_TYPE
     #enum ATTRIBUTE_TYPE {data, covariate, factor, taxa};
     #Use G for GenotypeTable present,
     #Taxa can be used for BLUEs, e.g. dpoll ~ Taxa
+
     jtsPheno <- getPhenotypeTable(phenotypeGenotype)
     phenoAttDf <- extractPhenotypeAttDf(jtsPheno)
     # attr(phenoAttDf,"phenotypeGenotype") <- phenotypeGenotype
@@ -65,29 +67,67 @@ assocModelDesign <- function(phenotypeGenotype,
     )
     df <- emptyDFWithPhenotype(phenoAttDf)
 
-    # replace list(.) with the unused numeric attributes
-    if (any(grepl(pattern = "list\\(\\.\\)", assocFormula))) {
-        labelsUsed <- terms(as.formula(assocFormula), data = df) %>%
-            attr("term.labels")
-        unusedNumericNames <- phenoAttDf %>%
-            dplyr::filter(traitAttribute == "NumericAttribute") %>%
-            dplyr::filter(!traitName %in% labelsUsed) %>%
-            dplyr::pull(traitName)
-        listDotReplacementStr <- paste0(
-            "list(",
-            paste(unusedNumericNames, collapse = ", "),
-            ")"
-        )
-        assocFormula <- gsub(
-            pattern = "list\\(\\.\\)",
-            replacement = listDotReplacementStr,
-            x = deparse(assocFormula)
-        ) %>% formula()
-    }
-    message("Formula: ", deparse(assocFormula))
 
-    term <- terms(as.formula(assocFormula), data = df)
-    if (attr(term, "response") == 0) {
+    term_fixed <- terms(as.formula(fixed), data = df)
+
+    ## Random effects check
+    if (is.null(random)) {
+        term_random <- ""
+    } else {
+        term_random <- terms(as.formula(random), data = df)
+    }
+    if (any(attr(term_fixed, "term.labels") %in% attr(term_random, "term.labels"))) {
+        stop("Identical variables identified in fixed and random effects.")
+    }
+
+
+    ## Define if element in df is fixed, random, or not used
+    vFixed <- ifelse(
+        test = names(df) %in% attr(term_fixed, "term.labels"),
+        yes = "random",
+        no = ""
+    )
+    vRand <- ifelse(
+        test = names(df) %in% attr(term_random, "term.labels"),
+        yes = "fixed",
+        no = ""
+    )
+    vNull <- ifelse(
+        test = !(names(df) %in% c(
+            attr(term_random, "term.labels"),
+            attr(term_fixed, "term.labels"))
+        ),
+        yes = "NA",
+        no = ""
+    )
+    effect <- with(list(vFixed, vRand, vNull), paste0(vFixed, vRand, vNull))
+
+    # TODO - Fix `list(.)` with new fixed and random effects parameters (Brandon)
+    # replace list(.) with the unused numeric attributes
+    # if (any(grepl(pattern = "list\\(\\.\\)", fixed))) {
+    #     labelsUsed <- terms(as.formula(fixed), data = df) %>%
+    #         attr("term.labels")
+    #     unusedNumericNames <- phenoAttDf %>%
+    #         dplyr::filter(traitAttribute == "NumericAttribute") %>%
+    #         dplyr::filter(!traitName %in% labelsUsed) %>%
+    #         dplyr::pull(traitName)
+    #     listDotReplacementStr <- paste0(
+    #         "list(",
+    #         paste(unusedNumericNames, collapse = ", "),
+    #         ")"
+    #     )
+    #     fixed <- gsub(
+    #         pattern = "list\\(\\.\\)",
+    #         replacement = listDotReplacementStr,
+    #         x = deparse(fixed)
+    #     ) %>% formula()
+    # }
+
+
+    message("Fixed effect:  ", deparse(fixed))
+    message("Random effect: ", deparse(random))
+
+    if (attr(term_fixed, "response") == 0) {
         stop(
             paste(
                 "Define a response variable (a trait name in the phenotypes),",
@@ -98,14 +138,33 @@ assocModelDesign <- function(phenotypeGenotype,
     #Add three new columns to describe new model
     newPhenoAttDf <- dplyr::mutate(
         phenoAttDf,
-        isReponse = traitName %in% as.character(assocFormula[[2]]),
-        isPredictor = traitName %in% attr(term, "term.labels"),
+        isReponse = traitName %in% as.character(fixed[[2]]),
+        isPredictor = traitName %in% c(
+            attr(term_fixed, "term.labels"),
+            attr(term_random, "term.labels")
+        ),
         newType = purrr::pmap_chr(
             list(traitAttribute, isReponse, isPredictor),
             tasselTypeMap
-        )
+        ),
+        effect = effect
     )
-    return(newPhenoAttDf)
+
+    if (!is.null(kinship)) {
+        return(
+            list(
+                kinshipJavaPointer = "pointerForTASSEL",
+                assocModelDF = newPhenoAttDf
+            )
+        )
+    } else {
+        return(
+            list(
+                kinshipJavaPointer = NULL,
+                assocModelDF = newPhenoAttDf
+            )
+        )
+    }
 }
 
 
@@ -127,6 +186,8 @@ tasselTypeMap <- function(traitAttribute, isResponse, isPredictor) {
         )
     }
 }
+
+randOrFixed <- function()
 
 
 #' @title Method for wrapping TASSEL objects in Datum and Dataset

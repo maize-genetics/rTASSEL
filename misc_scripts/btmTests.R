@@ -105,7 +105,8 @@ tasGenoPheno <- readGenotypePhenotype(
 ## Test `assocModelDesign()`
 assocModelDesign(
     phenotypeGenotype = tasGenoPheno,
-    assocFormula = list(.) ~ Taxa + G,
+    fixed = list(EarHT, EarDia) ~ dpoll,
+    random = ~ Taxa,
     kinship = NULL
 )
 
