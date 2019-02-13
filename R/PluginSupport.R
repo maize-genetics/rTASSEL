@@ -84,12 +84,12 @@ assocModelDesign <- function(phenotypeGenotype,
     ## Define if element in df is fixed, random, or not used
     vFixed <- ifelse(
         test = names(df) %in% attr(term_fixed, "term.labels"),
-        yes = "random",
+        yes = "fixed",
         no = ""
     )
     vRand <- ifelse(
         test = names(df) %in% attr(term_random, "term.labels"),
-        yes = "fixed",
+        yes = "random",
         no = ""
     )
     vNull <- ifelse(
