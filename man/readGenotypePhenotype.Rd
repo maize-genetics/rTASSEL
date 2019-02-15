@@ -2,19 +2,19 @@
 % Please edit documentation in R/GenotypePhenotypeFunctions.R
 \name{readGenotypePhenotype}
 \alias{readGenotypePhenotype}
-\title{Wrapper function of TasselGenotypePhenotype class for 
+\title{Wrapper function of TasselGenotypePhenotype class for
    GenotypePhenotype combined data}
 \usage{
 readGenotypePhenotype(genoPathOrObj, phenoPathDFOrObj)
 }
 \arguments{
-\item{genoPathOrObj}{a path to a genotype file (e.g. VCF, hmp, etc.) or 
+\item{genoPathOrObj}{a path to a genotype file (e.g. VCF, hmp, etc.) or
 TASSEL Genotype Obj}
 
-\item{phenoPathDFOrObj}{a path, a data frame of phenotypic data, or TASSEL 
+\item{phenoPathDFOrObj}{a path, a data frame of phenotypic data, or TASSEL
 Phenotype Obj}
 }
 \description{
-Creates a Java GenotypePhenotype object which is used for 
+Creates a Java GenotypePhenotype object which is used for
    \code{TasselGenotypePhenotype} object construction
 }
