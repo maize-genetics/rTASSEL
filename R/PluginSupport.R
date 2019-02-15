@@ -47,6 +47,8 @@
 # TODO Support proper kinship data import `kinshipPlugin` from TASSEL (Ed)
 # TODO Create class for kinship/distance matrices? (Ed and Brandon)
 # TODO conduct BLUE/GLM/MLM based on design structure in TASSEL (Ed)
+
+# currently supports the symbol "G" for genotype parameter in formula - may change...
 assocModelDesign <- function(phenotypeGenotype,
                              fixed,
                              random = NULL,
@@ -56,9 +58,10 @@ assocModelDesign <- function(phenotypeGenotype,
     #Use G for GenotypeTable present,
     #Taxa can be used for BLUEs, e.g. dpoll ~ Taxa
 
+    ## Get intial association metadata
+    ## Add Genotype (G) row for final conditional steps
     jtsPheno <- getPhenotypeTable(phenotypeGenotype)
     phenoAttDf <- extractPhenotypeAttDf(jtsPheno)
-    # attr(phenoAttDf,"phenotypeGenotype") <- phenotypeGenotype
     phenoAttDf <- tibble::add_case(
         phenoAttDf,
         traitName = "G",
@@ -67,19 +70,8 @@ assocModelDesign <- function(phenotypeGenotype,
     )
     df <- emptyDFWithPhenotype(phenoAttDf)
 
-
+    ## Identify fixed terms from formula
     term_fixed <- terms(as.formula(fixed), data = df)
-
-    ## Random effects check
-    if (is.null(random)) {
-        term_random <- ""
-    } else {
-        term_random <- terms(as.formula(random), data = df)
-    }
-    if (any(attr(term_fixed, "term.labels") %in% attr(term_random, "term.labels"))) {
-        stop("Identical variables identified in fixed and random effects.")
-    }
-
 
     ## Define if element in df is fixed, random, or not used
     vFixed <- ifelse(
@@ -87,20 +79,14 @@ assocModelDesign <- function(phenotypeGenotype,
         yes = "fixed",
         no = ""
     )
-    vRand <- ifelse(
-        test = names(df) %in% attr(term_random, "term.labels"),
-        yes = "random",
-        no = ""
-    )
     vNull <- ifelse(
         test = !(names(df) %in% c(
-            attr(term_random, "term.labels"),
             attr(term_fixed, "term.labels"))
         ),
-        yes = "NA",
+        yes = NA,
         no = ""
     )
-    effect <- with(list(vFixed, vRand, vNull), paste0(vFixed, vRand, vNull))
+    effect <- with(list(vFixed, vNull), paste0(vFixed, vNull))
 
     # TODO - Fix `list(.)` with new fixed and random effects parameters (Brandon)
     # replace list(.) with the unused numeric attributes
@@ -123,10 +109,6 @@ assocModelDesign <- function(phenotypeGenotype,
     #     ) %>% formula()
     # }
 
-
-    message("Fixed effect:  ", deparse(fixed))
-    message("Random effect: ", deparse(random))
-
     if (attr(term_fixed, "response") == 0) {
         stop(
             paste(
@@ -135,36 +117,62 @@ assocModelDesign <- function(phenotypeGenotype,
             )
         )
     }
-    #Add three new columns to describe new model
+
+    ## Add three new columns to describe new model
+    ## AKA the "choose your own adventure" object for conditional statements
     newPhenoAttDf <- dplyr::mutate(
         phenoAttDf,
         isReponse = traitName %in% as.character(fixed[[2]]),
         isPredictor = traitName %in% c(
-            attr(term_fixed, "term.labels"),
-            attr(term_random, "term.labels")
+            attr(term_fixed, "term.labels")
         ),
         newType = purrr::pmap_chr(
             list(traitAttribute, isReponse, isPredictor),
-            tasselTypeMap
+            rTASSEL:::tasselTypeMap
         ),
         effect = effect
     )
+    newPhenoAttDf[newPhenoAttDf == "NA"] <- NA
 
-    if (!is.null(kinship)) {
-        return(
-            list(
-                kinshipJavaPointer = "pointerForTASSEL",
-                assocModelDF = newPhenoAttDf
-            )
-        )
-    } else {
-        return(
-            list(
-                kinshipJavaPointer = NULL,
-                assocModelDF = newPhenoAttDf
-            )
-        )
+    ## Logic flow parameters
+    taxaStat <- newPhenoAttDf[newPhenoAttDf$traitType == "taxa", "effect"]
+    gStat    <- newPhenoAttDf[newPhenoAttDf$traitType == "genotype", "effect"]
+    kinStat  <- kinship
+
+    randCheck <- NULL
+
+    ## Initial check for taxa random effect
+    if (is.na(taxaStat) & !is.null(kinship)) {
+        newPhenoAttDf[newPhenoAttDf$traitType == "taxa", "effect"] <- "random"
+        randCheck <- "~ taxa"
+    } else if (taxaStat == "fixed" & !is.null(kinship)) {
+        warning("Converting taxa from \"fixed\" to \"random\"...")
+        newPhenoAttDf[newPhenoAttDf$traitType == "taxa", "effect"] <- "random"
+        randCheck <- "~ taxa"
+    } else if (is.na(gStat) & !is.null(kinStat)) {
+        stop("Missing genotype from MLM formula")
     }
+
+    ## Console formula checks
+    message("Fixed effect.... ", deparse(fixed))
+    message("Random effect... ", randCheck)
+
+    ## Update taxa status
+    taxaStat <- newPhenoAttDf[newPhenoAttDf$traitType == "taxa", "effect"]
+
+    ## Logic flow...
+    if (taxaStat == "fixed" & is.na(gStat)) {
+        message("Perform BLUE analysis...")
+    } else if (is.na(taxaStat) & gStat == "fixed") {
+        message("Perform GLM analysis...")
+    } else if (gStat == "fixed" & taxaStat == "random" & !is.null(kinStat)) {
+        message("Perform MLM analysis...")
+    } else {
+        message("I don't know what you want...")
+    }
+
+    ## Return association data frame for TASSEL analysis
+    return(newPhenoAttDf)
 }
 
 
