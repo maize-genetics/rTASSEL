@@ -133,9 +133,9 @@ tasKin <- kinshipPlugin(
     maxAlleles = 6,
     algorithmVariation = "Observed_Allele_Freq"
 )
-tasKinR <- kinshipRMatrix(tasKin)
-tasKinR[1:10, 1:10]
-image(tasKinR)
+tasKinR <- kinshipRMatrix(tasKin) ## Convert to R matrix
+tasKinR[1:10, 1:10]               ## Get subset
+image(tasKinR)                    ## Visualize it
 
 
 
