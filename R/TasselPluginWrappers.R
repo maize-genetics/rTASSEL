@@ -65,20 +65,29 @@ filterTaxaBuilderPlugin <- function(genotypeTable,
 }
 
 
-# TODO
+#' @export
 kinshipPlugin <- function(genotypeTable,
                           method="Centered_IBS",
                           maxAlleles=6,
                           algorithmVariation="Observed_Allele_Freq"
 ) {
-  if(is(genotypeTable, "GenotypeTable") == TRUE) {
-    genotypeTable <- genotypeTable@jtsGenotypeTable
+  if(is(genotypeTable, "TasselGenotypePhenotype") == TRUE) {
+    genotypeTable <- genotypeTable@jGenotypeTable
   }
   plugin <- new(J("net.maizegenetics.analysis.distance.KinshipPlugin"), .jnull(), FALSE)
   plugin$setParameter("method",toString(method))
   plugin$setParameter("maxAlleles",toString(maxAlleles))
   plugin$setParameter("algorithmVariation",toString(algorithmVariation))
   plugin$runPlugin(genotypeTable)
+}
+
+#' @export
+distanceMatrixPlugin <- function(genotypeTable) {
+    if(is(genotypeTable, "TasselGenotypePhenotype") == TRUE) {
+        genotypeTable <- genotypeTable@jGenotypeTable
+    }
+    plugin <- new(J("net.maizegenetics.analysis.distance.DistanceMatrixPlugin"), .jnull(), FALSE)
+    plugin$getDistanceMatrix(genotypeTable)
 }
 
 
