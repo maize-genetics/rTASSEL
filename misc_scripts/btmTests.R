@@ -16,19 +16,19 @@
 
 # === Create log file and output messages from console ==============
 
-## NOTE: For my use only (START AT PREAMBLE)
+## NOTE: For my use only (START AT PREAMBLE) - NOW DEFUNCT
 setwd("~/Projects/rtassel")
 path_tassel <- paste0(getwd(),"/inst/java/sTASSEL.jar")
 rJava::.jinit(parameters="-Xmx6g")
 rJava::.jaddClassPath(path_tassel)
 
-## Make rtassel_output file
+## Make rtassel_output file - NOW DEFUNCT
 rtOut <- paste0(Sys.getenv("HOME"), "/Temporary/rtassel_output")
 if (!exists(rtOut)) {
     system(paste("touch", rtOut))
 }
 
-## Send TASSEL console output messages to file
+## Send TASSEL console output messages to file - NOW DEFUNCT
 rJava::.jcall(
     "net.maizegenetics/util/LoggingUtils",
     "V",
