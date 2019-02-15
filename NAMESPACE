@@ -2,6 +2,9 @@
 
 export(assocModelDesign)
 export(combineTasselGenotypePhenotype)
+export(distanceMatrixPlugin)
+export(kinshipPlugin)
+export(kinshipRMatrix)
 export(readGenotypePhenotype)
 export(readGenotypeTable)
 export(readPhenotypeTable)
