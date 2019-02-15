@@ -88,6 +88,10 @@ emptyDFWithPhenotype <- function(phenotypeAttDf) {
                 .data = t,
                 !! as.character(phenotypeAttDf[tn, "traitName"][[1]]) := numeric()
             ),
+            CategoricalAttribute = t <- add_column(
+                .data = t,
+                !! as.character(phenotypeAttDf[tn, "traitName"][[1]]) := factor()
+            ),
             TaxaAttribute = t <- add_column(
                 .data = t,
                 !! as.character(phenotypeAttDf[tn, "traitName"][[1]]) := character()
