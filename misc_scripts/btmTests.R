@@ -85,6 +85,7 @@ genoPath <- "inst/extdata/mdp_genotype.hmp.txt"
 
 ## Phenotype file path example
 phenoPath <- "inst/extdata/mdp_traits.txt"
+phenoPath2 <- "inst/extdata/mdp_phenotype.txt"
 
 ## Phenotype data frame example
 phenoDF <- read.table(phenoPath, header = TRUE)
@@ -95,22 +96,50 @@ tasGeno <- readGenotypeTable(genoPath)
 
 ## Read PhenotypeTable
 tasPheno <- readPhenotypeTable(phenoPath)
+tasPheno2 <- readPhenotypeTable(phenoPath2)
 
 ## Read Genotype and Phenotype
 tasGenoPheno <- readGenotypePhenotype(
     genoPathOrObj = genoPath,
-    phenoPathDFOrObj = phenoPath
+    phenoPathDFOrObj = phenoPath2
 )
 
-## Test `assocModelDesign()`
+## Test `assocModelDesign()` - should return BLUE option
 assocModelDesign(
     phenotypeGenotype = tasGenoPheno,
-    fixed = list(EarHT, EarDia) ~ dpoll,
-    random = ~ Taxa,
+    fixed = list(EarHT, EarDia) ~ location + Q1 + Q2 + Q3 + Taxa,
     kinship = NULL
 )
 
-## `assocModelDesign()` debug
+## Test `assocModelDesign()` - should return GLM option
+assocModelDesign(
+    phenotypeGenotype = tasGenoPheno,
+    fixed = list(EarHT, EarDia) ~ location + Q1 + Q2 + Q3 + G,
+    kinship = NULL
+)
+
+## Test `assocModelDesign()` - should return MLM option
+assocModelDesign(
+    phenotypeGenotype = tasGenoPheno,
+    fixed = list(EarHT, dpoll) ~ location + G,
+    kinship = "K"
+)
+
+## Test `kinshipPlugin()` - return kinship matrix TASSEL object
+##     calculated from a `TasselGenotypePhenotype` object
+tasKin <- kinshipPlugin(
+    genotypeTable = tasGenoPheno,
+    method = "Centered_IBS",
+    maxAlleles = 6,
+    algorithmVariation = "Observed_Allele_Freq"
+)
+tasKinR <- kinshipRMatrix(tasKin)
+tasKinR[1:10, 1:10]
+image(tasKinR)
+
+
+
+## `assocModelDesign()` debug - DON'T RUN
 jtsPheno <- rTASSEL:::getPhenotypeTable(tasGenoPheno)
 phenoAttDf <- rTASSEL:::extractPhenotypeAttDf(jtsPheno)
 phenoAttDf <- tibble::add_case(
