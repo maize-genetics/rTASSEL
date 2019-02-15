@@ -112,6 +112,7 @@ assocModelDesign(
 )
 
 ## Test `assocModelDesign()` - should return GLM option
+## G = genotype
 assocModelDesign(
     phenotypeGenotype = tasGenoPheno,
     fixed = list(EarHT, EarDia) ~ location + Q1 + Q2 + Q3 + G,
@@ -138,6 +139,8 @@ tasKinR[1:10, 1:10]               ## Get subset
 image(tasKinR)                    ## Visualize it
 
 
+
+# === Miscellaneous =================================================
 
 ## `assocModelDesign()` debug - DON'T RUN
 jtsPheno <- rTASSEL:::getPhenotypeTable(tasGenoPheno)
