@@ -26,18 +26,19 @@ getGenotypePhenotype <- function(jtsObject) {
   }
 }
 
-#' @title Wrapper function of TasselGenotypePhenotype class for 
+
+#' @title Wrapper function of TasselGenotypePhenotype class for
 #'    GenotypePhenotype combined data
 
-#' @description Creates a Java GenotypePhenotype object which is used for 
+#' @description Creates a Java GenotypePhenotype object which is used for
 #'    \code{TasselGenotypePhenotype} object construction
-#' 
+#'
 #' @name readGenotypePhenotype
 #' @rdname readGenotypePhenotype
-#' 
-#' @param genoPathOrObj a path to a genotype file (e.g. VCF, hmp, etc.) or 
+#'
+#' @param genoPathOrObj a path to a genotype file (e.g. VCF, hmp, etc.) or
 #'    TASSEL Genotype Obj
-#' @param phenoPathDFOrObj a path, a data frame of phenotypic data, or TASSEL 
+#' @param phenoPathDFOrObj a path, a data frame of phenotypic data, or TASSEL
 #'    Phenotype Obj
 #'
 #' @importFrom rJava J
@@ -53,12 +54,13 @@ readGenotypePhenotype <- function(genoPathOrObj, phenoPathDFOrObj) {
   } else {
     phenoObj <- new(J("net/maizegenetics/phenotype/PhenotypeBuilder"))$fromFile(phenoPathDFOrObj)$build()$get(0L)
   }
-  
+
   t <- .tasselObjectConstructor(
     new(J("net.maizegenetics.phenotype.GenotypePhenotypeBuilder"))
     $genotype(genoObj)$phenotype(phenoObj)$intersect()$build()
   )
 }
+
 
 #' @title Function for combining TASSEL GenotypeTable and Phenotype to GenotypePhenotype class
 #' @param genotypeTable Java object of GenotypeTable
