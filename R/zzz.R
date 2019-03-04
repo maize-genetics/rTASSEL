@@ -10,9 +10,9 @@
 }
 
 .onAttach <- function(libname, pkgname){
-  msg <- paste0(
-    "rTASSEL (experimental)\n",
-    "Use with caution!\n"
-  )
-  packageStartupMessage(msg)
+    msg <- paste0(
+        "rTASSEL (experimental)\n",
+        "Use with caution!\n"
+    )
+    packageStartupMessage(msg)
 }
