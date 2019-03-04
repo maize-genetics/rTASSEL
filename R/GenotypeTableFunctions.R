@@ -27,9 +27,9 @@
 #' @importFrom rJava .jcall
 #' @export
 readGenotypeTable <- function(path) {
-    # if (!file.exists(path)) {
-    #     stop("Cannot open file ", path, ": No such file or directory")
-    # }
+    if (!file.exists(path)) {
+        stop("Cannot open file ", path, ": No such file or directory")
+    }
 
     .tasselObjectConstructor(
         rJava::.jcall(
