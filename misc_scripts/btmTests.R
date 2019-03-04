@@ -16,65 +16,66 @@
 
 # === Create log file and output messages from console ==============
 
-## NOTE: For my use only (START AT PREAMBLE) - NOW DEFUNCT
-setwd("~/Projects/rtassel")
-path_tassel <- paste0(getwd(),"/inst/java/sTASSEL.jar")
-rJava::.jinit(parameters="-Xmx6g")
-rJava::.jaddClassPath(path_tassel)
+# ## NOTE: For my use only (START AT PREAMBLE) - NOW DEFUNCT
+# setwd("~/Projects/rtassel")
+# path_tassel <- paste0(getwd(),"/inst/java/sTASSEL.jar")
+# rJava::.jinit(parameters = "-Xmx6g")
+#
+# rJava::.jaddClassPath(path_tassel)
+#
+# ## Make rtassel_output file - NOW DEFUNCT
+# rtOut <- paste0(Sys.getenv("HOME"), "/Temporary/rtassel_output")
+# if (!exists(rtOut)) {
+#     system(paste("touch", rtOut))
+# }
+#
+# ## Send TASSEL console output messages to file - NOW DEFUNCT
+# rJava::.jcall(
+#     "net.maizegenetics/util/LoggingUtils",
+#     "V",
+#     "setupLoggingOff"
+# )
 
-## Make rtassel_output file - NOW DEFUNCT
-rtOut <- paste0(Sys.getenv("HOME"), "/Temporary/rtassel_output")
-if (!exists(rtOut)) {
-    system(paste("touch", rtOut))
-}
-
-## Send TASSEL console output messages to file - NOW DEFUNCT
-rJava::.jcall(
-    "net.maizegenetics/util/LoggingUtils",
-    "V",
-    "setupLoggingOff"
-)
 
 
+# === Preamble (just load rTASSEL instead) ==========================
 
-# === Preamble ======================================================
-
-## Set WD (local use only)
-setwd("~/Projects/rtassel")
-
-## Load packages
-library(rJava)
-library(GenomicRanges)
-library(stringr)
-library(SummarizedExperiment)
-library(snpStats)
-library(hexbin)
-library(S4Vectors)
-
-## jinit
-rJava::.jinit(parameters="-Xmx6g")
-.jcall(.jnew("java/lang/Runtime"), "J", "totalMemory")
-.jcall(.jnew("java/lang/Runtime"), "J", "maxMemory")
-
-## Add class path
-path_tassel <- "inst/java/sTASSEL.jar"
-rJava::.jaddClassPath(path_tassel)
-
-## Which Tassel version
-tasselVersion <- rJava::.jfield("net/maizegenetics/tassel/TASSELMainFrame","S","version")
-paste0("Using TASSEL version: ", tasselVersion)
-
-## Source files
-source("R/AllGenerics.R")
-source("R/AllClasses.R")
-source("R/GenotypePhenotypeFunctions.R")
-source("R/TasselPluginWrappers.R")
-source("R/GenotypeTableFunctions.R")
-source("R/PhenotypeFunctions.R")
-source("R/PositionListFunctions.R")
-source("R/TaxaListFunctions.R")
-source("R/TableReportFunctions.R")
-source("R/PluginSupport.R")
+# ## Set WD (local use only)
+# setwd("~/Projects/rtassel")
+#
+# ## Load packages
+# library(rJava)
+# library(GenomicRanges)
+# library(stringr)
+# library(SummarizedExperiment)
+# library(snpStats)
+# library(hexbin)
+# library(S4Vectors)
+#
+# ## jinit
+# rJava::.jinit(parameters="-Xmx6g")
+# .jcall(.jnew("java/lang/Runtime"), "J", "totalMemory")
+# .jcall(.jnew("java/lang/Runtime"), "J", "maxMemory")
+#
+# ## Add class path
+# path_tassel <- "inst/java/sTASSEL.jar"
+# rJava::.jaddClassPath(path_tassel)
+#
+# ## Which Tassel version
+# tasselVersion <- rJava::.jfield("net/maizegenetics/tassel/TASSELMainFrame","S","version")
+# paste0("Using TASSEL version: ", tasselVersion)
+#
+# ## Source files
+# source("R/AllGenerics.R")
+# source("R/AllClasses.R")
+# source("R/GenotypePhenotypeFunctions.R")
+# source("R/TasselPluginWrappers.R")
+# source("R/GenotypeTableFunctions.R")
+# source("R/PhenotypeFunctions.R")
+# source("R/PositionListFunctions.R")
+# source("R/TaxaListFunctions.R")
+# source("R/TableReportFunctions.R")
+# source("R/PluginSupport.R")
 
 
 
@@ -138,6 +139,9 @@ tasKinR <- kinshipRMatrix(tasKin) ## Convert to R matrix
 tasKinR[1:10, 1:10]               ## Get subset
 image(tasKinR)                    ## Visualize it
 
+## Test WRONG file path (readGenotypeTable())
+genoWrongPath <- "this/is/so/wrong"
+readGenotypeTable(path = genoWrongPath)
 
 
 # === Miscellaneous =================================================
