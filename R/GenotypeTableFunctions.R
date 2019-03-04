@@ -137,19 +137,3 @@ GWASpolyGenoFromSummarizedExperiment <- function(SummarizedExperimentObject) {
     colnames(geno)[4:ncol(geno)] <- as.character(SummarizedExperimentObject$Sample)
     geno
 }
-
-
-## Check `readGenotypeTable` for errors
-genoChecker <- function() {
-
-}
-
-
-
-
-
-
-
-
-
-
