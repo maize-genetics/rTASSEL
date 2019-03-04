@@ -101,38 +101,39 @@ setMethod(
 
 ## main constructor for TasselGenotypePhenotype objects - not exported
 .tasselObjectConstructor <- function(jTasselObj) {
-  tobj <- new(
-    Class = "TasselGenotypePhenotype",
-    name = "TasselGenotypePhenotype",
-    jTasselObj = jTasselObj,
-    jTaxaList = getTaxaList(jTasselObj),
-    jPositionList = getPositionList(jTasselObj),
-    jGenotypeTable = getGenotypeTable(jTasselObj),
-    jPhenotypeTable = getPhenotypeTable(jTasselObj)
-  )
-  if(is.jnull(tobj@jTaxaList) & is.jnull(tobj@jPositionList) &
-     is.jnull(tobj@jGenotypeTable) & is.jnull(tobj@jPhenotypeTable)) {
-    return (NULL)
-  }
-  tobj
+    tobj <- new(
+        Class = "TasselGenotypePhenotype",
+        name = "TasselGenotypePhenotype",
+        jTasselObj = jTasselObj,
+        jTaxaList = getTaxaList(jTasselObj),
+        jPositionList = getPositionList(jTasselObj),
+        jGenotypeTable = getGenotypeTable(jTasselObj),
+        jPhenotypeTable = getPhenotypeTable(jTasselObj)
+    )
+    if(is.jnull(tobj@jTaxaList) & is.jnull(tobj@jPositionList) &
+        is.jnull(tobj@jGenotypeTable) & is.jnull(tobj@jPhenotypeTable)) {
+        return (NULL)
+    }
+    tobj
 }
 
 
 ## get TASSEL class - not exported
 .getTASSELClass <- function(object, tasselClassName, throwErrorOnNull = TRUE) {
-  jtsObject <- switch(tasselClassName,
-                      "GenotypePhenotype" = getGenotypePhenotype(object),
-                      "GenotypeTable" = getGenotypeTable(object),
-                      "Phenotype" = getPhenotypeTable(object),
-                      "TaxaList" = getTaxaList(object),
-                      "PositionList" = getPositionList(object)
-                      )
-  if(is.null(jtsObject)) {
-    stop("Unknown TASSEL class:",tasselClassName)
-  }
-  if(throwErrorOnNull & is.jnull(jtsObject)) {
-    errObj <- if(is(object,'jobjRef')) .jstrVal(object) else class(object)
-    stop(errObj," does not contain a TASSEL ",tasselClassName," object")
-  }
-  jtsObject
+    jtsObject <- switch(
+        tasselClassName,
+        "GenotypePhenotype" = getGenotypePhenotype(object),
+        "GenotypeTable" = getGenotypeTable(object),
+        "Phenotype" = getPhenotypeTable(object),
+        "TaxaList" = getTaxaList(object),
+        "PositionList" = getPositionList(object)
+    )
+    if(is.null(jtsObject)) {
+        stop("Unknown TASSEL class:", tasselClassName)
+    }
+    if(throwErrorOnNull & is.jnull(jtsObject)) {
+        errObj <- if(is(object,'jobjRef')) .jstrVal(object) else class(object)
+        stop(errObj," does not contain a TASSEL ",tasselClassName," object")
+    }
+    jtsObject
 }
