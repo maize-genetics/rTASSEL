@@ -144,6 +144,12 @@ genoWrongPath <- "this/is/so/wrong"
 readGenotypeTable(path = genoWrongPath)
 
 
+## Test WRONG file path (readPhenotypeTable())
+phenoWrongPath <- "wrong/path"
+readPhenotypeTable(path = phenoWrongPath)
+
+
+
 # === Miscellaneous =================================================
 
 ## `assocModelDesign()` debug - DON'T RUN
