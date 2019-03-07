@@ -102,7 +102,7 @@ tasPheno2 <- readPhenotypeTable(phenoPath2)
 ## Read Genotype and Phenotype
 tasGenoPheno <- readGenotypePhenotype(
     genoPathOrObj = genoPath,
-    phenoPathDFOrObj = phenoPath2
+    phenoPathDFOrObj = phenoPath
 )
 
 ## Test `assocModelDesign()` - should return BLUE option
