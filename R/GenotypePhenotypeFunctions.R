@@ -68,8 +68,6 @@ readGenotypePhenotype <- function(genoPathOrObj, phenoPathDFOrObj) {
 #'
 #' @return a TASSEL GenotypePhenotype object
 #' @export
-#'
-#' @examples
 combineTasselGenotypePhenotype <- function(genotypeTable, phenotype) {
   genotypeTable <- getGenotypeTable(genotypeTable)
   phenotype <- getPhenotypeTable(phenotype)
