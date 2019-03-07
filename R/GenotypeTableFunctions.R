@@ -119,7 +119,8 @@ snpMatrixFromGenotypeTable <- function(genotypeTable) {
         ":",
         ranges(genomicRangesDF)
     )
-    as(aMatrix, "SnpMatrix")
+    return(aMatrix)
+    # as(aMatrix, "SnpMatrix")
 }
 
 ## Create GWASpoly geno dataframe from SimplifiedExperiment object
