@@ -5,15 +5,14 @@
 \title{Converts a formula into a GWAS model design that can be used by
    TASSEL PhenotypeGenotype}
 \usage{
-assocModelDesign(phenotypeGenotype, fixed, random = NULL,
-  kinship = NULL)
+assocModelDesign(phenotypeGenotype, fixed, kinship = NULL)
 }
 \arguments{
 \item{phenotypeGenotype}{TASSEL PhenotypeGenotype Object}
 
-\item{kinship}{A TASSEL kinship matrix}
+\item{fixed}{An R formula (lm) notation for fixed effects}
 
-\item{assocFormula}{Using R formula (lm) notation}
+\item{kinship}{A TASSEL kinship matrix}
 }
 \value{
 tibble dataframe defining data, covariates, factors, taxa, and genotypes to be used

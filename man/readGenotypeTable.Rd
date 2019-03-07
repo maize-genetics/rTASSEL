@@ -11,7 +11,7 @@ readGenotypeTable(path)
 \item{path}{a genotype data path (e.g. \code{*.VCF, *.hmp}, etc.)}
 }
 \description{
-This function is a wrapper for the 
+This function is a wrapper for the
    \code{TasselGenotypePhenotype} class. It is used for storing genotype
    information into a class object.
 }
