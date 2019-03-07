@@ -18,7 +18,7 @@
 #' @details . is used for all variable, + to add one, - to exclude, list() used for multiple responses
 #'
 #' @param phenotypeGenotype TASSEL PhenotypeGenotype Object
-#' @param assocFormula Using R formula (lm) notation
+#' @param fixed An R formula (lm) notation for fixed effects
 #' @param kinship A TASSEL kinship matrix
 #'
 #' @return tibble dataframe defining data, covariates, factors, taxa, and genotypes to be used
@@ -32,7 +32,7 @@
 #' @export
 #'
 #'
-#' @examples
+# @examples
 # phenotypeGenotype <- genoPhenoCombined1
 # assocFormula <- . ~ dpoll
 # assocFormula <- list(EarHT,EarDia) ~ dpoll
@@ -51,7 +51,6 @@
 # currently supports the symbol "G" for genotype parameter in formula - may change...
 assocModelDesign <- function(phenotypeGenotype,
                              fixed,
-                             random = NULL,
                              kinship = NULL) {
     #Digest a formula to set the phenotypes to one of these ATTRIBUTE_TYPE
     #enum ATTRIBUTE_TYPE {data, covariate, factor, taxa};
@@ -154,8 +153,15 @@ assocModelDesign <- function(phenotypeGenotype,
     }
 
     ## Console formula checks
-    message("Fixed effect.... ", deparse(fixed))
-    message("Random effect... ", randCheck)
+    message("Fixed effect    : ", deparse(fixed))
+    message(
+        "Random effect   : ",
+        ifelse(
+            test = is.null(randCheck),
+            yes = "none",
+            no = randCheck
+        )
+    )
 
     ## Update taxa status
     taxaStat <- newPhenoAttDf[newPhenoAttDf$traitType == "taxa", "effect"]
@@ -195,49 +201,69 @@ tasselTypeMap <- function(traitAttribute, isResponse, isPredictor) {
     }
 }
 
-randOrFixed <- function()
 
 
 #' @title Method for wrapping TASSEL objects in Datum and Dataset
-#' @param ... a collection of TASSEL objects
+#' @param tasObj a vector of TASSEL objects
 #' @return a TASSEL Dataset
-#' @examples
-createTasselDataSet <- function(...) {
-  arguments <- list(...)
-  jList <- new(J("java/util/ArrayList"))
-  for(javaObj in arguments) {
-    #check if they are all TASSEL jobj
-    if(is(javaObj, "jobjRef") == FALSE) {
-      stop(paste0("Object ",javaObj," is not of class"))
+#' @export
+createTasselDataSet <- function(tasObj) {
+    arguments <- as.list(tasObj)
+    jList <- new(J("java/util/ArrayList"))
+    for(javaObj in arguments) {
+        # check if they are all TASSEL jobj
+        if(is(javaObj, "jobjRef") == FALSE) {
+            stop("Object ", javaObj, " is not of class")
+        }
+        jList$add(
+            new(J("net/maizegenetics/plugindef/Datum"), "FromR", javaObj, NULL)
+        )
     }
-    jList$add(new(J("net/maizegenetics/plugindef/Datum"),"FromR",javaObj,NULL))
-  }
-  new(J("net/maizegenetics/plugindef/DataSet"),jList,NULL)
+    new(J("net/maizegenetics/plugindef/DataSet"), jList, NULL)
 }
 
 
 # Converts TASSEL dataset to List of R objects - either DataFrames or TasselGenotypePhenotype S4 Class
 .dataSetToListOfRObjects <- function(jtsDataSet) {
-  result <- list()
-  for(i in 1:(jtsDataSet$getSize())) {
-    name <- jtsDataSet$getData(i-1L)$getName()
-    if(jtsDataSet$getData(i-1L)$getData() %instanceof% "net.maizegenetics.util.TableReport") {
-      result[[name]] <- convertTableReportToDataFrame(jtsDataSet$getData(i-1L)$getData())
-    } else {
-      tasselRObj <- .tasselObjectConstructor(jtsDataSet$getData(i-1L)$getData())
-      if(!is.null(tasselRObj)){
-        result[[name]] <- .tasselObjectConstructor(jtsDataSet$getData(i-1L)$getData())
+    result <- list()
+    for(i in 1:(jtsDataSet$getSize())) {
+      name <- jtsDataSet$getData(i-1L)$getName()
+      if(jtsDataSet$getData(i-1L)$getData() %instanceof% "net.maizegenetics.util.TableReport") {
+        result[[name]] <- convertTableReportToDataFrame(jtsDataSet$getData(i-1L)$getData())
+      } else {
+        tasselRObj <- .tasselObjectConstructor(jtsDataSet$getData(i-1L)$getData())
+        if(!is.null(tasselRObj)){
+          result[[name]] <- .tasselObjectConstructor(jtsDataSet$getData(i-1L)$getData())
+        }
       }
     }
-  }
-  result
+    result
 }
 
 
+## Convert fixed effect LM output to R list
+dataSetToListOfDataFrame <- function(jtsDataSet) {
+    result <- c()
+    for(i in 1:(jtsDataSet$getSize())) {
+        name <- jtsDataSet$getData(i-1L)$getName()
+        result[[name]] <- convertTableReportToDataFrame(jtsDataSet$getData(i-1L)$getData())
+    }
+    result
+}
+
+## Convert table report to data frame
+convertTableReportToDataFrame <- function(tableReport) {
+    tableReportVectors <- J("net/maizegenetics/plugindef/GenerateRCode")$tableReportToVectors(tableReport)
+    colNum <- length(tableReportVectors$columnNames)
+    aDF <- data.frame(tableReportVectors$dataVector$get(0L))
+    for(i in 2:(colNum)) {
+        aDF[[i]] <- tableReportVectors$dataVector$get(i-1L)
+    }
+    colnames(aDF) <- tableReportVectors$columnNames
+    aDF
+}
 
 settingPhenotypeAttr <- function(formula, phenotypeNameVector) {
   #formula <- y ~ x1*x2
   theTerms <- terms(formula)
-
-
 }
