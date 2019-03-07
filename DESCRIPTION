@@ -27,7 +27,10 @@ Depends:
     IRanges,
     S4Vectors,
     stringr,
-    tibble
+    tibble,
+    dplyr,
+    magrittr,
+    purrr
 Imports:
     methods
 Encoding: UTF-8
