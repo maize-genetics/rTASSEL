@@ -41,46 +41,53 @@ filterSiteBuilderPlugin <- function(genotypeTable,
   .dataSetToListOfRObjects(resultDataSet)
 }
 
+
 filterTaxaBuilderPlugin <- function(genotypeTable,
-                                    minNotMissing=0.0,
-                                    minHeterozygous=0.0,
-                                    maxHeterozygous=1.0,
+                                    minNotMissing = 0.0,
+                                    minHeterozygous = 0.0,
+                                    maxHeterozygous = 1.0,
                                     includeTaxa = TRUE,
-                                    taxaList = NULL
-) {
-  jtsGenotypeTable <- getGenotypeTable(genotypeTable)
-  if(is.jnull(jtsGenotypeTable)) {
-    stop("The genotype table needs to be or contain a TASSEL GenotypeTable")
-  }
-  plugin <- new(J("net.maizegenetics.analysis.filter.FilterTaxaBuilderPlugin"), .jnull(), FALSE)
-  plugin$setParameter("minNotMissing",toString(minNotMissing))
-  plugin$setParameter("minHeterozygous",toString(minHeterozygous))
-  plugin$setParameter("maxHeterozygous",toString(maxHeterozygous))
-  plugin$setParameter("includeTaxa",toString(includeTaxa))
-  # plugin$setParameter("taxaList",includeTaxa)
-  # plugin$includeTaxa(includeTaxa)
-  plugin$taxaList(taxaList)
-  filteredGT <- plugin$runPlugin(jtsGenotypeTable)
-  .tasselObjectConstructor(filteredGT)
+                                    taxaList = NULL) {
+    jtsGenotypeTable <- getGenotypeTable(genotypeTable)
+    if(is.jnull(jtsGenotypeTable)) {
+        stop("The genotype table needs to be or contain a TASSEL GenotypeTable")
+    }
+    plugin <- new(J("net.maizegenetics.analysis.filter.FilterTaxaBuilderPlugin"), .jnull(), FALSE)
+    plugin$setParameter("minNotMissing", toString(minNotMissing))
+    plugin$setParameter("minHeterozygous", toString(minHeterozygous))
+    plugin$setParameter("maxHeterozygous", toString(maxHeterozygous))
+    plugin$setParameter("includeTaxa", toString(includeTaxa))
+    # plugin$setParameter("taxaList",includeTaxa)
+    # plugin$includeTaxa(includeTaxa)
+    plugin$taxaList(taxaList)
+    filteredGT <- plugin$runPlugin(jtsGenotypeTable)
+    .tasselObjectConstructor(filteredGT)
 }
 
 
+#' @title Kinship Plugin
+#' @param genotypeTable an rTASSEL \code{TasselGenotypePhenotype} object
+#' @param method a Kinship method
+#' @param maxAlleles Maximum number of alleles
+#' @param algorithmVariation Algorithm variation
 #' @export
 kinshipPlugin <- function(genotypeTable,
-                          method="Centered_IBS",
-                          maxAlleles=6,
-                          algorithmVariation="Observed_Allele_Freq"
-) {
-  if(is(genotypeTable, "TasselGenotypePhenotype") == TRUE) {
-    genotypeTable <- genotypeTable@jGenotypeTable
-  }
-  plugin <- new(J("net.maizegenetics.analysis.distance.KinshipPlugin"), .jnull(), FALSE)
-  plugin$setParameter("method",toString(method))
-  plugin$setParameter("maxAlleles",toString(maxAlleles))
-  plugin$setParameter("algorithmVariation",toString(algorithmVariation))
-  plugin$runPlugin(genotypeTable)
+                          method = "Centered_IBS",
+                          maxAlleles = 6,
+                          algorithmVariation="Observed_Allele_Freq") {
+    if (is(genotypeTable, "TasselGenotypePhenotype") == TRUE) {
+        genotypeTable <- genotypeTable@jGenotypeTable
+    }
+    plugin <- new(J("net.maizegenetics.analysis.distance.KinshipPlugin"), .jnull(), FALSE)
+    plugin$setParameter("method", toString(method))
+    plugin$setParameter("maxAlleles", toString(maxAlleles))
+    plugin$setParameter("algorithmVariation", toString(algorithmVariation))
+    plugin$runPlugin(genotypeTable)
 }
 
+
+#' @title Distance Matrix Plugin
+#' @param genotypeTable an rTASSEL \code{TasselGenotypePhenotype} object
 #' @export
 distanceMatrixPlugin <- function(genotypeTable) {
     if(is(genotypeTable, "TasselGenotypePhenotype") == TRUE) {
@@ -97,34 +104,33 @@ distanceMatrixPlugin <- function(genotypeTable) {
 # TODO `createPhenoGenoBasedOnFormula` (Ed)
 fixedEffectLMPlugin <- function(formula,
                                 genotypePhenotypeTable,
-                                phenoOnly= FALSE,
-                                saveToFile= FALSE,
-                                maxP=1.0,
-                                permute= FALSE,
-                                nperm=0,
-                                genotypeComponent=NULL,
-                                minClassSize=0,
-                                biallelicOnly= FALSE,
-                                siteStatsOut= FALSE,
-                                appendAddDom= FALSE
-) {
-  inputDataSet <- createTasselDataSet(
-    createPhenoGenoBasedOnFormula(formula, genotypePhenotypeTable)
-  )
-  plugin <- new(J("net.maizegenetics.analysis.association.FixedEffectLMPlugin"), .jnull(), FALSE)
-  plugin$setParameter("phenoOnly",toString(phenoOnly))
-  plugin$setParameter("saveToFile",toString(saveToFile))
-  plugin$setParameter("maxP",toString(maxP))
-  plugin$setParameter("permute",toString(permute))
-  plugin$setParameter("nperm",toString(nperm))
-  #plugin$setParameter("genotypeComponent",genotypeComponent) #enum not working
-  plugin$setParameter("minClassSize",toString(minClassSize))
-  plugin$setParameter("biallelicOnly",toString(biallelicOnly))
-  plugin$setParameter("siteStatsOut",toString(siteStatsOut))
-  plugin$setParameter("appendAddDom",toString(appendAddDom))
-  resultDataSet <- plugin$performFunction(inputDataSet)
-  .dataSetToListOfRObjects(resultDataSet)
-  # jtsDataSet <- createTasselDataSet(phenotypeOrGenotypeTable)
-  # jtsResultSet <- plugin$processData(jtsDataSet)
-  # dataSetToListOfDataFrame(jtsResultSet)
+                                phenoOnly = FALSE,
+                                saveToFile = FALSE,
+                                maxP = 1.0,
+                                permute = FALSE,
+                                nperm = 0,
+                                genotypeComponent = NULL,
+                                minClassSize = 0,
+                                biallelicOnly = FALSE,
+                                siteStatsOut = FALSE,
+                                appendAddDom = FALSE) {
+    # inputDataSet <- createTasselDataSet(
+    #  createPhenoGenoBasedOnFormula(formula, genotypePhenotypeTable)
+    # )
+    plugin <- new(J("net.maizegenetics.analysis.association.FixedEffectLMPlugin"), .jnull(), FALSE)
+    plugin$setParameter("phenoOnly",toString(phenoOnly))
+    plugin$setParameter("saveToFile",toString(saveToFile))
+    plugin$setParameter("maxP",toString(maxP))
+    plugin$setParameter("permute",toString(permute))
+    plugin$setParameter("nperm",toString(nperm))
+    #plugin$setParameter("genotypeComponent",genotypeComponent) #enum not working
+    plugin$setParameter("minClassSize",toString(minClassSize))
+    plugin$setParameter("biallelicOnly",toString(biallelicOnly))
+    plugin$setParameter("siteStatsOut",toString(siteStatsOut))
+    plugin$setParameter("appendAddDom",toString(appendAddDom))
+    # resultDataSet <- plugin$performFunction(inputDataSet)
+    # .dataSetToListOfRObjects(resultDataSet)
+    jtsDataSet <- createTasselDataSet(c(genotypePhenotypeTable@jPhenotypeTable))
+    jtsResultSet <- plugin$processData(jtsDataSet)
+    dataSetToListOfDataFrame(jtsResultSet)
 }
