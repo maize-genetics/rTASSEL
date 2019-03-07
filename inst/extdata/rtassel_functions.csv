@@ -28,6 +28,7 @@
 "GWASpolyGenoFromSummarizedExperiment","GWASVisAnnotFuncs"
 "gwasPolyToDF","GWASVisAnnotFuncs"
 "kinshipPlugin","TasselPluginWrappers"
+"kinshipRMatrix", "KinshipFunctions"
 "manhattan_annot_plot","GWASVisAnnotFuncs"
 "manhattan_trait_plot","GWASVisAnnotFuncs"
 "qqPlot_multi_trait","GWASVisAnnotFuncs"
