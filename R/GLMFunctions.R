@@ -1,11 +1,9 @@
-#!/usr/bin/env Rscript
-
 #--------------------------------------------------------------------
 # Script Name:   GLMFunctions.R
 # Description:   GLM related functions
 # Author:        Brandon Monier
 # Created:       2019-03-06 at 17:50:59
-# Last Modified:
+# Last Modified: 2019-03-08 at 10:18:08
 #--------------------------------------------------------------------
 
 #--------------------------------------------------------------------
