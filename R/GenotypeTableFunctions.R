@@ -25,6 +25,7 @@
 #' @param path a genotype data path (e.g. \code{*.VCF, *.hmp}, etc.)
 #'
 #' @importFrom rJava .jcall
+#' @importFrom rJava .jinstanceof
 #' @export
 readGenotypeTable <- function(path) {
     if (!file.exists(path)) {

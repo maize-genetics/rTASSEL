@@ -25,6 +25,7 @@
 #' @param path a phenotype data path or \code{R} data frame
 #'
 #' @importFrom rJava J
+#' @importFrom rJava .jinstanceof
 #' @export
 readPhenotypeTable <- function(path) {
     if (!file.exists(path)) {
