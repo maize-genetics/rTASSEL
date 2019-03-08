@@ -91,13 +91,13 @@ extractPhenotypeAttDf <- function(phenotype) {
     #This is pulling the java class and return the class without the whole path
     traitAttribute = unlist(
         lapply(as.list(phenotype$attributeListCopy()),
-            function(tc) str_split(tc$getClass()$toString(),"\\.")[[1]][4])
+            function(tc) stringr::str_split(tc$getClass()$toString(),"\\.")[[1]][4])
         )
     data.frame(traitName, traitType, traitAttribute)
 }
 
 emptyDFWithPhenotype <- function(phenotypeAttDf) {
-    t <- tibble()
+    t <- tibble::tibble()
     for(tn in seq_len(nrow(phenotypeAttDf))) {
         switch(as.character(phenotypeAttDf$traitAttribute)[tn],
             NumericAttribute = t <- add_column(

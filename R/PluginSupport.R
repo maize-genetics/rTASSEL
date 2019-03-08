@@ -29,6 +29,8 @@
 #' @importFrom dplyr filter
 #' @importFrom dplyr pull
 #' @importFrom purrr pmap_chr
+#' @importFrom stringr str_split
+#' @importFrom tibble tibble
 #' @export
 #'
 #'

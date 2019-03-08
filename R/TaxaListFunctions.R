@@ -40,7 +40,7 @@ sampleVectorFromTassel <- function(ObjWithTasselTaxaList) {
 
 sampleDataFrame <- function(ObjWithTasselTaxaList) {
   taxaArray <- sampleVectorFromTassel(ObjWithTasselTaxaList)
-  fourNewCols <- str_split(taxaArray,":")
+  fourNewCols <- stringr::str_split(taxaArray,":")
   colData <- data.frame(Sample=taxaArray, TasselIndex = 0:(length(taxaArray)-1L), row.names = taxaArray,
                         matrix(unlist(fourNewCols), nrow = length(fourNewCols), byrow=T))
 }
