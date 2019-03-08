@@ -42,6 +42,7 @@ getGenotypePhenotype <- function(jtsObject) {
 #'    Phenotype Obj
 #'
 #' @importFrom rJava J
+#' @importFrom rJava is.jnull
 #' @export
 readGenotypePhenotype <- function(genoPathOrObj, phenoPathDFOrObj) {
   genoObj <- getGenotypeTable(genoPathOrObj)
