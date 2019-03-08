@@ -85,8 +85,8 @@
 genoPath <- system.file("extdata", "mdp_genotype.hmp.txt", package = "rTASSEL")
 
 ## Phenotype file path example
-phenoPath  <- system.file("extdata", "mdp_traits.hmp.txt", package = "rTASSEL")
-phenoPath2 <- system.file("extdata", "mdp_phenotype.hmp.txt", package = "rTASSEL")
+phenoPath  <- system.file("extdata", "mdp_traits.txt", package = "rTASSEL")
+phenoPath2 <- system.file("extdata", "mdp_phenotype.txt", package = "rTASSEL")
 
 ## Phenotype data frame example - currently not working
 # phenoDF <- read.table(phenoPath, header = TRUE)
