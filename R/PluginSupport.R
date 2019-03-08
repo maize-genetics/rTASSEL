@@ -168,13 +168,13 @@ assocModelDesign <- function(phenotypeGenotype,
 
     ## Logic flow...
     if (taxaStat == "fixed" & is.na(gStat)) {
-        message("Perform BLUE analysis...")
+        message("Analysis        : BLUE")
     } else if (is.na(taxaStat) & gStat == "fixed") {
-        message("Perform GLM analysis...")
+        message("Analysis        : GLM")
     } else if (gStat == "fixed" & taxaStat == "random" & !is.null(kinStat)) {
-        message("Perform MLM analysis...")
+        message("Analysis        : MLM")
     } else {
-        message("I don't know what you want...")
+        message("Analysis        : Unknown")
     }
 
     ## Return association data frame for TASSEL analysis
