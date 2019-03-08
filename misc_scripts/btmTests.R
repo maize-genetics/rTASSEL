@@ -82,15 +82,15 @@
 # === Tests =========================================================
 
 ## Genotype file path example
-genoPath <- "inst/extdata/mdp_genotype.hmp.txt"
+genoPath <- system.file("extdata", "mdp_genotype.hmp.txt", package = "rTASSEL")
 
 ## Phenotype file path example
-phenoPath <- "inst/extdata/mdp_traits.txt"
-phenoPath2 <- "inst/extdata/mdp_phenotype.txt"
+phenoPath  <- system.file("extdata", "mdp_traits.hmp.txt", package = "rTASSEL")
+phenoPath2 <- system.file("extdata", "mdp_phenotype.hmp.txt", package = "rTASSEL")
 
-## Phenotype data frame example
-phenoDF <- read.table(phenoPath, header = TRUE)
-colnames(phenoDF)[1] <- "Taxon"
+## Phenotype data frame example - currently not working
+# phenoDF <- read.table(phenoPath, header = TRUE)
+# colnames(phenoDF)[1] <- "Taxon"
 
 ## Read GenotypeTable
 tasGeno <- readGenotypeTable(genoPath)
