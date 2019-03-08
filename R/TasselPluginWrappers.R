@@ -16,29 +16,32 @@
 #      both Phenotype and Genotype objects; only returns Genotype table.
 # TODO Get rid of `$FromR_Filter` from console display
 filterSiteBuilderPlugin <- function(genotypeTable,
-                                    siteMinCount=0,
-                                    siteMinAlleleFreq=0.0,
-                                    siteMaxAlleleFreq=1.0,
-                                    minHeterozygous=0.0,
-                                    maxHeterozygous=1.0,
-                                    siteRangeFilterType="NONE",
-                                    startSite=0,
-                                    endSite=0
-) {
-  inputDataSet <- createTasselDataSet(
-    .getTASSELClass(genotypeTable, "GenotypeTable")
-  )
-  plugin <- new(J("net.maizegenetics.analysis.filter.FilterSiteBuilderPlugin"), .jnull(), FALSE)
-  plugin$setParameter("siteMinCount",toString(siteMinCount))
-  plugin$setParameter("siteMinAlleleFreq",toString(siteMinAlleleFreq))
-  plugin$setParameter("siteMaxAlleleFreq",toString(siteMaxAlleleFreq))
-  plugin$setParameter("minHeterozygous",toString(minHeterozygous))
-  plugin$setParameter("maxHeterozygous",toString(maxHeterozygous))
-  plugin$setParameter("siteRangeFilterType",toString(siteRangeFilterType))
-  plugin$setParameter("startSite",toString(startSite))
-  plugin$setParameter("endSite",toString(endSite))
-  resultDataSet <- plugin$performFunction(inputDataSet)
-  .dataSetToListOfRObjects(resultDataSet)
+                                    siteMinCount = 0,
+                                    siteMinAlleleFreq = 0.0,
+                                    siteMaxAlleleFreq = 1.0,
+                                    minHeterozygous = 0.0,
+                                    maxHeterozygous = 1.0,
+                                    siteRangeFilterType = "NONE",
+                                    startSite = 0,
+                                    endSite = 0) {
+    inputDataSet <- createTasselDataSet(
+        .getTASSELClass(genotypeTable, "GenotypeTable")
+    )
+    plugin <- new(
+        J("net.maizegenetics.analysis.filter.FilterSiteBuilderPlugin"),
+        .jnull(),
+        FALSE
+    )
+    plugin$setParameter("siteMinCount", toString(siteMinCount))
+    plugin$setParameter("siteMinAlleleFreq", toString(siteMinAlleleFreq))
+    plugin$setParameter("siteMaxAlleleFreq", toString(siteMaxAlleleFreq))
+    plugin$setParameter("minHeterozygous", toString(minHeterozygous))
+    plugin$setParameter("maxHeterozygous", toString(maxHeterozygous))
+    plugin$setParameter("siteRangeFilterType", toString(siteRangeFilterType))
+    plugin$setParameter("startSite", toString(startSite))
+    plugin$setParameter("endSite", toString(endSite))
+    resultDataSet <- plugin$performFunction(inputDataSet)
+    .dataSetToListOfRObjects(resultDataSet)
 }
 
 
