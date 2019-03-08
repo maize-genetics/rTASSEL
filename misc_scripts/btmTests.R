@@ -93,26 +93,26 @@ phenoPath2 <- system.file("extdata", "mdp_phenotype.txt", package = "rTASSEL")
 # colnames(phenoDF)[1] <- "Taxon"
 
 ## Read GenotypeTable
-tasGeno <- readGenotypeTable(genoPath)
+tasGeno <- rTASSEL::readGenotypeTable(genoPath)
 
 ## Read PhenotypeTable
-tasPheno <- readPhenotypeTable(phenoPath)
-tasPheno2 <- readPhenotypeTable(phenoPath2)
+tasPheno <- rTASSEL::readPhenotypeTable(phenoPath)
+tasPheno2 <- rTASSEL::readPhenotypeTable(phenoPath2)
 
 ## Read Genotype and Phenotype
-tasGenoPheno <- readGenotypePhenotype(
+tasGenoPheno <- rTASSEL::readGenotypePhenotype(
     genoPathOrObj = genoPath,
     phenoPathDFOrObj = phenoPath
 )
 
 ## Read Genotype and Phenotype (with covariates)
-tasGenoPhenoCov <- readGenotypePhenotype(
+tasGenoPhenoCov <- rTASSEL::readGenotypePhenotype(
     genoPathOrObj = genoPath,
     phenoPathDFOrObj = phenoPath2
 )
 
 ## Test `assocModelDesign()` - should return BLUE option
-assocModelDesign(
+rTASSEL::assocModelDesign(
     phenotypeGenotype = tasGenoPhenoCov,
     fixed = list(EarHT, EarDia) ~ location + Q1 + Q2 + Q3 + Taxa,
     kinship = NULL
@@ -120,14 +120,14 @@ assocModelDesign(
 
 ## Test `assocModelDesign()` - should return GLM option
 ## G = genotype
-assocModelDesign(
+rTASSEL::assocModelDesign(
     phenotypeGenotype = tasGenoPhenoCov,
     fixed = list(EarHT, EarDia) ~ location + Q1 + Q2 + Q3 + G,
     kinship = NULL
 )
 
 ## Test `assocModelDesign()` - should return MLM option
-assocModelDesign(
+rTASSEL::assocModelDesign(
     phenotypeGenotype = tasGenoPhenoCov,
     fixed = list(EarHT, dpoll) ~ location + G,
     kinship = "K"
@@ -135,13 +135,13 @@ assocModelDesign(
 
 ## Test `kinshipPlugin()` - return kinship matrix TASSEL object
 ##     calculated from a `TasselGenotypePhenotype` object
-tasKin <- kinshipPlugin(
+tasKin <- rTASSEL::kinshipPlugin(
     genotypeTable = tasGenoPheno,
     method = "Centered_IBS",
     maxAlleles = 6,
     algorithmVariation = "Observed_Allele_Freq"
 )
-tasKinR <- kinshipRMatrix(tasKin) ## Convert to R matrix
+tasKinR <- rTASSEL::kinshipRMatrix(tasKin) ## Convert to R matrix
 tasKinR[1:10, 1:10]               ## Get subset
 image(tasKinR)                    ## Visualize it
 
