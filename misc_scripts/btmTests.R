@@ -105,9 +105,15 @@ tasGenoPheno <- readGenotypePhenotype(
     phenoPathDFOrObj = phenoPath
 )
 
+## Read Genotype and Phenotype (with covariates)
+tasGenoPhenoCov <- readGenotypePhenotype(
+    genoPathOrObj = genoPath,
+    phenoPathDFOrObj = phenoPath2
+)
+
 ## Test `assocModelDesign()` - should return BLUE option
 assocModelDesign(
-    phenotypeGenotype = tasGenoPheno,
+    phenotypeGenotype = tasGenoPhenoCov,
     fixed = list(EarHT, EarDia) ~ location + Q1 + Q2 + Q3 + Taxa,
     kinship = NULL
 )
@@ -115,14 +121,14 @@ assocModelDesign(
 ## Test `assocModelDesign()` - should return GLM option
 ## G = genotype
 assocModelDesign(
-    phenotypeGenotype = tasGenoPheno,
+    phenotypeGenotype = tasGenoPhenoCov,
     fixed = list(EarHT, EarDia) ~ location + Q1 + Q2 + Q3 + G,
     kinship = NULL
 )
 
 ## Test `assocModelDesign()` - should return MLM option
 assocModelDesign(
-    phenotypeGenotype = tasGenoPheno,
+    phenotypeGenotype = tasGenoPhenoCov,
     fixed = list(EarHT, dpoll) ~ location + G,
     kinship = "K"
 )
