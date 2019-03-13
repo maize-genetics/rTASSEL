@@ -24,6 +24,7 @@
 "getPositionList","PositionListFunctions"
 "getTaxaList","TaxaListFunctions"
 "gffToAnnotationGR","GWASVisAnnotFuncs"
+"glmColConvert", "GLMFunctions"
 "GWASpolyGenoFromSummarizedExperiment","GenotypeTableFunctions"
 "GWASpolyGenoFromSummarizedExperiment","GWASVisAnnotFuncs"
 "gwasPolyToDF","GWASVisAnnotFuncs"
