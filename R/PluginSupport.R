@@ -23,14 +23,15 @@
 #'
 #' @return tibble dataframe defining data, covariates, factors, taxa, and genotypes to be used
 #'
-#' @importFrom tibble add_case
-#' @importFrom magrittr %>%
 #' @importFrom dplyr mutate
 #' @importFrom dplyr filter
 #' @importFrom dplyr pull
+#' @importFrom magrittr %>%
 #' @importFrom purrr pmap_chr
 #' @importFrom stringr str_split
 #' @importFrom tibble tibble
+#' @importFrom tibble add_case
+#' @importFrom tibble add_column
 #' @export
 #'
 #'
