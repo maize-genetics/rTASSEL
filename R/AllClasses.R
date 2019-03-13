@@ -28,7 +28,7 @@
 
 #' @title TasselGenotypePhenotype Class
 #'
-#' @description Class \code{TasselGenotypePhenoty} defines a \code{rTASSEL}
+#' @description Class \code{TasselGenotypePhenotype} defines a \code{rTASSEL}
 #'    Class for storing TASSEL genotype and phenotype objects.
 #'
 #' @name TasselGenotypePhenotype-class
