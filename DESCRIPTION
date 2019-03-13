@@ -30,7 +30,8 @@ Depends:
     tibble,
     dplyr,
     magrittr,
-    purrr
+    purrr,
+    ggplot2
 Imports:
     methods
 Encoding: UTF-8
