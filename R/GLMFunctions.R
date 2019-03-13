@@ -3,7 +3,7 @@
 # Description:   GLM related functions
 # Author:        Brandon Monier
 # Created:       2019-03-06 at 17:50:59
-# Last Modified: 2019-03-08 at 10:18:08
+# Last Modified: 2019-03-12 at 17:23:49
 #--------------------------------------------------------------------
 
 #--------------------------------------------------------------------
@@ -12,6 +12,7 @@
 #    necessary for GLM operations for TASSEL
 #--------------------------------------------------------------------
 
+# Run TASSEL GLM on Genotype Phenotype object
 tasselGLM <- function(tasGenoPhenoObj) {
     plugin <- new(
         J("net.maizegenetics.analysis.association.FixedEffectLMPlugin"),
@@ -26,23 +27,49 @@ tasselGLM <- function(tasGenoPhenoObj) {
     glm_geno  <- glm$getData(1L)$getData()
 
     # Parse GLM statistics
-    glm_stats <- unlist(strsplit(glm_stats$toStringTabDelim(), split = "\n"))
-    glm_stats <- strsplit(glm_stats, split = "\t")
-    glm_stats <- t(simplify2array(glm_stats))
-    colnames(glm_stats) <- as.character(unlist(glm_stats[1, ]))
-    glm_stats <- glm_stats[-1, ]
+    parser <- function(obj) {
+        obj <- unlist(strsplit(obj$toStringTabDelim(), split = "\n"))
+        obj <- strsplit(obj, split = "\t")
+        obj <- t(simplify2array(obj))
+        colnames(obj) <- as.character(unlist(obj[1, ]))
+        obj <- obj[-1, ]
+        tibble::as_tibble(obj)
+    }
 
-    # Parse GLM Genotype Effects
-    glm_geno <- unlist(strsplit(glm_geno$toStringTabDelim(), split = "\n"))
-    glm_geno <- strsplit(glm_geno, split = "\t")
-    glm_geno <- t(simplify2array(glm_geno))
-    colnames(glm_geno) <- as.character(unlist(glm_geno[1, ]))
-    glm_geno <- glm_geno[-1, ]
+    glm_stats <- parser(glm_stats)
+    glm_geno  <- parser(glm_geno)
+
+    glmColConvert(
+        stat = glm_stats,
+        geno = glm_geno
+    )
+
+}
+
+# Convert GLM columns to proper R data types
+glmColConvert <- function(stat, geno) {
+    # Numeric convert
+    stat[4:18] <- sapply(stat[4:18], as.numeric)
+    geno[c(4, 5, 7)] <- lapply(geno[c(4, 5, 7)], as.numeric)
+
+    # Factor convert
+    stat[c(1, 3)] <- lapply(stat[c(1, 3)], factor)
+    geno[c(1, 3, 6)] <- lapply(geno[c(1, 3, 6)], factor)
+
+    # Reorder Chromsome
+    stat$Chr <- factor(
+        stat$Chr,
+        levels = paste(sort(as.numeric(levels(stat$Chr))))
+    )
+    geno$Chr <- factor(
+        geno$Chr,
+        levels = paste(sort(as.numeric(levels(geno$Chr))))
+    )
 
     return(
         list(
-            "GLM_Statistics" = tibble::as_tibble(glm_stats),
-            "GLM_Geno_Effects" = tibble::as_tibble(glm_geno)
+            "GLM_Statistics" = tibble::as_tibble(stat),
+            "GLM_Geno_Effects" = tibble::as_tibble(geno)
         )
     )
 }
