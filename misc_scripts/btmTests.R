@@ -89,8 +89,8 @@ phenoPath  <- system.file("extdata", "mdp_traits.txt", package = "rTASSEL")
 phenoPath2 <- system.file("extdata", "mdp_phenotype.txt", package = "rTASSEL")
 
 ## Phenotype data frame example - currently not working
-# phenoDF <- read.table(phenoPath, header = TRUE)
-# colnames(phenoDF)[1] <- "Taxon"
+phenoDF <- read.table(phenoPath, header = TRUE)
+colnames(phenoDF)[1] <- "Taxon"
 
 ## Read GenotypeTable
 tasGeno <- rTASSEL::readGenotypeTable(genoPath)
@@ -142,29 +142,17 @@ tasKin <- rTASSEL::kinshipPlugin(
     algorithmVariation = "Observed_Allele_Freq"
 )
 tasKinR <- rTASSEL::kinshipRMatrix(tasKin) ## Convert to R matrix
-tasKinR[1:10, 1:10]               ## Get subset
-image(tasKinR)                    ## Visualize it
+tasKinR[1:10, 1:10]                        ## Get subset
+image(tasKinR)                             ## Visualize it
 
 ## Test WRONG file path (readGenotypeTable())
 genoWrongPath <- "this/is/so/wrong"
-readGenotypeTable(path = genoWrongPath)
-
+rTASSEL::readGenotypeTable(path = genoWrongPath)
 
 ## Test WRONG file path (readPhenotypeTable())
 phenoWrongPath <- "wrong/path"
-readPhenotypeTable(path = phenoWrongPath)
+rTASSEL::readPhenotypeTable(path = phenoWrongPath)
 
 
 
-# === Miscellaneous =================================================
 
-## `assocModelDesign()` debug - DON'T RUN
-jtsPheno <- rTASSEL:::getPhenotypeTable(tasGenoPheno)
-phenoAttDf <- rTASSEL:::extractPhenotypeAttDf(jtsPheno)
-phenoAttDf <- tibble::add_case(
-    phenoAttDf,
-    traitName = "G",
-    traitType = "genotype",
-    traitAttribute = "Genotype"
-)
-df <- rTASSEL:::emptyDFWithPhenotype(phenoAttDf)
