@@ -25,14 +25,17 @@
 #' @param path a phenotype data path or \code{R} data frame
 #'
 #' @importFrom rJava J
-#' @importFrom rJava .jinstanceof
+#' @importFrom rJava %instanceof%
+#' @importFrom rJava new
 #' @export
 readPhenotypeTable <- function(path) {
     if (!file.exists(path)) {
         stop("Cannot open file ", path, ": No such file or directory")
     }
 
-    jObj <- new(J("net.maizegenetics.phenotype.PhenotypeBuilder"))$fromFile(path)
+    jObj <- rJava::new(
+        rJava::J("net.maizegenetics.phenotype.PhenotypeBuilder")
+    )$fromFile(path)
     .tasselObjectConstructor(jObj$build()$get(0L))
 }
 
