@@ -35,3 +35,22 @@ phenoAttDf <- tibble::add_case(
     traitAttribute = "Genotype"
 )
 df <- rTASSEL:::emptyDFWithPhenotype(phenoAttDf)
+
+
+## Plugin tests
+jc <- rJava::J("net/maizegenetics/plugindef/GenerateRCode")
+
+## if GLM
+tmp <- c()
+for (i in seq_len(100)) {
+    assoc <- jc$association(
+        .jnull(),
+        .jnull(),
+        tasGenoPheno@jPhenotypeTable,
+        tasGenoPheno@jTasselObj
+    )
+    tmp[i] <- assoc$hashCode()
+}
+assoc$hashCode()
+
+
