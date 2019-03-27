@@ -28,8 +28,8 @@ manhattanPlot <- function(assocStats,
 
     ## Color data
     col <- c(
-        "black" = "#333333",
-        "red"   = "#D34747"
+        "col1" = "#333333",
+        "col2"   = "#D34747"
     )
 
     ## Plot components
@@ -41,7 +41,7 @@ manhattanPlot <- function(assocStats,
             data = dplyr::filter(
                 filtglmStats, highlight_flag == T
             ),
-            color = col[["red"]],
+            color = col[["col1"]],
             size = 2
         ) +
         ggplot2::scale_color_manual(
@@ -73,7 +73,7 @@ manhattanPlot <- function(assocStats,
                         no = ""
                     )
                 ),
-                color = col[["black"]],
+                color = col[["col2"]],
                 size = 3,
                 hjust = "inward",
                 vjust = "inward",
