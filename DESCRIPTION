@@ -21,7 +21,7 @@ Description:
 License: GPL-3 | file LICENSE
 URL:
     https://bitbucket.org/bucklerlab/rtassel/src/master/
-Depends:
+Imports:
     rJava,
     GenomicRanges,
     IRanges,
@@ -31,8 +31,7 @@ Depends:
     dplyr,
     magrittr,
     purrr,
-    ggplot2
-Imports:
+    ggplot2,
     methods
 Encoding: UTF-8
 LazyData: true
