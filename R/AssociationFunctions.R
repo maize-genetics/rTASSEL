@@ -62,7 +62,6 @@ assocModelFitter <- function(tasObj,
     }
 
     # Logic - Handle "." variables
-
     if (all(formResp == ".", formPred == ".")) {
         message("Running all traits...")
         finalResp <- as.vector(tasResp[which(tasResp$traitName != "."), ]$traitName)
@@ -82,7 +81,11 @@ assocModelFitter <- function(tasObj,
 
     # Logic - Handle association analyses
     if (!fitMarkers & is.null(kinship)) {
-        message("Association Analysis : BLUEs")
+        if (!is.jnull(tasObj@jPhenotypeTable)) {
+            message("Association Analysis : BLUEs")
+        } else {
+            stop("No TASSEL phenotype table was found in TasselGenotypePhenotype object!")
+        }
     } else if (fitMarkers & is.null(kinship)) {
         if (!is.jnull(tasObj@jGenotypeTable)) {
             message("Association Analysis : GLM")
