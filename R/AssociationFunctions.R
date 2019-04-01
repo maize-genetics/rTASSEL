@@ -1,5 +1,3 @@
-#!/usr/bin/env Rscript
-
 #--------------------------------------------------------------------
 # Script Name:   AssociationFunctions.R
 # Description:   General functions for running association analysis
@@ -15,7 +13,86 @@
 #--------------------------------------------------------------------
 
 # Association analysis front-end
-assocModelFitter <- function(tasObj, model, kinship = NULL) {
+assocModelFitter <- function(tasObj,
+                             formula,
+                             fitMarkers = FALSE,
+                             kinship = NULL) {
+
+    # Logic - Check for TasselGenotypePhenotype class
+    if (!is(tasObj, "TasselGenotypePhenotype")) {
+        stop("tasObj is not of class \"TasselGenotypePhenotype\"")
+    }
+    # Extract formula response and prediction components
+    formResp <- all.vars(formula[[2]])
+    formPred <- all.vars(formula[[3]])
+
+    # Get TASSEL object trait metadata
+    jtsPheno <- rTASSEL:::getPhenotypeTable(tasObj)
+    phenoAttDf <- rTASSEL:::extractPhenotypeAttDf(jtsPheno)
+
+    # Add "." variable for whitelisting
+    wildCard <- data.frame(
+        traitName = ".",
+        traitType = "wildcard",
+        traitAttribute = "AnyAttribute"
+    )
+    phenoAttDf <- rbind(phenoAttDf, wildCard)
+
+    # Subset TASSEL object trait types
+    tasResp <- subset(
+        x = phenoAttDf,
+        traitType == "data" |
+            traitType == "wildcard"
+    )
+    tasPred <- subset(
+        x = phenoAttDf,
+        traitType == "factor" |
+            traitType == "covariate" |
+            traitType == "wildcard"
+    )
+
+    # Logic - Check formula entry
+    if (any(!(c(formResp, formPred) %in% phenoAttDf$traitName))) {
+        stop("Variables in formula do not match traits in TASSEL object")
+    } else if (any(!(formResp %in% tasResp$traitName))) {
+        stop("Only <data> trait types can be implemented as response variables.")
+    } else if (any(!(formPred %in% tasPred$traitName))) {
+        stop("Only <factor> or <covariate> trait types can be implemented as predictor variables.")
+    }
+
+    # Logic - Handle "." variables
+    if (formResp == "." & formPred == ".") {
+        message("Running all traits...")
+    } else if (formResp == "." & formPred != ".") {
+        message("Running all <data> traits...")
+    } else if (formResp != "." & formPred == ".") {
+        message("Running all non <data> traits...")
+    }
+
+    # Logic - Handle association analyses
+    if (!fitMarkers & is.null(kinship)) {
+        message("Association Analysis : BLUEs")
+    } else if (fitMarkers & is.null(kinship)) {
+        if (!is.jnull(tasObj@jGenotypeTable)) {
+            message("Association Analysis : GLM")
+        } else {
+            stop("No TASSEL genotype table was found in TasselGenotypePhenotype object!")
+        }
+    } else if (fitMarkers & !is.null(kinship)) {
+        message("Associaiton Analysis : MLM")
+    } else {
+        stop("Don't know how to analyze with given parameter inputs.")
+    }
+
+    # DEBUG
+    return(
+        list(
+            formResp = formResp,
+            formPred = formPred,
+            tasResp = tasResp,
+            tasPred = tasPred
+        )
+    )
 
 }
 
