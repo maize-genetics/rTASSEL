@@ -7,9 +7,21 @@
 #                                  | |
 #                                  |_|
 
-#=== Notes ==========================================================
+#=== Temporary Flow Concepts=========================================
 
+# Phenotype filtration
 
+## Parameters
+tasObj <- tasPheno
+
+## Flow
+jtsPheno <- rTASSEL:::getPhenotypeTable(tasObj)
+# phenoAttDf <- rTASSEL:::extractPhenotypeAttDf(jtsPheno)
+# tmpPhenoDFDataTypes <- rTASSEL:::emptyDFWithPhenotype(phenoAttDf)
+
+tmpPhenoDF <- rTASSEL:::tasTableConvert(jtsPheno$toStringTabDelim())
+
+tmpTasPhenoObj <- rTASSEL:::createTasselPhenotypeFromDataFrame(tmpPhenoDF)
 
 
 #=== Functions ======================================================
