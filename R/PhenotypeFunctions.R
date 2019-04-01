@@ -62,7 +62,7 @@ createTasselPhenotypeFromDataFrame <- function(phenotypeDF, attributeTypes = NUL
     colnames <- colnames(phenotypeDF)
     notTaxaCols <- colnames[!colnames %in% c("Taxon")]
     if(is.null(attributeTypes)) {
-        atttype <- c(rep("data",length(notTaxaCols)))
+        atttype <- c(rep("data", length(notTaxaCols)))
     } else {
         atttype <- attributeTypes
     }
