@@ -12,40 +12,6 @@
 #    necessary for GLM operations for TASSEL
 #--------------------------------------------------------------------
 
-# Run TASSEL GLM on Genotype Phenotype object
-tasselGLM <- function(tasGenoPhenoObj) {
-    plugin <- new(
-        J("net.maizegenetics.analysis.association.FixedEffectLMPlugin"),
-        .jnull(),
-        FALSE
-    )
-    jtsDataSet <- createTasselDataSet(c(tasGenoPhenoObj@jTasselObj))
-    glm <- plugin$processData(jtsDataSet)
-
-    ## TODO (Brandon) - Iterate this process
-    glm_stats <- glm$getData(0L)$getData()
-    glm_geno  <- glm$getData(1L)$getData()
-
-    # Parse GLM statistics
-    parser <- function(obj) {
-        obj <- unlist(strsplit(obj$toStringTabDelim(), split = "\n"))
-        obj <- strsplit(obj, split = "\t")
-        obj <- t(simplify2array(obj))
-        colnames(obj) <- as.character(unlist(obj[1, ]))
-        obj <- obj[-1, ]
-        tibble::as_tibble(obj)
-    }
-
-    glm_stats <- parser(glm_stats)
-    glm_geno  <- parser(glm_geno)
-
-    glmColConvert(
-        stat = glm_stats,
-        geno = glm_geno
-    )
-
-}
-
 # Convert GLM columns to proper R data types
 glmColConvert <- function(stat, geno) {
     # Numeric convert
