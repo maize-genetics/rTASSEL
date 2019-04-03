@@ -50,6 +50,7 @@ tasGeno <- rTASSEL::readGenotypeTable(genoPath)
 ## Read PhenotypeTable
 tasPheno <- rTASSEL::readPhenotypeTable(phenoPath)
 tasPheno2 <- rTASSEL::readPhenotypeTable(phenoPath2)
+tasPheno3 <- rTASSEL:::createTasselPhenotypeFromDataFrame(phenoDF)
 
 ## Read Genotype and Phenotype
 tasGenoPheno <- rTASSEL::readGenotypePhenotype(
