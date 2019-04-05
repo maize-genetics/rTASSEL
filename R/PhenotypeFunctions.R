@@ -57,7 +57,7 @@ readPhenotypeFromPath <- function(path) {
 #' @name readPhenotypeFromDataFrame
 #' @rdname readPhenotypeFromDataFrame
 #'
-#' @param phenoDF A \code{R} object of class \code{data.frame}.
+#' @param phenotypeDF A \code{R} object of class \code{data.frame}.
 #' @param taxaID The column name that represents your taxa data as a string.
 #' @param attributeTypes A vector of non-taxa attributes. If \code{NULL}, all
 #'    attributes will be TASSEL \code{<data>} types.
