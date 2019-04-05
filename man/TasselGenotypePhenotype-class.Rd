@@ -3,8 +3,18 @@
 \docType{class}
 \name{TasselGenotypePhenotype-class}
 \alias{TasselGenotypePhenotype-class}
+\alias{show,TasselGenotypePhenotype-method}
 \title{TasselGenotypePhenotype Class}
+\usage{
+\S4method{show}{TasselGenotypePhenotype}(object)
+}
+\arguments{
+\item{object}{a \code{TasselGenotypePhenotype} class object}
+}
 \description{
 Class \code{TasselGenotypePhenotype} defines a \code{rTASSEL}
    Class for storing TASSEL genotype and phenotype objects.
+
+Prints out information related taxa, positions, genotype, and
+   phenotype information.
 }

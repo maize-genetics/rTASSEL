@@ -8,12 +8,12 @@
 readPhenotypeFromDataFrame(phenotypeDF, taxaID, attributeTypes = NULL)
 }
 \arguments{
+\item{phenotypeDF}{A \code{R} object of class \code{data.frame}.}
+
 \item{taxaID}{The column name that represents your taxa data as a string.}
 
 \item{attributeTypes}{A vector of non-taxa attributes. If \code{NULL}, all
 attributes will be TASSEL \code{<data>} types.}
-
-\item{phenoDF}{A \code{R} object of class \code{data.frame}.}
 }
 \value{
 Returns an object of \code{TasselGenotypePhenotype} class.
