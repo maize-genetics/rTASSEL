@@ -39,6 +39,7 @@
 #' @importFrom dplyr filter
 #' @importFrom dplyr mutate
 #' @importFrom magrittr %>%
+#' @importFrom rlang .data
 #'
 #' @export
 manhattanPlot <- function(assocStats,
@@ -52,7 +53,7 @@ manhattanPlot <- function(assocStats,
 
     ## Filter data
     filtglmStats <- assocStats %>%
-        dplyr::filter(Trait == trait) %>%
+        dplyr::filter(.data$Trait == trait) %>%
         dplyr::mutate(highlight_flag = ifelse(-log10(p) >= threshold, T, F))
 
     ## Color data
@@ -63,12 +64,12 @@ manhattanPlot <- function(assocStats,
 
     ## Plot components
     p <- ggplot2::ggplot(data = filtglmStats) +
-        ggplot2::aes(x = Pos, y = -log10(p)) +
+        ggplot2::aes(x = .data$Pos, y = -log10(.data$p)) +
         ggplot2::geom_point(size = 0.8, na.rm = TRUE) +
-        ggplot2::aes(color = Chr) +
+        ggplot2::aes(color = .data$Chr) +
         ggplot2::geom_point(
             data = dplyr::filter(
-                filtglmStats, highlight_flag == T
+                filtglmStats, .data$highlight_flag == T
             ),
             color = col[["col1"]],
             size = 2
@@ -98,7 +99,7 @@ manhattanPlot <- function(assocStats,
                 ggplot2::aes(
                     label = ifelse(
                         test = -log10(p) >= threshold,
-                        yes = as.character(Marker),
+                        yes = as.character(.data$Marker),
                         no = ""
                     )
                 ),
