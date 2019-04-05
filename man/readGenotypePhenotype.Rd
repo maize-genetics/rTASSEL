@@ -5,7 +5,7 @@
 \title{Wrapper function of TasselGenotypePhenotype class for
    GenotypePhenotype combined data}
 \usage{
-readGenotypePhenotype(genoPathOrObj, phenoPathDFOrObj)
+readGenotypePhenotype(genoPathOrObj, phenoPathDFOrObj, ...)
 }
 \arguments{
 \item{genoPathOrObj}{a path to a genotype file (e.g. VCF, hmp, etc.) or
@@ -13,8 +13,19 @@ TASSEL Genotype Obj}
 
 \item{phenoPathDFOrObj}{a path, a data frame of phenotypic data, or TASSEL
 Phenotype Obj}
+
+\item{...}{Additional parameters to be sent to the function. Currently,
+if an R data frame object is passed, additional parameters will also
+need to be entered for this process. These parameters are derived from
+the \code{readPhenotypeFromDataFrame} function. Mainly, \code{taxaID}
+is required.}
+}
+\value{
+Returns an object of \code{TasselGenotypePhenotype} class.
 }
 \description{
 Creates a Java GenotypePhenotype object which is used for
-   \code{TasselGenotypePhenotype} object construction
+   \code{TasselGenotypePhenotype} object construction. The Java
+   GenotypePhenotype object is created via an \code{intersect} method
+   from TASSEL.
 }

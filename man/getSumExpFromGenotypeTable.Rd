@@ -12,6 +12,9 @@ getSumExpFromGenotypeTable(tasObj, useRef = FALSE)
 \item{useRef}{Use reference alleles or major alleles at sites. If
 \code{FALSE}, major alleles will be used.}
 }
+\value{
+Returns a \code{SummarizedExperiment} of TASSEL genotype data.
+}
 \description{
 This function will generate an object of
    \code{SummarizedExperiment} class for marker data derived from a
