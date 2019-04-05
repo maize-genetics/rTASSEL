@@ -44,11 +44,10 @@ setClass(
 #'
 #' @param object a \code{TasselGenotypePhenotype} class object
 #'
-#' @rdname show-methods
+#' @rdname TasselGenotypePhenotype-class
 #' @aliases show,TasselGenotypePhenotype-method
 #'
 #' @importFrom rJava .jnull
-#' @exportMethod show
 setMethod(
     f = "show",
     signature = "TasselGenotypePhenotype",
