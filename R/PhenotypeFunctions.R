@@ -192,30 +192,3 @@ extractPhenotypeAttDf <- function(phenotype) {
     )
     return(data.frame(traitName, traitType, traitAttribute))
 }
-
-
-## Create empty `data.frame` object for Phenotype attribute data - not exported (<TMP>)
-emptyDFWithPhenotype <- function(phenotypeAttDf) {
-    t <- tibble::tibble()
-    for(tn in seq_len(nrow(phenotypeAttDf))) {
-        switch(as.character(phenotypeAttDf$traitAttribute)[tn],
-            NumericAttribute = t <- add_column(
-                .data = t,
-                !! as.character(phenotypeAttDf[tn, "traitName"][[1]]) := numeric()
-            ),
-            CategoricalAttribute = t <- add_column(
-                .data = t,
-                !! as.character(phenotypeAttDf[tn, "traitName"][[1]]) := factor()
-            ),
-            TaxaAttribute = t <- add_column(
-                .data = t,
-                !! as.character(phenotypeAttDf[tn, "traitName"][[1]]) := character()
-            ),
-            Genotype = t <- add_column(
-                .data = t,
-                !! as.character(phenotypeAttDf[tn,"traitName"][[1]]) := factor()
-            )
-        )
-    }
-    return(t)
-}
