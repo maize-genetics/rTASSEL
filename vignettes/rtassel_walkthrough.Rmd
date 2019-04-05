@@ -1,0 +1,239 @@
+---
+title: "Getting Started with rTASSEL"
+author: "Brandon Monier"
+date: "`r Sys.Date()`"
+output: 
+  BiocStyle::html_document:
+    toc: true
+    fig_caption: true
+    toc_float: true
+    number_sections: false
+vignette: >
+  %\VignetteIndexEntry{Visualizing RNA-seq data with ViDGER}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+  %\usepackage[utf8]{inputenc}
+  %\usepackage{float}      
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+    fig.path='figure/graphics-', 
+    cache.path='cache/graphics-', 
+    fig.align='center',
+    external=TRUE,
+    echo=TRUE,
+    warning=FALSE
+    # fig.pos="H"
+)
+```
+
+# Introduction
+
+## Overview
+Thanks for checking out rTASSEL! In this document, we will go over the
+functionalities used to work with the TASSEL software via R.
+
+TASSEL is a software package used to evaluate traits associations, evolutionary
+patterns, and linkage disequilibrium. Strengths of this software include:
+
+1. The opportunity for a number of new and powerful statistical approaches to 
+   association mapping such as a General Linear Model (GLM) and Mixed Linear 
+   Model (MLM). MLM is an implementation of the technique which our lab's 
+   published Nature Genetics paper - Unified Mixed-Model Method for 
+   Association Mapping - which reduces Type I error in association mapping 
+   with complex pedigrees, families, founding effects and population structure.
+
+2. An ability to handle a wide range of indels (insertion & deletions). Most 
+   software ignore this type of polymorphism; however, in some species 
+   (like maize), this is the most common type of polymorphism.
+
+More information can be found in the following paper:
+
+Bradbury PJ, Zhang Z, Kroon DE, Casstevens TM, Ramdoss Y, Buckler ES. (2007) 
+*TASSEL: Software for association mapping of complex traits in diverse samples.* Bioinformatics 23:2633-2635.
+
+Detailed documentation and source code can be found on our website:
+
+https://www.maizegenetics.net/tassel
+
+## Motivation
+The main goal of developing this package is to construct an R-based front-end
+to connect to a variety of highly used TASSEL methods and analytical tools.
+By using R as a front-end, we aim to utilize a *unified* scripting workflow that
+exploits the analytical prowess of TASSEL in conjunction with R's popular
+data handling and parsing capabilities without ever having the user to switch
+between these two environments. 
+
+## Disclaimer
+Due to the *experimental* nature of this package's lifecycle, end 
+functionalities are prone to change after end-user input is obtained in the 
+near future.
+
+
+
+# Installation and Preliminary Steps
+
+## Prerequisites
+Since TASSEL is written in Java, Java JDK will need to be installed on your
+machine. Additionally, for R to communicate with Java, the R package `rJava`
+will need to be installed. Detailed information can be found using the
+following links, depending on your OS:
+
+* [Linux/MacOS](https://datawookie.netlify.com/blog/2018/02/installing-rjava-on-ubuntu/)
+* [Windows](https://cimentadaj.github.io/blog/2018-05-25-installing-rjava-on-windows-10/installing-rjava-on-windows-10/)
+
+## Install from BitBucket
+After you have `rJava` up and running on your machine, install `rTASSEL` by
+installing the source code from our BitBucket repository:
+
+```{r, eval=FALSE, echo=TRUE}
+if (!require("devtools")) install.packages("devtools")
+devtools::install_bitbucket(repo = "bucklerlab/rtassel", ref = "master")
+```
+
+After source code has been compiled, the package can be loaded using:
+
+```{r, eval=FALSE, echo=TRUE}
+library(rTASSEL)
+```
+
+Or, if you want to use a function without violating your environment you can
+use `rTASSEL::<function>`, where `<function>` is an `rTASSEL` function.
+
+## Preliminary steps
+Before we begin analyzing data, optional parameters can be set up to make
+`rTASSEL` more efficient. To prevent your R console from being overloaded with
+TASSEL logging information, **it is highly recommended that you start a logging
+file**. This file will house all of TASSEL's logging output which is 
+beneficial for debugging and tracking the progress of your analytical workflow.
+To start a logging file, use the following command:
+
+```{r, eval=FALSE, echo=TRUE}
+rTASSEL::startLogger(fullPath = NULL, fileName = NULL)
+```
+
+If the `rTASSEL::startLogger()` parameters are set to `NULL`, the logging file
+will be created in your current working directory. If you are unsure of what
+your working directory is in R, use the base `getwd()` command.
+
+Since genome-wide association analyses can use up a lot of computational 
+resources, memory allocation to `rTASSEL` can be modified. To change the amount 
+of memory, use the base `options()` function and modify the following parameter:
+
+```{r, eval=FALSE, echo=TRUE}
+options(java.parameters = c("-Xmx<memory>", "-Xms<memory>"))
+```
+
+Replace `<memory>` with a specified unit of memory. For example, if I want to
+allocate a maximum of 6 GB of memory for my operations, I would use the input
+`"-Xmx6g"`, where `g` stands for gigabyte (GB). More information about memory
+allocation can be found [here](https://stackoverflow.com/questions/14763079/what-are-the-xms-and-xmx-parameters-when-starting-jvm).
+
+
+
+# Reading Data
+
+## Overview
+Like TASSEL, `rTASSEL` will read two main types of data:
+
+* Genotype data
+* Phenotype data
+
+This data can be read in several different ways. In the following examples,
+we will demonstrate various ways genotype and phenotype information can be
+loaded into `rTASSEL` objects.
+
+## Loading genotype data
+Currently, reading in genotype data to `rTASSEL` is based off of file 
+locations as paths. Genotype/sequencing data can be stored in a variety of
+formats. `rTASSEL` can read and store a wide variety of file types:
+
+* hapmap (HMP)
+* HDF5 (hierarchical data format version 5)
+* VCF (variant call format)
+* Plink
+
+To load this genotype data, simply store your file location as a string object
+in R. For this example, we will load two toy data sets - one being a VCF file
+and the other being a hapmap file. These data sets can be accessed via the 
+`rTASSEL` package itself:
+
+```{r, eval=TRUE, echo=TRUE}
+# Load hapmap data
+genoPathHMP <- system.file(
+    "extdata", 
+    "mdp_genotype.hmp.txt", 
+    package = "rTASSEL"
+)
+genoPathHMP
+
+# Load VCF data
+genoPathVCF <- system.file(
+    "extdata",
+    "maize_chr9_10thin40000.recode.vcf",
+    package = "rTASSEL"
+)
+genoPathVCF
+```
+
+Now that we have the file paths to this data, we can pass this to TASSEL and
+create a formal `TasselGenotypePhenotype` class object in R using the 
+following:
+
+```{r, eval=TRUE, echo=TRUE}
+# Load in hapmap file
+tasGenoHMP <- rTASSEL::readGenotypeTableFromPath(
+    path = genoPathHMP
+)
+
+# Load in VCF file
+tasGenoVCF <- rTASSEL::readGenotypeTableFromPath(
+    path = genoPathVCF
+)
+```
+
+When we call these objects, a summary of the data will be posted to the R
+console:
+
+```{r, eval=TRUE, echo=TRUE}
+tasGenoHMP
+```
+
+This S4 class data object houses "slot" information relating to TASSEL/Java
+pointers of the respective data.
+
+```{r, eval=TRUE, echo=TRUE}
+getSl
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
