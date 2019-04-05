@@ -9,21 +9,11 @@
 #--------------------------------------------------------------------
 # Detailed Purpose:
 #    The main purpose of this Rscript produce wrapper classes for
-#    TASSEL classes
+#    TASSEL class objects in Java
 #--------------------------------------------------------------------
-
-# TODO All
-#   other methods
-#   taxa -> vector
-#   phenotype -> dataframe or tassel obj in wrapper
-#   genotype -> dataframe or tassel obj in wrapper
-#   position -> granges or or tassel obj in wrapper
-
-
 
 #--------------------------------------------------------------------
 # TasselGenotypePhenotype class and constructors
-# TODO - Add log file path slot (Brandon)
 #--------------------------------------------------------------------
 
 #' @title TasselGenotypePhenotype Class
@@ -118,7 +108,7 @@ setMethod(
 }
 
 
-## get TASSEL class - not exported
+## get TASSEL class - not exported (house keeping)
 .getTASSELClass <- function(object, tasselClassName, throwErrorOnNull = TRUE) {
     jtsObject <- switch(
         tasselClassName,
