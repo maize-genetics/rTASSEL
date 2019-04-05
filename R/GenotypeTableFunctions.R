@@ -3,13 +3,14 @@
 # Description:   Support working with TASSEL GenotypeTables
 # Author:        Brandon Monier & Ed buckler
 # Created:       2018-11-26 at 11:14:36
-# Last Modified: 2018-12-21 at 15:16:56
+# Last Modified: 2019-04-04 at 16:34:22
 #--------------------------------------------------------------------
 
 #--------------------------------------------------------------------
 # Detailed Purpose:
-#    The main purpose of this Rscript produce wrapper classes for
-#    TASSEL classes
+#    The main purpose of this Rscript is to house functions
+#    necessary for reading in genotype datasets into R and
+#    extracting data from TASSEL genotype objects.
 #--------------------------------------------------------------------
 
 #' @title Wrapper function of TasselGenotypePhenotype class for genotype
@@ -19,31 +20,87 @@
 #'    \code{TasselGenotypePhenotype} class. It is used for storing genotype
 #'    information into a class object.
 #'
-#' @name readGenotypeTable
-#' @rdname readGenotypeTable
+#' @name readGenotypeTableFromPath
+#' @rdname readGenotypeTableFromPath
 #'
-#' @param path a genotype data path (e.g. \code{*.VCF, *.hmp}, etc.)
+#' @param path A genotype data path (e.g. \code{*.VCF, *.hmp}, etc.).
+#'
+#' @return Returns an object of \code{TasselGenotypePhenotype} class.
 #'
 #' @importFrom rJava .jcall
 #' @importFrom rJava %instanceof%
 #' @export
-readGenotypeTable <- function(path) {
+readGenotypeTableFromPath <- function(path) {
     if (!file.exists(path)) {
         stop("Cannot open file ", path, ": No such file or directory")
     }
 
-    .tasselObjectConstructor(
-        rJava::.jcall(
-            "net/maizegenetics/dna/snp/ImportUtils",
-            "Lnet/maizegenetics/dna/snp/GenotypeTable;",
-            "read",
-            path
+    return(
+        .tasselObjectConstructor(
+            rJava::.jcall(
+                "net/maizegenetics/dna/snp/ImportUtils",
+                "Lnet/maizegenetics/dna/snp/GenotypeTable;",
+                "read",
+                path
+            )
         )
     )
 }
 
 
-## Get a GenotypeTable - not exported
+#' @title Create Summarized Experiment from a TASSEL Genotype Table
+#'
+#' @description This function will generate an object of
+#'    \code{SummarizedExperiment} class for marker data derived from a
+#'    \code{TasselGenotypePhenotype} class object.
+#'
+#' @name getSumExpFromGenotypeTable
+#' @rdname getSumExpFromGenotypeTable
+#'
+#' @param tasObj An object of class \code{TasselGenotypePenotype}.
+#' @param useRef Use reference alleles or major alleles at sites. If
+#'    \code{FALSE}, major alleles will be used.
+#'
+#' @return Returns a \code{SummarizedExperiment} of TASSEL genotype data.
+#'
+#' @importFrom rJava .jcall
+#' @importFrom rJava is.jnull
+#' @importFrom SummarizedExperiment SummarizedExperiment
+#' @export
+getSumExpFromGenotypeTable <- function(tasObj, useRef = FALSE) {
+    jGT <- getGenotypeTable(tasObj)
+
+    if (class(tasObj) != "TasselGenotypePhenotype") {
+        stop("`tasObj` must be of class `TasselGenotypePhenotype`")
+    }
+
+    if (rJava::is.jnull(jGT)) {
+        stop("TASSEL genotype table not detected.")
+    }
+
+    sampleDF <- sampleDataFrame(jGT)
+    genomicRangesDF <- genomicRanges(jGT)
+
+    jc <- rJava::J("net/maizegenetics/plugindef/GenerateRCode")
+
+    genoCallIntArray <- jc$genotypeTableToDosageIntArray(
+        jGT,
+        useRef
+    )
+
+    SummarizedExperiment::SummarizedExperiment(
+        assays = matrix(
+            genoCallIntArray,
+            length(genomicRangesDF),
+            byrow = TRUE
+        ),
+        rowRanges = genomicRangesDF,
+        colData = sampleDF
+    )
+}
+
+
+## Get a GenotypeTable - not exported (house keeping)
 getGenotypeTable <- function(jtsObject) {
     if(is(jtsObject, "TasselGenotypePhenotype")) {
         return(jtsObject@jGenotypeTable)
@@ -58,31 +115,8 @@ getGenotypeTable <- function(jtsObject) {
     }
 }
 
-## Create Summarized Experiment from a TASSEL Genotype Table
-summarizeExperimentFromGenotypeTable <- function(genotypeTable) {
-    jGT <- .getTASSELClass(genotypeTable, "GenotypeTable")
-    sampleDF <- sampleDataFrame(jGT)
-    genomicRangesDF <- genomicRanges(jGT)
 
-    genoCallIntArray <- rJava::.jcall(
-        "net/maizegenetics/plugindef/GenerateRCode",
-        "[I",
-        "genotypeTableToDosageIntArray",
-        jGT,
-        FALSE
-    )
-
-    SummarizedExperiment(
-        assays = matrix(
-            genoCallIntArray,
-            length(genomicRangesDF),
-            byrow = TRUE
-        ),
-        rowRanges = genomicRangesDF, colData = sampleDF
-    )
-}
-
-## Create GWASpoly geno dataframe from SimplifiedExperiment object
+## Create GWASpoly geno dataframe from SimplifiedExperiment object - not exported (<TMP>)
 GWASpolyGenoFromSummarizedExperiment <- function(SummarizedExperimentObject) {
     geno <- data.frame(
         markerName = paste(
@@ -99,7 +133,8 @@ GWASpolyGenoFromSummarizedExperiment <- function(SummarizedExperimentObject) {
     geno
 }
 
-## Create Summarized Experiment from a TASSEL Genotype Table
+
+## Create Summarized Experiment from a TASSEL Genotype Table - not exported (<TMP>)
 snpMatrixFromGenotypeTable <- function(genotypeTable) {
     jGT <- .getTASSELClass(genotypeTable, "GenotypeTable")
 
@@ -124,7 +159,8 @@ snpMatrixFromGenotypeTable <- function(genotypeTable) {
     # as(aMatrix, "SnpMatrix")
 }
 
-## Create GWASpoly geno dataframe from SimplifiedExperiment object
+
+## Create GWASpoly geno dataframe from SimplifiedExperiment object - not exported (<TMP>)
 GWASpolyGenoFromSummarizedExperiment <- function(SummarizedExperimentObject) {
     geno <- data.frame(
         markerName = paste(
