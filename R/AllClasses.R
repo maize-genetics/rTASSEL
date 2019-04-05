@@ -108,6 +108,8 @@ setMethod(
 
 
 ## get TASSEL class - not exported (house keeping)
+#' @importFrom methods is
+#' @importFrom rJava .jstrVal
 .getTASSELClass <- function(object, tasselClassName, throwErrorOnNull = TRUE) {
     jtsObject <- switch(
         tasselClassName,
@@ -121,7 +123,11 @@ setMethod(
         stop("Unknown TASSEL class:", tasselClassName)
     }
     if(throwErrorOnNull & is.jnull(jtsObject)) {
-        errObj <- if(is(object,'jobjRef')) .jstrVal(object) else class(object)
+        errObj <- if(is(object,'jobjRef')) {
+            rJava::.jstrVal(object)
+        } else {
+            class(object)
+        }
         stop(errObj," does not contain a TASSEL ",tasselClassName," object")
     }
     jtsObject
