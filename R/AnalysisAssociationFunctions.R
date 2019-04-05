@@ -60,6 +60,7 @@
 #' @importFrom rJava J
 #' @importFrom rJava .jnull
 #' @importFrom rJava new
+#' @importFrom rlang .data
 #' @export
 assocModelFitter <- function(tasObj,
                              formula,
@@ -99,14 +100,14 @@ assocModelFitter <- function(tasObj,
     # Subset TASSEL object trait types
     tasResp <- subset(
         x = phenoAttDf,
-        traitType == "data" |
-            traitType == "wildcard"
+        .data$traitType == "data" |
+            .data$traitType == "wildcard"
     )
     tasPred <- subset(
         x = phenoAttDf,
-        traitType == "factor" |
-            traitType == "covariate" |
-            traitType == "wildcard"
+        .data$traitType == "factor" |
+            .data$traitType == "covariate" |
+            .data$traitType == "wildcard"
     )
 
     # Logic - Check formula entry
@@ -335,6 +336,7 @@ tasTableConvert <- function(stringTab) {
 
 
 ## Phenotype filter - return modified TASSEL object - not exported (house keeping)
+#' @importFrom rlang .data
 tasPhenoFilter <- function(tasObj, filtObj) {
 
     # Get all TASSEL object trait metadata
@@ -362,7 +364,7 @@ tasPhenoFilter <- function(tasObj, filtObj) {
 
     # Filter data frame columns based on association formula
     phenoDf <- phenoDf[, filtObjRight]
-    phenoAttDf <- subset(phenoAttDf, subset = traitName %in% filtObjRight)
+    phenoAttDf <- subset(phenoAttDf, subset = .data$traitName %in% filtObjRight)
 
     # Get vector of non-taxa column names
     phenoColNames <- colnames(phenoDf)
