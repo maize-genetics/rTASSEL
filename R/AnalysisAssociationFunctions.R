@@ -12,12 +12,63 @@
 #    general functions and wrappers for TASSEL association analyses.
 #--------------------------------------------------------------------
 
-# Association analysis front-end
+#' @title R interface for TASSEL's association methods
+#'
+#' @description This function acts as a front-end for TASSEL's extensive
+#'    association analysis methods. Using this function, users can run
+#'    the following TASSEL association methods:
+#'    \itemize{
+#'      \item{best linear unbiased estimates (BLUEs)}
+#'      \item{generalized linear model (GLM)}
+#'      \item{mixed linear model}
+#'      \item{Fast association (Shabalin 2012)}
+#'    }
+#'
+#' @name assocModelFitter
+#' @rdname assocModelFitter
+#'
+#' @param tasObj An object of class \code{TasselGenotypePenotype}.
+#' @param formula An R-based linear model formula. The general layout of this
+#'   formula uses the following TASSEL data scheme:
+#'   \code{<data> ~ <factor> and/or <covariate>}. If all traits in a Phenotype
+#'   object should be ran, a simplified formula (\code{. ~ .}) can be used.
+#'   This scheme can also be used for running all \code{<data>} or
+#'   \code{<factor>} and/or \code{<covariate>} data as well. Single variables
+#'   are separated witha \code{+} operator. See vignette for further
+#'   clarification.
+#' @param fitMarkers Should marker data be fitted? If \code{TRUE}, GLM
+#'   analysis will be executed. If \code{FALSE}, BLUEs will be calculated.
+#'   Defaults to \code{FALSE}.
+#' @param kinship Should kinship data be accounted for in the model? If so,
+#'   please submit a TASSEL kinship matrix object using the rTASSEL function,
+#'   \code{kinshipMatrix}. Defaults to \code{NULL}
+#' @param fastAssociation Should TASSEL's Fast Association plugin be used?
+#'   Consider setting to \code{TRUE} if you have many phenotypes in your
+#'   data set.
+#' @param minClassSize The minimum acceptable genotype class size. Genotypes
+#'   in a class with a smaller size will be set to missing. Defaults to 0.
+#' @param biallelicOnly Only test sites that are bi-allelic. The alternative is
+#'   to test sites with two or more alleles. Defaults to \code{FALSE}
+#' @param appendAddDom If true, additive and dominance effect estimates will
+#'   be added to the stats report for bi-allelic sites only. The effect will
+#'   only be estimated when the data source is genotype (not a probability).
+#'   The additive effect will always be non-negative. Defaults to \code{FALSE}
+#'
+#' @return Returns an R list containing \code{tibble}-based data frames
+#'
+#' @importFrom rJava is.jnull
+#' @importFrom rJava J
+#' @importFrom rJava .jnull
+#' @importFrom rJava new
+#' @export
 assocModelFitter <- function(tasObj,
                              formula,
                              fitMarkers = FALSE,
                              kinship = NULL,
-                             fastAssociation = FALSE) {
+                             fastAssociation = FALSE,
+                             minClassSize = 0,
+                             biallelicOnly = FALSE,
+                             appendAddDom = FALSE) {
 
     # Logic - Check for TasselGenotypePhenotype class
     if (!is(tasObj, "TasselGenotypePhenotype")) {
@@ -34,8 +85,8 @@ assocModelFitter <- function(tasObj,
     formPred <- all.vars(formula[[3]])
 
     # Get all TASSEL object trait metadata
-    jtsPheno <- rTASSEL:::getPhenotypeTable(tasObj)
-    phenoAttDf <- rTASSEL:::extractPhenotypeAttDf(jtsPheno)
+    jtsPheno <- getPhenotypeTable(tasObj)
+    phenoAttDf <- extractPhenotypeAttDf(jtsPheno)
 
     # Add "." variable for whitelisting
     wildCard <- data.frame(
@@ -102,7 +153,10 @@ assocModelFitter <- function(tasObj,
                     rJava::.jnull(),
                     rJava::.jnull(),
                     jTasFilt$phenotype,
-                    rJava::.jnull()
+                    rJava::.jnull(),
+                    as.integer(minClassSize),
+                    biallelicOnly,
+                    appendAddDom
                 )
                 assocType <- "BLUE"
             } else {
@@ -121,11 +175,14 @@ assocModelFitter <- function(tasObj,
                         rJava::.jnull(),
                         rJava::.jnull(),
                         jTasFilt$phenotype,
-                        rJava::.jnull()
+                        rJava::.jnull(),
+                        as.integer(minClassSize),
+                        biallelicOnly,
+                        appendAddDom
                     )
                     blueOut <- blueOut$get("BLUE")
                     message("(NOTE) BLUEs calculated - using output to test markers...")
-                    blueOut <- rTASSEL:::combineTasselGenotypePhenotype(
+                    blueOut <- combineTasselGenotypePhenotype(
                         genotypeTable = tasObj@jGenotypeTable,
                         phenotype = blueOut
                     )
@@ -133,7 +190,10 @@ assocModelFitter <- function(tasObj,
                         rJava::.jnull(),
                         blueOut$genotypeTable(),
                         blueOut$phenotype(),
-                        blueOut
+                        blueOut,
+                        as.integer(minClassSize),
+                        biallelicOnly,
+                        appendAddDom
                     )
                     assocType <- "GLM"
                 } else {
@@ -142,7 +202,10 @@ assocModelFitter <- function(tasObj,
                         rJava::.jnull(),
                         jTasFilt$genotypeTable,
                         jTasFilt$phenotype,
-                        jTasFilt$genotypePhenotype
+                        jTasFilt$genotypePhenotype,
+                        as.integer(minClassSize),
+                        biallelicOnly,
+                        appendAddDom
                     )
                     assocType <- "GLM"
                 }
@@ -160,11 +223,14 @@ assocModelFitter <- function(tasObj,
                         rJava::.jnull(),
                         rJava::.jnull(),
                         jTasFilt$phenotype,
-                        rJava::.jnull()
+                        rJava::.jnull(),
+                        as.integer(minClassSize),
+                        biallelicOnly,
+                        appendAddDom
                     )
                     blueOut <- blueOut$get("BLUE")
                     message("(NOTE) BLUEs calculated - using output to test markers...")
-                    blueOut <- rTASSEL:::combineTasselGenotypePhenotype(
+                    blueOut <- combineTasselGenotypePhenotype(
                         genotypeTable = tasObj@jGenotypeTable,
                         phenotype = blueOut
                     )
@@ -192,11 +258,14 @@ assocModelFitter <- function(tasObj,
                     rJava::.jnull(),
                     rJava::.jnull(),
                     jTasFilt$phenotype,
-                    rJava::.jnull()
+                    rJava::.jnull(),
+                    as.integer(minClassSize),
+                    biallelicOnly,
+                    appendAddDom
                 )
                 blueOut <- blueOut$get("BLUE")
                 message("(NOTE) BLUEs calculated - using output to test markers...")
-                blueOut <- rTASSEL:::combineTasselGenotypePhenotype(
+                blueOut <- combineTasselGenotypePhenotype(
                     genotypeTable = tasObj@jGenotypeTable,
                     phenotype = blueOut
                 )
@@ -204,7 +273,10 @@ assocModelFitter <- function(tasObj,
                     kinship,
                     blueOut$genotypeTable(),
                     blueOut$phenotype(),
-                    blueOut
+                    blueOut,
+                    as.integer(minClassSize),
+                    biallelicOnly,
+                    appendAddDom
                 )
                 assocType <- "MLM"
             } else {
@@ -213,7 +285,10 @@ assocModelFitter <- function(tasObj,
                     kinship,
                     jTasFilt$genotypeTable,
                     jTasFilt$phenotype,
-                    jTasFilt$genotypePhenotype
+                    jTasFilt$genotypePhenotype,
+                    as.integer(minClassSize),
+                    biallelicOnly,
+                    appendAddDom
                 )
                 assocType <- "MLM"
             }
@@ -227,7 +302,8 @@ assocModelFitter <- function(tasObj,
     assocConvOut <- tasAssocConvert(
         assocType = assocType,
         assocOut = assocOut,
-        notTaxaCols = jTasFilt$notTaxaCols
+        notTaxaCols = jTasFilt$notTaxaCols,
+        finalResp = finalResp
     )
 
     return(
@@ -241,22 +317,28 @@ assocModelFitter <- function(tasObj,
 }
 
 
-# TASSEL Table Report to R data frame converter
+## TASSEL Table Report to R data frame converter - not exported (house keeping)
 tasTableConvert <- function(stringTab) {
     obj <- unlist(strsplit(stringTab, split = "\n"))
     obj <- strsplit(obj, split = "\t")
     obj <- t(simplify2array(obj))
     colnames(obj) <- as.character(unlist(obj[1, ]))
     obj <- obj[-1, ]
-    tibble::as_tibble(obj)
+
+    # Check if object becomes named vector
+    if (is.vector(obj)) {
+        dplyr::bind_rows(obj)
+    } else {
+        tibble::as_tibble(obj)
+    }
 }
 
 
-# Phenotype filter - return modified TASSEL object
+## Phenotype filter - return modified TASSEL object - not exported (house keeping)
 tasPhenoFilter <- function(tasObj, filtObj) {
 
     # Get all TASSEL object trait metadata
-    phenoAttDf <- rTASSEL:::extractPhenotypeAttDf(tasObj@jPhenotypeTable)
+    phenoAttDf <- extractPhenotypeAttDf(tasObj@jPhenotypeTable)
 
     # Get phenotype data frame
     phenoDf <- tasObj@jPhenotypeTable
@@ -318,7 +400,7 @@ tasPhenoFilter <- function(tasObj, filtObj) {
             )
         )
     } else {
-        jcComb <- rTASSEL:::combineTasselGenotypePhenotype(
+        jcComb <- combineTasselGenotypePhenotype(
             genotypeTable = tasObj@jGenotypeTable,
             phenotype = jc
         )
@@ -337,8 +419,8 @@ tasPhenoFilter <- function(tasObj, filtObj) {
 }
 
 
-# Association table reports to tibbles
-tasAssocConvert <- function(assocType, assocOut, notTaxaCols) {
+## Association table reports to tibbles - not exported (house keeping)
+tasAssocConvert <- function(assocType, assocOut, notTaxaCols, finalResp) {
     if (assocType == "BLUE") {
         blue <- assocOut$get("BLUE")
         blueANOVA <- assocOut$get("BLUE_ANOVA")
@@ -368,13 +450,13 @@ tasAssocConvert <- function(assocType, assocOut, notTaxaCols) {
         mlmStats <- assocOut$get("MLM_Stats")
         mlmEffects <- assocOut$get("MLM_Effects")
 
-        mlmResid <- lapply(seq_along(notTaxaCols), function(i) {
-            assocOut$get(paste0("MLM_Residuals_", notTaxaCols[i]))
+        mlmResid <- lapply(seq_along(finalResp), function(i) {
+            assocOut$get(paste0("MLM_Residuals_", finalResp[i]))
         })
-        mlmResid2 <- lapply(seq_along(notTaxaCols), function(i) {
+        mlmResid2 <- lapply(seq_along(finalResp), function(i) {
             tasTableConvert(mlmResid[[i]]$toStringTabDelim())
         })
-        names(mlmResid2) <- paste0("MLM_Residuals_", notTaxaCols)
+        names(mlmResid2) <- paste0("MLM_Residuals_", finalResp)
         return(
             c(
                 list(
@@ -388,7 +470,7 @@ tasAssocConvert <- function(assocType, assocOut, notTaxaCols) {
 }
 
 
-# Convert tibble outputs to appropriate R data types
+## Convert tibble outputs to appropriate R data types - not exported (house keeping)
 tasAssocTableConvert <- function(assocType, assocConvOut, notTaxaCols, finalResp) {
     if (assocType == "BLUE") {
         blue <- assocConvOut$BLUE
@@ -457,7 +539,7 @@ tasAssocTableConvert <- function(assocType, assocConvOut, notTaxaCols, finalResp
     } else if (assocType == "MLM") {
         mlmStats <- assocConvOut$MLM_Stats
         mlmEffects <- assocConvOut$MLM_Effects
-        mlmResid <- assocConvOut[paste0("MLM_Residuals_", notTaxaCols)]
+        mlmResid <- assocConvOut[paste0("MLM_Residuals_", finalResp)]
 
         # Factor convert
         mlmStats$Trait <- factor(mlmStats$Trait)
@@ -466,7 +548,7 @@ tasAssocTableConvert <- function(assocType, assocConvOut, notTaxaCols, finalResp
             mlmStats$Chr,
             levels = paste(sort(as.numeric(levels(mlmStats$Chr))))
         )
-        mlmEffects[c(1, 3, 5)] <- sapply(mlmEffects[c(1, 3, 5)], factor)
+        mlmEffects[c(1, 3, 5)] <- lapply(mlmEffects[c(1, 3, 5)], factor)
         mlmEffects$Locus <- factor(
             mlmEffects$Locus,
             levels = paste(sort(as.numeric(levels(mlmEffects$Locus))))
@@ -477,7 +559,7 @@ tasAssocTableConvert <- function(assocType, assocConvOut, notTaxaCols, finalResp
         mlmEffects[c(4, 6, 7)] <- sapply(mlmEffects[c(4, 6, 7)], as.numeric)
 
         # Numeric convert - Residuals
-        for (i in seq_along(notTaxaCols)) {
+        for (i in seq_along(finalResp)) {
             mlmResid[[i]][[2]] <- as.numeric(mlmResid[[i]][[2]])
         }
 

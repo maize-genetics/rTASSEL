@@ -3,7 +3,7 @@
 # Description:   Visualization functions for association analyses
 # Author:        Brandon Monier
 # Created:       2019-03-13 at 13:27:30
-# Last Modified: 2019-03-13 at 16:20:06
+# Last Modified: 2019-04-04 at 23:32:09
 #--------------------------------------------------------------------
 
 #--------------------------------------------------------------------
@@ -12,6 +12,35 @@
 #    visualizing association output of TASSEL.
 #--------------------------------------------------------------------
 
+#' @title Create Manhattan plot from rTASSEL association output
+#'
+#' @description This function allows for quick generation of a Manhattan
+#'    plot from rTASSEL association statistical output data.
+#'
+#' @name manhattanPlot
+#' @rdname manhattanPlot
+#'
+#' @param assocStats rTASSEL association statistical output. This output is
+#'    derived from association output dat frames ending in \code{_Stats}.
+#'    This data contains the necessary column variables for this plot to work.
+#' @param trait Which phenotypic trait do you want to plot?
+#' @param threshold User-defined \eqn{p}-value threshold for significant
+#'    marker determination. Once specified any marker points higher than this
+#'    line will be highlighted.
+#' @param colors A vector of colors used for differentiating multiple
+#'    chromosomes. Defaults to 2 shades of blue.
+#' @param showSigMarkers Should significantly highlighted markers be labelled?
+#'    If \code{TRUE}, marker points will labelled with their respective
+#'    marker labels. Defaults to \code{FALSE}.
+#'
+#' @return Returns a \code{ggplot2} object
+#'
+#' @import ggplot2
+#' @importFrom dplyr filter
+#' @importFrom dplyr mutate
+#' @importFrom magrittr %>%
+#'
+#' @export
 manhattanPlot <- function(assocStats,
                           trait,
                           threshold,
