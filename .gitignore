@@ -2,6 +2,7 @@
 *.swo
 *.html
 *.pdf
+*.Rproj
 .DS_Store
 .RData
 .Rhistory
