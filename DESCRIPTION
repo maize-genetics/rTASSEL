@@ -1,5 +1,5 @@
 Package: rTASSEL
-Version: 0.9.2
+Version: 0.9.3
 Date: 2018-12-21
 Title: R front-end for TASSEL
 Authors@R: c(
@@ -22,17 +22,19 @@ License: GPL-3 | file LICENSE
 URL:
     https://bitbucket.org/bucklerlab/rtassel/src/master/
 Imports:
-    rJava,
+    dplyr,
     GenomicRanges,
+    ggplot2,
     IRanges,
+    rJava,
+    magrittr,
+    methods,
+    purrr,
+    rlang,
     S4Vectors,
     stringr,
-    tibble,
-    dplyr,
-    magrittr,
-    purrr,
-    ggplot2,
-    methods
+    SummarizedExperiment,
+    tibble
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.1.1
