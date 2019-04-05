@@ -36,6 +36,10 @@ phenoPath  <- system.file("extdata", "mdp_traits.txt", package = "rTASSEL")
 phenoPath2 <- system.file("extdata", "mdp_phenotype.txt", package = "rTASSEL")
 phenoPath3 <- system.file("extdata", "mdp_traits_nomissing.txt", package = "rTASSEL")
 
+
+
+# === Get phenotype data frame ======================================
+
 ## Phenotype data frame example - currently not working
 phenoDF <- read.table(phenoPath, header = TRUE)
 colnames(phenoDF)[1] <- "Taxon"
@@ -45,12 +49,16 @@ colnames(phenoDF)[1] <- "Taxon"
 # === Read tests ====================================================
 
 ## Read GenotypeTable
-tasGeno <- rTASSEL::readGenotypeTable(genoPath)
+tasGeno <- rTASSEL::readGenotypeTableFromPath(genoPath)
 
 ## Read PhenotypeTable
-tasPheno <- rTASSEL::readPhenotypeTable(phenoPath)
-tasPheno2 <- rTASSEL::readPhenotypeTable(phenoPath2)
-tasPheno3 <- rTASSEL:::createTasselPhenotypeFromDataFrame(phenoDF)
+tasPheno <- rTASSEL::readPhenotypeFromPath(phenoPath)
+tasPheno2 <- rTASSEL::readPhenotypeFromPath(phenoPath2)
+tasPheno3 <- rTASSEL::readPhenotypeFromDataFrame(
+    phenotypeDF = phenoDF,
+    taxaID = "Taxon",
+    attributeTypes = c("data", "covariate", "data")
+)
 
 ## Read Genotype and Phenotype
 tasGenoPheno <- rTASSEL::readGenotypePhenotype(
@@ -70,51 +78,88 @@ tasGenoPhenoFast <- rTASSEL::readGenotypePhenotype(
     phenoPathDFOrObj = phenoPath3
 )
 
-
-
-# === Assocatiation tests ===========================================
-
-## Test `assocModelDesign()` - should return BLUE option
-assocDF <- rTASSEL::assocModelDesign(
-    phenotypeGenotype = tasGenoPhenoCov,
-    fixed = list(EarHT, EarDia) ~ location + Q1 + Q2 + Q3 + Taxa,
-    kinship = NULL
+## Read Genotype and Phenotype (from two `TasselGenotypePhenotype` objects)
+tasGenoPhenoTASOBJ <- rTASSEL::readGenotypePhenotype(
+    genoPathOrObj = tasGeno,
+    phenoPathDFOrObj = tasPheno
 )
 
-## Test `assocModelDesign()` - should return GLM option
-## G = genotype
-rTASSEL::assocModelDesign(
-    phenotypeGenotype = tasGenoPhenoCov,
-    fixed = list(EarHT, EarDia) ~ location + Q1 + Q2 + Q3 + G,
-    kinship = NULL
-)
-
-## Test `assocModelDesign()` - should return MLM option
-rTASSEL::assocModelDesign(
-    phenotypeGenotype = tasGenoPhenoCov,
-    fixed = list(EarHT, dpoll) ~ location + G,
-    kinship = "K"
+## Read Genotype and Phenotype (from Genotype path and R phenotype data frame)
+tasGenoPhenoDF <- rTASSEL::readGenotypePhenotype(
+    genoPathOrObj = genoPath,
+    phenoPathDFOrObj = phenoDF,
+    taxaID = "Taxon"
 )
 
 
+# === Test SummarizedExperiment from TASSEL Genotype ================
+tasSumExp <- rTASSEL::getSumExpFromGenotypeTable(tasGenoPheno)
+tasGRanges <- GenomicRanges::granges(tasSumExp)
 
-# ==== Kinship functions ============================================
 
-## Test `kinshipPlugin()` - return kinship matrix TASSEL object
+
+# === Test extract phenotype data frame =============================
+tasTmpPheno <- rTASSEL::getPhenotypeDF(tasGenoPheno)
+tasTmpPhenoCov <- rTASSEL::getPhenotypeDF(tasGenoPhenoCov)
+
+
+
+# === Matrix functions =============================================+
+
+## Test `kinshipMatrix()` - return kinship matrix TASSEL object
 ##     calculated from a `TasselGenotypePhenotype` object
-tasKin <- rTASSEL::kinshipPlugin(
-    genotypeTable = tasGenoPheno,
+tasKin <- rTASSEL::kinshipMatrix(
+    tasObj = tasGenoPheno,
     method = "Centered_IBS",
     maxAlleles = 6,
     algorithmVariation = "Observed_Allele_Freq"
 )
-tasKinR <- rTASSEL::kinshipRMatrix(tasKin) ## Convert to R matrix
+tasKinR <- rTASSEL::kinshipToRMatrix(tasKin) ## Convert to R matrix
 tasKinR[1:10, 1:10]                        ## Get subset
 image(tasKinR)                             ## Visualize it
 
 
+## Test `distanceMatrix()` - return distance matrix TASSEL object
+tasDist <- rTASSEL::distanceMatrix(tasGenoPheno)
+tasDistR <- rTASSEL::distanceToRMatrix(tasDist)
+tasDistR[1:10, 1:10]
+image(tasDistR)
 
-# === Test for errors ===============================================
+
+# === Test association functions ====================================
+
+tasBLUE <- rTASSEL::assocModelFitter(
+    tasObj = tasGenoPhenoCov,
+    formula = list(EarHT, dpoll) ~ .,
+    fitMarkers = FALSE,
+    kinship = NULL,
+    fastAssociation = FALSE
+); tasBLUE
+
+tasGLM <- rTASSEL::assocModelFitter(
+    tasObj = tasGenoPhenoCov,
+    formula = list(EarHT, dpoll) ~ .,
+    fitMarkers = TRUE,
+    kinship = NULL,
+    fastAssociation = FALSE
+); tasGLM
+
+tasMLM <- rTASSEL::assocModelFitter(
+    tasObj = tasGenoPheno,
+    formula = . ~ .,
+    fitMarkers = TRUE,
+    kinship = tasKin,
+    fastAssociation = FALSE
+); tasMLM
+
+tasFAST <- rTASSEL::assocModelFitter(
+    tasObj = tasGenoPhenoFast,
+    formula = . ~ .,
+    fitMarkers = TRUE,
+    kinship = NULL,
+    fastAssociation = TRUE
+); tasFAST
+
 
 ## Test WRONG file path (readGenotypeTable())
 # genoWrongPath <- "this/is/so/wrong"
