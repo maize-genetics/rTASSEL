@@ -100,14 +100,14 @@ assocModelFitter <- function(tasObj,
     # Subset TASSEL object trait types
     tasResp <- subset(
         x = phenoAttDf,
-        .data$traitType == "data" |
-            .data$traitType == "wildcard"
+        traitType == "data" |
+            traitType == "wildcard"
     )
     tasPred <- subset(
         x = phenoAttDf,
-        .data$traitType == "factor" |
-            .data$traitType == "covariate" |
-            .data$traitType == "wildcard"
+        traitType == "factor" |
+            traitType == "covariate" |
+            traitType == "wildcard"
     )
 
     # Logic - Check formula entry
@@ -364,7 +364,7 @@ tasPhenoFilter <- function(tasObj, filtObj) {
 
     # Filter data frame columns based on association formula
     phenoDf <- phenoDf[, filtObjRight]
-    phenoAttDf <- subset(phenoAttDf, subset = .data$traitName %in% filtObjRight)
+    phenoAttDf <- subset(phenoAttDf, subset = traitName %in% filtObjRight)
 
     # Get vector of non-taxa column names
     phenoColNames <- colnames(phenoDf)
