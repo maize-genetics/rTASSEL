@@ -1,4 +1,4 @@
-## rtassel
+## rTASSEL
 
 ### Objective
 The main goal of developing this package is to construct an R-based front-end
@@ -9,15 +9,15 @@ data handling and parsing capabilities without ever having the user to switch
 between these two environments.
 
 ### Installation
-If you have the `devtools` package on your machine, you can use the following
-commands:
+Package source code can be installed directly from this BitBucket repository
+using the `remotes` package:
 
 ```
-if (!require("devtools")) install.packages("devtools")
-devtools::install_bitbucket(
+if (!require("remotes")) install.packages("remotes")
+remotes::install_bitbucket(
     repo = "bucklerlab/rtassel",
-    ref = "master",
-    build_vignettes = TRUE
+    build = TRUE
+    build_opts = c("--no-resave-data", "--no-manual")
 )
 ```
 
@@ -28,23 +28,22 @@ For an overview of available functions, use the following command:
 help(package = "rTASSEL")
 ```
 
-
-To load example data for this package (after it has been loaded into the
-environment), please use the following locations and
-commands:
+Once the package is installed, long-form documentation and walkthroughs can
+be loaded with:
 
 ```
-# Phenotype path example
-phenoPath <- system.file("extdata", "mdp_traits.txt", package = "rTASSEL")
+utils::vignette("rtassel_walkthrough")
 ```
 
-If you would like to study a function in full,
-refer to the R documentation by using `?<function>` in the console, where 
-`<function>` is an `rTASSEL`-based function.
+
+If you would like to study a function in full, refer to the R documentation 
+by using `?<function>` in the console, where `<function>` is an 
+`rTASSEL`-based function.
 
 ### Contacts
 * Brandon Monier (bm646@cornell.edu)
+* Terry Casstevens
 * Ed Buckler
 
 - - -
-*Last Modified:* 2019-04-05 at 21:40:14
+*Last Modified:* 2019-04-05 at 10:32:50
