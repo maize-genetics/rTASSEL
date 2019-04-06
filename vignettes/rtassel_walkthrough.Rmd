@@ -456,7 +456,7 @@ contains genotypic data, regardless of single or combined TASSEL objects.
 
 
 
-# Analysis - relatedness
+# Analysis - Relatedness
 
 ## Create a kinship matrix object
 In TASSEL, for mixed linear model analyses, a kinship matrix calculated from 
@@ -615,6 +615,9 @@ method to proper work it is necessary that your have:
 be elucidated upon in the following steps. This is simply to show the user how
 properly use these functions and the outputs that they give.
 
+In the following examples, we will run example data and in return, obtain 
+TASSEL association table reports in the form of an R `list` object containing
+`tibble`-based R data frames.
 
 ## Calculate BLUEs
 To caclulate best linear unbiased estimates (BLUEs), numeric phenotype data
@@ -642,8 +645,79 @@ tasBLUE
 ```
 
 
+## Calculate GLM
+Similar to BLUEs, we can fit a generalized linear model (GLM) by simply
+fitting marker data to our model. For this, we need a genotype data set
+combined with our phenotype data in a `TasselGenotypePhenotype` class object:
+
+```{r, echo=TRUE, eval=TRUE}
+# Calculate GLM
+tasGLM <- rTASSEL::assocModelFitter(
+    tasObj = tasGenoPheno,             # <- our prior TASSEL object
+    formula = list(EarHT, dpoll) ~ .,  # <- only EarHT and dpoll are ran
+    fitMarkers = TRUE,                 # <- set this to TRUE for GLM
+    kinship = NULL,
+    fastAssociation = FALSE
+)
+
+# Return GLM output
+tasGLM
+```
 
 
+## Calculate MLM
+Adding to our complexity, we can fit a mixed linear model (MLM) by adding
+kinship to our analysis. In addition to the prior parameters, we will also
+need a TASSEL kinship object (see *Create a kinship matrix object* in the
+*Analysis - Relatedness* section):
+
+```{r, echo=TRUE, eval=TRUE}
+# Calculate MLM
+tasMLM <- rTASSEL::assocModelFitter(
+    tasObj = tasGenoPheno,             # <- our prior TASSEL object
+    formula = EarHT ~ .,               # <- run only EarHT
+    fitMarkers = TRUE,                 # <- set this to TRUE for GLM
+    kinship = tasKin,                  # <- our prior kinship object
+    fastAssociation = FALSE
+)
+
+# Return GLM output
+tasMLM
+```
+
+
+## Calculate Fast Association
+Finally, we can run fast association analysis in our GLM model by setting
+the `fastAssociation` parameter to `TRUE`. **NOTE**: this is only really
+effective if you have many phenotype traits:
+
+```{r, echo=TRUE, eval=TRUE}
+# Read data - need only non missing data!
+phenoPathFast <-system.file(
+    "extdata", 
+    "mdp_traits_nomissing.txt", 
+    package = "rTASSEL"
+)
+
+# Creat rTASSEL object - use prior TASSEL genotype object
+tasGenoPhenoFast <- rTASSEL::readGenotypePhenotype(
+    genoPathOrObj = tasGenoHMP, 
+    phenoPathDFOrObj = phenoPathFast
+)
+ 
+
+# Calculate MLM
+tasFAST <- rTASSEL::assocModelFitter(
+    tasObj = tasGenoPhenoFast,         # <- our prior TASSEL object
+    formula = . ~ .,                   # <- run all of the phenotype data
+    fitMarkers = TRUE,                 # <- set this to TRUE for GLM
+    kinship = NULL,
+    fastAssociation = TRUE             # <- set this to TRUE for fast assoc.
+)
+
+# Return GLM output
+tasFAST
+```
 
 
 
