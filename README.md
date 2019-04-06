@@ -22,6 +22,13 @@ devtools::install_bitbucket(
 ```
 
 ### Usage
+For an overview of available functions, use the following command:
+
+```
+help(package = "rTASSEL")
+```
+
+
 To load example data for this package (after it has been loaded into the
 environment), please use the following locations and
 commands:
