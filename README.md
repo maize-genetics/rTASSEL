@@ -16,7 +16,7 @@ using the `remotes` package:
 if (!require("remotes")) install.packages("remotes")
 remotes::install_bitbucket(
     repo = "bucklerlab/rtassel",
-    build = TRUE
+    build = TRUE,
     build_opts = c("--no-resave-data", "--no-manual")
 )
 ```
@@ -36,8 +36,8 @@ utils::vignette("rtassel_walkthrough")
 ```
 
 
-If you would like to study a function in full, refer to the R documentation 
-by using `?<function>` in the console, where `<function>` is an 
+If you would like to study a function in full, refer to the R documentation
+by using `?<function>` in the console, where `<function>` is an
 `rTASSEL`-based function.
 
 ### Contacts
@@ -46,4 +46,4 @@ by using `?<function>` in the console, where `<function>` is an
 * Ed Buckler
 
 - - -
-*Last Modified:* 2019-04-05 at 22:45:50
+*Last Modified:*  2019-04-08 at 15:07:02
