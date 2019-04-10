@@ -9,6 +9,12 @@ data handling and parsing capabilities without ever having the user to switch
 between these two environments.
 
 ### Installation
+If you do not have experience working with and setting up `rJava` with your
+R installation, *it is recommended that you read the long-form documentation*.
+This walkthrough can be found [here](https://bitbucket.org/tasseladmin/tassel-5-source/wiki/rtassel_walkthrough.md).
+If you are already fairly comfortable working with Java JDK and `rJava`, you
+can follow the following commands.
+
 Package source code can be installed directly from this BitBucket repository
 using the `remotes` package:
 
@@ -46,4 +52,4 @@ by using `?<function>` in the console, where `<function>` is an
 * Ed Buckler
 
 - - -
-*Last Modified:*  2019-04-08 at 15:07:02
+*Last Modified:*  2019-04-10 at 10:17:17
