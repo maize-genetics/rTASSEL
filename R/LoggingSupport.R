@@ -15,6 +15,11 @@ startLogger <- function(fullPath = NULL, fileName = NULL, ...) {
         fileName <- "rTASSEL_log"
     }
 
+    # Remove slash from end of path (for purely aesthetics purposes only)
+    if (grepl(pattern = "/$", x = fullPath)) {
+        fullPath <- gsub(pattern = "/$", replacement = "", x = fullPath)
+    }
+
     if (is.null(fullPath)) {
         file.create(fileName)
         rtlog <- file.path(getwd(), fileName)
