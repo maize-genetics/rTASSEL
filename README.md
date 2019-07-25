@@ -38,7 +38,7 @@ Once the package is installed, long-form documentation and walkthroughs can
 be loaded with:
 
 ```
-utils::vignette("rtassel_walkthrough")
+utils::RShowDoc(what = "rtassel_walkthrough", package = "rTASSEL")
 ```
 
 
