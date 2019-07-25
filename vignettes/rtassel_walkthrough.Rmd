@@ -75,14 +75,40 @@ near future.
 
 # Installation and Preliminary Steps
 
-## Prerequisites
+## Prerequisites - installing rJava
 Since TASSEL is written in Java, Java JDK will need to be installed on your
 machine. Additionally, for R to communicate with Java, the R package `rJava`
 will need to be installed. Detailed information can be found using the
 following links, depending on your OS:
 
-* [Linux/MacOS](https://datawookie.netlify.com/blog/2018/02/installing-rjava-on-ubuntu/)
+* [Linux](https://datawookie.netlify.com/blog/2018/02/installing-rjava-on-ubuntu/)
+* [macOS](https://zhiyzuo.github.io/installation-rJava/)
 * [Windows](https://cimentadaj.github.io/blog/2018-05-25-installing-rjava-on-windows-10/installing-rjava-on-windows-10/)
+
+## Problems with rJava if you have upgraded Java
+On a MAC: if you previously had `rJava` working through RStudio, then you 
+upgraded your Java and it now longer works, try the following:
+
+At the command line type:
+
+```
+R CMD javareconf 
+```
+
+Then check for a left over symbolic link via:
+
+```
+ls -ltr /usr/local/lib/libjvm.dylib
+```
+
+If the link exists, remove it, then create it fresh via these commands:
+
+```
+rm /usr/local/lib/libjvm.dylib
+sudo ln -s $(/usr/libexec/java_home)/lib/server/libjvm.dylib /usr/local/lib
+```
+
+You should now be able to enter RStudio and setup rJava.
 
 ## Install from BitBucket
 After you have `rJava` up and running on your machine, install `rTASSEL` by
@@ -90,7 +116,11 @@ installing the source code from our BitBucket repository:
 
 ```{r, eval=FALSE, echo=TRUE}
 if (!require("devtools")) install.packages("devtools")
-devtools::install_bitbucket(repo = "bucklerlab/rtassel", ref = "master")
+devtools::install_bitbucket(
+    repo = "bucklerlab/rtassel", 
+    ref = "master", 
+    build_vignettes = TRUE
+)
 ```
 
 After source code has been compiled, the package can be loaded using:
@@ -715,40 +745,3 @@ tasFAST <- rTASSEL::assocModelFitter(
 # Return GLM output
 tasFAST
 ```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
