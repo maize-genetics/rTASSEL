@@ -3,7 +3,7 @@
 # Description:   Support for TASSEL GenotypePhenotype Class
 # Author:        Brandon Monier & Ed buckler
 # Created:       2018-11-26 at 11:14:36
-# Last Modified: 2019-04-04 at 19:20:17
+# Last Modified: 2019-07-25 at 15:10:54
 #--------------------------------------------------------------------
 
 #--------------------------------------------------------------------
@@ -33,7 +33,9 @@
 #'    if an R data frame object is passed, additional parameters will also
 #'    need to be entered for this process. These parameters are derived from
 #'    the \code{readPhenotypeFromDataFrame} function. Mainly, \code{taxaID}
-#'    is required.
+#'    is required. If you would like to specify depth retention and position
+#'    sorting in Genotype Tables from a path, indicate them here. See
+#'    \code{readGenotypeTableFromPath()} for more detail.
 #'
 #' @return Returns an object of \code{TasselGenotypePhenotype} class.
 #'
@@ -45,16 +47,13 @@ readGenotypePhenotype <- function(genoPathOrObj, phenoPathDFOrObj, ...) {
     genoObj <- getGenotypeTable(genoPathOrObj)
     if(rJava::is.jnull(genoObj)) {
         genoObj <- getGenotypeTable(
-            readGenotypeTableFromPath(genoPathOrObj)
+            readGenotypeTableFromPath(genoPathOrObj, keepDepth = FALSE, sortPositions = FALSE)
         )
     }
     phenoObj <- getPhenotypeTable(phenoPathDFOrObj)
     if(rJava::is.jnull(phenoObj) & is.data.frame(phenoPathDFOrObj)) {
         phenoObj <- getPhenotypeTable(
-            readPhenotypeFromDataFrame(
-                phenoPathDFOrObj,
-                ...
-            )
+            readPhenotypeFromDataFrame(phenoPathDFOrObj, ...)
         )
     } else if(rJava::is.jnull(phenoObj) & !is.data.frame(phenoPathDFOrObj)) {
         phenoObj <- rJava::new(

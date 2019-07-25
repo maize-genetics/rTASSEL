@@ -3,7 +3,7 @@
 # Description:   Support working with TASSEL GenotypeTables
 # Author:        Brandon Monier & Ed buckler
 # Created:       2018-11-26 at 11:14:36
-# Last Modified: 2019-04-04 at 16:34:22
+# Last Modified: 2019-07-25 at 14:55:30
 #--------------------------------------------------------------------
 
 #--------------------------------------------------------------------
@@ -24,25 +24,23 @@
 #' @rdname readGenotypeTableFromPath
 #'
 #' @param path A genotype data path (e.g. \code{*.VCF, *.hmp}, etc.).
+#' @param keepDepth Should depth be kept? Defaults to \code{FALSE}.
+#' @param sortPositions Should positions be sorted? Defaults to \code{FALSE}.
 #'
 #' @return Returns an object of \code{TasselGenotypePhenotype} class.
 #'
-#' @importFrom rJava .jcall
+#' @importFrom rJava J
 #' @importFrom rJava %instanceof%
 #' @export
-readGenotypeTableFromPath <- function(path) {
+readGenotypeTableFromPath <- function(path, keepDepth = FALSE, sortPositions = FALSE) {
     if (!file.exists(path)) {
         stop("Cannot open file ", path, ": No such file or directory")
     }
 
+    jrc <- rJava::J("net/maizegenetics/plugindef/GenerateRCode")
     return(
         .tasselObjectConstructor(
-            rJava::.jcall(
-                "net/maizegenetics/dna/snp/ImportUtils",
-                "Lnet/maizegenetics/dna/snp/GenotypeTable;",
-                "read",
-                path
-            )
+            jrc$read(path, keepDepth, sortPositions)
         )
     )
 }

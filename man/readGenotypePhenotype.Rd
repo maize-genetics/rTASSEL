@@ -18,7 +18,9 @@ Phenotype Obj}
 if an R data frame object is passed, additional parameters will also
 need to be entered for this process. These parameters are derived from
 the \code{readPhenotypeFromDataFrame} function. Mainly, \code{taxaID}
-is required.}
+is required. If you would like to specify depth retention and position
+sorting in Genotype Tables from a path, indicate them here. See
+\code{readGenotypeTableFromPath()} for more detail.}
 }
 \value{
 Returns an object of \code{TasselGenotypePhenotype} class.

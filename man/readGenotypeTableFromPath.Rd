@@ -5,10 +5,15 @@
 \title{Wrapper function of TasselGenotypePhenotype class for genotype
    data}
 \usage{
-readGenotypeTableFromPath(path)
+readGenotypeTableFromPath(path, keepDepth = FALSE,
+  sortPositions = FALSE)
 }
 \arguments{
 \item{path}{A genotype data path (e.g. \code{*.VCF, *.hmp}, etc.).}
+
+\item{keepDepth}{Should depth be kept? Defaults to \code{FALSE}.}
+
+\item{sortPositions}{Should positions be sorted? Defaults to \code{FALSE}.}
 }
 \value{
 Returns an object of \code{TasselGenotypePhenotype} class.
