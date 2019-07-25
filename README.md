@@ -19,11 +19,11 @@ Package source code can be installed directly from this BitBucket repository
 using the `remotes` package:
 
 ```
-if (!require("remotes")) install.packages("remotes")
-remotes::install_bitbucket(
-    repo = "bucklerlab/rtassel",
-    build = TRUE,
-    build_opts = c("--no-resave-data", "--no-manual")
+if (!require("devtools")) install.packages("devtools")
+devtools::install_bitbucket(
+    repo = "bucklerlab/rtassel", 
+    ref = "master", 
+    build_vignettes = TRUE
 )
 ```
 
