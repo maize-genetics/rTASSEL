@@ -11,7 +11,7 @@ between these two environments.
 ### Installation
 If you do not have experience working with and setting up `rJava` with your
 R installation, *it is recommended that you read the long-form documentation*.
-This walkthrough can be found [here](https://bitbucket.org/tasseladmin/tassel-5-source/wiki/rtassel_walkthrough.md).
+This walkthrough can be found [here](https://bitbucket.org/bucklerlab/rtassel/wiki/Home).
 If you are already fairly comfortable working with Java JDK and `rJava`, you
 can follow the following commands.
 
@@ -21,8 +21,8 @@ using the `remotes` package:
 ```
 if (!require("devtools")) install.packages("devtools")
 devtools::install_bitbucket(
-    repo = "bucklerlab/rtassel", 
-    ref = "master", 
+    repo = "bucklerlab/rtassel",
+    ref = "master",
     build_vignettes = TRUE
 )
 ```
@@ -52,4 +52,4 @@ by using `?<function>` in the console, where `<function>` is an
 * Ed Buckler
 
 - - -
-*Last Modified:*  2019-04-10 at 10:17:17
+*Last Modified:*  2019-08-06 at 13:22:27
