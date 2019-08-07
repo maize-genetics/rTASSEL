@@ -9,3 +9,6 @@
 .Rproj.user
 .httr-oauth
 rTASSEL_log
+
+## R projects
+*.Rproj
