@@ -23,7 +23,7 @@ if (!require("devtools")) install.packages("devtools")
 devtools::install_bitbucket(
     repo = "bucklerlab/rtassel",
     ref = "master",
-    build_vignettes = TRUE
+    build_vignettes = FALSE
 )
 ```
 
@@ -34,12 +34,8 @@ For an overview of available functions, use the following command:
 help(package = "rTASSEL")
 ```
 
-Once the package is installed, long-form documentation and walkthroughs can
-be loaded with:
-
-```
-utils::RShowDoc(what = "rtassel_walkthrough", package = "rTASSEL")
-```
+If you need a walkthrough for potential pipelines, long-form documentation can be
+found on our [wiki site](https://bitbucket.org/bucklerlab/rtassel/wiki/Home).
 
 
 If you would like to study a function in full, refer to the R documentation
@@ -52,4 +48,4 @@ by using `?<function>` in the console, where `<function>` is an
 * Ed Buckler
 
 - - -
-*Last Modified:*  2019-08-06 at 13:22:27
+*Last Modified:*  2019-09-04 at 10:28:27
