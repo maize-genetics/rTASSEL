@@ -76,6 +76,7 @@ setMethod(
             cat("  Genotype Table..... [ ]\n")
         }
         if (!is.jnull(object@jPhenotypeTable)) {
+            # TODO - check number of traits and limit output if trait # is too big (Brandon)
             cat("  Phenotype Table.... [x] Traits:", object@jPhenotypeTable$getTableColumnNames(),"\n")
         } else {
             cat("  Phenotype Table.... [ ]\n")
