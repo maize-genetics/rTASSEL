@@ -25,6 +25,7 @@ License: GPL-3 | file LICENSE
 URL:
     https://bitbucket.org/bucklerlab/rtassel/src/master/
 Imports:
+    BiocStyle,
     dplyr,
     GenomicRanges,
     ggplot2,
@@ -39,8 +40,6 @@ Imports:
     stringr,
     SummarizedExperiment,
     tibble
-Suggests:
-    BiocStyle
 Encoding: UTF-8
 LazyData: true
 VignetteBuilder:
