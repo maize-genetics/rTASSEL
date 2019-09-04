@@ -12,9 +12,7 @@
 .onAttach <- function(libname, pkgname){
     msg <- paste0(
         "Welcome to rTASSEL (version ", utils::packageVersion("rTASSEL"), ")", "\n",
-        " \u2022 Consider starting a TASSEL log file (see ?startLogger())", "\n",
-        " \u2022 Additional memory can be added using the following:", "\n",
-        "     options(java.parameters = c(\"-Xmx<>\"))", "\n"
+        " \u2022 Consider starting a TASSEL log file (see ?startLogger())", "\n"
     )
     packageStartupMessage(msg)
 }
