@@ -76,8 +76,20 @@ setMethod(
             cat("  Genotype Table..... [ ]\n")
         }
         if (!is.jnull(object@jPhenotypeTable)) {
-            # TODO - check number of traits and limit output if trait # is too big (Brandon)
-            cat("  Phenotype Table.... [x] Traits:", object@jPhenotypeTable$getTableColumnNames(),"\n")
+            taxaIDs <- object@jPhenotypeTable$getTableColumnNames()
+            taxaCutOff <- 5
+            if (length(taxaIDs) > taxaCutOff) {
+                taxaRem <- length(taxaIDs) - taxaCutOff
+                taxaIDs <- taxaIDs[seq_len(taxaCutOff)]
+                remMsg <- paste0("... with ", taxaRem, " more IDs\n")
+                cat("  Phenotype Table.... [x]\n")
+                cat("---\n")
+                cat("  Traits:", taxaIDs, remMsg)
+            } else {
+                cat("  Phenotype Table.... [x]\n")
+                cat("---\n")
+                cat("  Traits:", taxaIDs, "\n")
+            }
         } else {
             cat("  Phenotype Table.... [ ]\n")
         }
