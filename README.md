@@ -36,6 +36,9 @@ help(package = "rTASSEL")
 
 If you need a walkthrough for potential pipelines, long-form documentation can be
 found on our [wiki site](https://bitbucket.org/bucklerlab/rtassel/wiki/Home).
+If you prefer to compile a vignette locally, you can set the `build_vignettes`
+parameter to `TRUE` when you download from Bitbucket (*Note:* compiling the
+vignette may take some time to process and analyze test data.)
 
 
 If you would like to study a function in full, refer to the R documentation
@@ -48,4 +51,4 @@ by using `?<function>` in the console, where `<function>` is an
 * Ed Buckler
 
 - - -
-*Last Modified:*  2019-09-04 at 10:28:27
+*Last Modified:*  2019-09-04 at 10:50:20
