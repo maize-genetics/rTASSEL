@@ -1,7 +1,7 @@
 ## ----setup, include=FALSE--------------------------------------------------
 knitr::opts_chunk$set(
-    fig.path='figure/graphics-', 
-    cache.path='cache/graphics-', 
+    fig.path='figure/graphics-',
+    cache.path='cache/graphics-',
     fig.align='center',
     external=TRUE,
     echo=TRUE,
@@ -9,27 +9,28 @@ knitr::opts_chunk$set(
     # fig.pos="H"
 )
 
-## ---- eval=TRUE, echo=FALSE, message=FALSE, warning=FALSE------------------
-rTASSEL::startLogger()
-
 ## ---- eval=FALSE, echo=TRUE------------------------------------------------
 #  if (!require("devtools")) install.packages("devtools")
-#  devtools::install_bitbucket(repo = "bucklerlab/rtassel", ref = "master")
+#  devtools::install_bitbucket(
+#      repo = "bucklerlab/rtassel",
+#      ref = "master",
+#      build_vignettes = TRUE
+#  )
 
 ## ---- eval=FALSE, echo=TRUE------------------------------------------------
 #  library(rTASSEL)
 
 ## ---- eval=FALSE, echo=TRUE------------------------------------------------
-#  rTASSEL::startLogger(fullPath = NULL, fileName = NULL)
+#  options(java.parameters = c("-Xmx<memory>", "-Xms<memory>"))
 
 ## ---- eval=FALSE, echo=TRUE------------------------------------------------
-#  options(java.parameters = c("-Xmx<memory>", "-Xms<memory>"))
+#  rTASSEL::startLogger(fullPath = NULL, fileName = NULL)
 
 ## ---- eval=TRUE, echo=TRUE-------------------------------------------------
 # Load hapmap data
 genoPathHMP <- system.file(
-    "extdata", 
-    "mdp_genotype.hmp.txt", 
+    "extdata",
+    "mdp_genotype.hmp.txt",
     package = "rTASSEL"
 )
 genoPathHMP
@@ -209,17 +210,17 @@ tasMLM
 ## ---- echo=TRUE, eval=TRUE-------------------------------------------------
 # Read data - need only non missing data!
 phenoPathFast <-system.file(
-    "extdata", 
-    "mdp_traits_nomissing.txt", 
+    "extdata",
+    "mdp_traits_nomissing.txt",
     package = "rTASSEL"
 )
 
 # Creat rTASSEL object - use prior TASSEL genotype object
 tasGenoPhenoFast <- rTASSEL::readGenotypePhenotype(
-    genoPathOrObj = tasGenoHMP, 
+    genoPathOrObj = tasGenoHMP,
     phenoPathDFOrObj = phenoPathFast
 )
- 
+
 
 # Calculate MLM
 tasFAST <- rTASSEL::assocModelFitter(
