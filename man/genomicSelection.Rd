@@ -2,7 +2,7 @@
 % Please edit documentation in R/AnalysisAssociationFunctions.R
 \name{genomicSelection}
 \alias{genomicSelection}
-\title{R interface for TASSEL's genomic selection functions}
+\title{R interface for TASSEL's genomic selection capabilities}
 \usage{
 genomicSelection(tasPhenoObj, kinship, doCV = FALSE, kFolds, nIter)
 }
@@ -20,7 +20,7 @@ contains a phenotype object.}
 \item{nIter}{Number of iterations to be ran.}
 }
 \value{
-Returns an R list containing \code{tibble}-based data frames
+Returns a \code{tibble}-based data frame
 }
 \description{
 This function acts as a front-end for TASSEL's genomic

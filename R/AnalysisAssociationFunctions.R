@@ -581,7 +581,7 @@ tasAssocTableConvert <- function(assocType, assocConvOut, notTaxaCols, finalResp
 
 
 
-#' @title R interface for TASSEL's genomic selection functions
+#' @title R interface for TASSEL's genomic selection capabilities
 #'
 #' @description This function acts as a front-end for TASSEL's genomic
 #'   selection functions. This analysis method uses gBLUP (genomic BLUP) to
@@ -629,7 +629,7 @@ tasAssocTableConvert <- function(assocType, assocConvOut, notTaxaCols, finalResp
 #' @param kFolds Number of folds to be entered.
 #' @param nIter Number of iterations to be ran.
 #'
-#' @return Returns an R list containing \code{tibble}-based data frames
+#' @return Returns a \code{tibble}-based data frame
 #'
 #' @importFrom rJava is.jnull
 #' @importFrom rJava J
