@@ -581,10 +581,10 @@ tasAssocTableConvert <- function(assocType, assocConvOut, notTaxaCols, finalResp
 
 
 
-#' @title R interface for TASSEL's genomic selection capabilities
+#' @title R interface for TASSEL's genomic prediction capabilities
 #'
 #' @description This function acts as a front-end for TASSEL's genomic
-#'   selection functions. This analysis method uses gBLUP (genomic BLUP) to
+#'   prediction functions. This analysis method uses gBLUP (genomic BLUP) to
 #'   predict phenotypes from genotypes. It proceeds by fitting a mixed model
 #'   that uses kinship to capture covariance between taxa. The mixed model can
 #'   calculate BLUPs for taxa that do not have phenotypes based on the
@@ -618,8 +618,8 @@ tasAssocTableConvert <- function(assocType, assocConvOut, notTaxaCols, finalResp
 #'   accuracy estimates. The defaults of k = 5 and iterations = 20 will be
 #'   adequate for most users.
 #'
-#' @name genomicSelection
-#' @rdname genomicSelection
+#' @name genomicPrediction
+#' @rdname genomicPrediction
 #'
 #' @param tasPhenoObj An object of class \code{TasselGenotypePenotype} that
 #'   contains a phenotype object.
@@ -634,7 +634,7 @@ tasAssocTableConvert <- function(assocType, assocConvOut, notTaxaCols, finalResp
 #' @importFrom rJava is.jnull
 #' @importFrom rJava J
 #' @export
-genomicSelection <- function(tasPhenoObj, kinship, doCV = FALSE, kFolds, nIter) {
+genomicPrediction <- function(tasPhenoObj, kinship, doCV = FALSE, kFolds, nIter) {
     ## Check for correct rTASSEL class
     if (class(tasPhenoObj) != "TasselGenotypePhenotype") {
         stop("`tasObj` must be of class `TasselGenotypePhenotype`")
