@@ -680,3 +680,74 @@ genomicPrediction <- function(tasPhenoObj, kinship, doCV = FALSE, kFolds, nIter)
     ## Return object
     return(genSelRes)
 }
+
+
+
+#' @title Leave one family out cross-validation
+#'
+#' @description Cross-validation by leaving one family out.
+#'
+#' @param tasPhenoObj An object of class \code{TasselGenotypePenotype} that
+#'   contains a phenotype object with family data.
+#'
+#' @importFrom foreach foreach
+#' @importFrom foreach %do%
+#' @importFrom tibble tibble
+#' @export
+leaveOneFamilyOut <- function(tasPhenoObj) {
+
+    phenoFamilyDF <- getPhenotypeDF(tasPhenoObj)
+
+    ## (1) Create empty data frame object ---
+    LOFO <- data.frame()
+
+    ## (2) Iterate through all families and leave one out (set to NA)
+    for (family in levels(phenoFamilyDF$family)) {
+
+        message("LOFO: ", family)
+        familyTaxa <- phenoFamilyDF$Taxa[phenoFamilyDF$family == family]
+
+        ## Converted iterated family to NA
+        phenoDF_NA <- phenoFamilyDF
+        phenoDF_NA[phenoDF_NA$family == family, sapply(phenoDF_NA, is.numeric)] <- NA
+
+        ## Make rTASSEL phenotype object
+        pheno_TASSEL <- readPhenotypeFromDataFrame(
+            phenotypeDF = phenoDF_NA[, c(1, 3, 4)],
+            taxaID = "Taxa"
+        )
+
+        ## Genomic prediction
+        GP <- genomicPrediction(
+            tasPhenoObj = pheno_TASSEL,
+            kinship = tasKin,
+            doCV = FALSE
+        )
+
+        ## Calculate accuracy
+        out <- foreach::foreach(trait = unique(GP$Trait), .combine = rbind) %do% {
+
+            GP_trait <- GP[GP$Trait == trait, ]
+
+            r <- cor(
+                phenoFamilyDF[match(familyTaxa, phenoFamilyDF$Taxa), trait],
+                GP_trait[match(familyTaxa, GP_trait$Taxon), "Predicted"],
+                use = "complete"
+            )
+
+            tibble::tibble(
+                Trait    = trait,
+                Family   = family,
+                Accuracy = r
+            )
+
+        }
+
+        LOFO <- rbind(LOFO, out)
+
+
+    }
+    names(LOFO) <- c("Trait", "Family", "Accuracy")
+    return(LOFO)
+
+}
