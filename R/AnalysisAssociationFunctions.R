@@ -687,16 +687,16 @@ genomicPrediction <- function(tasPhenoObj, kinship, doCV = FALSE, kFolds, nIter)
 #'
 #' @description Cross-validation by leaving one family out.
 #'
-#' @param tasPhenoObj An object of class \code{TasselGenotypePenotype} that
+#' @param phenoDF An object of class \code{TasselGenotypePenotype} that
 #'   contains a phenotype object with family data.
 #'
 #' @importFrom foreach foreach
 #' @importFrom foreach %do%
 #' @importFrom tibble tibble
 #' @export
-leaveOneFamilyOut <- function(tasPhenoObj) {
+leaveOneFamilyOut <- function(phenoFamilyDF) {
 
-    phenoFamilyDF <- getPhenotypeDF(tasPhenoObj)
+    # phenoFamilyDF <- getPhenotypeDF(tasPhenoObj)
 
     ## (1) Create empty data frame object ---
     LOFO <- data.frame()
@@ -747,7 +747,8 @@ leaveOneFamilyOut <- function(tasPhenoObj) {
 
 
     }
-    names(LOFO) <- c("Trait", "Family", "Accuracy")
+    colnames(LOFO) <- c("Trait", "Family", "Accuracy")
+    LOFO$Accuracy <- as.vector(LOFO$Accuracy)
     return(LOFO)
 
 }
