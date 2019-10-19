@@ -689,12 +689,13 @@ genomicPrediction <- function(tasPhenoObj, kinship, doCV = FALSE, kFolds, nIter)
 #'
 #' @param phenoDF An object of class \code{TasselGenotypePenotype} that
 #'   contains a phenotype object with family data.
+#' @param tasKin A TASSEL kinship object.
 #'
 #' @importFrom foreach foreach
 #' @importFrom foreach %do%
 #' @importFrom tibble tibble
 #' @export
-leaveOneFamilyOut <- function(phenoFamilyDF) {
+leaveOneFamilyOut <- function(phenoFamilyDF, tasKin) {
 
     # phenoFamilyDF <- getPhenotypeDF(tasPhenoObj)
 

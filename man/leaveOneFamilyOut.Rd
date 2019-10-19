@@ -4,9 +4,11 @@
 \alias{leaveOneFamilyOut}
 \title{Leave one family out cross-validation}
 \usage{
-leaveOneFamilyOut(phenoFamilyDF)
+leaveOneFamilyOut(phenoFamilyDF, tasKin)
 }
 \arguments{
+\item{tasKin}{A TASSEL kinship object.}
+
 \item{phenoDF}{An object of class \code{TasselGenotypePenotype} that
 contains a phenotype object with family data.}
 }
