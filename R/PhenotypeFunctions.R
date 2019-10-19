@@ -82,6 +82,11 @@ readPhenotypeFromDataFrame <- function(phenotypeDF,
             )
         )
     }
+
+    if (any(class(phenotypeDF) == "tbl_df")) {
+        phenotypeDF <- as.data.frame(phenotypeDF)
+    }
+
     taxaNames <- as.vector(phenotypeDF[, taxaID])
     colnames <- colnames(phenotypeDF)
     notTaxaCols <- colnames[!colnames %in% taxaID]

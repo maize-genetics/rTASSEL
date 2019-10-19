@@ -40,8 +40,6 @@
 #' @importFrom dplyr mutate
 #' @importFrom magrittr %>%
 #' @importFrom rlang .data
-#'
-#' @export
 manhattanPlot <- function(assocStats,
                           trait,
                           threshold,
