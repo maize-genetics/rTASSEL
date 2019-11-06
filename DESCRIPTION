@@ -7,13 +7,12 @@ Authors@R: c(
         given = "Brandon",
         family = "Monier",
         email = "brandon.monier@gmail.com",
-        role = c("aut")
+        role = c("aut", "cre")
     ),
     person(
         given = "Ed",
         family = "Buckler",
-        email = "esb33@cornell.edu",
-        role = c("aut", "cre")
+        role = c("aut")
     ))
 Description:
     The aim of rTASSEL is to provide an R front-end for the
