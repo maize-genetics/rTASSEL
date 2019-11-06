@@ -1,7 +1,7 @@
 Package: rTASSEL
 Version: 0.9.12
 Date: 2018-12-21
-Title: R front-end for TASSEL
+Title: R Front-End for TASSEL
 Authors@R: c(
     person(
         given = "Brandon",
@@ -22,7 +22,7 @@ Authors@R: c(
 Description:
     The aim of rTASSEL is to provide an R front-end for the
     Java program, TASSEL. TASSEL is a software package used to evaluate
-    trait associaitions, evolutionary patterns, and linkage disequilibrium.
+    trait associations, evolutionary patterns, and linkage disequilibrium.
     Additionally, this software allows for a number of powerful statistical
     approaches to association mapping such general and mixed linear modelling.
 License: GPL-3 | file LICENSE
