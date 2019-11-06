@@ -10,6 +10,11 @@ Authors@R: c(
         role = c("aut", "cre")
     ),
     person(
+        given = "Terry",
+        family = "Casstevens",
+        role = c("aut")
+    ),
+    person(
         given = "Ed",
         family = "Buckler",
         role = c("aut")
