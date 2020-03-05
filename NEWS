@@ -7,7 +7,7 @@
 
 ## CHANGES IN VERSION 0.9.12
 * Added new functions:
-  + `leaveOneFamilyOUt()`
+  + `leaveOneFamilyOut()`
   + `genomicPredction()`
 * Fixed a bug where tibbles when passed through `readPhenotypeFromDataFrame()`,
   would cause errors.
