@@ -65,6 +65,20 @@ filterGenotypeTableSites <- function(tasObj,
         stop("TASSEL genotype object not found")
     }
 
+    # Range check
+    if (siteMinAlleleFreq > 1 || siteMinAlleleFreq < 0) {
+        stop("siteMinAlleleFreq parameter is out of range")
+    }
+    if (siteMaxAlleleFreq > 1 || siteMaxAlleleFreq < 0) {
+        stop("siteMaxAlleleFreq parameter is out of range")
+    }
+    if (minHeterozygous > 1 || minHeterozygous < 0) {
+        stop("minHeterozygous parameter is out of range")
+    }
+    if (maxHeterozygous > 1 || maxHeterozygous < 0) {
+        stop("maxHeterozygous parameter is out of range")
+    }
+
     # Create filter siter builder plugin
     plugin <- rJava::new(
         rJava::J("net.maizegenetics.analysis.filter.FilterSiteBuilderPlugin"),
@@ -133,6 +147,17 @@ filterGenotypeTableTaxa <- function(tasObj,
     jGenoTable <- getGenotypeTable(tasObj)
     if (rJava::is.jnull(jGenoTable)) {
         stop("TASSEL genotype object not found")
+    }
+
+    # Range check
+    if (minNotMissing > 1 || minNotMissing < 0 ) {
+        stop("minNotMissing parameter is out of range")
+    }
+    if (minHeterozygous > 1 || minHeterozygous < 0 ) {
+        stop("minHeterozygous parameter is out of range")
+    }
+    if (maxHeterozygous > 1 || maxHeterozygous < 0 ) {
+        stop("maxHeterozygous parameter is out of range")
     }
 
     # Create filter taxa builder plugin
