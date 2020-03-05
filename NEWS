@@ -1,0 +1,13 @@
+## CHANGES IN VERSION 0.9.13
+* Added error checks for catching C stack usage errors for the following functions:
+  + filterGenotypeTableSites()
+  + filterGenotypeTableTaxa()
+* Added NEWS file for tracking version updates.
+
+
+## CHANGES IN VERSION 0.9.12
+* Added new functions:
+  + `leaveOneFamilyOUt()`
+  + `genomicPredction()`
+* Fixed a bug where tibbles when passed through `readPhenotypeFromDataFrame()`,
+  would cause errors.
