@@ -687,13 +687,14 @@ genomicPrediction <- function(tasPhenoObj, kinship, doCV = FALSE, kFolds, nIter)
 #'
 #' @description Cross-validation by leaving one family out.
 #'
-#' @param phenoDF An object of class \code{TasselGenotypePenotype} that
+#' @param phenoFamilyDF An object of class \code{TasselGenotypePenotype} that
 #'   contains a phenotype object with family data.
 #' @param tasKin A TASSEL kinship object.
 #'
 #' @importFrom foreach foreach
 #' @importFrom foreach %do%
 #' @importFrom tibble tibble
+#' @importFrom stats cor
 #' @export
 leaveOneFamilyOut <- function(phenoFamilyDF, tasKin) {
 
