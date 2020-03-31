@@ -475,7 +475,8 @@ tasGenoPhenoFilt <- rTASSEL::filterGenotypeTableSites(
     tasObj = tasGenoPheno,
     siteMinCount = 150,
     siteMinAlleleFreq = 0.05,
-    siteMaxAlleleFreq = 1.0
+    siteMaxAlleleFreq = 1.0,
+    siteRangeFilterType = "none"
 )
 tasGenoPhenoFilt
 ```
