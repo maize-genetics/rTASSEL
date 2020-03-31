@@ -1,4 +1,4 @@
-## ----setup, include=FALSE--------------------------------------------------
+## ----setup, include=FALSE-----------------------------------------------------
 knitr::opts_chunk$set(
     fig.path='figure/graphics-',
     cache.path='cache/graphics-',
@@ -9,7 +9,7 @@ knitr::opts_chunk$set(
     # fig.pos="H"
 )
 
-## ---- eval=FALSE, echo=TRUE------------------------------------------------
+## ---- eval=FALSE, echo=TRUE---------------------------------------------------
 #  if (!require("devtools")) install.packages("devtools")
 #  devtools::install_bitbucket(
 #      repo = "bucklerlab/rtassel",
@@ -17,16 +17,16 @@ knitr::opts_chunk$set(
 #      build_vignettes = TRUE
 #  )
 
-## ---- eval=FALSE, echo=TRUE------------------------------------------------
+## ---- eval=FALSE, echo=TRUE---------------------------------------------------
 #  library(rTASSEL)
 
-## ---- eval=FALSE, echo=TRUE------------------------------------------------
+## ---- eval=FALSE, echo=TRUE---------------------------------------------------
 #  options(java.parameters = c("-Xmx<memory>", "-Xms<memory>"))
 
-## ---- eval=FALSE, echo=TRUE------------------------------------------------
+## ---- eval=FALSE, echo=TRUE---------------------------------------------------
 #  rTASSEL::startLogger(fullPath = NULL, fileName = NULL)
 
-## ---- eval=TRUE, echo=TRUE-------------------------------------------------
+## ---- eval=TRUE, echo=TRUE----------------------------------------------------
 # Load hapmap data
 genoPathHMP <- system.file(
     "extdata",
@@ -43,7 +43,7 @@ genoPathVCF <- system.file(
 )
 genoPathVCF
 
-## ---- eval=TRUE, echo=TRUE-------------------------------------------------
+## ---- eval=TRUE, echo=TRUE----------------------------------------------------
 # Load in hapmap file
 tasGenoHMP <- rTASSEL::readGenotypeTableFromPath(
     path = genoPathHMP
@@ -54,17 +54,17 @@ tasGenoVCF <- rTASSEL::readGenotypeTableFromPath(
     path = genoPathVCF
 )
 
-## ---- eval=TRUE, echo=TRUE-------------------------------------------------
+## ---- eval=TRUE, echo=TRUE----------------------------------------------------
 tasGenoHMP
 
-## ---- eval=TRUE, echo=TRUE-------------------------------------------------
+## ---- eval=TRUE, echo=TRUE----------------------------------------------------
 class(tasGenoHMP)
 slotNames(tasGenoHMP)
 
-## ---- eval=TRUE, echo=TRUE-------------------------------------------------
+## ---- eval=TRUE, echo=TRUE----------------------------------------------------
 tasGenoHMP@jGenotypeTable
 
-## ---- eval=TRUE, echo=TRUE-------------------------------------------------
+## ---- eval=TRUE, echo=TRUE----------------------------------------------------
 # Read from phenotype path
 phenoPath  <- system.file("extdata", "mdp_traits.txt", package = "rTASSEL")
 phenoPath
@@ -77,7 +77,7 @@ tasPheno <- rTASSEL::readPhenotypeFromPath(
 # Inspect object
 tasPheno
 
-## ---- eval=TRUE, echo=TRUE-------------------------------------------------
+## ---- eval=TRUE, echo=TRUE----------------------------------------------------
 # Create phenotype data frame
 phenoDF <- read.table(phenoPath, header = TRUE)
 colnames(phenoDF)[1] <- "Taxon"
@@ -95,14 +95,14 @@ tasPhenoDF <- rTASSEL::readPhenotypeFromDataFrame(
 # Inspect new object
 tasPhenoDF
 
-## ---- eval=TRUE, echo=TRUE-------------------------------------------------
+## ---- eval=TRUE, echo=TRUE----------------------------------------------------
 tasGenoPheno <- rTASSEL::readGenotypePhenotype(
     genoPathOrObj = tasGenoHMP,
     phenoPathDFOrObj = tasPheno
 )
 tasGenoPheno
 
-## ---- eval=TRUE, echo=TRUE-------------------------------------------------
+## ---- eval=TRUE, echo=TRUE----------------------------------------------------
 tasGenoPhenoDF <- rTASSEL::readGenotypePhenotype(
     genoPathOrObj = genoPathHMP,
     phenoPathDFOrObj = phenoDF,
@@ -111,60 +111,61 @@ tasGenoPhenoDF <- rTASSEL::readGenotypePhenotype(
 )
 tasGenoPhenoDF
 
-## ---- eval=TRUE, echo=TRUE-------------------------------------------------
+## ---- eval=TRUE, echo=TRUE----------------------------------------------------
 tasSumExp <- rTASSEL::getSumExpFromGenotypeTable(
     tasObj = tasGenoPheno
 )
 tasSumExp
 
-## ---- eval=TRUE, echo=TRUE-------------------------------------------------
+## ---- eval=TRUE, echo=TRUE----------------------------------------------------
 SummarizedExperiment::colData(tasSumExp)
 
-## ---- eval=TRUE, echo=TRUE-------------------------------------------------
+## ---- eval=TRUE, echo=TRUE----------------------------------------------------
 SummarizedExperiment::rowData(tasSumExp)
 
-## ---- eval=TRUE, echo=TRUE-------------------------------------------------
+## ---- eval=TRUE, echo=TRUE----------------------------------------------------
 SummarizedExperiment::rowRanges(tasSumExp)
 
-## ---- eval=TRUE, echo=TRUE-------------------------------------------------
+## ---- eval=TRUE, echo=TRUE----------------------------------------------------
 tasExportPhenoDF <- rTASSEL::getPhenotypeDF(
     tasObj = tasGenoPheno
 )
 tasExportPhenoDF
 
-## ---- eval=TRUE, echo=TRUE-------------------------------------------------
+## ---- eval=TRUE, echo=TRUE----------------------------------------------------
 tasGenoPhenoFilt <- rTASSEL::filterGenotypeTableSites(
     tasObj = tasGenoPheno,
     siteMinCount = 150,
     siteMinAlleleFreq = 0.05,
-    siteMaxAlleleFreq = 1.0
+    siteMaxAlleleFreq = 1.0,
+    siteRangeFilterType = "none"
 )
 tasGenoPhenoFilt
 
-## ---- eval=TRUE, echo=TRUE-------------------------------------------------
+## ---- eval=TRUE, echo=TRUE----------------------------------------------------
 tasGenoPheno
 
-## ---- eval=TRUE, echo=TRUE-------------------------------------------------
+## ---- eval=TRUE, echo=TRUE----------------------------------------------------
 tasKin <- rTASSEL::kinshipMatrix(tasObj = tasGenoPheno)
 
-## ---- eval=TRUE, echo=TRUE-------------------------------------------------
+## ---- eval=TRUE, echo=TRUE----------------------------------------------------
 # Get full R matrix
 tasKinRMat <- rTASSEL::kinshipToRMatrix(tasKin)
 
 # Inspect the first 5 rows and columns
 tasKinRMat[1:5, 1:5]
 
-## ---- eval=TRUE, echo=TRUE-------------------------------------------------
+## ---- eval=TRUE, echo=TRUE----------------------------------------------------
 tasDist <- rTASSEL::distanceMatrix(tasObj = tasGenoPheno)
 
-## ---- eval=TRUE, echo=TRUE-------------------------------------------------
+## ---- eval=TRUE, echo=TRUE----------------------------------------------------
 # Get full R matrix
 tasDistRMat <- rTASSEL::distanceToRMatrix(tasDist)
 
 # Inspect the first 5 rows and columns
 tasDistRMat[1:5, 1:5]
 
-## ---- echo=TRUE, eval=TRUE-------------------------------------------------
+## ---- echo=TRUE, eval=TRUE----------------------------------------------------
 # Read in phenotype data
 phenoPathCov <- system.file("extdata", "mdp_phenotype.txt", package = "rTASSEL")
 tasPhenoCov <- rTASSEL::readPhenotypeFromPath(phenoPathCov)
@@ -181,7 +182,7 @@ tasBLUE <- rTASSEL::assocModelFitter(
 # Return BLUE output
 tasBLUE
 
-## ---- echo=TRUE, eval=TRUE-------------------------------------------------
+## ---- echo=TRUE, eval=TRUE----------------------------------------------------
 # Calculate GLM
 tasGLM <- rTASSEL::assocModelFitter(
     tasObj = tasGenoPheno,             # <- our prior TASSEL object
@@ -194,7 +195,7 @@ tasGLM <- rTASSEL::assocModelFitter(
 # Return GLM output
 tasGLM
 
-## ---- echo=TRUE, eval=TRUE-------------------------------------------------
+## ---- echo=TRUE, eval=TRUE----------------------------------------------------
 # Calculate MLM
 tasMLM <- rTASSEL::assocModelFitter(
     tasObj = tasGenoPheno,             # <- our prior TASSEL object
@@ -207,7 +208,7 @@ tasMLM <- rTASSEL::assocModelFitter(
 # Return GLM output
 tasMLM
 
-## ---- echo=TRUE, eval=TRUE-------------------------------------------------
+## ---- echo=TRUE, eval=TRUE----------------------------------------------------
 # Read data - need only non missing data!
 phenoPathFast <-system.file(
     "extdata",
