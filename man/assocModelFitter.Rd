@@ -4,9 +4,16 @@
 \alias{assocModelFitter}
 \title{R interface for TASSEL's association methods}
 \usage{
-assocModelFitter(tasObj, formula, fitMarkers = FALSE, kinship = NULL,
-  fastAssociation = FALSE, minClassSize = 0, biallelicOnly = FALSE,
-  appendAddDom = FALSE)
+assocModelFitter(
+  tasObj,
+  formula,
+  fitMarkers = FALSE,
+  kinship = NULL,
+  fastAssociation = FALSE,
+  minClassSize = 0,
+  biallelicOnly = FALSE,
+  appendAddDom = FALSE
+)
 }
 \arguments{
 \item{tasObj}{An object of class \code{TasselGenotypePenotype}.}

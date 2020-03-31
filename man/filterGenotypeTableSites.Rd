@@ -4,10 +4,21 @@
 \alias{filterGenotypeTableSites}
 \title{Filter genotype table by sites}
 \usage{
-filterGenotypeTableSites(tasObj, siteMinCount = 0,
-  siteMinAlleleFreq = 0, siteMaxAlleleFreq = 1, minHeterozygous = 0,
-  maxHeterozygous = 1, siteRangeFilterType = "NONE", startSite = 0,
-  endSite = 0)
+filterGenotypeTableSites(
+  tasObj,
+  siteMinCount = 0,
+  siteMinAlleleFreq = 0,
+  siteMaxAlleleFreq = 1,
+  minHeterozygous = 0,
+  maxHeterozygous = 1,
+  siteRangeFilterType = c("none", "sites", "position"),
+  startSite = NULL,
+  endSite = NULL,
+  startChr = NULL,
+  startPos = NULL,
+  endChr = NULL,
+  endPos = NULL
+)
 }
 \arguments{
 \item{tasObj}{An object of class \code{TasselGenotypePenotype}.}
@@ -29,11 +40,29 @@ Defaults to 1.0.}
 
 \item{siteRangeFilterType}{True if filtering by site numbers. False if
 filtering by chromosome and position. Options are
-\code{NONE}, \code{SITES}, or \code{POSITIONS}. Defaults to \code{NONE}.}
+\code{none}, \code{sites}, or \code{position}. Defaults to \code{NONE}.}
 
 \item{startSite}{The start site. Defaults to 0.}
 
 \item{endSite}{The end site. Defaults to 0.}
+
+\item{startChr}{Start chromosome for site filtration range if \code{position}
+is chosen from \code{siteRangeFilterType}. Needs end chromsome
+(\code{endChr}) to work.}
+
+\item{startPos}{Physical start position (bp) for filtration range if
+\code{position} is chosen from \code{siteRangeFilterType}. If
+\code{NULL}, the first physical position in the data set will be
+chosen.}
+
+\item{endChr}{End chromosome for site filtration range if \code{position}
+is chosen from \code{siteRangeFilterType}. Needs start chromsome
+(\code{endChr}) to work.}
+
+\item{endPos}{Physical end position (bp) for filtration range if
+\code{position} is chosen from \code{siteRangeFilterType}. If
+\code{NULL}, the last physical position in the data set will be
+chosen.}
 }
 \value{
 Returns an object of \code{TasselGenotypePhenotype} class.

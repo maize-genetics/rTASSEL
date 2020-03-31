@@ -4,8 +4,13 @@
 \alias{manhattanPlot}
 \title{Create Manhattan plot from rTASSEL association output}
 \usage{
-manhattanPlot(assocStats, trait, threshold, colors = c("#91baff",
-  "#3e619b"), showSigMarkers = FALSE)
+manhattanPlot(
+  assocStats,
+  trait,
+  threshold,
+  colors = c("#91baff", "#3e619b"),
+  showSigMarkers = FALSE
+)
 }
 \arguments{
 \item{assocStats}{rTASSEL association statistical output. This output is

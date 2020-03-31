@@ -5,8 +5,7 @@
 \title{Wrapper function of TasselGenotypePhenotype class for genotype
    data}
 \usage{
-readGenotypeTableFromPath(path, keepDepth = FALSE,
-  sortPositions = FALSE)
+readGenotypeTableFromPath(path, keepDepth = FALSE, sortPositions = FALSE)
 }
 \arguments{
 \item{path}{A genotype data path (e.g. \code{*.VCF, *.hmp}, etc.).}

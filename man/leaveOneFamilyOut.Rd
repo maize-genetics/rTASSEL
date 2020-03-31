@@ -7,10 +7,10 @@
 leaveOneFamilyOut(phenoFamilyDF, tasKin)
 }
 \arguments{
-\item{tasKin}{A TASSEL kinship object.}
-
-\item{phenoDF}{An object of class \code{TasselGenotypePenotype} that
+\item{phenoFamilyDF}{An object of class \code{TasselGenotypePenotype} that
 contains a phenotype object with family data.}
+
+\item{tasKin}{A TASSEL kinship object.}
 }
 \description{
 Cross-validation by leaving one family out.
