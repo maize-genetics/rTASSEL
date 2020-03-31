@@ -3,7 +3,7 @@
 # Description:   Functions for TASSEL filtration
 # Author:        Brandon Monier & Ed buckler
 # Created:       2018-11-26 at 11:14:36
-# Last Modified: 2019-04-04 at 21:15:54
+# Last Modified: 2020-03-31 at 18:00:14
 #--------------------------------------------------------------------
 
 #--------------------------------------------------------------------
@@ -35,9 +35,23 @@
 #'    Defaults to 1.0.
 #' @param siteRangeFilterType True if filtering by site numbers. False if
 #'    filtering by chromosome and position. Options are
-#'    \code{NONE}, \code{SITES}, or \code{POSITIONS}. Defaults to \code{NONE}.
+#'    \code{none}, \code{sites}, or \code{position}. Defaults to \code{NONE}.
 #' @param startSite The start site. Defaults to 0.
 #' @param endSite The end site. Defaults to 0.
+#' @param startChr Start chromosome for site filtration range if \code{position}
+#'    is chosen from \code{siteRangeFilterType}. Needs end chromsome
+#'    (\code{endChr}) to work.
+#' @param endChr End chromosome for site filtration range if \code{position}
+#'    is chosen from \code{siteRangeFilterType}. Needs start chromsome
+#'    (\code{endChr}) to work.
+#' @param startPos Physical start position (bp) for filtration range if
+#'    \code{position} is chosen from \code{siteRangeFilterType}. If
+#'    \code{NULL}, the first physical position in the data set will be
+#'    chosen.
+#' @param endPos Physical end position (bp) for filtration range if
+#'    \code{position} is chosen from \code{siteRangeFilterType}. If
+#'    \code{NULL}, the last physical position in the data set will be
+#'    chosen.
 #'
 #' @return Returns an object of \code{TasselGenotypePhenotype} class.
 #'
@@ -52,9 +66,13 @@ filterGenotypeTableSites <- function(tasObj,
                                      siteMaxAlleleFreq = 1.0,
                                      minHeterozygous = 0.0,
                                      maxHeterozygous = 1.0,
-                                     siteRangeFilterType = "NONE",
-                                     startSite = 0,
-                                     endSite = 0) {
+                                     siteRangeFilterType = c("none", "sites", "position"),
+                                     startSite = NULL,
+                                     endSite = NULL,
+                                     startChr = NULL,
+                                     startPos = NULL,
+                                     endChr = NULL,
+                                     endPos = NULL) {
 
     if (class(tasObj) != "TasselGenotypePhenotype") {
         stop("`tasObj` must be of class `TasselGenotypePhenotype`")
@@ -79,6 +97,18 @@ filterGenotypeTableSites <- function(tasObj,
         stop("maxHeterozygous parameter is out of range")
     }
 
+    if (missing(siteRangeFilterType) || !siteRangeFilterType %in% c("none", "sites", "position")) {
+        stop(
+            paste(
+                "Please specify analysis type",
+                "(\"none\", \"sites\", or \"position\")"
+            )
+        )
+    }
+
+    siteRangeFilterType <- match.arg(siteRangeFilterType)
+    # siteRangeFilterType <- toupper(siteRangeFilterType)
+
     # Create filter siter builder plugin
     plugin <- rJava::new(
         rJava::J("net.maizegenetics.analysis.filter.FilterSiteBuilderPlugin"),
@@ -90,9 +120,33 @@ filterGenotypeTableSites <- function(tasObj,
     plugin$setParameter("siteMaxAlleleFreq", toString(siteMaxAlleleFreq))
     plugin$setParameter("minHeterozygous", toString(minHeterozygous))
     plugin$setParameter("maxHeterozygous", toString(maxHeterozygous))
-    plugin$setParameter("siteRangeFilterType", toString(siteRangeFilterType))
-    plugin$setParameter("startSite", toString(startSite))
-    plugin$setParameter("endSite", toString(endSite))
+
+    # Logic check necessary parameters given range filter type
+    if (siteRangeFilterType == "sites") {
+
+        if (is.null(startSite) || is.null(endSite)) {
+            stop("Please specify both start and end sites.")
+        }
+
+        plugin$setParameter("startSite", toString(startSite))
+        plugin$setParameter("endSite", toString(endSite))
+
+    } else if (siteRangeFilterType == "position") {
+
+        if (is.null(startChr) || is.null(endChr)) {
+            stop("Please specify both start and end chromosomes.")
+        }
+
+        if (!is.null(startPos)) startPos <- toString(startPos)
+        if (!is.null(endPos)) endPos <- toString(endPos)
+
+        plugin$setParameter("startChr", toString(startChr))
+        plugin$setParameter("startPos", startPos)
+        plugin$setParameter("endChr", toString(endChr))
+        plugin$setParameter("endPos", endPos)
+    }
+
+    # Run plugin
     resultDataSet <- plugin$runPlugin(jGenoTable)
 
     # Check if input had phenotype table. If yes, combine genotype with phenotype
