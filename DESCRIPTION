@@ -45,6 +45,8 @@ Imports:
     stringr,
     SummarizedExperiment,
     tibble
+Suggests:
+    testthat
 Encoding: UTF-8
 LazyData: true
 VignetteBuilder:
