@@ -52,12 +52,18 @@
 #' @param appendAddDom If true, additive and dominance effect estimates will
 #'   be added to the stats report for bi-allelic sites only. The effect will
 #'   only be estimated when the data source is genotype (not a probability).
-#'   The additive effect will always be non-negative. Defaults to \code{FALSE}
+#'   The additive effect will always be non-negative. Defaults to \code{FALSE}.
+#' @param maxP Maximum p-value (0 - 1) to be reported. Currently works with
+#'   fast association only. If \code{NULL}, a default p-value of \code{0.001}
+#'   will be used as a threshold.
+#' @param maxThreads Maximum threads to be used when running fast association.
+#'   If \code{NULL}, all threads on machine will be used.
 #'
 #' @return Returns an R list containing \code{tibble}-based data frames
 #'
 #' @importFrom rJava is.jnull
 #' @importFrom rJava J
+#' @importFrom rJava .jnew
 #' @importFrom rJava .jnull
 #' @importFrom rJava new
 #' @importFrom rlang .data
@@ -69,7 +75,9 @@ assocModelFitter <- function(tasObj,
                              fastAssociation = FALSE,
                              minClassSize = 0,
                              biallelicOnly = FALSE,
-                             appendAddDom = FALSE) {
+                             appendAddDom = FALSE,
+                             maxP = NULL,
+                             maxThreads = NULL) {
 
     # Logic - Check for TasselGenotypePhenotype class
     if (!is(tasObj, "TasselGenotypePhenotype")) {
@@ -144,6 +152,15 @@ assocModelFitter <- function(tasObj,
         filtObj = c(finalResp, finalPred)
     )
     tmpDF <- as.data.frame(jTasFilt$phenoDf) # check for missing values
+
+    # Logic - Check for out of range p-values
+    if (maxP > 1 || maxP < 0) {
+        stop("p-value is out of range (0 - 1)")
+    }
+
+    # Convert p-values and threads to Java data types
+    maxP <- rJava::.jnew("java/lang/Double", maxP)
+    maxThreads <- rJava::.jnew("java/lang/Integer", toString(maxThreads))
 
     # Logic - Handle association types and output
     if (!fitMarkers & is.null(kinship)) {
@@ -236,13 +253,17 @@ assocModelFitter <- function(tasObj,
                         phenotype = blueOut
                     )
                     assocOut <- jRC$fastAssociation(
-                        blueOut
+                        blueOut,
+                        maxP,
+                        maxThreads
                     )
                     assocType <- "FastAssoc"
                 } else {
                     message("Association Analysis : Fast Association")
                     assocOut <- jRC$fastAssociation(
-                        jTasFilt$genotypePhenotype
+                        jTasFilt$genotypePhenotype,
+                        maxP,
+                        maxThreads
                     )
                     assocType <- "FastAssoc"
                 }
