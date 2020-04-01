@@ -165,73 +165,73 @@ tasDistRMat <- rTASSEL::distanceToRMatrix(tasDist)
 # Inspect the first 5 rows and columns
 tasDistRMat[1:5, 1:5]
 
-## ---- echo=TRUE, eval=TRUE----------------------------------------------------
-# Read in phenotype data
-phenoPathCov <- system.file("extdata", "mdp_phenotype.txt", package = "rTASSEL")
-tasPhenoCov <- rTASSEL::readPhenotypeFromPath(phenoPathCov)
+## ---- echo=TRUE, eval=FALSE---------------------------------------------------
+#  # Read in phenotype data
+#  phenoPathCov <- system.file("extdata", "mdp_phenotype.txt", package = "rTASSEL")
+#  tasPhenoCov <- rTASSEL::readPhenotypeFromPath(phenoPathCov)
+#  
+#  # Calculate BLUEs
+#  tasBLUE <- rTASSEL::assocModelFitter(
+#      tasObj = tasPhenoCov,
+#      formula = . ~ .,                  # <- All data is used!
+#      fitMarkers = FALSE,
+#      kinship = NULL,
+#      fastAssociation = FALSE
+#  )
+#  
+#  # Return BLUE output
+#  tasBLUE
 
-# Calculate BLUEs
-tasBLUE <- rTASSEL::assocModelFitter(
-    tasObj = tasPhenoCov,
-    formula = . ~ .,                  # <- All data is used!
-    fitMarkers = FALSE,
-    kinship = NULL,
-    fastAssociation = FALSE
-)
+## ---- echo=TRUE, eval=FALSE---------------------------------------------------
+#  # Calculate GLM
+#  tasGLM <- rTASSEL::assocModelFitter(
+#      tasObj = tasGenoPheno,             # <- our prior TASSEL object
+#      formula = list(EarHT, dpoll) ~ .,  # <- only EarHT and dpoll are ran
+#      fitMarkers = TRUE,                 # <- set this to TRUE for GLM
+#      kinship = NULL,
+#      fastAssociation = FALSE
+#  )
+#  
+#  # Return GLM output
+#  tasGLM
 
-# Return BLUE output
-tasBLUE
+## ---- echo=TRUE, eval=FALSE---------------------------------------------------
+#  # Calculate MLM
+#  tasMLM <- rTASSEL::assocModelFitter(
+#      tasObj = tasGenoPheno,             # <- our prior TASSEL object
+#      formula = EarHT ~ .,               # <- run only EarHT
+#      fitMarkers = TRUE,                 # <- set this to TRUE for GLM
+#      kinship = tasKin,                  # <- our prior kinship object
+#      fastAssociation = FALSE
+#  )
+#  
+#  # Return GLM output
+#  tasMLM
 
-## ---- echo=TRUE, eval=TRUE----------------------------------------------------
-# Calculate GLM
-tasGLM <- rTASSEL::assocModelFitter(
-    tasObj = tasGenoPheno,             # <- our prior TASSEL object
-    formula = list(EarHT, dpoll) ~ .,  # <- only EarHT and dpoll are ran
-    fitMarkers = TRUE,                 # <- set this to TRUE for GLM
-    kinship = NULL,
-    fastAssociation = FALSE
-)
-
-# Return GLM output
-tasGLM
-
-## ---- echo=TRUE, eval=TRUE----------------------------------------------------
-# Calculate MLM
-tasMLM <- rTASSEL::assocModelFitter(
-    tasObj = tasGenoPheno,             # <- our prior TASSEL object
-    formula = EarHT ~ .,               # <- run only EarHT
-    fitMarkers = TRUE,                 # <- set this to TRUE for GLM
-    kinship = tasKin,                  # <- our prior kinship object
-    fastAssociation = FALSE
-)
-
-# Return GLM output
-tasMLM
-
-## ---- echo=TRUE, eval=TRUE----------------------------------------------------
-# Read data - need only non missing data!
-phenoPathFast <-system.file(
-    "extdata",
-    "mdp_traits_nomissing.txt",
-    package = "rTASSEL"
-)
-
-# Creat rTASSEL object - use prior TASSEL genotype object
-tasGenoPhenoFast <- rTASSEL::readGenotypePhenotype(
-    genoPathOrObj = tasGenoHMP,
-    phenoPathDFOrObj = phenoPathFast
-)
-
-
-# Calculate MLM
-tasFAST <- rTASSEL::assocModelFitter(
-    tasObj = tasGenoPhenoFast,         # <- our prior TASSEL object
-    formula = . ~ .,                   # <- run all of the phenotype data
-    fitMarkers = TRUE,                 # <- set this to TRUE for GLM
-    kinship = NULL,
-    fastAssociation = TRUE             # <- set this to TRUE for fast assoc.
-)
-
-# Return GLM output
-tasFAST
+## ---- echo=TRUE, eval=FALSE---------------------------------------------------
+#  # Read data - need only non missing data!
+#  phenoPathFast <-system.file(
+#      "extdata",
+#      "mdp_traits_nomissing.txt",
+#      package = "rTASSEL"
+#  )
+#  
+#  # Creat rTASSEL object - use prior TASSEL genotype object
+#  tasGenoPhenoFast <- rTASSEL::readGenotypePhenotype(
+#      genoPathOrObj = tasGenoHMP,
+#      phenoPathDFOrObj = phenoPathFast
+#  )
+#  
+#  
+#  # Calculate MLM
+#  tasFAST <- rTASSEL::assocModelFitter(
+#      tasObj = tasGenoPhenoFast,         # <- our prior TASSEL object
+#      formula = . ~ .,                   # <- run all of the phenotype data
+#      fitMarkers = TRUE,                 # <- set this to TRUE for GLM
+#      kinship = NULL,
+#      fastAssociation = TRUE             # <- set this to TRUE for fast assoc.
+#  )
+#  
+#  # Return GLM output
+#  tasFAST
 
