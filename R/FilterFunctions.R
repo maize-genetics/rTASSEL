@@ -107,7 +107,6 @@ filterGenotypeTableSites <- function(tasObj,
     }
 
     siteRangeFilterType <- match.arg(siteRangeFilterType)
-    # siteRangeFilterType <- toupper(siteRangeFilterType)
 
     # Create filter siter builder plugin
     plugin <- rJava::new(
