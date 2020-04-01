@@ -159,8 +159,8 @@ assocModelFitter <- function(tasObj,
     }
 
     # Convert p-values and threads to Java data types
-    maxP <- rJava::.jnew("java/lang/Double", maxP)
-    maxThreads <- rJava::.jnew("java/lang/Integer", toString(maxThreads))
+    if (!is.null(maxP)) maxP <- rJava::.jnew("java/lang/Double", maxP)
+    if (!is.null(maxThreads)) maxThreads <- rJava::.jnew("java/lang/Integer", toString(maxThreads))
 
     # Logic - Handle association types and output
     if (!fitMarkers & is.null(kinship)) {
