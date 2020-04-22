@@ -3,7 +3,7 @@
 # Description:   General functions for running association analysis
 # Author:        Brandon Monier
 # Created:       2019-03-29 at 13:51:02
-# Last Modified: 2019-04-01 at 17:27:39
+# Last Modified: 2020-04-22 at 10:53:08
 #--------------------------------------------------------------------
 
 #--------------------------------------------------------------------
@@ -45,6 +45,15 @@
 #' @param fastAssociation Should TASSEL's Fast Association plugin be used?
 #'   Consider setting to \code{TRUE} if you have many phenotypes in your
 #'   data set.
+#' @param maxP Maximum p-value (0 - 1) to be reported. Currently works with
+#'   fast association only. Defaults to a p-value of \code{0.001}
+#'   will be used as a threshold. \strong{Note:} p-value parameter will
+#'   not be used for BLUE analysis.
+#' @param maxThreads Maximum threads to be used when running fast association.
+#'   If \code{NULL}, all threads on machine will be used.
+#' @param outputFile Output file prefix to be specified in case you want
+#'   to write data directly to disk. Highly recommended for large datasets.
+#'   If \code{NULL}, no data will be saved to disk. If a character
 #' @param minClassSize The minimum acceptable genotype class size. Genotypes
 #'   in a class with a smaller size will be set to missing. Defaults to 0.
 #' @param biallelicOnly Only test sites that are bi-allelic. The alternative is
@@ -53,11 +62,6 @@
 #'   be added to the stats report for bi-allelic sites only. The effect will
 #'   only be estimated when the data source is genotype (not a probability).
 #'   The additive effect will always be non-negative. Defaults to \code{FALSE}.
-#' @param maxP Maximum p-value (0 - 1) to be reported. Currently works with
-#'   fast association only. If \code{NULL}, a default p-value of \code{0.001}
-#'   will be used as a threshold.
-#' @param maxThreads Maximum threads to be used when running fast association.
-#'   If \code{NULL}, all threads on machine will be used.
 #'
 #' @return Returns an R list containing \code{tibble}-based data frames
 #'
@@ -73,11 +77,12 @@ assocModelFitter <- function(tasObj,
                              fitMarkers = FALSE,
                              kinship = NULL,
                              fastAssociation = FALSE,
+                             maxP = 0.001,
+                             maxThreads = NULL,
                              minClassSize = 0,
+                             outputFile = NULL,
                              biallelicOnly = FALSE,
-                             appendAddDom = FALSE,
-                             maxP = NULL,
-                             maxThreads = NULL) {
+                             appendAddDom = FALSE) {
 
     # Logic - Check for TasselGenotypePhenotype class
     if (!is(tasObj, "TasselGenotypePhenotype")) {
@@ -86,7 +91,7 @@ assocModelFitter <- function(tasObj,
 
     # Logic - Check to see if TASSEL object has a phenotype table
     if (rJava::is.jnull(tasObj@jPhenotypeTable)) {
-        stop("tasObj does contain a Phenotype object")
+        stop("tasObj does not contain a Phenotype object")
     }
 
     # Extract formula response and prediction components
@@ -158,9 +163,29 @@ assocModelFitter <- function(tasObj,
         stop("p-value is out of range (0 - 1)")
     }
 
-    # Convert p-values and threads to Java data types
-    if (!is.null(maxP)) maxP <- rJava::.jnew("java/lang/Double", maxP)
-    if (!is.null(maxThreads)) maxThreads <- rJava::.jnew("java/lang/Integer", toString(maxThreads))
+    # Logic - Convert p-values to Java data types
+    if (!is.numeric(maxP)) {
+        stop("p-value must be numeric")
+    } else if (!fastAssociation) {
+        maxP <- as.double(maxP)
+    } else {
+        maxP <- rJava::.jnew("java/lang/Double", as.character(maxP))
+    }
+
+    # Logic - Convert threads to Java data types
+    if (!is.null(maxThreads)) {
+        maxThreads <- rJava::.jnew("java/lang/Integer", toString(maxThreads))
+    } else {
+        maxThreads <- rJava::.jnull()
+    }
+
+    # Logic - Check output data
+    if (!is.null(outputFile)) {
+        saveToFile <- TRUE
+    } else {
+        saveToFile <- FALSE
+        outputFile <- rJava::.jnull()
+    }
 
     # Logic - Handle association types and output
     if (!fitMarkers & is.null(kinship)) {
@@ -174,7 +199,10 @@ assocModelFitter <- function(tasObj,
                     rJava::.jnull(),
                     as.integer(minClassSize),
                     biallelicOnly,
-                    appendAddDom
+                    appendAddDom,
+                    saveToFile,
+                    outputFile,
+                    maxP
                 )
                 assocType <- "BLUE"
             } else {
@@ -196,7 +224,10 @@ assocModelFitter <- function(tasObj,
                         rJava::.jnull(),
                         as.integer(minClassSize),
                         biallelicOnly,
-                        appendAddDom
+                        appendAddDom,
+                        saveToFile,
+                        outputFile,
+                        maxP
                     )
                     blueOut <- blueOut$get("BLUE")
                     message("(NOTE) BLUEs calculated - using output to test markers...")
@@ -211,7 +242,10 @@ assocModelFitter <- function(tasObj,
                         blueOut,
                         as.integer(minClassSize),
                         biallelicOnly,
-                        appendAddDom
+                        appendAddDom,
+                        saveToFile,
+                        outputFile,
+                        maxP
                     )
                     assocType <- "GLM"
                 } else {
@@ -223,7 +257,10 @@ assocModelFitter <- function(tasObj,
                         jTasFilt$genotypePhenotype,
                         as.integer(minClassSize),
                         biallelicOnly,
-                        appendAddDom
+                        appendAddDom,
+                        saveToFile,
+                        outputFile,
+                        maxP
                     )
                     assocType <- "GLM"
                 }
@@ -244,7 +281,10 @@ assocModelFitter <- function(tasObj,
                         rJava::.jnull(),
                         as.integer(minClassSize),
                         biallelicOnly,
-                        appendAddDom
+                        appendAddDom,
+                        saveToFile,
+                        outputFile,
+                        maxP
                     )
                     blueOut <- blueOut$get("BLUE")
                     message("(NOTE) BLUEs calculated - using output to test markers...")
@@ -255,7 +295,9 @@ assocModelFitter <- function(tasObj,
                     assocOut <- jRC$fastAssociation(
                         blueOut,
                         maxP,
-                        maxThreads
+                        maxThreads,
+                        saveToFile,
+                        outputFile
                     )
                     assocType <- "FastAssoc"
                 } else {
@@ -263,7 +305,9 @@ assocModelFitter <- function(tasObj,
                     assocOut <- jRC$fastAssociation(
                         jTasFilt$genotypePhenotype,
                         maxP,
-                        maxThreads
+                        maxThreads,
+                        saveToFile,
+                        outputFile
                     )
                     assocType <- "FastAssoc"
                 }
@@ -283,7 +327,10 @@ assocModelFitter <- function(tasObj,
                     rJava::.jnull(),
                     as.integer(minClassSize),
                     biallelicOnly,
-                    appendAddDom
+                    appendAddDom,
+                    saveToFile,
+                    outputFile,
+                    maxP
                 )
                 blueOut <- blueOut$get("BLUE")
                 message("(NOTE) BLUEs calculated - using output to test markers...")
@@ -298,7 +345,10 @@ assocModelFitter <- function(tasObj,
                     blueOut,
                     as.integer(minClassSize),
                     biallelicOnly,
-                    appendAddDom
+                    appendAddDom,
+                    saveToFile,
+                    outputFile,
+                    maxP
                 )
                 assocType <- "MLM"
             } else {
@@ -310,7 +360,10 @@ assocModelFitter <- function(tasObj,
                     jTasFilt$genotypePhenotype,
                     as.integer(minClassSize),
                     biallelicOnly,
-                    appendAddDom
+                    appendAddDom,
+                    saveToFile,
+                    outputFile,
+                    maxP
                 )
                 assocType <- "MLM"
             }
@@ -321,25 +374,71 @@ assocModelFitter <- function(tasObj,
         stop("Don't know how to analyze with given parameter inputs.")
     }
 
-    assocConvOut <- tasAssocConvert(
-        assocType = assocType,
-        assocOut = assocOut,
-        notTaxaCols = jTasFilt$notTaxaCols,
-        finalResp = finalResp
-    )
+    # assocConvOut <- tasAssocConvert(
+    #     assocType = assocType,
+    #     assocOut = assocOut,
+    #     notTaxaCols = jTasFilt$notTaxaCols,
+    #     finalResp = finalResp
+    # )
 
-    return(
-        tasAssocTableConvert(
-            assocType = assocType,
-            assocConvOut = assocConvOut,
-            notTaxaCols = jTasFilt$notTaxaCols,
-            finalResp = finalResp
-        )
-    )
+    # return(
+    #     tasAssocTableConvert(
+    #         assocType = assocType,
+    #         assocConvOut = assocConvOut,
+    #         notTaxaCols = jTasFilt$notTaxaCols,
+    #         finalResp = finalResp
+    #     )
+    # )
+
+    # return(
+    #     list(
+    #         assocType = assocType,
+    #         assocOut = assocOut
+    #     )
+    # )
+    return(tableReportList(assocOut))
 }
 
 
+## Association table reports to S4Vectors::DataFrame objects - not exported (house keeping)
+#' @importFrom rJava .jevalArray
+#' @importFrom rJava J
+#' @importFrom S4Vectors DataFrame
+tableReportToDF <- function(x) {
+    rJC <- rJava::J("net/maizegenetics/plugindef/GenerateRCode")
+    tabRep <- rJC$tableReportToVectors(x)
+
+    tabRepCols <- lapply(tabRep$dataVector, rJava::.jevalArray)
+
+    tabRepCols <- do.call("data.frame", c(tabRepCols, stringsAsFactors = FALSE))
+    colnames(tabRepCols) <- tabRep$columnNames
+    return(S4Vectors::DataFrame(tabRepCols))
+}
+
+
+## Get table reports based on HashMap - not exported (house keeping)
+#' @importFrom magrittr %>%
+#' @importFrom rJava .jrcall
+#' @importFrom rJava .jstrVal
+tableReportList <- function(x) {
+    hashVectors <- x %>%
+        rJava::.jrcall("keySet") %>%
+        lapply(rJava::.jstrVal)
+
+    myList <- hashVectors %>%
+        lapply(function(i) x$get(i)) %>%
+        lapply(tableReportToDF)
+
+    names(myList) <- hashVectors
+    return(myList)
+}
+
+
+
+
+
 ## TASSEL Table Report to R data frame converter - not exported (house keeping)
+# TODO: Deprecate this (Brandon)
 tasTableConvert <- function(stringTab) {
     obj <- unlist(strsplit(stringTab, split = "\n"))
     obj <- strsplit(obj, split = "\t")
@@ -356,7 +455,11 @@ tasTableConvert <- function(stringTab) {
 }
 
 
+
+
+
 ## Phenotype filter - return modified TASSEL object - not exported (house keeping)
+#' @importFrom magrittr %>%
 #' @importFrom rlang .data
 tasPhenoFilter <- function(tasObj, filtObj) {
 
@@ -364,31 +467,33 @@ tasPhenoFilter <- function(tasObj, filtObj) {
     phenoAttDf <- extractPhenotypeAttDf(tasObj@jPhenotypeTable)
 
     # Get phenotype data frame
-    phenoDf <- tasObj@jPhenotypeTable
-    phenoDf <- tasTableConvert(phenoDf$toStringTabDelim())
+    # phenoDf <- tasObj@jPhenotypeTable
+    # phenoDf <- tasTableConvert(phenoDf$toStringTabDelim())
+    phenoDF <- tableReportToDF(tasObj@jPhenotypeTable) %>%
+        as.data.frame()
 
     # Convert <data> and <covariates> to doubles (correct pass to TASSEL)
     doubCols <- as.character(
         phenoAttDf$traitName[which(phenoAttDf$traitType == "data" | phenoAttDf$traitType == "covariate")]
     )
-    phenoDf[doubCols] <- sapply(phenoDf[doubCols], as.double)
+    phenoDF[doubCols] <- sapply(phenoDF[doubCols], as.double)
 
     # Get taxa column
     taxaCol <- as.character(phenoAttDf$traitName[which(phenoAttDf$traitType == "taxa")])
-    taxaNames <- as.vector(phenoDf[[taxaCol]])
+    taxaNames <- as.vector(phenoDF[[taxaCol]])
 
     # Get non-taxa columns and reorder filtered columns (correct pass to TASSEL)
-    origColNames <- colnames(phenoDf)
+    origColNames <- colnames(phenoDF)
     filtObjRight <- c(taxaCol, filtObj)
     filtObjRight <- filtObjRight[match(origColNames, filtObjRight)]
     filtObjRight <- filtObjRight[!is.na(filtObjRight)]
 
     # Filter data frame columns based on association formula
-    phenoDf <- phenoDf[, filtObjRight]
+    phenoDF <- phenoDF[, filtObjRight]
     phenoAttDf <- subset(phenoAttDf, subset = traitName %in% filtObjRight)
 
     # Get vector of non-taxa column names
-    phenoColNames <- colnames(phenoDf)
+    phenoColNames <- colnames(phenoDF)
     notTaxaCols <- phenoColNames[!(phenoColNames %in% taxaCol)]
 
     # Get attribute types
@@ -397,7 +502,7 @@ tasPhenoFilter <- function(tasObj, filtObj) {
     # Send filtered data frame to TASSEL methods
     jList <- rJava::new(rJava::J("java/util/ArrayList"))
     for (col_i in notTaxaCols) {
-        jList$add(rJava::.jarray(phenoDf[[col_i]]))
+        jList$add(rJava::.jarray(phenoDF[[col_i]]))
     }
 
     # Create filtered TASSEL phenotype
@@ -414,7 +519,7 @@ tasPhenoFilter <- function(tasObj, filtObj) {
         return(
             list(
                 attTypes = attTypes,
-                phenoDf = phenoDf,
+                phenoDf = phenoDF,
                 finalVars = filtObj,
                 notTaxaCols = notTaxaCols,
                 genotypeTable = rJava::.jnull(),
@@ -430,7 +535,7 @@ tasPhenoFilter <- function(tasObj, filtObj) {
         return(
             list(
                 attTypes = attTypes,
-                phenoDf = phenoDf,
+                phenoDf = phenoDF,
                 finalVars = filtObj,
                 notTaxaCols = notTaxaCols,
                 genotypeTable = jcComb$genotypeTable(),
@@ -442,163 +547,165 @@ tasPhenoFilter <- function(tasObj, filtObj) {
 }
 
 
-## Association table reports to tibbles - not exported (house keeping)
-tasAssocConvert <- function(assocType, assocOut, notTaxaCols, finalResp) {
-    if (assocType == "BLUE") {
-        blue <- assocOut$get("BLUE")
-        blueANOVA <- assocOut$get("BLUE_ANOVA")
-        return(
-            list(
-                BLUE = tasTableConvert(blue$toStringTabDelim()),
-                BLUE_ANOVA = tasTableConvert(blueANOVA$toStringTabDelim())
-            )
-        )
-    } else if (assocType == "GLM") {
-        glmStats <- assocOut$get("GLM_Stats")
-        glmGeno <- assocOut$get("GLM_Genotypes")
-        return(
-            list(
-                GLM_Stats = tasTableConvert(glmStats$toStringTabDelim()),
-                GLM_Genotypes = tasTableConvert(glmGeno$toStringTabDelim())
-            )
-        )
-    } else if (assocType == "FastAssoc") {
-        fastAssoc <- assocOut$get("FastAssociation")
-        return(
-            list(
-                FastAssociation = tasTableConvert(fastAssoc$toStringTabDelim())
-            )
-        )
-    } else if (assocType == "MLM") {
-        mlmStats <- assocOut$get("MLM_Stats")
-        mlmEffects <- assocOut$get("MLM_Effects")
-
-        mlmResid <- lapply(seq_along(finalResp), function(i) {
-            assocOut$get(paste0("MLM_Residuals_", finalResp[i]))
-        })
-        mlmResid2 <- lapply(seq_along(finalResp), function(i) {
-            tasTableConvert(mlmResid[[i]]$toStringTabDelim())
-        })
-        names(mlmResid2) <- paste0("MLM_Residuals_", finalResp)
-        return(
-            c(
-                list(
-                    MLM_Stats = tasTableConvert(mlmStats$toStringTabDelim()),
-                    MLM_Effects = tasTableConvert(mlmEffects$toStringTabDelim())
-                ),
-                mlmResid2
-            )
-        )
-    }
-}
 
 
-## Convert tibble outputs to appropriate R data types - not exported (house keeping)
-tasAssocTableConvert <- function(assocType, assocConvOut, notTaxaCols, finalResp) {
-    if (assocType == "BLUE") {
-        blue <- assocConvOut$BLUE
-        blueANOVA <- assocConvOut$BLUE_ANOVA
-
-        # Numberic Convert
-        blue[finalResp] <- sapply(blue[finalResp], as.numeric)
-        blueANOVA[2:9] <- sapply(blueANOVA[2:9], as.numeric)
-
-        # Return objects
-        return(
-            list(
-                BLUE = blue,
-                BLUE_ANOVA = blueANOVA
-            )
-        )
-    } else if (assocType == "GLM") {
-        glmStats <- assocConvOut$GLM_Stats
-        glmGeno <- assocConvOut$GLM_Genotypes
-
-        # Numeric convert
-        glmStats[4:18] <- sapply(glmStats[4:18], as.numeric)
-        glmGeno[c(4, 5, 7)] <- lapply(glmGeno[c(4, 5, 7)], as.numeric)
-
-        # Factor convert
-        glmStats[c(1, 3)] <- lapply(glmStats[c(1, 3)], factor)
-        glmGeno[c(1, 3, 6)] <- lapply(glmGeno[c(1, 3, 6)], factor)
-
-        # Reorder Chromsome
-        glmStats$Chr <- factor(
-            glmStats$Chr,
-            levels = paste(sort(as.numeric(levels(glmStats$Chr))))
-        )
-        glmGeno$Chr <- factor(
-            glmGeno$Chr,
-            levels = paste(sort(as.numeric(levels(glmGeno$Chr))))
-        )
-
-        # Return objects
-        return(
-            list(
-                GLM_Stats = glmStats,
-                GLM_Genotypes = glmGeno
-            )
-        )
-    } else if (assocType == "FastAssoc") {
-        fastAssoc <- assocConvOut$FastAssociation
-
-        # Factor convert
-        fastAssoc$Trait <- factor(fastAssoc$Trait)
-        fastAssoc$Chr <- factor(fastAssoc$Chr)
-        fastAssoc$Chr <- factor(
-            fastAssoc$Chr,
-            levels = paste(sort(as.numeric(levels(fastAssoc$Chr))))
-        )
-
-        # Numeric convert
-        fastAssoc[4:7] <- sapply(fastAssoc[4:7], as.numeric)
-
-        # Return object
-        return(
-            list(
-                FastAssociation = fastAssoc
-            )
-        )
-    } else if (assocType == "MLM") {
-        mlmStats <- assocConvOut$MLM_Stats
-        mlmEffects <- assocConvOut$MLM_Effects
-        mlmResid <- assocConvOut[paste0("MLM_Residuals_", finalResp)]
-
-        # Factor convert
-        mlmStats$Trait <- factor(mlmStats$Trait)
-        mlmStats$Chr <- factor(mlmStats$Chr)
-        mlmStats$Chr <- factor(
-            mlmStats$Chr,
-            levels = paste(sort(as.numeric(levels(mlmStats$Chr))))
-        )
-        mlmEffects[c(1, 3, 5)] <- lapply(mlmEffects[c(1, 3, 5)], factor)
-        mlmEffects$Locus <- factor(
-            mlmEffects$Locus,
-            levels = paste(sort(as.numeric(levels(mlmEffects$Locus))))
-        )
-
-        # Numeric convert
-        mlmStats[4:18] <- sapply(mlmStats[4:18], as.numeric)
-        mlmEffects[c(4, 6, 7)] <- sapply(mlmEffects[c(4, 6, 7)], as.numeric)
-
-        # Numeric convert - Residuals
-        for (i in seq_along(finalResp)) {
-            mlmResid[[i]][[2]] <- as.numeric(mlmResid[[i]][[2]])
-        }
-
-        # Return object
-        return(
-            c(
-                list(
-                    MLM_Stats = mlmStats,
-                    MLM_Effects = mlmEffects
-                ),
-                mlmResid
-            )
-        )
-
-    }
-}
+# ## Association table reports to tibbles - not exported (house keeping)
+# tasAssocConvert <- function(assocType, assocOut, notTaxaCols, finalResp) {
+#     if (assocType == "BLUE") {
+#         blue <- assocOut$get("BLUE")
+#         blueANOVA <- assocOut$get("BLUE_ANOVA")
+#         return(
+#             list(
+#                 BLUE = tasTableConvert(blue$toStringTabDelim()),
+#                 BLUE_ANOVA = tasTableConvert(blueANOVA$toStringTabDelim())
+#             )
+#         )
+#     } else if (assocType == "GLM") {
+#         glmStats <- assocOut$get("GLM_Stats")
+#         glmGeno <- assocOut$get("GLM_Genotypes")
+#         return(
+#             list(
+#                 GLM_Stats = tasTableConvert(glmStats$toStringTabDelim()),
+#                 GLM_Genotypes = tasTableConvert(glmGeno$toStringTabDelim())
+#             )
+#         )
+#     } else if (assocType == "FastAssoc") {
+#         fastAssoc <- assocOut$get("FastAssociation")
+#         return(
+#             list(
+#                 FastAssociation = tasTableConvert(fastAssoc$toStringTabDelim())
+#             )
+#         )
+#     } else if (assocType == "MLM") {
+#         mlmStats <- assocOut$get("MLM_Stats")
+#         mlmEffects <- assocOut$get("MLM_Effects")
+#
+#         mlmResid <- lapply(seq_along(finalResp), function(i) {
+#             assocOut$get(paste0("MLM_Residuals_", finalResp[i]))
+#         })
+#         mlmResid2 <- lapply(seq_along(finalResp), function(i) {
+#             tasTableConvert(mlmResid[[i]]$toStringTabDelim())
+#         })
+#         names(mlmResid2) <- paste0("MLM_Residuals_", finalResp)
+#         return(
+#             c(
+#                 list(
+#                     MLM_Stats = tasTableConvert(mlmStats$toStringTabDelim()),
+#                     MLM_Effects = tasTableConvert(mlmEffects$toStringTabDelim())
+#                 ),
+#                 mlmResid2
+#             )
+#         )
+#     }
+# }
+#
+#
+# ## Convert tibble outputs to appropriate R data types - not exported (house keeping)
+# tasAssocTableConvert <- function(assocType, assocConvOut, notTaxaCols, finalResp) {
+#     if (assocType == "BLUE") {
+#         blue <- assocConvOut$BLUE
+#         blueANOVA <- assocConvOut$BLUE_ANOVA
+#
+#         # Numberic Convert
+#         blue[finalResp] <- sapply(blue[finalResp], as.numeric)
+#         blueANOVA[2:9] <- sapply(blueANOVA[2:9], as.numeric)
+#
+#         # Return objects
+#         return(
+#             list(
+#                 BLUE = blue,
+#                 BLUE_ANOVA = blueANOVA
+#             )
+#         )
+#     } else if (assocType == "GLM") {
+#         glmStats <- assocConvOut$GLM_Stats
+#         glmGeno <- assocConvOut$GLM_Genotypes
+#
+#         # Numeric convert
+#         glmStats[4:18] <- sapply(glmStats[4:18], as.numeric)
+#         glmGeno[c(4, 5, 7)] <- lapply(glmGeno[c(4, 5, 7)], as.numeric)
+#
+#         # Factor convert
+#         glmStats[c(1, 3)] <- lapply(glmStats[c(1, 3)], factor)
+#         glmGeno[c(1, 3, 6)] <- lapply(glmGeno[c(1, 3, 6)], factor)
+#
+#         # Reorder Chromsome
+#         glmStats$Chr <- factor(
+#             glmStats$Chr,
+#             levels = paste(sort(as.numeric(levels(glmStats$Chr))))
+#         )
+#         glmGeno$Chr <- factor(
+#             glmGeno$Chr,
+#             levels = paste(sort(as.numeric(levels(glmGeno$Chr))))
+#         )
+#
+#         # Return objects
+#         return(
+#             list(
+#                 GLM_Stats = glmStats,
+#                 GLM_Genotypes = glmGeno
+#             )
+#         )
+#     } else if (assocType == "FastAssoc") {
+#         fastAssoc <- assocConvOut$FastAssociation
+#
+#         # Factor convert
+#         fastAssoc$Trait <- factor(fastAssoc$Trait)
+#         fastAssoc$Chr <- factor(fastAssoc$Chr)
+#         fastAssoc$Chr <- factor(
+#             fastAssoc$Chr,
+#             levels = paste(sort(as.numeric(levels(fastAssoc$Chr))))
+#         )
+#
+#         # Numeric convert
+#         fastAssoc[4:7] <- sapply(fastAssoc[4:7], as.numeric)
+#
+#         # Return object
+#         return(
+#             list(
+#                 FastAssociation = fastAssoc
+#             )
+#         )
+#     } else if (assocType == "MLM") {
+#         mlmStats <- assocConvOut$MLM_Stats
+#         mlmEffects <- assocConvOut$MLM_Effects
+#         mlmResid <- assocConvOut[paste0("MLM_Residuals_", finalResp)]
+#
+#         # Factor convert
+#         mlmStats$Trait <- factor(mlmStats$Trait)
+#         mlmStats$Chr <- factor(mlmStats$Chr)
+#         mlmStats$Chr <- factor(
+#             mlmStats$Chr,
+#             levels = paste(sort(as.numeric(levels(mlmStats$Chr))))
+#         )
+#         mlmEffects[c(1, 3, 5)] <- lapply(mlmEffects[c(1, 3, 5)], factor)
+#         mlmEffects$Locus <- factor(
+#             mlmEffects$Locus,
+#             levels = paste(sort(as.numeric(levels(mlmEffects$Locus))))
+#         )
+#
+#         # Numeric convert
+#         mlmStats[4:18] <- sapply(mlmStats[4:18], as.numeric)
+#         mlmEffects[c(4, 6, 7)] <- sapply(mlmEffects[c(4, 6, 7)], as.numeric)
+#
+#         # Numeric convert - Residuals
+#         for (i in seq_along(finalResp)) {
+#             mlmResid[[i]][[2]] <- as.numeric(mlmResid[[i]][[2]])
+#         }
+#
+#         # Return object
+#         return(
+#             c(
+#                 list(
+#                     MLM_Stats = mlmStats,
+#                     MLM_Effects = mlmEffects
+#                 ),
+#                 mlmResid
+#             )
+#         )
+#
+#     }
+# }
 
 
 
