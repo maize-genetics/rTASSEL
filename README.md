@@ -21,7 +21,7 @@ using the `remotes` package:
 ```
 if (!require("devtools")) install.packages("devtools")
 devtools::install_bitbucket(
-    repo = "bucklerlab/rtassel",
+    repo = "bucklerlab/rTASSEL",
     ref = "master",
     build_vignettes = FALSE
 )
