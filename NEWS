@@ -1,3 +1,13 @@
+## CHANGES IN VERSION 0.9.16
+* Added write to file parameters for:
+  + assocModelFitter()
+* Added p-value threshold parameters for:
+  + assocModelFitter()
+* Added thread usage paramters for:
+  + assocModelFitter()
+* Optimized table report to data frame generation
+
+
 ## CHANGES IN VERSION 0.9.13
 * Added error checks for catching C stack usage errors for the following functions:
   + filterGenotypeTableSites()
