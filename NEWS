@@ -6,6 +6,11 @@
 * Added thread usage paramters for:
   + assocModelFitter()
 * Optimized table report to data frame generation
+* Added new filtration features for genotype tables via filterGenotypeTableSites()
+  + parameters for variant sites
+  + parameters for physical positions
+  + filtration via chromsomome position files
+  + filtration via BED file formats
 
 
 ## CHANGES IN VERSION 0.9.13

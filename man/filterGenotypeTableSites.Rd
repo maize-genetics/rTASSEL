@@ -17,7 +17,9 @@ filterGenotypeTableSites(
   startChr = NULL,
   startPos = NULL,
   endChr = NULL,
-  endPos = NULL
+  endPos = NULL,
+  chrPosFile = NULL,
+  bedFile = NULL
 )
 }
 \arguments{
@@ -63,6 +65,15 @@ is chosen from \code{siteRangeFilterType}. Needs start chromsome
 \code{position} is chosen from \code{siteRangeFilterType}. If
 \code{NULL}, the last physical position in the data set will be
 chosen.}
+
+\item{chrPosFile}{An optional chromosome position file path of
+\code{character} class. Defaults to \code{NULL}. \strong{Note:}
+a chromosome position file must contain correct formatting
+(e.g. a two column file with the header of
+\code{c("Chromosome", "Position")}).}
+
+\item{bedFile}{An optional BED coordinate file path of
+\code{character} class. Defaults to \code{NULL}.}
 }
 \value{
 Returns an object of \code{TasselGenotypePhenotype} class.

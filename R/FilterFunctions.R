@@ -52,6 +52,13 @@
 #'    \code{position} is chosen from \code{siteRangeFilterType}. If
 #'    \code{NULL}, the last physical position in the data set will be
 #'    chosen.
+#' @param chrPosFile An optional chromosome position file path of
+#'    \code{character} class. Defaults to \code{NULL}. \strong{Note:}
+#'    a chromosome position file must contain correct formatting
+#'    (e.g. a two column file with the header of
+#'    \code{c("Chromosome", "Position")}).
+#' @param bedFile An optional BED coordinate file path of
+#'    \code{character} class. Defaults to \code{NULL}.
 #'
 #' @return Returns an object of \code{TasselGenotypePhenotype} class.
 #'
@@ -72,7 +79,9 @@ filterGenotypeTableSites <- function(tasObj,
                                      startChr = NULL,
                                      startPos = NULL,
                                      endChr = NULL,
-                                     endPos = NULL) {
+                                     endPos = NULL,
+                                     chrPosFile = NULL,
+                                     bedFile = NULL) {
 
     if (class(tasObj) != "TasselGenotypePhenotype") {
         stop("`tasObj` must be of class `TasselGenotypePhenotype`")
@@ -121,28 +130,44 @@ filterGenotypeTableSites <- function(tasObj,
     plugin$setParameter("maxHeterozygous", toString(maxHeterozygous))
 
     # Logic check necessary parameters given range filter type
-    if (siteRangeFilterType == "sites") {
+    if (is.null(chrPosFile) && is.null(bedFile)) {
+        if (siteRangeFilterType == "sites") {
 
-        if (is.null(startSite) || is.null(endSite)) {
-            stop("Please specify both start and end sites.")
+            if (is.null(startSite) || is.null(endSite)) {
+                stop("Please specify both start and end sites.")
+            }
+
+            plugin$setParameter("startSite", toString(startSite))
+            plugin$setParameter("endSite", toString(endSite))
+
+        } else if (siteRangeFilterType == "position") {
+
+            if (is.null(startChr) || is.null(endChr)) {
+                stop("Please specify both start and end chromosomes.")
+            }
+
+            if (!is.null(startPos)) startPos <- toString(startPos)
+            if (!is.null(endPos)) endPos <- toString(endPos)
+
+            plugin$setParameter("startChr", toString(startChr))
+            plugin$setParameter("startPos", startPos)
+            plugin$setParameter("endChr", toString(endChr))
+            plugin$setParameter("endPos", endPos)
+        }
+    } else if (is.character(chrPosFile) && is.null(bedFile)) {
+        tmpChrDF <- utils::read.table(chrPosFile, sep = "\t", header = TRUE)
+        headCheck <- c("Chromosome", "Position")
+
+        if (!identical(colnames(tmpChrDF), headCheck)) {
+            stop("Please check chromosome position file for correct formatting")
         }
 
-        plugin$setParameter("startSite", toString(startSite))
-        plugin$setParameter("endSite", toString(endSite))
+        plugin$setParameter("chrPosFile", chrPosFile)
 
-    } else if (siteRangeFilterType == "position") {
-
-        if (is.null(startChr) || is.null(endChr)) {
-            stop("Please specify both start and end chromosomes.")
-        }
-
-        if (!is.null(startPos)) startPos <- toString(startPos)
-        if (!is.null(endPos)) endPos <- toString(endPos)
-
-        plugin$setParameter("startChr", toString(startChr))
-        plugin$setParameter("startPos", startPos)
-        plugin$setParameter("endChr", toString(endChr))
-        plugin$setParameter("endPos", endPos)
+    } else if (is.null(chrPosFile) && is.character(bedFile)) {
+        plugin$setParameter("bedFile", bedFile)
+    } else {
+        stop("Incorrect parameter usage")
     }
 
     # Run plugin
