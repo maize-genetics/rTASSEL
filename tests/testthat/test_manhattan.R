@@ -87,24 +87,24 @@ test_that("Manhattan Plot returns correct plot layers", {
 
     ## Plot object ----
     p <- manhattanPlot(
-        assocStats = fastRep$FastAssociation,
-        trait = "EarHT",
+        assocStats     = fastRep$FastAssociation,
+        trait          = "EarHT",
         showSigMarkers = TRUE,
-        showRug = TRUE,threshold = 6
+        showRug        = TRUE,
+        threshold      = 6
     )
 
-    # expect_identical(
-    #     object = class(p$layers[[1]]),
-    #     expected =  c("LayerInstance", "Layer", "ggproto", "gg")
-    # )
-    # expect_identical(
-    #     object = class(p$layers[[1]]$geom[1]),
-    #     expected =  c("GeomPoint")
-    # )
-
     expect_s3_class(
-        p$layers[[1]],
-        "ggproto"
+        object = p$layers[[1]],
+        class  = "ggproto"
+    )
+    expect_s3_class(
+        object = p$layers[[1]]$geom,
+        class  = "GeomPoint"
+    )
+    expect_s3_class(
+        object = p$layers[[3]]$geom,
+        class  = "GeomRug"
     )
 
 })
