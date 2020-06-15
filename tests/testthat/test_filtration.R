@@ -4,7 +4,6 @@
 test_that("filterGenotypeTableSites returns error when parameters not specified", {
 
     # Load hapmap data
-    startLogger()
     genoPathHMP <- system.file(
         "extdata",
         "mdp_genotype.hmp.txt",
@@ -85,7 +84,6 @@ test_that("filterGenotypeTableSites returns correct positions.", {
     obs_site <- 1486
 
     # Load hapmap data
-    startLogger()
     genoPathHMP <- system.file(
         "extdata",
         "mdp_genotype.hmp.txt",
@@ -120,7 +118,6 @@ test_that("filterGenotypeTableSites returns correct positions.", {
     obs_site <- 2896
 
     # Load hapmap data
-    startLogger()
     genoPathHMP <- system.file(
         "extdata",
         "mdp_genotype.hmp.txt",
@@ -157,7 +154,6 @@ test_that("filterGenotypeTableSites returns correct sites.", {
     obs_site <- 300
 
     # Load hapmap data
-    startLogger()
     genoPathHMP <- system.file(
         "extdata",
         "mdp_genotype.hmp.txt",
@@ -192,7 +188,6 @@ test_that("filterGenotypeTableSites returns correct sites with no range filtrati
     obs_site <- 3093
 
     # Load hapmap data
-    startLogger()
     genoPathHMP <- system.file(
         "extdata",
         "mdp_genotype.hmp.txt",
