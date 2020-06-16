@@ -247,8 +247,6 @@ filterGenotypeTableTaxa <- function(tasObj,
     plugin$setParameter("minNotMissing", toString(minNotMissing))
     plugin$setParameter("minHeterozygous", toString(minHeterozygous))
     plugin$setParameter("maxHeterozygous", toString(maxHeterozygous))
-    # plugin$setParameter("includeTaxa", toString(includeTaxa))
-    # plugin$taxaList(taxaList)
     resultDataSet <- plugin$runPlugin(jGenoTable)
 
     # Check if input had phenotype table. If yes, combine genotype with phenotype
