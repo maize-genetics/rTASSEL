@@ -63,7 +63,7 @@
 #'   only be estimated when the data source is genotype (not a probability).
 #'   The additive effect will always be non-negative. Defaults to \code{FALSE}.
 #'
-#' @return Returns an R list containing \code{tibble}-based data frames
+#' @return Returns an R list containing \code{DataFrame}-based data frames
 #'
 #' @importFrom rJava is.jnull
 #' @importFrom rJava J
