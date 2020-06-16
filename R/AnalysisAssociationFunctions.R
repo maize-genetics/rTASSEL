@@ -395,17 +395,23 @@ tableReportToDF <- function(x) {
 
 
 ## Get table reports based on HashMap - not exported (house keeping)
-#' @importFrom magrittr %>%
 #' @importFrom rJava .jrcall
 #' @importFrom rJava .jstrVal
 tableReportList <- function(x) {
-    hashVectors <- x %>%
-        rJava::.jrcall("keySet") %>%
-        lapply(rJava::.jstrVal)
 
-    myList <- hashVectors %>%
-        lapply(function(i) x$get(i)) %>%
-        lapply(tableReportToDF)
+    hashVectors <- rJava::.jrcall(x, "keySet")
+    hashVectors <- lapply(hashVectors, rJava::.jstrVal)
+
+    # hashVectors <- x %>%
+    #     rJava::.jrcall("keySet") %>%
+    #     lapply(rJava::.jstrVal)
+
+    myList <- lapply(hashVectors, function(i) x$get(i))
+    myList <- lapply(myList, tableReportToDF)
+
+    # myList <- hashVectors %>%
+    #     lapply(function(i) x$get(i)) %>%
+    #     lapply(tableReportToDF)
 
     names(myList) <- hashVectors
     return(myList)
