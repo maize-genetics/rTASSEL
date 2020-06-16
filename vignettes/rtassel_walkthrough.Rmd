@@ -3,17 +3,17 @@ title: "Getting Started with rTASSEL"
 author: "Brandon Monier"
 date:   "2019-09-04 at 11:21:26"
 output:
-  BiocStyle::html_document:
-    toc: true
-    fig_caption: true
-    toc_float: true
-    number_sections: false
+    BiocStyle::html_document:
+      toc: true
+      fig_caption: true
+      toc_float: true
+      number_sections: false
 vignette: >
-  %\VignetteIndexEntry{Getting Start with rTASSEL}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
-  %\usepackage[utf8]{inputenc}
-  %\usepackage{float}
+    %\VignetteIndexEntry{Getting Start with rTASSEL}
+    %\VignetteEngine{knitr::rmarkdown}
+    %\VignetteEncoding{UTF-8}
+    %\usepackage[utf8]{inputenc}
+    %\usepackage{float}
 ---
 
 ```{r setup, include=FALSE}
