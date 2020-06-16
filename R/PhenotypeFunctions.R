@@ -110,9 +110,9 @@ readPhenotypeFromDataFrame <- function(phenotypeDF,
 }
 
 
-#' @title Get an R/\code{tibble} phenotype data frame from TASSEL object
+#' @title Get an R/\code{DataFrame} phenotype data frame from TASSEL object
 #'
-#' @description This function will extract a \code{tibble}-based R data
+#' @description This function will extract a \code{DataFrame}-based R data
 #'    frame from an object of \code{TasselGenotypePhenotype} class that
 #'    contains phenotypic data. Column data will be converted to the following
 #'    types data depending on TASSEL data type:
@@ -123,7 +123,7 @@ readPhenotypeFromDataFrame <- function(phenotypeDF,
 #'      \item{\code{<factor>}: \code{factor}}
 #'    }
 #'
-#' @return Returns an \code{tibble} based data frame
+#' @return Returns an \code{DataFrame} based data frame
 #'
 #' @name getPhenotypeDF
 #' @rdname getPhenotypeDF
@@ -143,7 +143,7 @@ getPhenotypeDF <- function(tasObj) {
     }
 
     jPhenoAttri <- extractPhenotypeAttDf(jPhenoTable)
-    jPhenoTable <- tasTableConvert(jPhenoTable$toStringTabDelim())
+    jPhenoTable <- tableReportToDF(jPhenoTable)
 
     # Get list of TASSEL data types
     attributes <- c("taxa", "factor", "covariate", "data")
@@ -192,7 +192,7 @@ extractPhenotypeAttDf <- function(phenotype) {
     # Pull the java class and return the class without the whole path
     traitAttribute = unlist(
         lapply(as.list(phenotype$attributeListCopy()), function(tc) {
-            stringr::str_split(tc$getClass()$toString(),"\\.")[[1]][4]
+            strsplit(tc$getClass()$toString(),"\\.")[[1]][4]
         })
     )
     return(data.frame(traitName, traitType, traitAttribute))
