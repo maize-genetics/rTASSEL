@@ -63,7 +63,7 @@
 #' @param kFolds Number of folds to be entered.
 #' @param nIter Number of iterations to be ran.
 #'
-#' @return Returns a \code{tibble}-based data frame
+#' @return Returns a \code{DataFrame}-based data frame
 #'
 #' @importFrom rJava is.jnull
 #' @importFrom rJava J
@@ -116,75 +116,3 @@ genomicPrediction <- function(tasPhenoObj, kinship, doCV = FALSE, kFolds, nIter)
 }
 
 
-
-#' @title Leave one family out cross-validation
-#'
-#' @description Cross-validation by leaving one family out.
-#'
-#' @param phenoFamilyDF An object of class \code{TasselGenotypePenotype} that
-#'   contains a phenotype object with family data.
-#' @param tasKin A TASSEL kinship object.
-#'
-#' @importFrom foreach foreach
-#' @importFrom foreach %do%
-#' @importFrom S4Vectors DataFrame
-#' @importFrom stats cor
-#' @export
-leaveOneFamilyOut <- function(phenoFamilyDF, tasKin) {
-
-    # phenoFamilyDF <- getPhenotypeDF(tasPhenoObj)
-
-    ## (1) Create empty data frame object ---
-    LOFO <- data.frame()
-
-    ## (2) Iterate through all families and leave one out (set to NA)
-    for (family in levels(phenoFamilyDF$family)) {
-
-        message("LOFO: ", family)
-        familyTaxa <- phenoFamilyDF$Taxa[phenoFamilyDF$family == family]
-
-        ## Converted iterated family to NA
-        phenoDF_NA <- phenoFamilyDF
-        phenoDF_NA[phenoDF_NA$family == family, sapply(phenoDF_NA, is.numeric)] <- NA
-
-        ## Make rTASSEL phenotype object
-        pheno_TASSEL <- readPhenotypeFromDataFrame(
-            phenotypeDF = phenoDF_NA[, c(1, 3, 4)],
-            taxaID = "Taxa"
-        )
-
-        ## Genomic prediction
-        GP <- genomicPrediction(
-            tasPhenoObj = pheno_TASSEL,
-            kinship = tasKin,
-            doCV = FALSE
-        )
-
-        ## Calculate accuracy
-        out <- foreach::foreach(trait = unique(GP$Trait), .combine = rbind) %do% {
-
-            GP_trait <- GP[GP$Trait == trait, ]
-
-            r <- cor(
-                phenoFamilyDF[match(familyTaxa, phenoFamilyDF$Taxa), trait],
-                GP_trait[match(familyTaxa, GP_trait$Taxon), "Predicted"],
-                use = "complete"
-            )
-
-            S4Vectors::DataFrame(
-                Trait    = trait,
-                Family   = family,
-                Accuracy = r
-            )
-
-        }
-
-        LOFO <- rbind(LOFO, out)
-
-
-    }
-    colnames(LOFO) <- c("Trait", "Family", "Accuracy")
-    LOFO$Accuracy <- as.vector(LOFO$Accuracy)
-    return(LOFO)
-
-}
