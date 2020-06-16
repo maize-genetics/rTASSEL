@@ -423,20 +423,20 @@ tableReportList <- function(x) {
 
 ## TASSEL Table Report to R data frame converter - not exported (house keeping)
 # TODO: Deprecate this (Brandon)
-tasTableConvert <- function(stringTab) {
-    obj <- unlist(strsplit(stringTab, split = "\n"))
-    obj <- strsplit(obj, split = "\t")
-    obj <- t(simplify2array(obj))
-    colnames(obj) <- as.character(unlist(obj[1, ]))
-    obj <- obj[-1, ]
-
-    # Check if object becomes named vector
-    if (is.vector(obj)) {
-        dplyr::bind_rows(obj)
-    } else {
-        tibble::as_tibble(obj)
-    }
-}
+# tasTableConvert <- function(stringTab) {
+#     obj <- unlist(strsplit(stringTab, split = "\n"))
+#     obj <- strsplit(obj, split = "\t")
+#     obj <- t(simplify2array(obj))
+#     colnames(obj) <- as.character(unlist(obj[1, ]))
+#     obj <- obj[-1, ]
+#
+#     # Check if object becomes named vector
+#     if (is.vector(obj)) {
+#         dplyr::bind_rows(obj)
+#     } else {
+#         tibble::as_tibble(obj)
+#     }
+# }
 
 
 
@@ -613,7 +613,7 @@ genomicPrediction <- function(tasPhenoObj, kinship, doCV = FALSE, kFolds, nIter)
     ## Run genomic selection
     plugin <- rJava::J("net/maizegenetics/plugindef/GenerateRCode")
     genSelRes <- plugin$genomicSelection(tasPhenoObj, kinship, doCV, kFolds, nIter)
-    genSelRes <- tasTableConvert(genSelRes$toStringTabDelim())
+    genSelRes <- tableReportToDF(genSelRes)
 
     ## Convert columns to appropriate data types
     if (!doCV) {
