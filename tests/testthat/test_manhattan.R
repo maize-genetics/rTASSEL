@@ -50,7 +50,6 @@ test_that("Manhattan Plot throws error.", {
 
 
 ## Equality tests ----
-## Error tests ----
 test_that("Manhattan Plot returns correct plot layers", {
 
     ## Load data ----
@@ -94,6 +93,8 @@ test_that("Manhattan Plot returns correct plot layers", {
         threshold      = 6
     )
 
+
+    ## Tests ----
     expect_s3_class(
         object = p$layers[[1]],
         class  = "ggproto"
@@ -106,7 +107,18 @@ test_that("Manhattan Plot returns correct plot layers", {
         object = p$layers[[3]]$geom,
         class  = "GeomRug"
     )
-
+    expect_equal(
+        object   = p$labels$title,
+        expected = "Trait: EarHT"
+    )
+    expect_equal(
+        object   = p$labels$x,
+        expected = "Position"
+    )
+    expect_equal(
+        object   = p$labels$y,
+        expected = ~-log[10] ~ "(" * italic(p) * "-value)"
+    )
 })
 
 
