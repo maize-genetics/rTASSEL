@@ -20,7 +20,7 @@ contains a phenotype object.}
 \item{nIter}{Number of iterations to be ran.}
 }
 \value{
-Returns a \code{tibble}-based data frame
+Returns a \code{DataFrame}-based data frame
 }
 \description{
 This function acts as a front-end for TASSEL's genomic

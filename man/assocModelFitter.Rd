@@ -66,7 +66,7 @@ only be estimated when the data source is genotype (not a probability).
 The additive effect will always be non-negative. Defaults to \code{FALSE}.}
 }
 \value{
-Returns an R list containing \code{tibble}-based data frames
+Returns an R list containing \code{DataFrame}-based data frames
 }
 \description{
 This function acts as a front-end for TASSEL's extensive

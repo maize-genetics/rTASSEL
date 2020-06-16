@@ -2,7 +2,7 @@
 % Please edit documentation in R/PhenotypeFunctions.R
 \name{getPhenotypeDF}
 \alias{getPhenotypeDF}
-\title{Get an R/\code{tibble} phenotype data frame from TASSEL object}
+\title{Get an R/\code{DataFrame} phenotype data frame from TASSEL object}
 \usage{
 getPhenotypeDF(tasObj)
 }
@@ -10,10 +10,10 @@ getPhenotypeDF(tasObj)
 \item{tasObj}{An object of class \code{TasselGenotypePenotype}.}
 }
 \value{
-Returns an \code{tibble} based data frame
+Returns an \code{DataFrame} based data frame
 }
 \description{
-This function will extract a \code{tibble}-based R data
+This function will extract a \code{DataFrame}-based R data
    frame from an object of \code{TasselGenotypePhenotype} class that
    contains phenotypic data. Column data will be converted to the following
    types data depending on TASSEL data type:
