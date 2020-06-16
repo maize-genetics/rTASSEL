@@ -1,3 +1,9 @@
+## CHANGES IN VERSION 0.9.17
+* Added new function:
+  + `manhattanPlot()`
+* Removed tidyverse dependencies
+
+
 ## CHANGES IN VERSION 0.9.16
 * Added write to file parameters for:
   + assocModelFitter()
