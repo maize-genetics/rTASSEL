@@ -29,28 +29,23 @@ License: GPL-3 | file LICENSE
 URL:
     https://bitbucket.org/bucklerlab/rtassel/src/master/
 Imports:
-    BiocStyle,
-    dplyr,
-    foreach,
     GenomicRanges,
     ggplot2,
     IRanges,
-    knitr,
-    magrittr,
     methods,
-    purrr,
     rJava,
     rlang,
     S4Vectors,
-    stringr,
-    SummarizedExperiment,
-    tibble
+    SummarizedExperiment
 Suggests:
+    BiocStyle,
+    knitr,
+    rmarkdown,
     testthat
+SystemRequirements: Java (>= 8.0)
 Encoding: UTF-8
 LazyData: true
-VignetteBuilder:
-    knitr
+VignetteBuilder: knitr
 RoxygenNote: 7.1.0
 biocViews:
     GenomeWideAssociation
