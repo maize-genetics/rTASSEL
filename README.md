@@ -1,5 +1,7 @@
 ## rTASSEL
 
+[![Build Status](https://travis-ci.org/maize-genetics/rTASSEL.svg?branch=master)](https://travis-ci.org/maize-genetics/rTASSEL)
+
 ### Objective
 The main goal of developing this package is to construct an R-based front-end
 to connect to a variety of highly used TASSEL methods and analytical tools.
