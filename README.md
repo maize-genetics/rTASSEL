@@ -1,6 +1,6 @@
 ## rTASSEL
 
-[![Build Status](https://travis-ci.org/maize-genetics/rTASSEL.svg?branch=master)](https://travis-ci.org/maize-genetics/rTASSEL)
+[![Build Status](https://travis-ci.org/maize-genetics/rTASSEL.svg?branch=master)](https://travis-ci.org/maize-genetics/rTASSEL) [![Coverage Status](https://codecov.io/gh/maize-genetics/rTASSEL/branch/master/graph/badge.svg)](https://codecov.io/gh/maize-genetics/rTASSEL)
 
 ### Objective
 The main goal of developing this package is to construct an R-based front-end
