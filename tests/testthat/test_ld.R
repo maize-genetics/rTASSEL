@@ -81,3 +81,29 @@ test_that("linkageDiseq() throws general exceptions.", {
 })
 
 
+
+## Return tests ----
+test_that("linkageDiseq() returns correct data structure.", {
+    ldDF <- linkageDiseq(
+        tasObj     = tasGeno,
+        ldType     = "SlidingWindow",
+        windowSize = 50,
+        hetCalls   = "missing"
+    )
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
