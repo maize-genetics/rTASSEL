@@ -4,9 +4,19 @@
 \alias{assocModelFitter}
 \title{R interface for TASSEL's association methods}
 \usage{
-assocModelFitter(tasObj, formula, fitMarkers = FALSE, kinship = NULL,
-  fastAssociation = FALSE, minClassSize = 0, biallelicOnly = FALSE,
-  appendAddDom = FALSE)
+assocModelFitter(
+  tasObj,
+  formula,
+  fitMarkers = FALSE,
+  kinship = NULL,
+  fastAssociation = FALSE,
+  maxP = 0.001,
+  maxThreads = NULL,
+  minClassSize = 0,
+  outputFile = NULL,
+  biallelicOnly = FALSE,
+  appendAddDom = FALSE
+)
 }
 \arguments{
 \item{tasObj}{An object of class \code{TasselGenotypePenotype}.}
@@ -32,8 +42,20 @@ please submit a TASSEL kinship matrix object using the rTASSEL function,
 Consider setting to \code{TRUE} if you have many phenotypes in your
 data set.}
 
+\item{maxP}{Maximum p-value (0 - 1) to be reported. Currently works with
+fast association only. Defaults to a p-value of \code{0.001}
+will be used as a threshold. \strong{Note:} p-value parameter will
+not be used for BLUE analysis.}
+
+\item{maxThreads}{Maximum threads to be used when running fast association.
+If \code{NULL}, all threads on machine will be used.}
+
 \item{minClassSize}{The minimum acceptable genotype class size. Genotypes
 in a class with a smaller size will be set to missing. Defaults to 0.}
+
+\item{outputFile}{Output file prefix to be specified in case you want
+to write data directly to disk. Highly recommended for large datasets.
+If \code{NULL}, no data will be saved to disk. If a character}
 
 \item{biallelicOnly}{Only test sites that are bi-allelic. The alternative is
 to test sites with two or more alleles. Defaults to \code{FALSE}}
@@ -41,10 +63,10 @@ to test sites with two or more alleles. Defaults to \code{FALSE}}
 \item{appendAddDom}{If true, additive and dominance effect estimates will
 be added to the stats report for bi-allelic sites only. The effect will
 only be estimated when the data source is genotype (not a probability).
-The additive effect will always be non-negative. Defaults to \code{FALSE}}
+The additive effect will always be non-negative. Defaults to \code{FALSE}.}
 }
 \value{
-Returns an R list containing \code{tibble}-based data frames
+Returns an R list containing \code{DataFrame}-based data frames
 }
 \description{
 This function acts as a front-end for TASSEL's extensive

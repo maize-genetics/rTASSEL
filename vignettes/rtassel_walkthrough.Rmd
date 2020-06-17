@@ -3,17 +3,17 @@ title: "Getting Started with rTASSEL"
 author: "Brandon Monier"
 date:   "2019-09-04 at 11:21:26"
 output:
-  BiocStyle::html_document:
-    toc: true
-    fig_caption: true
-    toc_float: true
-    number_sections: false
+    BiocStyle::html_document:
+      toc: true
+      fig_caption: true
+      toc_float: true
+      number_sections: false
 vignette: >
-  %\VignetteIndexEntry{Getting Start with rTASSEL}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
-  %\usepackage[utf8]{inputenc}
-  %\usepackage{float}
+    %\VignetteIndexEntry{Getting Start with rTASSEL}
+    %\VignetteEngine{knitr::rmarkdown}
+    %\VignetteEncoding{UTF-8}
+    %\usepackage[utf8]{inputenc}
+    %\usepackage{float}
 ---
 
 ```{r setup, include=FALSE}
@@ -475,7 +475,8 @@ tasGenoPhenoFilt <- rTASSEL::filterGenotypeTableSites(
     tasObj = tasGenoPheno,
     siteMinCount = 150,
     siteMinAlleleFreq = 0.05,
-    siteMaxAlleleFreq = 1.0
+    siteMaxAlleleFreq = 1.0,
+    siteRangeFilterType = "none"
 )
 tasGenoPhenoFilt
 ```
@@ -661,7 +662,7 @@ control for field variation. Since genotype data is not needed for this
 method, we can leave the `fitMarkers`, `kinship`, and `fastAssociation` to
 `NULL` or `FALSE`:
 
-```{r, echo=TRUE, eval=TRUE}
+```{r, echo=TRUE, eval=FALSE}
 # Read in phenotype data
 phenoPathCov <- system.file("extdata", "mdp_phenotype.txt", package = "rTASSEL")
 tasPhenoCov <- rTASSEL::readPhenotypeFromPath(phenoPathCov)
@@ -685,7 +686,7 @@ Similar to BLUEs, we can fit a generalized linear model (GLM) by simply
 fitting marker data to our model. For this, we need a genotype data set
 combined with our phenotype data in a `TasselGenotypePhenotype` class object:
 
-```{r, echo=TRUE, eval=TRUE}
+```{r, echo=TRUE, eval=FALSE}
 # Calculate GLM
 tasGLM <- rTASSEL::assocModelFitter(
     tasObj = tasGenoPheno,             # <- our prior TASSEL object
@@ -706,7 +707,7 @@ kinship to our analysis. In addition to the prior parameters, we will also
 need a TASSEL kinship object (see *Create a kinship matrix object* in the
 *Analysis - Relatedness* section):
 
-```{r, echo=TRUE, eval=TRUE}
+```{r, echo=TRUE, eval=FALSE}
 # Calculate MLM
 tasMLM <- rTASSEL::assocModelFitter(
     tasObj = tasGenoPheno,             # <- our prior TASSEL object
@@ -726,7 +727,7 @@ Finally, we can run fast association analysis in our GLM model by setting
 the `fastAssociation` parameter to `TRUE`. **NOTE**: this is only really
 effective if you have many phenotype traits:
 
-```{r, echo=TRUE, eval=TRUE}
+```{r, echo=TRUE, eval=FALSE}
 # Read data - need only non missing data!
 phenoPathFast <-system.file(
     "extdata",

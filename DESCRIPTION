@@ -1,5 +1,5 @@
 Package: rTASSEL
-Version: 0.9.13
+Version: 0.9.17
 Date: 2018-12-21
 Title: R Front-End for TASSEL
 Authors@R: c(
@@ -29,26 +29,23 @@ License: GPL-3 | file LICENSE
 URL:
     https://bitbucket.org/bucklerlab/rtassel/src/master/
 Imports:
-    BiocStyle,
-    dplyr,
-    foreach,
     GenomicRanges,
     ggplot2,
     IRanges,
-    knitr,
-    magrittr,
     methods,
-    purrr,
     rJava,
     rlang,
     S4Vectors,
-    stringr,
-    SummarizedExperiment,
-    tibble
+    SummarizedExperiment
+Suggests:
+    BiocStyle,
+    knitr,
+    rmarkdown,
+    testthat
+SystemRequirements: Java (>= 8.0)
 Encoding: UTF-8
 LazyData: true
-VignetteBuilder:
-    knitr
-RoxygenNote: 6.1.1
+VignetteBuilder: knitr
+RoxygenNote: 7.1.0
 biocViews:
     GenomeWideAssociation

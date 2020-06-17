@@ -3,7 +3,7 @@
 # Description:   Functions to support TaxaList or Samples
 # Author:        Brandon Monier & Ed buckler
 # Created:       2018-11-26 at 11:14:36
-# Last Modified: 2019-04-04 at 16:32:24
+# Last Modified: 2020-06-16 at 17:27:42
 #--------------------------------------------------------------------
 
 #--------------------------------------------------------------------
@@ -43,7 +43,6 @@ sampleVectorFromTassel <- function(tasObj) {
 ## Get sample ID data frame - not exported (house keeping)
 sampleDataFrame <- function(tasObj) {
     taxaArray <- sampleVectorFromTassel(tasObj)
-    # fourNewCols <- stringr::str_split(taxaArray, ":")
     colData <- data.frame(
         row.names = taxaArray,
         Sample = taxaArray,

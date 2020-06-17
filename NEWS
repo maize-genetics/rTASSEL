@@ -1,3 +1,24 @@
+## CHANGES IN VERSION 0.9.17
+* Added new function:
+  + `manhattanPlot()`
+* Removed tidyverse dependencies
+
+
+## CHANGES IN VERSION 0.9.16
+* Added write to file parameters for:
+  + assocModelFitter()
+* Added p-value threshold parameters for:
+  + assocModelFitter()
+* Added thread usage paramters for:
+  + assocModelFitter()
+* Optimized table report to data frame generation
+* Added new filtration features for genotype tables via filterGenotypeTableSites()
+  + parameters for variant sites
+  + parameters for physical positions
+  + filtration via chromsomome position files
+  + filtration via BED file formats
+
+
 ## CHANGES IN VERSION 0.9.13
 * Added error checks for catching C stack usage errors for the following functions:
   + filterGenotypeTableSites()

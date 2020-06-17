@@ -4,8 +4,12 @@
 \alias{filterGenotypeTableTaxa}
 \title{Filter genotype table by taxa}
 \usage{
-filterGenotypeTableTaxa(tasObj, minNotMissing = 0, minHeterozygous = 0,
-  maxHeterozygous = 1)
+filterGenotypeTableTaxa(
+  tasObj,
+  minNotMissing = 0,
+  minHeterozygous = 0,
+  maxHeterozygous = 1
+)
 }
 \arguments{
 \item{tasObj}{An object of class \code{TasselGenotypePenotype}.}

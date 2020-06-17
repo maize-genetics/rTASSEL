@@ -4,8 +4,14 @@
 \alias{manhattanPlot}
 \title{Create Manhattan plot from rTASSEL association output}
 \usage{
-manhattanPlot(assocStats, trait, threshold, colors = c("#91baff",
-  "#3e619b"), showSigMarkers = FALSE)
+manhattanPlot(
+  assocStats,
+  trait,
+  threshold,
+  colors = c("#91baff", "#3e619b"),
+  showSigMarkers = FALSE,
+  showRug = FALSE
+)
 }
 \arguments{
 \item{assocStats}{rTASSEL association statistical output. This output is
@@ -14,7 +20,7 @@ This data contains the necessary column variables for this plot to work.}
 
 \item{trait}{Which phenotypic trait do you want to plot?}
 
-\item{threshold}{User-defined \eqn{p}-value threshold for significant
+\item{threshold}{User-defined \eqn{-log_{10}(p)}-value threshold for significant
 marker determination. Once specified any marker points higher than this
 line will be highlighted.}
 
@@ -24,6 +30,9 @@ chromosomes. Defaults to 2 shades of blue.}
 \item{showSigMarkers}{Should significantly highlighted markers be labelled?
 If \code{TRUE}, marker points will labelled with their respective
 marker labels. Defaults to \code{FALSE}.}
+
+\item{showRug}{Should a rug plot be plotted under the Manhattan
+plot? Defaults to \code{FALSE}.}
 }
 \value{
 Returns a \code{ggplot2} object

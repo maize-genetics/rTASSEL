@@ -4,8 +4,12 @@
 \alias{kinshipMatrix}
 \title{Create a TASSEL kinship matrix}
 \usage{
-kinshipMatrix(tasObj, method = "Centered_IBS", maxAlleles = 6,
-  algorithmVariation = "Observed_Allele_Freq")
+kinshipMatrix(
+  tasObj,
+  method = "Centered_IBS",
+  maxAlleles = 6,
+  algorithmVariation = "Observed_Allele_Freq"
+)
 }
 \arguments{
 \item{tasObj}{An object of class \code{TasselGenotypePenotype}.}
