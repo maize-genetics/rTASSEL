@@ -1,5 +1,3 @@
-#!/usr/bin/env Rscript
-
 #--------------------------------------------------------------------
 # Script Name:   GenomicPrediction.R
 # Description:   General functions for running genomic prediction
