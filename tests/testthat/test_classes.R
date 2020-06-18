@@ -1,4 +1,4 @@
-# === Tests for `assocModelFitter()` ================================
+# === Tests for rTASSEL classes =====================================
 
 ## Preamble - load data ----
 
