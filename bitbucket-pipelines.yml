@@ -1,16 +1,12 @@
-image: cardcorp/r-java
+image: rocker/tidyverse
 
 pipelines:
   default:
     - step:
         script:
           - cd /opt/atlassian/pipelines/agent/build
-          - Rscript -e 'install.packages("curl")'
-          - Rscript -e 'install.packages("xml2")'
-          - Rscript -e 'install.packages("openssl")'
-          - Rscript -e 'install.packages("httr")'
-          - Rscript -e 'install.packages("rvest")'
-          - Rscript -e 'install.packages("devtools")'
+          - apt update
+          - apt-get install -y openjdk-8-jdk
           - Rscript -e 'devtools::install_deps(".", dependencies=TRUE, upgrade=FALSE)'
           - Rscript -e 'devtools::build()'
           - Rscript -e 'devtools::install(upgrade_dependencies = FALSE)'
