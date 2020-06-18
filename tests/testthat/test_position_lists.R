@@ -42,8 +42,6 @@ tasGenoPheno <- readGenotypePhenotype(
 test_that("getPositionList() throws general exceptions.", {
     tmp <- getPositionList(mtcars)
     expect_true(rJava::is.jnull(tmp))
-
-
 })
 
 
@@ -58,12 +56,5 @@ test_that("position list methods return correct data and classes.", {
     expect_true(length(tmp$tasselIndex) == 3093)
 
 })
-
-
-
-
-
-
-
 
 
