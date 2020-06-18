@@ -95,8 +95,8 @@ test_that("kinshipMatrix() returns correct data.", {
         expected = "jobjRef"
     )
     expect_equal(
-        object = names(tasKin)[1],
-        expected = "annotations()"
+        object = length(names(tasKin)),
+        expected = 35
     )
 
 
@@ -123,8 +123,8 @@ test_that("distanceMatrix() returns correct data.", {
         expected = "jobjRef"
     )
     expect_equal(
-        object = names(tasDist)[1],
-        expected = "annotations()"
+        object = length(names(tasDist)),
+        expected = 35
     )
 
 
