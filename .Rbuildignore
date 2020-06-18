@@ -3,3 +3,4 @@
 ^\.httr-oauth$
 ^\.travis\.yml$
 ^NEWS$
+^\bitbucket-pipelines\.yml$
