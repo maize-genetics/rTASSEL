@@ -1,9 +1,11 @@
-image: cardcorp/r-java
+image: rocker/tidyverse
 
 pipelines:
   default:
     - step:
         script:
+          - apt-get default_jre
+          - apt-get default-jdk
           - cd /opt/atlassian/pipelines/agent/build
           - Rscript -e 'install.packages("devtools")'
           - Rscript -e 'devtools::install_deps(".", dependencies=TRUE, upgrade=FALSE)'
