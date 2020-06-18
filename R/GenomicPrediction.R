@@ -84,7 +84,7 @@ genomicPrediction <- function(tasPhenoObj, kinship, doCV = FALSE, kFolds, nIter)
     tasPhenoObj <- tasPhenoObj@jPhenotypeTable
 
     ## Check to see if kinship parameter is of rJava and DistanceMatrix class
-    if (class(kinship) == "rJava" && kinship != "net/maizegenetics/taxa/distance/DistanceMatrix") {
+    if (class(kinship) != "jobjRef") {
         stop("TASSEL kinship object is not of DistanceMatrix class")
     }
 
