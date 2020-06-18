@@ -83,6 +83,7 @@ readPhenotypeFromDataFrame <- function(phenotypeDF,
         )
     }
 
+    # TODO Remove tibble check
     if (any(class(phenotypeDF) == "tbl_df")) {
         phenotypeDF <- as.data.frame(phenotypeDF)
     }
