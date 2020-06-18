@@ -1,13 +1,9 @@
-image: rocker/tidyverse
+image: dividor/rocker-h2o-db-wemmodels
 
 pipelines:
   default:
     - step:
         script:
-          - cd /opt/atlassian/pipelines/agent/build
-          - apt update
-          - apt install -y default-jdk
-          - sudo R CMD javareconf -e
           - Rscript -e 'devtools::install_deps(".", dependencies=TRUE, upgrade=FALSE)'
           - Rscript -e 'devtools::build()'
           - Rscript -e 'devtools::install(upgrade_dependencies = FALSE)'
