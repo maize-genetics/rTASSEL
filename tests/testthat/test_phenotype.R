@@ -91,10 +91,9 @@ test_that("readPhenotypeFromDataFrame() returns correct data.", {
 
     phenoDF <- getPhenotypeDF(tasGenoPheno)
     phenoDF <- as.data.frame(phenoDF)
-    phenoDFTib <- tibble::as_tibble(phenoDF)
 
     phenoDFTas <- readPhenotypeFromDataFrame(
-        phenotypeDF = phenoDFTib,
+        phenotypeDF = phenoDF,
         taxaID = "Taxa"
     )
 
