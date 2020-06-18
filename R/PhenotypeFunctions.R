@@ -145,21 +145,21 @@ getPhenotypeDF <- function(tasObj) {
     jPhenoAttri <- extractPhenotypeAttDf(jPhenoTable)
     jPhenoTable <- tableReportToDF(jPhenoTable)
 
-    # Get list of TASSEL data types
-    attributes <- c("taxa", "factor", "covariate", "data")
-    att <- lapply(seq_along(attributes), function(i) {
-        as.vector(jPhenoAttri$traitName[which(jPhenoAttri$traitType == attributes[i])])
-    })
-    names(att) <- attributes
-
-    # Convert column data based TASSEL data types
-    jPhenoTable[c(att$covariate, att$data)] <- sapply(
-        jPhenoTable[c(att$covariate, att$data)], as.numeric
-    )
-    jPhenoTable[c(att$factor)] <- lapply(
-        jPhenoTable[c(att$factor)], factor
-    )
-    names(jPhenoTable) <- jPhenoAttri$traitName
+    # # Get list of TASSEL data types
+    # attributes <- c("taxa", "factor", "covariate", "data")
+    # att <- lapply(seq_along(attributes), function(i) {
+    #     as.vector(jPhenoAttri$traitName[which(jPhenoAttri$traitType == attributes[i])])
+    # })
+    # names(att) <- attributes
+    #
+    # # Convert column data based TASSEL data types
+    # jPhenoTable[c(att$covariate, att$data)] <- sapply(
+    #     jPhenoTable[c(att$covariate, att$data)], as.numeric
+    # )
+    # jPhenoTable[c(att$factor)] <- lapply(
+    #     jPhenoTable[c(att$factor)], factor
+    # )
+    # names(jPhenoTable) <- jPhenoAttri$traitName
     return(jPhenoTable)
 }
 
