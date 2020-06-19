@@ -7,4 +7,4 @@ pipelines:
           - Rscript -e 'devtools::install_deps(".", dependencies=TRUE, upgrade=FALSE)'
           - Rscript -e 'devtools::build()'
           - Rscript -e 'devtools::install(upgrade_dependencies = FALSE)'
-          - Rscript -e 'devtools::check()'
+          - Rscript -e 'library("methods"); devtools::check()'
