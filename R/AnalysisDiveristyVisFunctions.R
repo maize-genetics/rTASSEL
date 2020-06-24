@@ -3,7 +3,7 @@
 # Description:   Visualization functions for diveristy analyses
 # Author:        Brandon Monier
 # Created:       2020-06-17 at 11:39:52
-# Last Modified: 2020-06-23 at 11:07:50
+# Last Modified: 2020-06-24 at 11:37:51
 #--------------------------------------------------------------------
 
 #--------------------------------------------------------------------
@@ -150,6 +150,12 @@ ldJavaApp <- function(tasObj,
 #' @param hetCalls How should heterozygous calls be handled? Current options
 #'   are \code{"ignore"} (ignore altogether), \code{"missing"}
 #'   (set to missing), and \code{"third"} (treat as third state).
+#' @param plotVal What LD value do you want to plot? Options are:
+#'   \itemize{
+#'     \item \code{r2}: \eqn{r^{2}} (Default parameter)
+#'     \item \code{DPrime}: \eqn{D'}
+#'     \item \code{pDiseq}: \emph{p}-value
+#'   }
 #' @param verbose Display messages? Defaults to \code{TRUE}.
 #'
 #' @details Linkage disequilibrium between any set of polymorphisms can be
@@ -176,17 +182,82 @@ ldJavaApp <- function(tasObj,
 #'
 #' @return Returns a \code{ggplot2} object.
 #'
-#' @importFrom rJava is.jnull
-#' @importFrom rJava J
-#' @importFrom rJava .jnew
+#' @importFrom rlang .data
 #'
 #' @export
 ldPlot <- function(tasObj,
                    ldType = c("SlidingWindow", "All"),
                    windowSize = NULL,
                    hetCalls = c("missing", "ignore", "third"),
+                   plotVal = c("r2", "DPrime", "pDiseq"),
                    verbose = TRUE) {
-    message("Coming soon...")
+    # House-keeping parameters
+    angle                <- 135
+    text_scale_buffer    <- 1.5
+    upper_margin_padding <- 3
+
+    # Plot logic handling
+    plotVal <- match.arg(plotVal)
+
+    # Generate initial data frame
+    ldDF <- linkageDiseq(
+        tasObj     = tasObj,
+        ldType     = ldType,
+        windowSize = windowSize,
+        hetCalls   = hetCalls,
+        verbose    = verbose
+    )
+
+    # Subset LD data frame
+    if (plotVal == "r2") plotVal <- "R.2"
+    ldDF$coord1 <- paste0(ldDF$Locus1, "_", ldDF$Position1)
+    ldDF$coord2 <- paste0(ldDF$Locus2, "_", ldDF$Position2)
+    ldSub        <- ldDF[, c("coord1", "coord2", plotVal)]
+    ldSub        <- as.data.frame(ldSub)
+
+    # Rotate coordinates for plotting
+    ldSubRot <- ldCellRotater(ldSub, angle)
+
+    # Get IDs and rotate to new position
+    ids <- unique(c(ldSub$coord1, ldSub$coord2))
+    ids <- ids[order(ids)]
+    id_coord <- list(
+        "x" = seq(1.5, 1.5 + length(ids) - 1, 1),
+        "y" = seq(0.5, 0.5 + length(ids) - 1, 1)
+    )
+    id_coord <- rotate(id_coord$x, id_coord$y, angle)
+
+    # Generate "clean" legend label
+    legend_lab <- switch(
+        EXPR = plotVal,
+        "R.2" = bquote(italic(r)^2),
+        "DPrime" = bquote(italic(D)*"'"),
+        "pDiseq" = bquote(italic(p)*'-value')
+    )
+
+    # Make ggplot2 object
+    cell_plot <- ggplot2::ggplot(data = ldSubRot) +
+        ggplot2::aes(x = .data$x, y = .data$y, fill = .data$val, group = .data$group) +
+        ggplot2::geom_polygon(color = "white", size = 1) +
+        ggplot2::annotate(
+            geom = "text",
+            x = id_coord$x,
+            y = id_coord$y + (abs(id_coord$y) * text_scale_buffer),
+            label = ids,
+            angle = 90
+        ) +
+        ggplot2::ylim(min(ldSubRot$y), upper_margin_padding) +
+        ggplot2::scale_x_reverse() +
+        ggplot2::scale_fill_continuous(
+            name = legend_lab,
+            type = "viridis"
+        ) +
+        ggplot2::coord_fixed() +
+        ggplot2::theme_void() +
+        ggplot2::theme(
+            legend.position = "bottom"
+        )
+    return(cell_plot)
 }
 
 
