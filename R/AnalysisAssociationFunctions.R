@@ -3,7 +3,7 @@
 # Description:   General functions for running association analysis
 # Author:        Brandon Monier
 # Created:       2019-03-29 at 13:51:02
-# Last Modified: 2020-06-16 at 16:24:01
+# Last Modified: 2020-06-24 at 09:50:27
 #--------------------------------------------------------------------
 
 #--------------------------------------------------------------------
@@ -377,37 +377,6 @@ assocModelFitter <- function(tasObj,
     return(tableReportList(assocOut))
 }
 
-
-## Association table reports to S4Vectors::DataFrame objects - not exported (house keeping)
-#' @importFrom rJava .jevalArray
-#' @importFrom rJava J
-#' @importFrom S4Vectors DataFrame
-tableReportToDF <- function(x) {
-    rJC <- rJava::J("net/maizegenetics/plugindef/GenerateRCode")
-    tabRep <- rJC$tableReportToVectors(x)
-
-    tabRepCols <- lapply(tabRep$dataVector, rJava::.jevalArray)
-
-    tabRepCols <- do.call("data.frame", c(tabRepCols, stringsAsFactors = FALSE))
-    colnames(tabRepCols) <- tabRep$columnNames
-    return(S4Vectors::DataFrame(tabRepCols))
-}
-
-
-## Get table reports based on HashMap - not exported (house keeping)
-#' @importFrom rJava .jrcall
-#' @importFrom rJava .jstrVal
-tableReportList <- function(x) {
-
-    hashVectors <- rJava::.jrcall(x, "keySet")
-    hashVectors <- lapply(hashVectors, rJava::.jstrVal)
-
-    myList <- lapply(hashVectors, function(i) x$get(i))
-    myList <- lapply(myList, tableReportToDF)
-
-    names(myList) <- hashVectors
-    return(myList)
-}
 
 
 ## Phenotype filter - return modified TASSEL object - not exported (house keeping)
