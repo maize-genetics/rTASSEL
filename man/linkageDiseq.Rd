@@ -9,17 +9,22 @@ linkageDiseq(
   tasObj,
   ldType = c("SlidingWindow", "All"),
   windowSize = NULL,
-  hetCalls = c("missing", "ignore", "third")
+  hetCalls = c("missing", "ignore", "third"),
+  verbose = TRUE
 )
 }
 \arguments{
-\item{tasObj}{An object of class \code{TasselGenotypePenotype}.}
+\item{tasObj}{An object of class \code{TasselGenotypePenotype} that
+contains a genotype table.}
 
 \item{ldType}{How do you want LD calculated? Currently, the available
-options are \code{"All"} and \code{"SlidingWindow"}. If \code{All} is
-selected, LD will be calculated for every combination of sites in the
-alignment. If \code{SlidingWindow} is selected, LD will be calculated for
-sites within a window of sites surrounding the current site.}
+options are \code{"All"} and \code{"SlidingWindow"}. If
+\code{All} is selected, LD will be calculated for every
+combination of sites in the alignment (NOTE: this may produce a
+massive series of combinations; use only on heavily filtered
+genotype tables). If \code{SlidingWindow} is selected, LD will
+be calculated for sites within a window of sites surrounding the
+current site.}
 
 \item{windowSize}{What size do you want your LD analysis window? If you
 have chosen \code{SlidingWindow} for the \code{ldType} parameter, you
@@ -28,6 +33,8 @@ will need to specify window size.}
 \item{hetCalls}{How should heterozygous calls be handled? Current options
 are \code{"ignore"} (ignore altogether), \code{"missing"}
 (set to missing), and \code{"third"} (treat as third state).}
+
+\item{verbose}{Display messages? Defaults to \code{TRUE}.}
 }
 \value{
 Returns a \code{DataFrame}-based data frame.
@@ -38,21 +45,24 @@ Generates a linkage disequilibrium (LD) data set from SNP data.
 \details{
 Linkage disequilibrium between any set of polymorphisms can be
   estimated by initially filtering a genotype dataset and then using
-  this function. At this time, D', r2 and P-values will be estimated. The
+  this function. At this time, \eqn{D'}, \eqn{r^{2}} and P-values will be estimated. The
   current version calculates LD between haplotypes with known phase only
   (unphased diploid genotypes are not supported; see PowerMarker or
   Arlequin for genotype support).
   \itemize{
-    \item D' is the standardized disequilibrium coefficient, a useful
+    \item \eqn{D'} is the standardized disequilibrium coefficient, a useful
     statistic for determining whether recombination or homoplasy has
     occurred between a pair of alleles.
-    \item r2 represents the correlation between alleles at two loci, which
+    \item \eqn{r^{2}} represents the correlation between alleles at two loci, which
     is informative for evaluating the resolution of association approaches.
   }
-  D' and r2 can be calculated when only two alleles are present. If more
+  \eqn{D'} and \eqn{r^{2}} can be calculated when only two alleles are present. If more
   than two alleles, only the two most frequent alleles are used. P-values
   are determined by a two-sided Fisher's Exact test is calculated. Since LD
   is meaningless when scored with very small sample sizes, a minimum of 20
   taxa must be present to calculate LD and there must be 2 or more minor
   alleles.
+}
+\seealso{
+\code{\link{linkageDiseq}}, \code{\link{ldPlot}}
 }

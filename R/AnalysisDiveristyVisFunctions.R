@@ -3,7 +3,7 @@
 # Description:   Visualization functions for diveristy analyses
 # Author:        Brandon Monier
 # Created:       2020-06-17 at 11:39:52
-# Last Modified: 2020-06-17 at 11:41:52
+# Last Modified: 2020-06-23 at 11:07:50
 #--------------------------------------------------------------------
 
 #--------------------------------------------------------------------
@@ -12,181 +12,181 @@
 #    visualizing diversity analyses of TASSEL.
 #--------------------------------------------------------------------
 
-#' @title LD visualization application
+#' @title Linkage desequilibrium visualization application
 #'
-#' @description Runs an interactive visualizer for an LD object
+#' @description Calculates linkage disequilibrium (LD) and runs an
+#'   interactive Java visualizer for LD results.
 #'
-#' @param ldData An LD data frame.
+#' @name ldJavaApp
+#' @rdname ldJavaApp
 #'
-#' @import shiny
-#' @importFrom plotly layout
-#' @importFrom plotly plot_ly
-#' @importFrom plotly plotlyOutput
-#' @importFrom plotly renderPlotly
+#' @param tasObj An object of class \code{TasselGenotypePenotype}. That
+#'   contains a genotype table.
+#' @param ldType How do you want LD calculated? Currently, the available
+#'   options are \code{"All"} and \code{"SlidingWindow"}. If
+#'   \code{All} is selected, LD will be calculated for every
+#'   combination of sites in the alignment (NOTE: this may produce a
+#'   massive series of combinations; use only on heavily filtered
+#'   genotype tables). If \code{SlidingWindow} is selected, LD will
+#'   be calculated for sites within a window of sites surrounding the
+#'   current site.
+#' @param windowSize What size do you want your LD analysis window? If you
+#'   have chosen \code{SlidingWindow} for the \code{ldType} parameter, you
+#'   will need to specify window size.
+#' @param hetCalls How should heterozygous calls be handled? Current options
+#'   are \code{"ignore"} (ignore altogether), \code{"missing"}
+#'   (set to missing), and \code{"third"} (treat as third state).
+#' @param verbose Display messages? Defaults to \code{TRUE}.
+#'
+#' @details Linkage disequilibrium between any set of polymorphisms can be
+#'   estimated by initially filtering a genotype dataset and then using
+#'   this function. At this time, \eqn{D'}, \eqn{r^{2}} and P-values will be estimated. The
+#'   current version calculates LD between haplotypes with known phase only
+#'   (unphased diploid genotypes are not supported; see PowerMarker or
+#'   Arlequin for genotype support).
+#'   \itemize{
+#'     \item \eqn{D'} is the standardized disequilibrium coefficient, a useful
+#'     statistic for determining whether recombination or homoplasy has
+#'     occurred between a pair of alleles.
+#'     \item \eqn{r^{2}} represents the correlation between alleles at two loci, which
+#'     is informative for evaluating the resolution of association approaches.
+#'   }
+#'   \eqn{D'} and \eqn{r^{2}} can be calculated when only two alleles are present. If more
+#'   than two alleles, only the two most frequent alleles are used. P-values
+#'   are determined by a two-sided Fisher's Exact test is calculated. Since LD
+#'   is meaningless when scored with very small sample sizes, a minimum of 20
+#'   taxa must be present to calculate LD and there must be 2 or more minor
+#'   alleles.
+#'
+#' @seealso \code{\link{linkageDiseq}}, \code{\link{ldPlot}}
+#'
+#' @return Returns a Java-based visualization application.
+#'
+#' @importFrom rJava is.jnull
+#' @importFrom rJava J
+#' @importFrom rJava .jnew
 #'
 #' @export
-ldApp <- function(ldData) {
-
-    ui <- shiny::shinyUI(shiny::fluidPage(
-        shiny::h4("rTASSEL - Linkage Disequilibrium"),
-        shiny::sidebarLayout(
-            shiny::sidebarPanel(
-                shiny::numericInput(
-                    inputId = "window",
-                    label = "Window size",
-                    value = 10
-                ),
-                shiny::selectInput(
-                    inputId = "matVal",
-                    label = "Value type",
-                    choices = c(
-                        "R Squared" = "R^2",
-                        "P-Value" = "pDiseq",
-                        "D Prime" = "DPrime"
-                    )
-                )
-            ),
-            shiny::mainPanel(
-                plotly::plotlyOutput("distPlot"),
-                # uiOutput("xMov"),
-                # uiOutput("yMov")
-                shiny::sliderInput(
-                    inputId = "xMov",
-                    label = "Move Window (x axis)",
-                    min = 1,
-                    max = 100,
-                    value = 1
-                ),
-                shiny::sliderInput(
-                    inputId = "yMov",
-                    label = "Move Window (y axis)",
-                    min = 1,
-                    max = 100,
-                    value = 1
-                ),
-                shiny::verbatimTextOutput("ldDebug")
-            )
-        )
-    ))
-
-    server <- function(input, output) {
-        # output$xMov <- shiny::renderUI({
-        #     shiny::sliderInput(
-        #         inputId = "xMovActive",
-        #         label = "Move Window (x axis)",
-        #         min = 1,
-        #         max = 3000,
-        #         value = 1
-        #     )
-        # })
-        # output$yMov <- shiny::renderUI({
-        #     shiny::sliderInput(
-        #         inputId = "yMovActive",
-        #         label = "Move Window (y axis)",
-        #         min = 1,
-        #         max = 3000,
-        #         value = 1
-        #     )
-        # })
-        output$distPlot <- plotly::renderPlotly({
-            ## Get LD matrix
-            ldOut <- ldDFToShinyMat(
-                ldDF = ldData,
-                matVal = input$matVal,
-                x_range_1 = input$xMov,
-                x_range_2 = input$xMov + input$window,
-                # x_range_2 = (input$xMovActive + input$window) - 1,
-                y_range_1 = input$yMov,
-                y_range_2 = input$yMov + input$window
-                # y_range_2 = (input$yMovActive + input$window) - 1
-            )
-
-            ## Plotly metadata and parameters
-            ax <- list(
-                zeroline = FALSE,
-                showline = FALSE,
-                showticklabels = FALSE,
-                showgrid = TRUE
-            )
-
-            ## The Plotly plot
-            plotly::plot_ly(
-                x = colnames(ldOut),
-                y = rownames(ldOut),
-                z = ldOut,
-                type = "heatmap"
-            ) %>% plotly::layout(xaxis = ax, yaxis = ax)
-        })
-
-        output$ldDebug <- shiny::renderPrint({
-            debug_list <- list(
-                x_range_1 = input$xMov,
-                x_range_2 = input$xMov + input$window,
-                y_range_1 = input$yMov,
-                y_range_2 = input$yMov + input$window
-            )
-            cat("--- LD DEBUG ---\n")
-            debug_list
-        })
+ldJavaApp <- function(tasObj,
+                      ldType = c("SlidingWindow", "All"),
+                      windowSize = NULL,
+                      hetCalls = c("missing", "ignore", "third"),
+                      verbose = TRUE) {
+    # Logic - Check for TasselGenotypePhenotype class
+    if (!is(tasObj, "TasselGenotypePhenotype")) {
+        stop("tasObj is not of class \"TasselGenotypePhenotype\"")
     }
 
-    shiny::shinyApp(ui, server)
+    # Logic - Check to see if TASSEL object has a genotype table
+    if (rJava::is.jnull(tasObj@jGenotypeTable)) {
+        stop("tasObj does contain a Genotype object")
+    }
+
+    # Logic - Check for available parameters
+    hetCalls <- match.arg(hetCalls)
+    ldType <- match.arg(ldType)
+
+    # Logic - Add warning for all
+    if (ldType == "All") {
+        if (verbose) message("This *might* produce a massive matrix. You have been warned.")
+        windowSize <- -1
+    }
+
+    # Logic - check for ldType and windowSize compatability
+    if (ldType == "SlidingWindow" & is.null(windowSize)) {
+        if (verbose) message("`windowSize` is not set - setting to `1`")
+        windowSize <- 1
+    }
+
+    # Get TASSEL generate R code plugin
+    jRC <- rJava::J("net/maizegenetics/plugindef/GenerateRCode")
+
+    # Run LD
+    if (verbose) message("Calculating LD...")
+    ldObj <- jRC$linkageDiseq(
+        tasObj@jGenotypeTable,  # TASSEL genotype table
+        ldType,                 # LD type parameter
+        as.integer(windowSize), # Window size
+        hetCalls                # heterozygous calls
+    )
+
+    ## Call LD dialog ----
+    ldPlug <- rJava::.jnew(
+        class = "net/maizegenetics/analysis/popgen/LinkageDiseqDisplayPlugin",
+        rJava::.jnew("java/awt/Frame"),
+        TRUE
+    )
+    ldDialog <- rJava::.jnew(
+        class = "net/maizegenetics/analysis/popgen/LinkageDiseqDisplayDialog",
+        ldPlug,
+        ldObj
+    )
+    ldDialog$show()
 }
 
 
-## LD dataframe to matrix converter - not exported (house keeping)
 
-# #' @importFrom stringr str_sort
-ldDFToShinyMat <- function(ldDF,
-                           matVal = c("R^2", "pDiseq", "DPrime"),
-                           x_range_1,
-                           x_range_2,
-                           y_range_1,
-                           y_range_2,
-                           subSet = NULL) {
-
-    matVal <- match.arg(matVal)
-
-    # Add new coordinates (combine chrom. and chrom. coordinate)
-    ldSUB <- ldDF[, c(1:3, 7:9, 13:17)]
-    ldSUB$coord1 <- paste0(ldSUB$Locus1, "_", ldSUB$Position1)
-    ldSUB$coord2 <- paste0(ldSUB$Locus2, "_", ldSUB$Position2)
-
-    # Sub matrix check
-    if (!is.null(subSet)) {
-        matEx <- ldSUB[1:subSet, c("coord1", "coord2", matVal)]
-    } else {
-        matEx <- ldSUB[, c("coord1", "coord2", matVal)]
-    }
-
-    # Subset matrix IDs
-    matIDs <- unique(c(matEx$coord1, matEx$coord2))
-    matIDs <- stringr::str_sort(matIDs, numeric = TRUE)
-
-    # Create NA matrix (for population)
-    mat <- matrix(data = NA, nrow = length(matIDs), ncol = length(matIDs))
-    colnames(mat) <- matIDs
-    rownames(mat) <- matIDs
-
-    # Populate NA matrix with existing TASSEL calculations
-    matExMat <- as.matrix(matEx)
-    mat[matExMat[, 1:2]] <- as.numeric(matExMat[, 3])
-
-    # Sub Matrix
-    matSub <- mat[y_range_1:y_range_2, x_range_1:x_range_2]
-
-    if (all(is.na(matSub))) {
-        matSub[is.na(matSub)] <- 0
-    }
-
-
-    # Rotate and visualze
-    # matCorrect <- t(apply(matSub, 2, rev))
-    # matCorrect <- matSub
-
-    # Return
-    return(matSub)
-    # return(dim(mat))
+#' @title Linkage disequilibrium plot
+#'
+#' @description Calculates linkage disequilibrium (LD) and generates
+#'   a static plot using \code{ggplot2} graphics.
+#'
+#' @name ldPlot
+#' @rdname ldPlot
+#'
+#' @param tasObj An object of class \code{TasselGenotypePenotype}. That
+#'   contains a genotype table.
+#' @param ldType How do you want LD calculated? Currently, the available
+#'   options are \code{"All"} and \code{"SlidingWindow"}. If
+#'   \code{All} is selected, LD will be calculated for every
+#'   combination of sites in the alignment (NOTE: this may produce a
+#'   massive series of combinations; use only on heavily filtered
+#'   genotype tables). If \code{SlidingWindow} is selected, LD will
+#'   be calculated for sites within a window of sites surrounding the
+#'   current site.
+#' @param windowSize What size do you want your LD analysis window? If you
+#'   have chosen \code{SlidingWindow} for the \code{ldType} parameter, you
+#'   will need to specify window size.
+#' @param hetCalls How should heterozygous calls be handled? Current options
+#'   are \code{"ignore"} (ignore altogether), \code{"missing"}
+#'   (set to missing), and \code{"third"} (treat as third state).
+#' @param verbose Display messages? Defaults to \code{TRUE}.
+#'
+#' @details Linkage disequilibrium between any set of polymorphisms can be
+#'   estimated by initially filtering a genotype dataset and then using
+#'   this function. At this time, \eqn{D'}, \eqn{r^{2}} and P-values will be estimated. The
+#'   current version calculates LD between haplotypes with known phase only
+#'   (unphased diploid genotypes are not supported; see PowerMarker or
+#'   Arlequin for genotype support).
+#'   \itemize{
+#'     \item \eqn{D'} is the standardized disequilibrium coefficient, a useful
+#'     statistic for determining whether recombination or homoplasy has
+#'     occurred between a pair of alleles.
+#'     \item \eqn{r^{2}} represents the correlation between alleles at two loci, which
+#'     is informative for evaluating the resolution of association approaches.
+#'   }
+#'   \eqn{D'} and \eqn{r^{2}} can be calculated when only two alleles are present. If more
+#'   than two alleles, only the two most frequent alleles are used. P-values
+#'   are determined by a two-sided Fisher's Exact test is calculated. Since LD
+#'   is meaningless when scored with very small sample sizes, a minimum of 20
+#'   taxa must be present to calculate LD and there must be 2 or more minor
+#'   alleles.
+#'
+#' @seealso \code{\link{linkageDiseq}}, \code{\link{ldJavaApp}}
+#'
+#' @return Returns a \code{ggplot2} object.
+#'
+#' @importFrom rJava is.jnull
+#' @importFrom rJava J
+#' @importFrom rJava .jnew
+#'
+#' @export
+ldPlot <- function(tasObj,
+                   ldType = c("SlidingWindow", "All"),
+                   windowSize = NULL,
+                   hetCalls = c("missing", "ignore", "third"),
+                   verbose = TRUE) {
+    message("Coming soon...")
 }
 
 
