@@ -9,6 +9,7 @@ ldPlot(
   ldType = c("SlidingWindow", "All"),
   windowSize = NULL,
   hetCalls = c("missing", "ignore", "third"),
+  plotVal = c("r2", "DPrime", "pDiseq"),
   verbose = TRUE
 )
 }
@@ -32,6 +33,13 @@ will need to specify window size.}
 \item{hetCalls}{How should heterozygous calls be handled? Current options
 are \code{"ignore"} (ignore altogether), \code{"missing"}
 (set to missing), and \code{"third"} (treat as third state).}
+
+\item{plotVal}{What LD value do you want to plot? Options are:
+\itemize{
+  \item \code{r2}: \eqn{r^{2}} (Default parameter)
+  \item \code{DPrime}: \eqn{D'}
+  \item \code{pDiseq}: \emph{p}-value
+}}
 
 \item{verbose}{Display messages? Defaults to \code{TRUE}.}
 }
