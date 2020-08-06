@@ -12,3 +12,5 @@ rTASSEL_log
 
 ## R projects
 *.Rproj
+docs
+docs/
