@@ -4,3 +4,6 @@
 ^\.travis\.yml$
 ^NEWS$
 ^bitbucket-pipelines\.yml$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$
