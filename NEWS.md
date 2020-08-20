@@ -1,0 +1,34 @@
+# rTASSEL 0.9.17
+* Added new function:
+  + `manhattanPlot()`
+* Removed tidyverse dependencies
+
+
+# rTASSEL 0.9.16
+* Added write to file parameters for:
+  + assocModelFitter()
+* Added p-value threshold parameters for:
+  + assocModelFitter()
+* Added thread usage paramters for:
+  + assocModelFitter()
+* Optimized table report to data frame generation
+* Added new filtration features for genotype tables via filterGenotypeTableSites()
+  + parameters for variant sites
+  + parameters for physical positions
+  + filtration via chromsomome position files
+  + filtration via BED file formats
+
+
+# rTASSEL 0.9.13
+* Added error checks for catching C stack usage errors for the following functions:
+  + filterGenotypeTableSites()
+  + filterGenotypeTableTaxa()
+* Added NEWS file for tracking version updates.
+
+
+# rTASSEL 0.9.12
+* Added new functions:
+  + `leaveOneFamilyOut()`
+  + `genomicPredction()`
+* Fixed a bug where tibbles when passed through `readPhenotypeFromDataFrame()`,
+  would cause errors.
