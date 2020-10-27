@@ -1,3 +1,11 @@
+## CHANGES IN VERSION 0.9.18
+* Added functions to calculate linkage disequilibrium (LD)
+* Proposed LD functions:
+  + `linkageDiseq()` - Returns TASSEL LD table report as data frame
+  + `ldPlot()` - Returns static `ggplot2` plot
+  + `ldJavaApp()` - Initiates TASSEL's interactive LD viewer
+
+
 ## CHANGES IN VERSION 0.9.17
 * Added new function:
   + `manhattanPlot()`
