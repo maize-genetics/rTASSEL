@@ -3,7 +3,7 @@
 # Description:   Functions for TASSEL filtration
 # Author:        Brandon Monier & Ed buckler
 # Created:       2018-11-26 at 11:14:36
-# Last Modified: 2020-03-31 at 18:00:14
+# Last Modified: 2020-10-26 at 13:14:55
 #--------------------------------------------------------------------
 
 #--------------------------------------------------------------------
@@ -33,16 +33,20 @@
 #'    Defaults to 0.0.
 #' @param maxHeterozygous Max heterozygous proportion. Can range from 0 to 1.0.
 #'    Defaults to 1.0.
+#' @param removeMinorSNPStates Remove minor SNP states. Defaults to 
+#'    \code{FALSE}.
+#' @param removeSitesWithIndels Remove sites containing an indel 
+#'    (\code{+} or \code{-}). Defaults to \code{FALSE}.
 #' @param siteRangeFilterType True if filtering by site numbers. False if
 #'    filtering by chromosome and position. Options are
-#'    \code{none}, \code{sites}, or \code{position}. Defaults to \code{NONE}.
+#'    \code{none}, \code{sites}, or \code{position}. Defaults to \code{none}.
 #' @param startSite The start site. Defaults to 0.
 #' @param endSite The end site. Defaults to 0.
 #' @param startChr Start chromosome for site filtration range if \code{position}
-#'    is chosen from \code{siteRangeFilterType}. Needs end chromsome
+#'    is chosen from \code{siteRangeFilterType}. Needs end chromosome
 #'    (\code{endChr}) to work.
 #' @param endChr End chromosome for site filtration range if \code{position}
-#'    is chosen from \code{siteRangeFilterType}. Needs start chromsome
+#'    is chosen from \code{siteRangeFilterType}. Needs start chromosome
 #'    (\code{endChr}) to work.
 #' @param startPos Physical start position (bp) for filtration range if
 #'    \code{position} is chosen from \code{siteRangeFilterType}. If
@@ -73,6 +77,8 @@ filterGenotypeTableSites <- function(tasObj,
                                      siteMaxAlleleFreq = 1.0,
                                      minHeterozygous = 0.0,
                                      maxHeterozygous = 1.0,
+                                     removeMinorSNPStates = FALSE,
+                                     removeSitesWithIndels = FALSE,
                                      siteRangeFilterType = c("none", "sites", "position"),
                                      startSite = NULL,
                                      endSite = NULL,
@@ -105,7 +111,19 @@ filterGenotypeTableSites <- function(tasObj,
     if (maxHeterozygous > 1 || maxHeterozygous < 0) {
         stop("maxHeterozygous parameter is out of range")
     }
-
+    
+    # Range check (chromosomes)
+    chroms <- getGenotypeTable(tasObj)
+    chroms <- chroms$chromosomes()
+    chroms <- unlist(lapply(chroms, function(x) { rJava::.jstrVal(x) }))
+    if (!is.null(startChr) || !is.null(endChr)) {
+        if (!(any(startChr %in% chroms)) || !(any(endChr %in% chroms))) {
+            stop("Chromosome IDs not found in genotype table.")
+        }
+    }
+    
+    # Filter type selection
+    siteRangeFilterType <- match.arg(siteRangeFilterType)
     if (missing(siteRangeFilterType) || !siteRangeFilterType %in% c("none", "sites", "position")) {
         stop(
             paste(
@@ -114,8 +132,6 @@ filterGenotypeTableSites <- function(tasObj,
             )
         )
     }
-
-    siteRangeFilterType <- match.arg(siteRangeFilterType)
 
     # Create filter siter builder plugin
     plugin <- rJava::new(
@@ -128,6 +144,8 @@ filterGenotypeTableSites <- function(tasObj,
     plugin$setParameter("siteMaxAlleleFreq", toString(siteMaxAlleleFreq))
     plugin$setParameter("minHeterozygous", toString(minHeterozygous))
     plugin$setParameter("maxHeterozygous", toString(maxHeterozygous))
+    plugin$setParameter("removeMinorSNPStates", toString(removeMinorSNPStates))
+    plugin$setParameter("removeSitesWithIndels", toString(removeSitesWithIndels))
 
     # Logic check necessary parameters given range filter type
     if (is.null(chrPosFile) && is.null(bedFile)) {

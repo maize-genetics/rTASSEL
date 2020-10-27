@@ -73,6 +73,14 @@ test_that("filterGenotypeTableSites returns error when parameters not specified"
             endChr = NULL
         )
     )
+    
+    expect_error(
+        filterGenotypeTableSites(
+            tasObj = tasGenoHMP,
+            startChr = 5,
+            endChr = 50
+        )
+    )
 })
 
 

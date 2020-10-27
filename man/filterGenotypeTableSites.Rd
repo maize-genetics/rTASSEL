@@ -11,6 +11,8 @@ filterGenotypeTableSites(
   siteMaxAlleleFreq = 1,
   minHeterozygous = 0,
   maxHeterozygous = 1,
+  removeMinorSNPStates = FALSE,
+  removeSitesWithIndels = FALSE,
   siteRangeFilterType = c("none", "sites", "position"),
   startSite = NULL,
   endSite = NULL,
@@ -40,16 +42,22 @@ Defaults to 0.0.}
 \item{maxHeterozygous}{Max heterozygous proportion. Can range from 0 to 1.0.
 Defaults to 1.0.}
 
+\item{removeMinorSNPStates}{Remove minor SNP states. Defaults to 
+\code{FALSE}.}
+
+\item{removeSitesWithIndels}{Remove sites containing an indel 
+(\code{+} or \code{-}). Defaults to \code{FALSE}.}
+
 \item{siteRangeFilterType}{True if filtering by site numbers. False if
 filtering by chromosome and position. Options are
-\code{none}, \code{sites}, or \code{position}. Defaults to \code{NONE}.}
+\code{none}, \code{sites}, or \code{position}. Defaults to \code{none}.}
 
 \item{startSite}{The start site. Defaults to 0.}
 
 \item{endSite}{The end site. Defaults to 0.}
 
 \item{startChr}{Start chromosome for site filtration range if \code{position}
-is chosen from \code{siteRangeFilterType}. Needs end chromsome
+is chosen from \code{siteRangeFilterType}. Needs end chromosome
 (\code{endChr}) to work.}
 
 \item{startPos}{Physical start position (bp) for filtration range if
@@ -58,7 +66,7 @@ is chosen from \code{siteRangeFilterType}. Needs end chromsome
 chosen.}
 
 \item{endChr}{End chromosome for site filtration range if \code{position}
-is chosen from \code{siteRangeFilterType}. Needs start chromsome
+is chosen from \code{siteRangeFilterType}. Needs start chromosome
 (\code{endChr}) to work.}
 
 \item{endPos}{Physical end position (bp) for filtration range if
