@@ -2,10 +2,12 @@
 * Added two new parameters to `filterGenotypeTableSites()`
   + `removeMinorSNPStates`: Boolean; removes minor SNP states.
   + `removeSitesWithIndels`: Boolean; removes sites with indels.
-* Added better descriptions to exceptions when users would enter chromosome IDs
-  not present in a genotype table.
+* Added better descriptive error handling for `filterGenotypeTableSites()`
 * Fixed `siteRangeFilterType` parameter bug in `filterGenotypeTableSites()`.
-  Defaults to `none` when user does not specify filter type.
+  Now defaults to `none` when user does not specify filter type.
+* Added two new parameters to `getSumExpFromGenotypeTable()`
+  + `coerceDosageToInt`: Returns raw byte dosage array instead of integer from Java.
+  + `verbose`: Display console messages for large "memory-intensive" datasets.
 
 
 ## CHANGES IN VERSION 0.9.18

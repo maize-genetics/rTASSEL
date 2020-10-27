@@ -42,10 +42,10 @@ Defaults to 0.0.}
 \item{maxHeterozygous}{Max heterozygous proportion. Can range from 0 to 1.0.
 Defaults to 1.0.}
 
-\item{removeMinorSNPStates}{Remove minor SNP states. Defaults to 
+\item{removeMinorSNPStates}{Remove minor SNP states. Defaults to
 \code{FALSE}.}
 
-\item{removeSitesWithIndels}{Remove sites containing an indel 
+\item{removeSitesWithIndels}{Remove sites containing an indel
 (\code{+} or \code{-}). Defaults to \code{FALSE}.}
 
 \item{siteRangeFilterType}{True if filtering by site numbers. False if
