@@ -1,3 +1,23 @@
+# rTASSEL 0.9.19
+* Added two new parameters to `filterGenotypeTableSites()`
+  + `removeMinorSNPStates`: Boolean; removes minor SNP states.
+  + `removeSitesWithIndels`: Boolean; removes sites with indels.
+* Added better descriptive error handling for `filterGenotypeTableSites()`
+* Fixed `siteRangeFilterType` parameter bug in `filterGenotypeTableSites()`. 
+  Now defaults to `none` when user does not specify filter type.
+* Added two new parameters to `getSumExpFromGenotypeTable()`
+  + `coerceDosageToInt`: Returns raw byte dosage array instead of integer from Java.
+  + `verbose`: Display console messages for large "memory-intensive" datasets.
+
+
+# rTASSEL 0.9.18
+* Added functions to calculate linkage disequilibrium (LD)
+* Proposed LD functions:
+  + `linkageDiseq()` - Returns TASSEL LD table report as data frame
+  + `ldPlot()` - Returns static `ggplot2` plot
+  + `ldJavaApp()` - Initiates TASSEL's interactive LD viewer
+
+
 # rTASSEL 0.9.17
 * Added new function:
   + `manhattanPlot()`
