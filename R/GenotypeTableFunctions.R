@@ -62,6 +62,8 @@ readGenotypeTableFromPath <- function(path, keepDepth = FALSE, sortPositions = F
 #'    values? If \code{FALSE}, dosage array will be returned as type
 #'    \code{raw} byte values. Returning \code{raw} byte values. Will greatly
 #'    save on memory. Defaults to \code{TRUE}.
+#' @param verbose Should messages be displayed to console? Defaults to
+#'    \code{FALSE}.
 #'
 #' @return Returns a \code{SummarizedExperiment} of TASSEL genotype data.
 #'
@@ -72,15 +74,17 @@ readGenotypeTableFromPath <- function(path, keepDepth = FALSE, sortPositions = F
 #' @export
 getSumExpFromGenotypeTable <- function(tasObj,
                                        useRef = FALSE,
-                                       coerceDosageToInt = TRUE) {
-    jGT <- getGenotypeTable(tasObj)
+                                       coerceDosageToInt = TRUE,
+                                       verbose = FALSE) {
 
     if (class(tasObj) != "TasselGenotypePhenotype") {
         stop("`tasObj` must be of class `TasselGenotypePhenotype`")
     }
 
+    jGT <- getGenotypeTable(tasObj)
+
     if (rJava::is.jnull(jGT)) {
-        stop("TASSEL genotype table not detected.")
+        stop("TASSEL genotype object not found")
     }
 
     # Create SumExp components (DF and ranges)
@@ -88,20 +92,28 @@ getSumExpFromGenotypeTable <- function(tasObj,
     genomicRangesDF <- genomicRanges(jGT)
 
     # Create and return byte array from TASSEL
+    if (verbose) message("Generating byte array...")
     jc <- rJava::J("net/maizegenetics/plugindef/GenerateRCode")
     genoCallByteArray <- jc$genotypeTableToDosageByteArray(
         jGT,
         useRef
     )
+    if (verbose) message("Returning Java byte array to R...")
     dosMat <- lapply(genoCallByteArray, rJava::.jevalArray)
-    if (coerceDosageToInt) dosMat <- lapply(dosMat, as.integer)
+    if (coerceDosageToInt) {
+        if (verbose) message("Coercing to integer...")
+        dosMat <- lapply(dosMat, as.integer)
+    }
+    if (verbose) message("Transforming to SummarizedExperiment...")
     dosMat <- simplify2array(dosMat)
 
-    SummarizedExperiment::SummarizedExperiment(
+    se <- SummarizedExperiment::SummarizedExperiment(
         assays = dosMat,
         rowRanges = genomicRangesDF,
         colData = sampleDF
     )
+    if (verbose) message("Finished.")
+    return(se)
 }
 
 
@@ -119,3 +131,55 @@ getGenotypeTable <- function(jtsObject) {
         return(rJava::.jnull())
     }
 }
+
+
+## Return min/max physical positions from genotype tables (house keeping)
+getMinMaxPhysPositions <- function(tasObj) {
+    if (class(tasObj) != "TasselGenotypePhenotype") {
+        stop("`tasObj` must be of class `TasselGenotypePhenotype`")
+    }
+
+    jGenoTable <- getGenotypeTable(tasObj)
+    if (rJava::is.jnull(jGenoTable)) {
+        stop("TASSEL genotype object not found")
+    }
+
+    javaGT <- getGenotypeTable(tasObj)
+
+    positions <- javaGT$positions()
+    chroms <- rJava::.jevalArray(javaGT$chromosomes())
+    posLS  <- lapply(chroms, javaGT$firstLastSiteOfChromosome)
+
+    physPos <- lapply(posLS, function(x) {
+        firstPos <- positions$get(x[1])
+        lastPos  <- positions$get(x[2])
+        return(c(firstPos$getPosition(), lastPos$getPosition()))
+    })
+    names(physPos) <- sapply(chroms, function(x) x$getName())
+    return(physPos)
+}
+
+
+## Return min/max physical positions from genotype tables (house keeping)
+getMinMaxVarSites <- function(tasObj) {
+    if (class(tasObj) != "TasselGenotypePhenotype") {
+        stop("`tasObj` must be of class `TasselGenotypePhenotype`")
+    }
+
+    jGenoTable <- getGenotypeTable(tasObj)
+    if (rJava::is.jnull(jGenoTable)) {
+        stop("TASSEL genotype object not found")
+    }
+
+    javaGT <- getGenotypeTable(tasObj)
+
+    positions <- javaGT$positions()
+    chroms <- rJava::.jevalArray(javaGT$chromosomes())
+    posLS  <- lapply(chroms, javaGT$firstLastSiteOfChromosome)
+
+    names(posLS) <- sapply(chroms, function(x) x$getName())
+    return(posLS)
+}
+
+
+
