@@ -1,3 +1,21 @@
+# rTASSEL 0.9.19
+* Added two new parameters to `filterGenotypeTableSites()`
+  + `removeMinorSNPStates`: Boolean; removes minor SNP states.
+  + `removeSitesWithIndels`: Boolean; removes sites with indels.
+* Added better descriptions to exceptions when users would enter chromosome IDs
+  not present in a genotype table.
+* Fixed `siteRangeFilterType` parameter bug in `filterGenotypeTableSites()`. 
+  Defaults to `none` when user does not specify filter type.
+
+
+# rTASSEL 0.9.18
+* Added functions to calculate linkage disequilibrium (LD)
+* Proposed LD functions:
+  + `linkageDiseq()` - Returns TASSEL LD table report as data frame
+  + `ldPlot()` - Returns static `ggplot2` plot
+  + `ldJavaApp()` - Initiates TASSEL's interactive LD viewer
+
+
 # rTASSEL 0.9.17
 * Added new function:
   + `manhattanPlot()`
