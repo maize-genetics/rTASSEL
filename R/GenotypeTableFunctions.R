@@ -57,15 +57,22 @@ readGenotypeTableFromPath <- function(path, keepDepth = FALSE, sortPositions = F
 #'
 #' @param tasObj An object of class \code{TasselGenotypePenotype}.
 #' @param useRef Use reference alleles or major alleles at sites. If
-#'    \code{FALSE}, major alleles will be used.
+#'    \code{FALSE}, major alleles will be used. Defaults to \code{FALSE}.
+#' @param coerceDosageToInt Should dosage array be returned as \code{integer}
+#'    values? If \code{FALSE}, dosage array will be returned as type
+#'    \code{raw} byte values. Returning \code{raw} byte values. Will greatly
+#'    save on memory. Defaults to \code{TRUE}.
 #'
 #' @return Returns a \code{SummarizedExperiment} of TASSEL genotype data.
 #'
 #' @importFrom rJava .jcall
 #' @importFrom rJava is.jnull
+#' @importFrom rJava .jevalArray
 #' @importFrom SummarizedExperiment SummarizedExperiment
 #' @export
-getSumExpFromGenotypeTable <- function(tasObj, useRef = FALSE) {
+getSumExpFromGenotypeTable <- function(tasObj,
+                                       useRef = FALSE,
+                                       coerceDosageToInt = TRUE) {
     jGT <- getGenotypeTable(tasObj)
 
     if (class(tasObj) != "TasselGenotypePhenotype") {
@@ -76,22 +83,22 @@ getSumExpFromGenotypeTable <- function(tasObj, useRef = FALSE) {
         stop("TASSEL genotype table not detected.")
     }
 
+    # Create SumExp components (DF and ranges)
     sampleDF <- sampleDataFrame(jGT)
     genomicRangesDF <- genomicRanges(jGT)
 
+    # Create and return byte array from TASSEL
     jc <- rJava::J("net/maizegenetics/plugindef/GenerateRCode")
-
-    genoCallIntArray <- jc$genotypeTableToDosageIntArray(
+    genoCallByteArray <- jc$genotypeTableToDosageByteArray(
         jGT,
         useRef
     )
+    dosMat <- lapply(genoCallByteArray, rJava::.jevalArray)
+    if (coerceDosageToInt) dosMat <- lapply(dosMat, as.integer)
+    dosMat <- simplify2array(dosMat)
 
     SummarizedExperiment::SummarizedExperiment(
-        assays = matrix(
-            genoCallIntArray,
-            length(genomicRangesDF),
-            byrow = TRUE
-        ),
+        assays = dosMat,
         rowRanges = genomicRangesDF,
         colData = sampleDF
     )
