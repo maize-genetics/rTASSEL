@@ -33,11 +33,9 @@ Imports:
     ggplot2,
     IRanges,
     methods,
-    plotly,
     rJava,
     rlang,
     S4Vectors,
-    shiny,
     SummarizedExperiment
 Suggests:
     BiocStyle,
