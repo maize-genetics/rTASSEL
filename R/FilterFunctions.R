@@ -257,6 +257,8 @@ filterGenotypeTableSites <- function(tasObj,
 #'    Value can be between 0.0 and 1.0.
 #' @param maxHeterozygous Maximum proportion of sites that are heterozygous.
 #'    Value can be between 0.0 and 1.0.
+#' @param taxa Vector of taxa IDs (as character) to subset. Defaults to
+#'    \code{NULL}.
 #'
 #' @return Returns an object of \code{TasselGenotypePhenotype} class.
 #'
@@ -268,7 +270,8 @@ filterGenotypeTableSites <- function(tasObj,
 filterGenotypeTableTaxa <- function(tasObj,
                                     minNotMissing = 0.0,
                                     minHeterozygous = 0.0,
-                                    maxHeterozygous = 1.0) {
+                                    maxHeterozygous = 1.0,
+                                    taxa = NULL) {
 
     if (class(tasObj) != "TasselGenotypePhenotype") {
         stop("`tasObj` must be of class `TasselGenotypePhenotype`")
@@ -299,6 +302,23 @@ filterGenotypeTableTaxa <- function(tasObj,
     plugin$setParameter("minNotMissing", toString(minNotMissing))
     plugin$setParameter("minHeterozygous", toString(minHeterozygous))
     plugin$setParameter("maxHeterozygous", toString(maxHeterozygous))
+
+    if (!is.null(taxa)) {
+        if (!is.vector(taxa)) {
+            stop("Taxa list must be vector.")
+        }
+        if (!is.character(taxa)) {
+            stop("Taxa list must be of type character.")
+        }
+
+        builder <- .jnew("net.maizegenetics.taxa.TaxaListBuilder")
+        builder$addAll(.jarray(taxa))
+        taxaArray <- builder$build()
+
+        plugin$setParameter("includeTaxa", "true")
+        plugin$setParameter("taxaList", taxaArray)
+    }
+
     resultDataSet <- plugin$runPlugin(jGenoTable)
 
     # Check if input had phenotype table. If yes, combine genotype with phenotype
