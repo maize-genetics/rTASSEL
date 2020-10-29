@@ -134,6 +134,8 @@ getGenotypeTable <- function(jtsObject) {
 
 
 ## Return min/max physical positions from genotype tables (house keeping)
+#' @importFrom rJava .jevalArray
+#' @importFrom rJava is.jnull
 getMinMaxPhysPositions <- function(tasObj) {
     if (class(tasObj) != "TasselGenotypePhenotype") {
         stop("`tasObj` must be of class `TasselGenotypePhenotype`")
@@ -161,6 +163,8 @@ getMinMaxPhysPositions <- function(tasObj) {
 
 
 ## Return min/max physical positions from genotype tables (house keeping)
+#' @importFrom rJava .jevalArray
+#' @importFrom rJava is.jnull
 getMinMaxVarSites <- function(tasObj) {
     if (class(tasObj) != "TasselGenotypePhenotype") {
         stop("`tasObj` must be of class `TasselGenotypePhenotype`")
@@ -181,5 +185,25 @@ getMinMaxVarSites <- function(tasObj) {
     return(posLS)
 }
 
+
+## Return vector of taxa from genotype table
+#' @importFrom rJava .jevalArray
+#' @importFrom rJava .jstrVal
+#' @importFrom rJava is.jnull
+getTaxa <- function(tasObj) {
+    if (class(tasObj) != "TasselGenotypePhenotype") {
+        stop("`tasObj` must be of class `TasselGenotypePhenotype`")
+    }
+
+    jGenoTable <- getGenotypeTable(tasObj)
+    if (rJava::is.jnull(jGenoTable)) {
+        stop("TASSEL genotype object not found")
+    }
+
+    javaGT <- getGenotypeTable(tasObj)
+    taxaArray <- javaGT$taxa()$toArray()
+
+    sapply(rJava::.jevalArray(taxaArray), rJava::.jstrVal)
+}
 
 
