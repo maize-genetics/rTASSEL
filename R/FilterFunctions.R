@@ -56,6 +56,9 @@
 #'    \code{position} is chosen from \code{siteRangeFilterType}. If
 #'    \code{NULL}, the last physical position in the data set will be
 #'    chosen.
+#' @param gRangesObj Filter genotype table by \code{GenomicRanges} object.
+#'    If this parameter is selected, you cannot utilize the parameters,
+#'    \code{chrPosFile} or \code{bedFile}. Defaults to \code{NULL}.
 #' @param chrPosFile An optional chromosome position file path of
 #'    \code{character} class. Defaults to \code{NULL}. \strong{Note:}
 #'    a chromosome position file must contain correct formatting
@@ -66,10 +69,14 @@
 #'
 #' @return Returns an object of \code{TasselGenotypePhenotype} class.
 #'
+#' @importFrom GenomicRanges end
+#' @importFrom GenomicRanges seqnames
+#' @importFrom GenomicRanges start
+#' @importFrom rJava .jarray
+#' @importFrom rJava .jnull
 #' @importFrom rJava is.jnull
 #' @importFrom rJava new
 #' @importFrom rJava J
-#' @importFrom rJava .jnull
 #' @export
 filterGenotypeTableSites <- function(tasObj,
                                      siteMinCount = 0,
@@ -86,6 +93,7 @@ filterGenotypeTableSites <- function(tasObj,
                                      startPos = NULL,
                                      endChr = NULL,
                                      endPos = NULL,
+                                     gRangesObj = NULL,
                                      chrPosFile = NULL,
                                      bedFile = NULL) {
 
@@ -119,8 +127,7 @@ filterGenotypeTableSites <- function(tasObj,
     }
 
     # Range check (chromosomes)
-    chroms <- getGenotypeTable(tasObj)
-    chroms <- chroms$chromosomes()
+    chroms <- jGenoTable$chromosomes()
     chroms <- unlist(lapply(chroms, function(x) { rJava::.jstrVal(x) }))
     if (!is.null(startChr) || !is.null(endChr)) {
         if (!(any(startChr %in% chroms)) || !(any(endChr %in% chroms))) {
@@ -137,10 +144,6 @@ filterGenotypeTableSites <- function(tasObj,
                 "(\"none\", \"sites\", or \"position\")"
             )
         )
-    }
-
-    if (siteRangeFilterType == "position") {
-        physPosLS <- getMinMaxPhysPositions(tasObj)
     }
 
     # Create filter siter builder plugin
@@ -194,7 +197,7 @@ filterGenotypeTableSites <- function(tasObj,
             plugin$setParameter("endChr", toString(endChr))
             plugin$setParameter("endPos", endPos)
         }
-    } else if (is.character(chrPosFile) && is.null(bedFile)) {
+    } else if (is.character(chrPosFile) && is.null(bedFile) && is.null(gRangesObj)) {
         tmpChrDF <- utils::read.table(chrPosFile, sep = "\t", header = TRUE)
         headCheck <- c("Chromosome", "Position")
 
@@ -204,13 +207,27 @@ filterGenotypeTableSites <- function(tasObj,
 
         plugin$setParameter("chrPosFile", chrPosFile)
 
-    } else if (is.null(chrPosFile) && is.character(bedFile)) {
+    } else if (is.null(chrPosFile) && is.character(bedFile) && is.null(gRangesObj)) {
         plugin$setParameter("bedFile", bedFile)
     } else {
         stop("Incorrect parameter usage")
     }
 
-    # Run plugin
+    # Filter by GRanges object if present
+    if (!is.null(gRangesObj)) {
+        if (class(gRangesObj) != "GRanges") {
+            stop("gRangesObj must be of class `GRanges`")
+        }
+        jRC <- rJava::J("net/maizegenetics/plugindef/GenerateRCode")
+        jGenoTable <- jRC$filterSitesByGRanges(
+            jGenoTable,
+            rJava::.jarray(as.vector(GenomicRanges::seqnames(gRangesObj))),
+            rJava::.jarray(GenomicRanges::start(gRangesObj)),
+            rJava::.jarray(GenomicRanges::end(gRangesObj))
+        )
+    }
+
+    # Try to run plugin
     out <- tryCatch(
         {
             plugin$runPlugin(jGenoTable)
@@ -238,6 +255,7 @@ filterGenotypeTableSites <- function(tasObj,
         }
     }
 }
+
 
 
 #' @title Filter genotype table by taxa

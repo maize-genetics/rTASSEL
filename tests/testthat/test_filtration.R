@@ -281,7 +281,6 @@ test_that("filterGenotypeTableSites returns correct positions.", {
     )
 })
 
-
 test_that("filterGenotypeTableSites returns correct positions.", {
 
     # Expected (observed) data
@@ -576,3 +575,77 @@ test_that("filterGenotypeTableSites correct chromosome with strings as parameter
     )
 })
 
+test_that("filterGenotypeTableSites properly filters by a GRanges object.", {
+
+    # Expected (observed) data
+    obs_taxa <- 281
+    obs_site <- 3
+
+    # Load hapmap data
+    genoPathHMP <- system.file(
+        "extdata",
+        "mdp_genotype.hmp.txt",
+        package = "rTASSEL"
+    )
+    tasGenoHMP <- readGenotypeTableFromPath(path = genoPathHMP)
+
+    # GRanges object
+    gr <- GenomicRanges::GRanges(
+        seqnames = c("1"),
+        ranges = IRanges::IRanges(start = c(5353318), end = c(5562503))
+    )
+
+    # Filter
+    tasFiltTests <- filterGenotypeTableSites(
+        tasObj = tasGenoHMP,
+        gRangesObj = gr
+    )
+
+    # Test data
+    test_taxa <- tasFiltTests@jTaxaList$numberOfTaxa()
+    test_site <- tasFiltTests@jPositionList$numberOfSites()
+
+    # Equality test
+    expect_equal(
+        object = c(test_taxa, test_site),
+        expected = c(obs_taxa, obs_site)
+    )
+})
+
+test_that("filterGenotypeTableSites properly filters by a GRanges object with other parameters.", {
+
+    # Expected (observed) data
+    obs_taxa <- 281
+    obs_site <- 1
+
+    # Load hapmap data
+    genoPathHMP <- system.file(
+        "extdata",
+        "mdp_genotype.hmp.txt",
+        package = "rTASSEL"
+    )
+    tasGenoHMP <- readGenotypeTableFromPath(path = genoPathHMP)
+
+    # GRanges object
+    gr <- GenomicRanges::GRanges(
+        seqnames = c("1"),
+        ranges = IRanges::IRanges(start = c(5353318), end = c(5562503))
+    )
+
+    # Filter
+    tasFiltTests <- filterGenotypeTableSites(
+        tasObj = tasGenoHMP,
+        siteMaxAlleleFreq = 0.05,
+        gRangesObj = gr
+    )
+
+    # Test data
+    test_taxa <- tasFiltTests@jTaxaList$numberOfTaxa()
+    test_site <- tasFiltTests@jPositionList$numberOfSites()
+
+    # Equality test
+    expect_equal(
+        object = c(test_taxa, test_site),
+        expected = c(obs_taxa, obs_site)
+    )
+})

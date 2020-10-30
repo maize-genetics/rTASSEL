@@ -103,6 +103,9 @@ getSumExpFromGenotypeTable <- function(tasObj,
     if (coerceDosageToInt) {
         if (verbose) message("Coercing to integer...")
         dosMat <- lapply(dosMat, as.integer)
+
+        # Replace 128 values (conversion artifact?) with NAs...
+        dosMat <- lapply(dosMat, function(i) replace(i, i == 128, NA))
     }
     if (verbose) message("Transforming to SummarizedExperiment...")
     dosMat <- simplify2array(dosMat)
