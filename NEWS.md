@@ -1,3 +1,12 @@
+# rTASSEL 0.9.20
+* Added new parameter to `filterGenotypeTableSites()`
+  + `gRangesObj`: Filter genotype tables by using a `GRanges` object.
+* Added new parameter to `filterGenotypeTableTaxa()`
+  + `taxa`: Pass a vector of taxa IDs to filter genotype table by.
+* Fixed `getSumExpFromGenotypeTable()` bug:
+  + dosage array now returns `NA`s instead of `128` values.
+
+
 # rTASSEL 0.9.19
 * Added two new parameters to `filterGenotypeTableSites()`
   + `removeMinorSNPStates`: Boolean; removes minor SNP states.
