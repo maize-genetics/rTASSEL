@@ -6,6 +6,13 @@ deploy:
 
 language: r
 cache: packages
+sudo: required
+
+apt_packages:
+    - r-cran-rjava
+
+before_install:
+    - sudo $(which R) CMD javareconf
 
 r_packages:
     - covr
