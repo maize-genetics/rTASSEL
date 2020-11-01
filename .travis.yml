@@ -1,3 +1,4 @@
+before_cache: Rscript -e 'remotes::install_cran("pkgdown")'
 language: r
 cache: packages
 sudo: required
@@ -14,7 +15,6 @@ before_install:
 
 r_packages:
     - covr
-    - pkgdown
 
 after_success:
     - Rscript -e 'library(covr); codecov()'
