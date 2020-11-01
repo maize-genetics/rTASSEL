@@ -1,12 +1,10 @@
-before_cache: Rscript -e 'remotes::install_cran("pkgdown")'
-deploy:
-  provider: script
-  script: Rscript -e 'pkgdown::deploy_site_github(ssh_id = Sys.getenv("TRAVIS_DEPLOY_KEY", ""))'
-  skip_cleanup: true
-
 language: r
 cache: packages
 sudo: required
+
+deploy:
+  provider: script
+  skip_cleanup: true
 
 apt_packages:
     - r-cran-rjava
@@ -16,6 +14,8 @@ before_install:
 
 r_packages:
     - covr
+    - pkgdown
 
 after_success:
     - Rscript -e 'library(covr); codecov()'
+    - Rscript -e 'pkgdown::deploy_site_github(ssh_id = Sys.getenv("TRAVIS_DEPLOY_KEY", ""))'
