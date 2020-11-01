@@ -88,7 +88,7 @@ getSumExpFromGenotypeTable <- function(tasObj,
     }
 
     # Create SumExp components (DF and ranges)
-    sampleDF <- sampleDataFrame(jGT)
+    sampleDF <- sampleDataFrame(tasObj)
     genomicRangesDF <- genomicRanges(jGT)
 
     # Create and return byte array from TASSEL
@@ -186,27 +186,6 @@ getMinMaxVarSites <- function(tasObj) {
 
     names(posLS) <- sapply(chroms, function(x) x$getName())
     return(posLS)
-}
-
-
-## Return vector of taxa from genotype table
-#' @importFrom rJava .jevalArray
-#' @importFrom rJava .jstrVal
-#' @importFrom rJava is.jnull
-getTaxa <- function(tasObj) {
-    if (class(tasObj) != "TasselGenotypePhenotype") {
-        stop("`tasObj` must be of class `TasselGenotypePhenotype`")
-    }
-
-    jGenoTable <- getGenotypeTable(tasObj)
-    if (rJava::is.jnull(jGenoTable)) {
-        stop("TASSEL genotype object not found")
-    }
-
-    javaGT <- getGenotypeTable(tasObj)
-    taxaArray <- javaGT$taxa()$toArray()
-
-    sapply(rJava::.jevalArray(taxaArray), rJava::.jstrVal)
 }
 
 
