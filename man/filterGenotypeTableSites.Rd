@@ -20,6 +20,7 @@ filterGenotypeTableSites(
   startPos = NULL,
   endChr = NULL,
   endPos = NULL,
+  gRangesObj = NULL,
   chrPosFile = NULL,
   bedFile = NULL
 )
@@ -73,6 +74,10 @@ is chosen from \code{siteRangeFilterType}. Needs start chromosome
 \code{position} is chosen from \code{siteRangeFilterType}. If
 \code{NULL}, the last physical position in the data set will be
 chosen.}
+
+\item{gRangesObj}{Filter genotype table by \code{GenomicRanges} object.
+If this parameter is selected, you cannot utilize the parameters,
+\code{chrPosFile} or \code{bedFile}. Defaults to \code{NULL}.}
 
 \item{chrPosFile}{An optional chromosome position file path of
 \code{character} class. Defaults to \code{NULL}. \strong{Note:}

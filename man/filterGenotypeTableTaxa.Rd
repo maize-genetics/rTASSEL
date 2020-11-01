@@ -8,7 +8,8 @@ filterGenotypeTableTaxa(
   tasObj,
   minNotMissing = 0,
   minHeterozygous = 0,
-  maxHeterozygous = 1
+  maxHeterozygous = 1,
+  taxa = NULL
 )
 }
 \arguments{
@@ -22,6 +23,9 @@ Value can be between 0.0 and 1.0.}
 
 \item{maxHeterozygous}{Maximum proportion of sites that are heterozygous.
 Value can be between 0.0 and 1.0.}
+
+\item{taxa}{Vector of taxa IDs (as character) to subset. Defaults to
+\code{NULL}.}
 }
 \value{
 Returns an object of \code{TasselGenotypePhenotype} class.

@@ -33,7 +33,12 @@ getTaxaList <- function(jtsObject) {
 
 
 ## Methods for pulling Taxa or Samples - not exported (house keeping)
-sampleVectorFromTassel <- function(tasObj) {
+#' @importFrom rJava J
+getTaxaIDs <- function(tasObj) {
+    if (class(tasObj) != "TasselGenotypePhenotype") {
+        stop("`tasObj` must be of class `TasselGenotypePhenotype`")
+    }
+
     jtsTL <- getTaxaList(tasObj)
     rJava::J("net/maizegenetics/plugindef/GenerateRCode")$
         genotypeTableToSampleNameArray(jtsTL)
@@ -42,16 +47,12 @@ sampleVectorFromTassel <- function(tasObj) {
 
 ## Get sample ID data frame - not exported (house keeping)
 sampleDataFrame <- function(tasObj) {
-    taxaArray <- sampleVectorFromTassel(tasObj)
-    colData <- data.frame(
-        row.names = taxaArray,
+    taxaArray <- getTaxaIDs(tasObj)
+
+    S4Vectors::DataFrame(
         Sample = taxaArray,
         TasselIndex = 0:(length(taxaArray) - 1L)
-        # DEBUG = matrix(
-        #     unlist(fourNewCols),
-        #     nrow = length(fourNewCols),
-        #     byrow = TRUE
-        # )
     )
-    return(colData)
 }
+
+

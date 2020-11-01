@@ -88,7 +88,7 @@ getSumExpFromGenotypeTable <- function(tasObj,
     }
 
     # Create SumExp components (DF and ranges)
-    sampleDF <- sampleDataFrame(jGT)
+    sampleDF <- sampleDataFrame(tasObj)
     genomicRangesDF <- genomicRanges(jGT)
 
     # Create and return byte array from TASSEL
@@ -103,6 +103,9 @@ getSumExpFromGenotypeTable <- function(tasObj,
     if (coerceDosageToInt) {
         if (verbose) message("Coercing to integer...")
         dosMat <- lapply(dosMat, as.integer)
+
+        # Replace 128 values (conversion artifact?) with NAs...
+        dosMat <- lapply(dosMat, function(i) replace(i, i == 128, NA))
     }
     if (verbose) message("Transforming to SummarizedExperiment...")
     dosMat <- simplify2array(dosMat)
@@ -134,6 +137,8 @@ getGenotypeTable <- function(jtsObject) {
 
 
 ## Return min/max physical positions from genotype tables (house keeping)
+#' @importFrom rJava .jevalArray
+#' @importFrom rJava is.jnull
 getMinMaxPhysPositions <- function(tasObj) {
     if (class(tasObj) != "TasselGenotypePhenotype") {
         stop("`tasObj` must be of class `TasselGenotypePhenotype`")
@@ -161,6 +166,8 @@ getMinMaxPhysPositions <- function(tasObj) {
 
 
 ## Return min/max physical positions from genotype tables (house keeping)
+#' @importFrom rJava .jevalArray
+#' @importFrom rJava is.jnull
 getMinMaxVarSites <- function(tasObj) {
     if (class(tasObj) != "TasselGenotypePhenotype") {
         stop("`tasObj` must be of class `TasselGenotypePhenotype`")
@@ -180,6 +187,5 @@ getMinMaxVarSites <- function(tasObj) {
     names(posLS) <- sapply(chroms, function(x) x$getName())
     return(posLS)
 }
-
 
 
