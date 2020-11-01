@@ -1,25 +1,34 @@
-# before_cache: Rscript -e 'remotes::install_cran("pkgdown")'
+# # before_cache: Rscript -e 'remotes::install_cran("pkgdown")'
+# language: r
+# cache: packages
+# sudo: required
+#
+# deploy:
+#   provider: script
+#   skip_cleanup: true
+#
+# apt_packages:
+#     - r-cran-rjava
+#     - libharfbuzz-dev
+#     - libfribidi-dev
+#
+# before_install:
+#     - sudo $(which R) CMD javareconf
+#
+# r_packages:
+#     - covr
+#     - textshaping
+#     - pkgdown
+#
+# after_success:
+#     # - Rscript -e 'library(covr); codecov()'
+#     # - Rscript -e 'pkgdown::deploy_site_github(ssh_id = Sys.getenv("TRAVIS_DEPLOY_KEY", ""))'
+
 language: r
 cache: packages
-sudo: required
-
-deploy:
-  provider: script
-  skip_cleanup: true
-
-apt_packages:
-    - r-cran-rjava
-    - libharfbuzz-dev
-    - libfribidi-dev
-
-before_install:
-    - sudo $(which R) CMD javareconf
 
 r_packages:
-    - covr
-    - textshaping
-    - pkgdown
+  - covr
 
 after_success:
-    # - Rscript -e 'library(covr); codecov()'
-    # - Rscript -e 'pkgdown::deploy_site_github(ssh_id = Sys.getenv("TRAVIS_DEPLOY_KEY", ""))'
+- Rscript -e 'library(covr); codecov()'
