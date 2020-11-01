@@ -9,6 +9,8 @@ deploy:
 
 apt_packages:
     - r-cran-rjava
+    - libharfbuzz-dev
+    - libfribidi-dev
 
 before_install:
     - sudo $(which R) CMD javareconf
