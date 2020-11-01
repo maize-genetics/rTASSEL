@@ -26,6 +26,10 @@
 
 language: r
 cache: packages
+sudo: required
+
+before_install:
+  - sudo $(which R) CMD javareconf
 
 r_packages:
   - covr
