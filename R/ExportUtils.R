@@ -53,7 +53,7 @@ exportGenotypeTable <- function(tasObj,
 
     if (format == "vcf") {
         rJC$writeToVCF(
-            tasObj,
+            jGenoTable,
             file,
             TRUE, # <- keep depth
             NULL  # <- progress listener
