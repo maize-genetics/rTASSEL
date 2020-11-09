@@ -3,6 +3,7 @@
 export(assocModelFitter)
 export(distanceMatrix)
 export(distanceToRMatrix)
+export(exportGenotypeTable)
 export(filterGenotypeTableSites)
 export(filterGenotypeTableTaxa)
 export(genomicPrediction)
