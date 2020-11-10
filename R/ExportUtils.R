@@ -3,7 +3,7 @@
 # Description:   Export utilities for rTASSEL
 # Author:        Brandon Monier
 # Created:       2020-11-09 at 11:53:02
-# Last Modified: 2020-11-09 at 12:27:54
+# Last Modified: 2020-11-10 at 17:02:40
 #--------------------------------------------------------------------
 
 #--------------------------------------------------------------------
@@ -21,13 +21,24 @@
 #'   contains a genotype table.
 #' @param file Output file name.
 #' @param format Export file format.
+#' @param keepDepth Whether to keep depth if format supports depth. Defaults
+#'   to \code{TRUE}.
+#' @param taxaAnnotations Whether to include taxa annotations if format
+#'   supports taxa. Defaults to \code{TRUE}.
+#' @param branchLengths Whether to include branch lengths for Newick formatted
+#'   files. Defaults to \code{TRUE}.
 #'
+#' @importFrom rJava .jchar
 #' @importFrom rJava is.jnull
+#' @importFrom rJava J
 #'
 #' @export
 exportGenotypeTable <- function(tasObj,
                                 file = "",
-                                format = c("vcf", "hapmap", "plink", "flapjack")) {
+                                format = c("vcf", "hapmap", "plink", "flapjack", "hdf5"),
+                                keepDepth = TRUE,
+                                taxaAnnotations = TRUE,
+                                branchLengths = TRUE) {
     if (class(tasObj) != "TasselGenotypePhenotype") {
         stop("`tasObj` must be of class `TasselGenotypePhenotype`")
     }
@@ -38,16 +49,16 @@ exportGenotypeTable <- function(tasObj,
     }
 
     # Filter type selection
+    acceptedFormats <- c("vcf", "hapmap", "plink", "flapjack", "hdf5")
     format <- match.arg(format)
-    if (missing(format) || !format %in% c("vcf", "hapmap", "plink", "flapjack")) {
+    if (missing(format) || !format %in% acceptedFormats) {
         stop(
             paste(
                 "Please specify analysis type",
-                "(\"vcf\", \"hapmap\", \"plink\", or \"flapjack\")"
+                "(\"vcf\", \"hapmap\", \"plink\", \"HDF5\", or \"flapjack\")"
             )
         )
     }
-
 
     rJC <- rJava::J("net.maizegenetics.dna.snp.ExportUtils")
 
@@ -55,11 +66,33 @@ exportGenotypeTable <- function(tasObj,
         rJC$writeToVCF(
             jGenoTable,
             file,
-            TRUE, # <- keep depth
+            keepDepth, # <- keep depth
             NULL  # <- progress listener
         )
+    } else if (format == "hapmap") {
+        rJC$writeToHapmap(
+            jGenoTable,
+            FALSE, # <- diploid?
+            file,
+            rJava::.jchar(9), # <- tab delimited UTF char
+            taxaAnnotations,
+            NULL
+        )
+    } else if (format == "plink") {
+        rJC$writeToPlink(
+            jGenoTable,
+            file,
+            rJava::.jchar(9) # <- tab delimited UTF char
+        )
+    } else if (format == "hdf5") {
+        rJC$writeGenotypeHDF5(
+            jGenoTable,
+            file,
+            NULL, # <- export taxa annotation
+            keepDepth
+        )
     } else {
-        message("Format not yet implemented. Coming soon!")
+        message("FlapJack format not yet implemented. Coming soon!")
     }
 }
 

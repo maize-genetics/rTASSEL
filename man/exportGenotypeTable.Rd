@@ -7,7 +7,10 @@
 exportGenotypeTable(
   tasObj,
   file = "",
-  format = c("vcf", "hapmap", "plink", "flapjack")
+  format = c("vcf", "hapmap", "plink", "flapjack", "hdf5"),
+  keepDepth = TRUE,
+  taxaAnnotations = TRUE,
+  branchLengths = TRUE
 )
 }
 \arguments{
@@ -17,6 +20,15 @@ contains a genotype table.}
 \item{file}{Output file name.}
 
 \item{format}{Export file format.}
+
+\item{keepDepth}{Whether to keep depth if format supports depth. Defaults
+to \code{TRUE}.}
+
+\item{taxaAnnotations}{Whether to include taxa annotations if format
+supports taxa. Defaults to \code{TRUE}.}
+
+\item{branchLengths}{Whether to include branch lengths for Newick formatted
+files. Defaults to \code{TRUE}.}
 }
 \description{
 Exports genotype tables to various flat file formats.
