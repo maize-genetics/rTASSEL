@@ -3,7 +3,7 @@
 # Description:   Export utilities for rTASSEL
 # Author:        Brandon Monier
 # Created:       2020-11-09 at 11:53:02
-# Last Modified: 2020-11-10 at 17:02:40
+# Last Modified: 2020-11-11 at 11:09:17
 #--------------------------------------------------------------------
 
 #--------------------------------------------------------------------
@@ -12,7 +12,6 @@
 #    exporting various rTASSEL data objects to flat files.
 #--------------------------------------------------------------------
 
-## ----
 #' @title Export Genotype Table to Disk
 #'
 #' @description Exports genotype tables to various flat file formats.
@@ -34,7 +33,7 @@
 #'
 #' @export
 exportGenotypeTable <- function(tasObj,
-                                file = "",
+                                file,
                                 format = c("vcf", "hapmap", "plink", "flapjack", "hdf5"),
                                 keepDepth = TRUE,
                                 taxaAnnotations = TRUE,
@@ -48,17 +47,12 @@ exportGenotypeTable <- function(tasObj,
         stop("TASSEL genotype object not found")
     }
 
-    # Filter type selection
-    acceptedFormats <- c("vcf", "hapmap", "plink", "flapjack", "hdf5")
-    format <- match.arg(format)
-    if (missing(format) || !format %in% acceptedFormats) {
-        stop(
-            paste(
-                "Please specify analysis type",
-                "(\"vcf\", \"hapmap\", \"plink\", \"HDF5\", or \"flapjack\")"
-            )
-        )
+    if (file == "") {
+        stop("File name not specified.")
     }
+
+    # Filter type selection
+    format <- match.arg(format)
 
     rJC <- rJava::J("net.maizegenetics.dna.snp.ExportUtils")
 
@@ -91,8 +85,12 @@ exportGenotypeTable <- function(tasObj,
             NULL, # <- export taxa annotation
             keepDepth
         )
-    } else {
-        message("FlapJack format not yet implemented. Coming soon!")
+    } else if (format == "flapjack") {
+        rJC <- rJava::J("net.maizegenetics.plugindef.GenerateRCode")
+        rJC$exportToFlapjack(
+            jGenoTable,
+            file
+        )
     }
 }
 
