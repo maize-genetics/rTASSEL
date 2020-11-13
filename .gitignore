@@ -9,6 +9,7 @@
 .Rproj.user
 .httr-oauth
 rTASSEL_log
+vignettes/*.log
 
 ## R projects
 *.Rproj
