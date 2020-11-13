@@ -1,4 +1,4 @@
-# CHANGES IN VERSION 0.9.21
+# rTASSEL 0.9.21
 * Added new function:
   + `exportGenotypeTable()`
 * Added new vignette:
