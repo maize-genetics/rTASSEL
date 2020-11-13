@@ -6,7 +6,7 @@
 \usage{
 exportGenotypeTable(
   tasObj,
-  file = "",
+  file,
   format = c("vcf", "hapmap", "plink", "flapjack", "hdf5"),
   keepDepth = TRUE,
   taxaAnnotations = TRUE,
@@ -19,7 +19,16 @@ contains a genotype table.}
 
 \item{file}{Output file name.}
 
-\item{format}{Export file format.}
+\item{format}{Export file format. This function current supports the
+  following:
+
+  \itemize{
+    \item \code{vcf} - A VCF (variant call) file
+    \item \code{hapmap} - HapMap files
+    \item \code{plink} - Plink files
+    \item \code{flapjack} - FlapJack files
+    \item \code{hdf5} - HDF5 (hierarchical data format v5) files
+  }}
 
 \item{keepDepth}{Whether to keep depth if format supports depth. Defaults
 to \code{TRUE}.}

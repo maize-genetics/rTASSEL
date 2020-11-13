@@ -19,7 +19,17 @@
 #' @param tasObj An object of class \code{TasselGenotypePenotype} that
 #'   contains a genotype table.
 #' @param file Output file name.
-#' @param format Export file format.
+#' @param format Export file format. This function current supports the
+#'   following:
+#'
+#'   \itemize{
+#'     \item \code{vcf} - A VCF (variant call) file
+#'     \item \code{hapmap} - HapMap files
+#'     \item \code{plink} - Plink files
+#'     \item \code{flapjack} - FlapJack files
+#'     \item \code{hdf5} - HDF5 (hierarchical data format v5) files
+#'   }
+#'
 #' @param keepDepth Whether to keep depth if format supports depth. Defaults
 #'   to \code{TRUE}.
 #' @param taxaAnnotations Whether to include taxa annotations if format
