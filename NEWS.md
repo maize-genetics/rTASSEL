@@ -1,3 +1,10 @@
+# CHANGES IN VERSION 0.9.21
+* Added new function:
+  + `exportGenotypeTable()`
+* Added new vignette:
+  + "Filtering Genotype Tables"
+
+
 # rTASSEL 0.9.20
 * Added new parameter to `filterGenotypeTableSites()`
   + `gRangesObj`: Filter genotype tables by using a `GRanges` object.
