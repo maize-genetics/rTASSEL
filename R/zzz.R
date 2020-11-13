@@ -9,10 +9,18 @@
     # )
 }
 
-.onAttach <- function(libname, pkgname){
-    msg <- paste0(
-        "Welcome to rTASSEL (version ", utils::packageVersion("rTASSEL"), ") - PREVIEW", "\n",
-        " \u2022 Consider starting a TASSEL log file (see ?startLogger())", "\n"
-    )
+.onAttach <- function(libname, pkgname, preview = TRUE){
+    if (preview) {
+        msg <- paste0(
+            "Welcome to rTASSEL (version ", utils::packageVersion("rTASSEL"), ") - PREVIEW", "\n",
+            " \u2022 Consider starting a TASSEL log file (see ?startLogger())", "\n",
+            " \u2022 WARNING - This is a SNAPSHOT build. Certain functions may not work!"
+        )
+    } else {
+        msg <- paste0(
+            "Welcome to rTASSEL (version ", utils::packageVersion("rTASSEL"), ")", "\n",
+            " \u2022 Consider starting a TASSEL log file (see ?startLogger())", "\n"
+        )
+    }
     packageStartupMessage(msg)
 }
