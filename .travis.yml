@@ -7,6 +7,7 @@ before_install:
 r_packages:
     - covr
     - pkgdown
+    - textshaping
 
 after_success:
     - Rscript -e 'pkgdown::deploy_site_github(ssh_id = Sys.getenv("TRAVIS_DEPLOY_KEY", ""))'
