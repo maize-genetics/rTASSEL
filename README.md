@@ -1,6 +1,6 @@
 ## rTASSEL
 
-[![Build Status](https://travis-ci.org/maize-genetics/rTASSEL.svg?branch=master)](https://travis-ci.org/maize-genetics/rTASSEL) [![Coverage Status](https://codecov.io/gh/maize-genetics/rTASSEL/branch/master/graph/badge.svg)](https://codecov.io/gh/maize-genetics/rTASSEL) [![Life Cycle Status](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
+[![Build Status](https://travis-ci.org/maize-genetics/rTASSEL.svg?branch=master)](https://travis-ci.org/maize-genetics/rTASSEL) [![Coverage Status](https://codecov.io/gh/maize-genetics/rTASSEL/branch/master/graph/badge.svg)](https://codecov.io/gh/maize-genetics/rTASSEL) [![Life Cycle Status](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing) [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/maize-genetics/rTASSEL_sandbox/master?filepath=getting_started.ipynb)
 
 
 ### Objective
@@ -14,7 +14,7 @@ between these two environments.
 ### Installation
 If you do not have experience working with and setting up `rJava` with your
 R installation, *it is recommended that you read the long-form documentation*.
-This walkthrough can be found [here](https://bitbucket.org/bucklerlab/rtassel/wiki/Home).
+This walkthrough can be found [here](https://maize-genetics.github.io/rTASSEL/articles/rtassel_walkthrough.html).
 If you are already fairly comfortable working with Java JDK and `rJava`, you
 can follow the following commands.
 
@@ -49,9 +49,4 @@ by using `?<function>` in the console, where `<function>` is an
 `rTASSEL`-based function.
 
 ### Contacts
-* Brandon Monier (bm646@cornell.edu)
-* Terry Casstevens
-* Ed Buckler
-
-- - -
-*Last Modified:*  2020-06-17 at 19:49:20
+* Brandon Monier (bm646@cornell.edu) - _Author, Maintainer_
