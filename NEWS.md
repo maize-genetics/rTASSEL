@@ -1,3 +1,9 @@
+# rTASSEL 0.9.22
+* Fix `manhattanPlot()` aesthetics:
+  + Remove redundant marker labels from x-axis
+  + Change x-axis label to `SNP Positions`
+
+
 # rTASSEL 0.9.21
 * Added new function:
   + `exportGenotypeTable()`
