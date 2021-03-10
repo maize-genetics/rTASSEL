@@ -1,6 +1,6 @@
 ## rTASSEL
 
-[![Build Status](https://travis-ci.org/maize-genetics/rTASSEL.svg?branch=master)](https://travis-ci.org/maize-genetics/rTASSEL) [![Coverage Status](https://codecov.io/gh/maize-genetics/rTASSEL/branch/master/graph/badge.svg)](https://codecov.io/gh/maize-genetics/rTASSEL) [![Life Cycle Status](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
+[![Build Status](https://travis-ci.org/maize-genetics/rTASSEL.svg?branch=master)](https://travis-ci.org/maize-genetics/rTASSEL) [![Coverage Status](https://codecov.io/gh/maize-genetics/rTASSEL/branch/master/graph/badge.svg)](https://codecov.io/gh/maize-genetics/rTASSEL) [![Life Cycle Status](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing) [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/maize-genetics/rTASSEL_sandbox/master?filepath=getting_started.ipynb)
 
 
 ### Objective
@@ -11,15 +11,24 @@ exploits the analytical prowess of TASSEL in conjunction with R's popular
 data handling and parsing capabilities without ever having the user to switch
 between these two environments.
 
+
+### Demo
+If you want to test out what this package does but do not want to install it 
+locally, we have set up an interactive Jupyter notebook detailing the
+walkthrough of `rTASSEL` on Binder. The Binder link can be accessed through
+the Binder icon on this page or by clicking 
+[here](https://mybinder.org/v2/gh/maize-genetics/rTASSEL_sandbox/master?filepath=getting_started.ipynb).
+
+
 ### Installation
 If you do not have experience working with and setting up `rJava` with your
 R installation, *it is recommended that you read the long-form documentation*.
-This walkthrough can be found [here](https://bitbucket.org/bucklerlab/rtassel/wiki/Home).
+This walkthrough can be found [here](https://maize-genetics.github.io/rTASSEL/articles/rtassel_walkthrough.html).
 If you are already fairly comfortable working with Java JDK and `rJava`, you
 can follow the following commands.
 
 Package source code can be installed directly from this BitBucket repository
-using the `remotes` package:
+using the `devtools` package:
 
 ```
 if (!require("devtools")) install.packages("devtools")
@@ -30,6 +39,12 @@ devtools::install_bitbucket(
 )
 ```
 
+Vignettes (`build_vignettes`) are optional since there are constantly updated 
+article links on our [website](https://maize-genetics.github.io/rTASSEL/). If 
+you do want to build vignettes locally, make sure you have the required 
+packages and programs available.
+
+
 ### Usage
 For an overview of available functions, use the following command:
 
@@ -37,8 +52,8 @@ For an overview of available functions, use the following command:
 help(package = "rTASSEL")
 ```
 
-If you need a walkthrough for potential pipelines, long-form documentation can be
-found on our [wiki site](https://bitbucket.org/bucklerlab/rtassel/wiki/Home).
+If you need a walkthrough for potential pipelines, long-form documentation can 
+be found on our [website](https://maize-genetics.github.io/rTASSEL/).
 If you prefer to compile a vignette locally, you can set the `build_vignettes`
 parameter to `TRUE` when you download from Bitbucket (*Note:* compiling the
 vignette may take some time to process and analyze test data.)
@@ -48,10 +63,6 @@ If you would like to study a function in full, refer to the R documentation
 by using `?<function>` in the console, where `<function>` is an
 `rTASSEL`-based function.
 
-### Contacts
-* Brandon Monier (bm646@cornell.edu)
-* Terry Casstevens
-* Ed Buckler
 
-- - -
-*Last Modified:*  2020-06-17 at 19:49:20
+### Contacts
+* Brandon Monier (bm646@cornell.edu) - _Author, Maintainer_
