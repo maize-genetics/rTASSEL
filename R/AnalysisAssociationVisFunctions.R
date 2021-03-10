@@ -115,13 +115,14 @@ manhattanPlot <- function(assocStats,
         rug_comp +
         sig_markers +
         ggplot2::geom_hline(yintercept = threshold, linetype = "dashed") +
-        ggplot2::xlab("Position") +
+        ggplot2::xlab("SNP Position") +
         ggplot2::ylab(bquote(~-log[10]~ '('*italic(p)*'-value)')) +
         ggplot2::ggtitle(label = paste("Trait:", trait)) +
         ggplot2::facet_grid(. ~ Chr, scales = "free_x", space = "free_x") +
         ggplot2::theme_bw() +
         ggplot2::theme(
-            axis.text.x        = ggplot2::element_text(angle = 90, hjust = 1),
+            axis.text.x        = ggplot2::element_blank(),
+            axis.ticks.x       = ggplot2::element_blank(),
             legend.position    = "none",
             panel.grid.major.x = ggplot2::element_blank(),
             panel.grid.minor.x = ggplot2::element_blank()

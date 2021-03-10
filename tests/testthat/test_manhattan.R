@@ -113,7 +113,7 @@ test_that("Manhattan Plot returns correct plot layers", {
     )
     expect_equal(
         object   = p$labels$x,
-        expected = "Position"
+        expected = "SNP Position"
     )
     expect_equal(
         object   = p$labels$y,
