@@ -75,7 +75,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">rTASSEL</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.17</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.22</span>
       </span>
     </div>
 
@@ -83,7 +83,7 @@
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -98,9 +98,15 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
+      <a href="../articles/genotype_filtration.html">Filtering Genotype Tables</a>
+    </li>
+    <li>
       <a href="../articles/rtassel_walkthrough.html">Getting Started with rTASSEL</a>
     </li>
   </ul>
+</li>
+<li>
+  <a href="../news/index.html">Changelog</a>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
@@ -130,12 +136,13 @@
    <code>FilterTaxaBuilder</code> plugin.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>filterGenotypeTableTaxa</span>(
-  <span class='no'>tasObj</span>,
-  <span class='kw'>minNotMissing</span> <span class='kw'>=</span> <span class='fl'>0</span>,
-  <span class='kw'>minHeterozygous</span> <span class='kw'>=</span> <span class='fl'>0</span>,
-  <span class='kw'>maxHeterozygous</span> <span class='kw'>=</span> <span class='fl'>1</span>
-)</pre>
+    <pre class="usage"><span class='fu'>filterGenotypeTableTaxa</span><span class='op'>(</span>
+  <span class='va'>tasObj</span>,
+  minNotMissing <span class='op'>=</span> <span class='fl'>0</span>,
+  minHeterozygous <span class='op'>=</span> <span class='fl'>0</span>,
+  maxHeterozygous <span class='op'>=</span> <span class='fl'>1</span>,
+  taxa <span class='op'>=</span> <span class='cn'>NULL</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -159,6 +166,11 @@ Value can be between 0.0 and 1.0.</p></td>
       <td><p>Maximum proportion of sites that are heterozygous.
 Value can be between 0.0 and 1.0.</p></td>
     </tr>
+    <tr>
+      <th>taxa</th>
+      <td><p>Vector of taxa IDs (as character) to subset. Defaults to
+<code>NULL</code>.</p></td>
+    </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
@@ -180,7 +192,7 @@ Value can be between 0.0 and 1.0.</p></td>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

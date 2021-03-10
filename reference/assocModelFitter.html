@@ -80,7 +80,7 @@ Fast association (Shabalin 2012)
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">rTASSEL</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.17</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.22</span>
       </span>
     </div>
 
@@ -88,7 +88,7 @@ Fast association (Shabalin 2012)
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -103,9 +103,15 @@ Fast association (Shabalin 2012)
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
+      <a href="../articles/genotype_filtration.html">Filtering Genotype Tables</a>
+    </li>
+    <li>
       <a href="../articles/rtassel_walkthrough.html">Getting Started with rTASSEL</a>
     </li>
   </ul>
+</li>
+<li>
+  <a href="../news/index.html">Changelog</a>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
@@ -140,19 +146,19 @@ Fast association (Shabalin 2012)
 
     </div>
 
-    <pre class="usage"><span class='fu'>assocModelFitter</span>(
-  <span class='no'>tasObj</span>,
-  <span class='no'>formula</span>,
-  <span class='kw'>fitMarkers</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>kinship</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>fastAssociation</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>maxP</span> <span class='kw'>=</span> <span class='fl'>0.001</span>,
-  <span class='kw'>maxThreads</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>minClassSize</span> <span class='kw'>=</span> <span class='fl'>0</span>,
-  <span class='kw'>outputFile</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>biallelicOnly</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>appendAddDom</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>
-)</pre>
+    <pre class="usage"><span class='fu'>assocModelFitter</span><span class='op'>(</span>
+  <span class='va'>tasObj</span>,
+  <span class='va'>formula</span>,
+  fitMarkers <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  kinship <span class='op'>=</span> <span class='cn'>NULL</span>,
+  fastAssociation <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  maxP <span class='op'>=</span> <span class='fl'>0.001</span>,
+  maxThreads <span class='op'>=</span> <span class='cn'>NULL</span>,
+  minClassSize <span class='op'>=</span> <span class='fl'>0</span>,
+  outputFile <span class='op'>=</span> <span class='cn'>NULL</span>,
+  biallelicOnly <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  appendAddDom <span class='op'>=</span> <span class='cn'>FALSE</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -169,7 +175,7 @@ formula uses the following TASSEL data scheme:
 object should be ran, a simplified formula (<code>. ~ .</code>) can be used.
 This scheme can also be used for running all <code>&lt;data&gt;</code> or
 <code>&lt;factor&gt;</code> and/or <code>&lt;covariate&gt;</code> data as well. Single variables
-are separated witha <code>+</code> operator. See vignette for further
+are separated witha <code><a href='https://rdrr.io/r/base/Arithmetic.html'>+</a></code> operator. See vignette for further
 clarification.</p></td>
     </tr>
     <tr>
@@ -246,7 +252,7 @@ The additive effect will always be non-negative. Defaults to <code>FALSE</code>.
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

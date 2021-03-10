@@ -36,7 +36,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">rTASSEL</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.17</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.22</span>
       </span>
     </div>
 
@@ -44,7 +44,7 @@
       <ul class="nav navbar-nav">
 <li>
   <a href="index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -59,9 +59,15 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
+      <a href="articles/genotype_filtration.html">Filtering Genotype Tables</a>
+    </li>
+    <li>
       <a href="articles/rtassel_walkthrough.html">Getting Started with rTASSEL</a>
     </li>
   </ul>
+</li>
+<li>
+  <a href="news/index.html">Changelog</a>
 </li>
       </ul>
 <ul class="nav navbar-nav navbar-right"></ul>
@@ -85,36 +91,39 @@
 <a href="#objective" class="anchor"></a>Objective</h3>
 <p>The main goal of developing this package is to construct an R-based front-end to connect to a variety of highly used TASSEL methods and analytical tools. By using R as a front-end, we aim to utilize a <em>unified</em> scripting workflow that exploits the analytical prowess of TASSEL in conjunction with R’s popular data handling and parsing capabilities without ever having the user to switch between these two environments.</p>
 </div>
+<div id="demo" class="section level3">
+<h3 class="hasAnchor">
+<a href="#demo" class="anchor"></a>Demo</h3>
+<p>If you want to test out what this package does but do not want to install it locally, we have set up an interactive Jupyter notebook detailing the walkthrough of <code>rTASSEL</code> on Binder. The Binder link can be accessed through the Binder icon on this page or by clicking <a href="https://mybinder.org/v2/gh/maize-genetics/rTASSEL_sandbox/master?filepath=getting_started.ipynb">here</a>.</p>
+</div>
 <div id="installation" class="section level3">
 <h3 class="hasAnchor">
 <a href="#installation" class="anchor"></a>Installation</h3>
-<p>If you do not have experience working with and setting up <code>rJava</code> with your R installation, <em>it is recommended that you read the long-form documentation</em>. This walkthrough can be found <a href="https://bitbucket.org/bucklerlab/rtassel/wiki/Home">here</a>. If you are already fairly comfortable working with Java JDK and <code>rJava</code>, you can follow the following commands.</p>
-<p>Package source code can be installed directly from this BitBucket repository using the <code>remotes</code> package:</p>
+<p>If you do not have experience working with and setting up <code>rJava</code> with your R installation, <em>it is recommended that you read the long-form documentation</em>. This walkthrough can be found <a href="https://maize-genetics.github.io/rTASSEL/articles/rtassel_walkthrough.html">here</a>. If you are already fairly comfortable working with Java JDK and <code>rJava</code>, you can follow the following commands.</p>
+<p>Package source code can be installed directly from this BitBucket repository using the <code>devtools</code> package:</p>
 <pre><code>if (!require("devtools")) install.packages("devtools")
 devtools::install_bitbucket(
     repo = "bucklerlab/rTASSEL",
     ref = "master",
     build_vignettes = FALSE
 )</code></pre>
+<p>Vignettes (<code>build_vignettes</code>) are optional since there are constantly updated article links on our <a href="https://maize-genetics.github.io/rTASSEL/">website</a>. If you do want to build vignettes locally, make sure you have the required packages and programs available.</p>
 </div>
 <div id="usage" class="section level3">
 <h3 class="hasAnchor">
 <a href="#usage" class="anchor"></a>Usage</h3>
 <p>For an overview of available functions, use the following command:</p>
 <pre><code><a href="https://rdrr.io/pkg/rTASSEL/man">help(package = "rTASSEL")</a></code></pre>
-<p>If you need a walkthrough for potential pipelines, long-form documentation can be found on our <a href="https://bitbucket.org/bucklerlab/rtassel/wiki/Home">wiki site</a>. If you prefer to compile a vignette locally, you can set the <code>build_vignettes</code> parameter to <code>TRUE</code> when you download from Bitbucket (<em>Note:</em> compiling the vignette may take some time to process and analyze test data.)</p>
+<p>If you need a walkthrough for potential pipelines, long-form documentation can be found on our <a href="https://maize-genetics.github.io/rTASSEL/">website</a>. If you prefer to compile a vignette locally, you can set the <code>build_vignettes</code> parameter to <code>TRUE</code> when you download from Bitbucket (<em>Note:</em> compiling the vignette may take some time to process and analyze test data.)</p>
 <p>If you would like to study a function in full, refer to the R documentation by using <code>?&lt;function&gt;</code> in the console, where <code>&lt;function&gt;</code> is an <code>rTASSEL</code>-based function.</p>
 </div>
 <div id="contacts" class="section level3">
 <h3 class="hasAnchor">
 <a href="#contacts" class="anchor"></a>Contacts</h3>
 <ul>
-<li>Brandon Monier (<a href="mailto:bm646@cornell.edu">bm646@cornell.edu</a>)</li>
-<li>Terry Casstevens</li>
-<li>Ed Buckler</li>
+<li>Brandon Monier (<a href="mailto:bm646@cornell.edu">bm646@cornell.edu</a>) - <em>Author, Maintainer</em>
+</li>
 </ul>
-<hr>
-<p><em>Last Modified:</em> 2020-06-17 at 19:49:20</p>
 </div>
 </div>
   </div>
@@ -143,6 +152,7 @@ devtools::install_bitbucket(
 <li><a href="https://travis-ci.org/maize-genetics/rTASSEL"><img src="https://travis-ci.org/maize-genetics/rTASSEL.svg?branch=master" alt="Build Status"></a></li>
 <li><a href="https://codecov.io/gh/maize-genetics/rTASSEL"><img src="https://codecov.io/gh/maize-genetics/rTASSEL/branch/master/graph/badge.svg" alt="Coverage Status"></a></li>
 <li><a href="https://www.tidyverse.org/lifecycle/#maturing"><img src="https://img.shields.io/badge/lifecycle-maturing-blue.svg" alt="Life Cycle Status"></a></li>
+<li><a href="https://mybinder.org/v2/gh/maize-genetics/rTASSEL_sandbox/master?filepath=getting_started.ipynb"><img src="https://mybinder.org/badge_logo.svg" alt="Binder"></a></li>
 </ul>
 </div>
 </div>
@@ -154,7 +164,7 @@ devtools::install_bitbucket(
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

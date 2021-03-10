@@ -71,7 +71,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">rTASSEL</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.17</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.22</span>
       </span>
     </div>
 
@@ -79,7 +79,7 @@
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -94,9 +94,15 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
+      <a href="../articles/genotype_filtration.html">Filtering Genotype Tables</a>
+    </li>
+    <li>
       <a href="../articles/rtassel_walkthrough.html">Getting Started with rTASSEL</a>
     </li>
   </ul>
+</li>
+<li>
+  <a href="../news/index.html">Changelog</a>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
@@ -164,6 +170,12 @@
       </tr><tr>
         
         <td>
+          <p><code><a href="exportGenotypeTable.html">exportGenotypeTable()</a></code> </p>
+        </td>
+        <td><p>Export Genotype Table to Disk</p></td>
+      </tr><tr>
+        
+        <td>
           <p><code><a href="filterGenotypeTableSites.html">filterGenotypeTableSites()</a></code> </p>
         </td>
         <td><p>Filter genotype table by sites</p></td>
@@ -203,6 +215,25 @@
           <p><code><a href="kinshipToRMatrix.html">kinshipToRMatrix()</a></code> </p>
         </td>
         <td><p>Convert TASSEL kinship matrix object to an R matrix class</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="ldJavaApp.html">ldJavaApp()</a></code> </p>
+        </td>
+        <td><p>Linkage desequilibrium visualization application</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="ldPlot.html">ldPlot()</a></code> </p>
+        </td>
+        <td><p>Linkage disequilibrium plot</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="linkageDiseq.html">linkageDiseq()</a></code> </p>
+        </td>
+        <td><p>Calculate linkage disequilibrium from an rTASSEL genotype
+  dataset.</p></td>
       </tr><tr>
         
         <td>
@@ -262,7 +293,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>
