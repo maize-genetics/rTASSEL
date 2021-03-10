@@ -1,7 +1,7 @@
 ---
 title: "Getting Started with rTASSEL"
 author: "Brandon Monier"
-date:   "2019-09-04 at 11:21:26"
+date:   "2021-03-10"
 output:
     BiocStyle::html_document:
       toc: true
@@ -27,6 +27,7 @@ knitr::opts_chunk$set(
     # fig.pos="H"
 )
 ```
+
 
 
 # Introduction
@@ -173,6 +174,8 @@ Additionally, since this is a general walkthrough, certain intricaces of each
 function may glossed over. If you would like to study a function in full,
 refer to the R documentation by using `?<function>` in the console, where
 `<function>` is an `rTASSEL`-based function.
+
+
 
 # Reading Data
 
@@ -754,3 +757,109 @@ tasFAST <- rTASSEL::assocModelFitter(
 # Return GLM output
 tasFAST
 ```
+
+
+
+# Visualizations
+
+## Manhattan plots
+`rTASSEL` supports automated visualizations for Manhattan plots and linkage 
+disequilibrium (LD) analyses. In this example, we will generate a Manhattan 
+plot for our prior MLM object:
+
+```{r, echo=TRUE, eval=FALSE}
+# Generate Manhattan plot for ear height trait
+manhattanEH <- manhattanPlot(
+    assocStats = tasMLM$MLM_Stats,
+    trait      = "EarHT",
+    threshold  = 5
+)
+
+# View visualization
+manhattanEH
+```
+
+
+## LD plots
+Similarly, we can also visualize LD using automated methods. Like most 
+LD plots, it is wise to filter your genotype information to a specific region 
+of interest:
+
+```{r, echo=TRUE, eval=FALSE}
+# Filter genotype table by position
+tasGenoPhenoFilt <- filterGenotypeTableSites(
+    tasObj              = tasGenoPheno,
+    siteRangeFilterType = "position",
+    startPos            = 228e6,
+    endPos              = 300e6,
+    startChr            = 2,
+    endChr              = 2
+)
+
+# Generate and visualize LD
+myLD <- ldPlot(
+    tasObj  = tasGenoPhenoFilt,
+    ldType  = "All",
+    plotVal = "r2",
+    verbose = FALSE
+)
+
+# View LD
+myLD
+```
+
+
+
+# Genomic Prediction
+
+## Overview
+`rTASSEL` also allows for phenotypic prediction through genotype information 
+via genomic best linear unbiased predictors (gBLUPs). It proceeds by fitting a 
+mixed model that uses kinship to capture covariance between taxa. The mixed 
+model can calculate BLUPs for taxa that do not have phenotypes based on the 
+phenotypes of lines with relationship information.
+
+A phenotype dataset and a kinship matrix must be supplied as input to the 
+method by selecting both then choosing Analysis/Genomic Selection. In addition 
+to trait values, the phenotype dataset may also contain factors or covariates 
+which will be used as fixed effects in the model. All taxa in the phenotype 
+dataset can only appear once. No repeated values are allowed for a single 
+taxon. When the analysis is run, the user is presented with the choice to run 
+k-fold cross-validation. If cross- validation is selected, then the number of 
+folds and the number of iterations can be entered. For each iteration and each 
+fold within an iteration, the correlation between the observed and predicted 
+values will be reported. If cross-validation is not selected, then the original 
+observations, predicted values and PEVs (prediction error variance) will be 
+reported for all taxa in the dataset.
+
+When k-fold cross-validation is performed, only taxa with phenotypes and rows 
+in the kinship matrix are used. That set of taxa are divided into k subsets of 
+equal size. Each subset in turn is used as the validation set. Phenotypes of 
+the individuals in the validation are set to 0 then predicted using the 
+remaining individuals as the training set. The correlation (r) of the observed 
+values and predicted values is calculated for the validation set and reported. 
+The mean and standard deviation of the mean of the r's are calculated for each 
+trait and reported in the comments section of the "Accuracy" data set that is 
+output by the analysis. In general, the results are not very sensitive to the 
+choice of k. The number of iterations affects the standard error of the mean 
+for the accuracy estimates. The defaults of k = 5 and iterations = 20 will be 
+adequate for most users.
+
+
+```{r, echo=TRUE, eval=FALSE}
+tasCV <- genomicPrediction(
+    tasPhenoObj = tasGenoPheno,
+    kinship     = tasKin,
+    doCV        = TRUE,
+    kFolds      = 5,
+    nIter       = 1
+)
+head(tasCV)
+```
+
+
+
+
+
+
+
