@@ -145,3 +145,48 @@ setMethod(
     }
     jtsObject
 }
+
+
+#--------------------------------------------------------------------
+# FactorTable class and constructors
+#--------------------------------------------------------------------
+
+#' @title FactorTable Class
+#'
+#' @description Class \code{FactorTable} defines a \code{rTASSEL}
+#'    Class for storing TASSEL 6 \code{FactorTable} objects.
+#'
+#' @name FactorTable-class
+#' @rdname FactorTable-class
+#' @exportClass TasselGenotypePhenotype
+setClass(
+    Class = "FactorTable",
+    representation = representation(
+        jFactorTable = "jobjRef"
+    )
+)
+
+
+#' @title Show method FactorTable objects
+#'
+#' @description Prints out information related taxa, positions, genotype, and
+#'    phenotype information.
+#'
+#' @param object a \code{FactorTable} class object
+#'
+#' @rdname FactorTable-class
+#' @aliases show,FactorTable-method
+#'
+#' @importFrom rJava .jnull
+setMethod(
+    f = "show",
+    signature = "FactorTable",
+    definition = function(object) {
+        cat("A FactorTable Dataset\n")
+        cat("Class...........: ", class(object), "\n")
+        cat("Taxa............: ", object@jFactorTable$numTaxa(), "\n")
+        cat("Ref. Ranges.....: ", object@jFactorTable$numFactors(), "\n")
+    }
+)
+
+
