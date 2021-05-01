@@ -24,6 +24,8 @@
 #' @param method A Kinship method.
 #' @param maxAlleles Maximum number of alleles.
 #' @param algorithmVariation Algorithm variation.
+#' @param factorTable Do you want kinship ran on a \code{FactorTable} object?
+#'    Defaults to \code{FALSE}.
 #'
 #' @return Returns a Java pointer of a TASSEL kinship matrix object.
 #'
@@ -35,26 +37,42 @@
 kinshipMatrix <- function(tasObj,
                           method = "Centered_IBS",
                           maxAlleles = 6,
-                          algorithmVariation = "Observed_Allele_Freq") {
-    if (class(tasObj) != "TasselGenotypePhenotype") {
-        stop("`tasObj` must be of class `TasselGenotypePhenotype`")
+                          algorithmVariation = "Observed_Allele_Freq",
+                          factorTable = FALSE) {
+    acceptClass <- c("FactorTable", "TasselGenotypePhenotype")
+    if (!(class(tasObj) %in% acceptClass)) {
+        stop("`tasObj` must be of appropriate TASSEL class")
     }
 
-    jGenoTable <- getGenotypeTable(tasObj)
+    if (!factorTable) {
+        jGenoTable <- getGenotypeTable(tasObj)
+    } else {
+        jGenoTable <- tasObj@jFactorTable
+    }
+
     if (rJava::is.jnull(jGenoTable)) {
         stop("TASSEL genotype object not found")
     }
 
     # Create kinship plugin
-    plugin <- rJava::new(
-        rJava::J("net.maizegenetics.analysis.distance.KinshipPlugin"),
-        rJava::.jnull(),
-        FALSE
-    )
-    plugin$setParameter("method", toString(method))
-    plugin$setParameter("maxAlleles", toString(maxAlleles))
-    plugin$setParameter("algorithmVariation", toString(algorithmVariation))
-    plugin$runPlugin(jGenoTable)
+    if (!factorTable) {
+        plugin <- rJava::new(
+            rJava::J("net.maizegenetics.analysis.distance.KinshipPlugin"),
+            rJava::.jnull(),
+            FALSE
+        )
+        plugin$setParameter("method", toString(method))
+        plugin$setParameter("maxAlleles", toString(maxAlleles))
+        plugin$setParameter("algorithmVariation", toString(algorithmVariation))
+        plugin$runPlugin(jGenoTable)
+    } else {
+        plugin <- rJava::new(
+            rJava::J("net.maizegenetics.analysis.distance.KinshipPlugin"),
+            FALSE
+        )
+        plugin$setParameter("method", "Centered_IBS")
+        plugin$runPlugin(jGenoTable)
+    }
 }
 
 
@@ -70,19 +88,33 @@ kinshipMatrix <- function(tasObj,
 #'
 #' @return Returns an R \code{matrix} object.
 #'
+#' @importFrom rJava .jnew
 #' @export
 kinshipToRMatrix <- function(kinJobj) {
-    tmp1 <- unlist(strsplit(kinJobj$toStringTabDelim(), split = "\n"))
-    tmp2 <- strsplit(tmp1, split = "\t")
-    tmp3 <- t(simplify2array(tmp2))
-    colnames(tmp3) <- as.character(unlist(tmp3[1, ]))
-    tmp3 <- tmp3[-1, ]
-    matRow <- tmp3[, 1]
-    tmp3 <- tmp3[, -1]
-    tmp3 <- apply(tmp3, 2, as.numeric)
-    rownames(tmp3) <- matRow
-    return(tmp3)
+    jRC <- rJava::.jnew("net/maizegenetics/plugindef/GenerateRCodeT6")
+
+    da <- jRC$getDistArray(kin)
+    daM <- lapply(.jevalArray(da), .jevalArray)
+    daM <- simplify2array(daM)
+
+    taxa <- kinJobj$getTableColumnNames()[-1]
+    colnames(daM) <- taxa
+    rownames(daM) <- taxa
+
+    return(daM)
 }
+# kinshipToRMatrix <- function(kinJobj) {
+#     tmp1 <- unlist(strsplit(kinJobj$toStringTabDelim(), split = "\n"))
+#     tmp2 <- strsplit(tmp1, split = "\t")
+#     tmp3 <- t(simplify2array(tmp2))
+#     colnames(tmp3) <- as.character(unlist(tmp3[1, ]))
+#     tmp3 <- tmp3[-1, ]
+#     matRow <- tmp3[, 1]
+#     tmp3 <- tmp3[, -1]
+#     tmp3 <- apply(tmp3, 2, as.numeric)
+#     rownames(tmp3) <- matRow
+#     return(tmp3)
+# }
 
 
 #' @title Create a TASSEL distance matrix
