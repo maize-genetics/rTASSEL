@@ -45,3 +45,120 @@ readFactorTable <- function(file, verbose = TRUE) {
 }
 
 
+#' @title Get reference ranges
+#'
+#' @description Returns reference range intervals from a \code{FactorTable}
+#'    object.
+#'
+#' @name refRanges
+#' @rdname refRanges
+#'
+#' @param factorTable An object of clase \code{FactorTable}.
+#'
+#' @return Returns a \code{GRanges} object of reference range data.
+#'
+#' @importFrom GenomicRanges GRanges
+#' @importFrom IRanges IRanges
+#' @importFrom rJava .jevalArray
+#' @importFrom rJava .jnew
+#' @importFrom S4Vectors Rle
+#' @export
+refRanges <- function(factorTable) {
+    jRC <- rJava::.jnew("net/maizegenetics/plugindef/GenerateRCodeT6")
+    rr <- jRC$getRefRanges(factorTable@jFactorTable)
+    rr <- lapply(rJava::.jevalArray(rr), rJava::.jevalArray)
+
+    GenomicRanges::GRanges(
+        seqnames = S4Vectors::Rle(rr[[1]]),
+        ranges = IRanges::IRanges(
+            start = as.numeric(rr[[3]]),
+            end = as.numeric(rr[[4]])
+        )
+    )
+}
+
+
+#' @title Get taxa
+#'
+#' @description Returns taxa IDs from a \code{FactorTable} object.
+#'
+#' @name taxa
+#' @rdname taxa
+#'
+#' @param factorTable An object of clase \code{FactorTable}.
+#'
+#' @return Returns a vector of taxa of type \code{character}.
+#'
+#' @importFrom rJava .jnew
+#' @export
+taxa <- function(factorTable) {
+    jRC <- rJava::.jnew("net/maizegenetics/plugindef/GenerateRCodeT6")
+    jRC$getTaxaArray(factorTable@jFactorTable)
+}
+
+
+#' @title Get hap ID matrix
+#'
+#' @importFrom rJava .jnew
+#'
+#' @description returns a matrix of hap ID integers.
+factorTableHapMatrix <- function(factorTable) {
+    jRC <- rJava::.jnew("net/maizegenetics/plugindef/GenerateRCodeT6")
+    intArray <- jRC$getHapArray(factorTable@jFactorTable)
+    m <- lapply(intArray, rJava::.jevalArray)
+    m <- simplify2array(m)
+    rownames(m) <- taxa(factorTable)
+    colnames(m) <- 1:factorTable@jFactorTable$numFactors()
+    return(m)
+}
+
+
+#' @title Get haplotype ID data frame
+#'
+#' @description Returns a \code{data.frame} of haplotype and taxa IDs from a
+#'    \code{FactorTable} object.
+#'
+#' @name factorTableDF
+#' @rdname factorTableDF
+#'
+#' @param factorTable An object of clase \code{FactorTable}.
+#'
+#' @return Returns a \code{data.frame} of haplotype and taxa IDs.
+#'
+#' @export
+factorTableDF <- function(factorTable) {
+    taxa <- data.frame(taxa = taxa(factorTable))
+    m <- factorTableHapMatrix(factorTable)
+    m <- as.data.frame(m, row.names = NULL)
+    m[,] <- lapply(m[,], factor)
+
+    m <- cbind(taxa, m)
+    rownames(m) <- NULL
+
+    return(m)
+}
+
+
+#' @title Create Summarized Experiment from a TASSEL Genotype Table
+#'
+#' @description This function will generate an object of
+#'    \code{SummarizedExperiment} class for marker data derived from a
+#'    \code{FactorTable} class object.
+#'
+#' @name getSumExp
+#' @rdname getSumExp
+#'
+#' @param factorTable An object of clase \code{FactorTable}.
+#'
+#' @return Returns a \code{SummarizedExperiment} of TASSEL genotype data.
+#'
+#' @importFrom SummarizedExperiment SummarizedExperiment
+#' @export
+getSumExp <- function(factorTable) {
+    SummarizedExperiment::SummarizedExperiment(
+        assays = list(hapID = t(factorTableHapMatrix(factorTable))),
+        rowRanges = refRanges(factorTable)
+    )
+}
+
+

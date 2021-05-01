@@ -47,3 +47,20 @@ genomicRanges <- function(genoTable) {
     )
     return(gr2)
 }
+
+
+## Constructor for GRanges (GenomicRanges) class object for FactorTables
+genomicRangesFT <- function(factorTable) {
+    rr <- factorTable@jFactorTable$getRefRanges()
+    rr <- lapply(.jevalArray(rr), .jevalArray)
+
+    GenomicRanges::GRanges(
+        seqnames = S4Vectors::Rle(rr[[1]]),
+        ranges = IRanges::IRanges(
+            start = as.numeric(rr[[3]]),
+            end = as.numeric(rr[[4]])
+        )
+    )
+}
+
+
