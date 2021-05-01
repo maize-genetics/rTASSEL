@@ -183,9 +183,9 @@ setMethod(
     signature = "FactorTable",
     definition = function(object) {
         cat("A FactorTable Dataset\n")
-        cat("Class...........: ", class(object), "\n")
-        cat("Taxa............: ", object@jFactorTable$numTaxa(), "\n")
-        cat("Ref. Ranges.....: ", object@jFactorTable$numFactors(), "\n")
+        cat("  Class..........:", class(object), "\n")
+        cat("  Taxa...........:", object@jFactorTable$numTaxa(), "\n")
+        cat("  Ref. Ranges....:", object@jFactorTable$numFactors(), "\n")
     }
 )
 
