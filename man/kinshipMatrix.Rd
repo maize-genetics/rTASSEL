@@ -8,7 +8,8 @@ kinshipMatrix(
   tasObj,
   method = "Centered_IBS",
   maxAlleles = 6,
-  algorithmVariation = "Observed_Allele_Freq"
+  algorithmVariation = "Observed_Allele_Freq",
+  factorTable = FALSE
 )
 }
 \arguments{
@@ -19,6 +20,9 @@ kinshipMatrix(
 \item{maxAlleles}{Maximum number of alleles.}
 
 \item{algorithmVariation}{Algorithm variation.}
+
+\item{factorTable}{Do you want kinship ran on a \code{FactorTable} object?
+Defaults to \code{FALSE}.}
 }
 \value{
 Returns a Java pointer of a TASSEL kinship matrix object.
