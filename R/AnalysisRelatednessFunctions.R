@@ -93,7 +93,7 @@ kinshipMatrix <- function(tasObj,
 kinshipToRMatrix <- function(kinJobj) {
     jRC <- rJava::.jnew("net/maizegenetics/plugindef/GenerateRCodeT6")
 
-    da <- jRC$getDistArray(kin)
+    da <- jRC$getDistArray(kinJobj)
     daM <- lapply(.jevalArray(da), .jevalArray)
     daM <- simplify2array(daM)
 
