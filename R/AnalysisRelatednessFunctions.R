@@ -24,7 +24,7 @@
 #' @param method A Kinship method.
 #' @param maxAlleles Maximum number of alleles.
 #' @param algorithmVariation Algorithm variation.
-#' @param factorTable Do you want kinship ran on a \code{FactorTable} object?
+#' @param featureTable Do you want kinship ran on a \code{FactorTable} object?
 #'    Defaults to \code{FALSE}.
 #'
 #' @return Returns a Java pointer of a TASSEL kinship matrix object.
@@ -38,13 +38,13 @@ kinshipMatrix <- function(tasObj,
                           method = "Centered_IBS",
                           maxAlleles = 6,
                           algorithmVariation = "Observed_Allele_Freq",
-                          factorTable = FALSE) {
-    acceptClass <- c("FactorTable", "TasselGenotypePhenotype")
+                          featureTable = FALSE) {
+    acceptClass <- c("FeatureTable", "TasselGenotypePhenotype")
     if (!(class(tasObj) %in% acceptClass)) {
         stop("`tasObj` must be of appropriate TASSEL class")
     }
 
-    if (!factorTable) {
+    if (!featureTable) {
         jGenoTable <- getGenotypeTable(tasObj)
     } else {
         jGenoTable <- tasObj@jFactorTable
@@ -55,7 +55,7 @@ kinshipMatrix <- function(tasObj,
     }
 
     # Create kinship plugin
-    if (!factorTable) {
+    if (!featureTable) {
         plugin <- rJava::new(
             rJava::J("net.maizegenetics.analysis.distance.KinshipPlugin"),
             rJava::.jnull(),
