@@ -3,7 +3,7 @@
 # Description:   Functions to create TASSEL Phenotype
 # Author:        Brandon Monier & Ed Buckler
 # Created:       2018-11-26 at 11:14:36
-# Last Modified: 2019-04-04 at 19:20:28
+# Last Modified: 2021-05-31 at 11:51:11
 #--------------------------------------------------------------------
 
 #--------------------------------------------------------------------
@@ -31,6 +31,7 @@
 #' @importFrom rJava J
 #' @importFrom rJava %instanceof%
 #' @importFrom rJava new
+#'
 #' @export
 readPhenotypeFromPath <- function(path) {
     if (!file.exists(path)) {
@@ -65,6 +66,7 @@ readPhenotypeFromPath <- function(path) {
 #' @importFrom rJava .jarray
 #' @importFrom rJava J
 #' @importFrom rJava new
+#'
 #' @export
 readPhenotypeFromDataFrame <- function(phenotypeDF,
                                        taxaID,
@@ -111,6 +113,68 @@ readPhenotypeFromDataFrame <- function(phenotypeDF,
 }
 
 
+#' @title Read phenotype information from a BrAPI web service
+#'
+#' @description Reads phenotype information from BreedBase using a BrAPI rest
+#'    client.
+#'
+#' @return Returns an object of \code{data.frame} class.
+#'
+#' @name readPhenotypeFromBrapi
+#' @rdname readPhenotypeFromBrapi
+#'
+#' @param brapiObj An BrAPI connection object of \code{BrapiCon} class.
+#' @param studyName Return a specified study. If \code{NULL}, all data will be
+#'    returned. Defaults to \code{NULL}.
+#' @param verbose Show messages to console? Defaults to \code{TRUE}.
+#'
+#' @importFrom rPHG brapiURL
+#' @importFrom httr GET
+#' @importFrom httr content
+#' @importFrom jsonlite fromJSON
+#'
+#' @export
+readPhenotypeFromBrapi <- function(brapiObj, studyName = NULL, verbose = TRUE) {
+    if (verbose) message("Downloading data...")
+    url <- rPHG::brapiURL(brapiObj)
+
+    obs <- paste0(url, "/observations?pageSize=10000")
+    studies <- paste0(url, "/studies")
+
+    ## Return observations
+    xObs <- httr::GET(obs)
+    xObs <- httr::content(xObs, as = "text", encoding = "ISO-8859-1")
+    xObs <- jsonlite::fromJSON(xObs, flatten = TRUE)
+    xObs <- xObs$result$data
+
+    xObsSeason <- xObs$season
+    xObsSeason <- do.call("rbind", xObsSeason)
+    xObs <- xObs[, which(names(xObs) != "season")]
+    xObs <- cbind(xObs, xObsSeason)
+
+
+    ## Return studies
+    xStu <- httr::GET(studies)
+    xStu <- httr::content(xStu, as = "text", encoding = "ISO-8859-1")
+    xStu <- jsonlite::fromJSON(xStu, flatten = TRUE)
+    xStu <- xStu$result$data
+    xStu <- xStu[!(colnames(xStu) %in% c("dataLinks", "seasons"))]
+
+    ## JOIN study and observation info
+    total <- merge(xObs, xStu, by = "studyDbId")
+
+    ## Filter by parameters (WIP)
+    if (!is.null(studyName)) total <- total[total$studyName %in% studyName, ]
+
+    if (dim(total)[1] == 0) {
+        warning("No data returned.", call. = FALSE)
+        return(NULL)
+    } else {
+        return(total)
+    }
+}
+
+
 #' @title Get an R/\code{DataFrame} phenotype data frame from TASSEL object
 #'
 #' @description This function will extract a \code{DataFrame}-based R data
@@ -132,6 +196,7 @@ readPhenotypeFromDataFrame <- function(phenotypeDF,
 #' @param tasObj An object of class \code{TasselGenotypePenotype}.
 #'
 #' @importFrom rJava is.jnull
+#'
 #' @export
 getPhenotypeDF <- function(tasObj) {
     if (class(tasObj) != "TasselGenotypePhenotype") {
@@ -198,3 +263,5 @@ extractPhenotypeAttDf <- function(phenotype) {
     )
     return(data.frame(traitName, traitType, traitAttribute))
 }
+
+
