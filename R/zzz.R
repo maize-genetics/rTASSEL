@@ -14,7 +14,7 @@
     preview <- TRUE
     if (preview) {
         msg <- paste0(
-            "##### TASSEL 6 PREVIEW BUILD #####", "\n",
+            "##### TASSEL 6 PREVIEW BUILD (May) #####", "\n",
             "Welcome to rTASSEL (version ", utils::packageVersion("rTASSEL"), ") - PREVIEW", "\n",
             " \u2022 Consider starting a TASSEL log file (see ?startLogger())", "\n",
             " \u2022 WARNING - This is a SNAPSHOT build. Certain functions may not work!"
