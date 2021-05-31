@@ -148,44 +148,44 @@ setMethod(
 
 
 #--------------------------------------------------------------------
-# FactorTable class and constructors
+# FeatureTable class and constructors
 #--------------------------------------------------------------------
 
-#' @title FactorTable Class
+#' @title FeatureTable Class
 #'
-#' @description Class \code{FactorTable} defines a \code{rTASSEL}
-#'    Class for storing TASSEL 6 \code{FactorTable} objects.
+#' @description Class \code{FeatureTable} defines a \code{rTASSEL}
+#'    Class for storing TASSEL 6 \code{FeatureTable} objects.
 #'
-#' @name FactorTable-class
-#' @rdname FactorTable-class
+#' @name FeatureTable-class
+#' @rdname FeatureTable-class
 #' @exportClass TasselGenotypePhenotype
 setClass(
-    Class = "FactorTable",
+    Class = "FeatureTable",
     representation = representation(
-        jFactorTable = "jobjRef"
+        jFeatureTable = "jobjRef"
     )
 )
 
 
-#' @title Show method FactorTable objects
+#' @title Show method FeatureTable objects
 #'
 #' @description Prints out information related taxa, positions, genotype, and
 #'    phenotype information.
 #'
-#' @param object a \code{FactorTable} class object
+#' @param object a \code{FeatureTable} class object
 #'
-#' @rdname FactorTable-class
-#' @aliases show,FactorTable-method
+#' @rdname FeatureTable-class
+#' @aliases show,FeatureTable-method
 #'
 #' @importFrom rJava .jnull
 setMethod(
     f = "show",
-    signature = "FactorTable",
+    signature = "FeatureTable",
     definition = function(object) {
-        cat("A FactorTable Dataset\n")
+        cat("A FeatureTable Dataset\n")
         cat("  Class..........:", class(object), "\n")
-        cat("  Taxa...........:", object@jFactorTable$numTaxa(), "\n")
-        cat("  Ref. Ranges....:", object@jFactorTable$numFactors(), "\n")
+        cat("  Taxa...........:", object@jFeatureTable$numTaxa(), "\n")
+        cat("  Ref. Ranges....:", object@jFeatureTable$numFeatures(), "\n")
     }
 )
 
