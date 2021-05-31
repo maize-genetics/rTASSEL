@@ -30,10 +30,13 @@ URL: https://bitbucket.org/bucklerlab/rtassel/src/master/
 Imports:
     GenomicRanges,
     ggplot2,
+    httr,
     IRanges,
+    jsonlite,
     methods,
     rJava,
     rlang,
+    rPHG,
     S4Vectors,
     SummarizedExperiment
 Suggests:
