@@ -49,9 +49,9 @@ genomicRanges <- function(genoTable) {
 }
 
 
-## Constructor for GRanges (GenomicRanges) class object for FactorTables
-genomicRangesFT <- function(factorTable) {
-    rr <- factorTable@jFactorTable$getRefRanges()
+## Constructor for GRanges (GenomicRanges) class object for FeatureTables
+genomicRangesFT <- function(featureTable) {
+    rr <- featureTable@jFeatureTable$getRefRanges()
     rr <- lapply(.jevalArray(rr), .jevalArray)
 
     GenomicRanges::GRanges(
