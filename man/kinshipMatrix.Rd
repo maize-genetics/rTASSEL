@@ -9,7 +9,7 @@ kinshipMatrix(
   method = "Centered_IBS",
   maxAlleles = 6,
   algorithmVariation = "Observed_Allele_Freq",
-  factorTable = FALSE
+  featureTable = FALSE
 )
 }
 \arguments{
@@ -21,7 +21,7 @@ kinshipMatrix(
 
 \item{algorithmVariation}{Algorithm variation.}
 
-\item{factorTable}{Do you want kinship ran on a \code{FactorTable} object?
+\item{featureTable}{Do you want kinship ran on a \code{FactorTable} object?
 Defaults to \code{FALSE}.}
 }
 \value{
