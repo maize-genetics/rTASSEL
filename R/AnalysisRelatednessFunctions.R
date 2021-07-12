@@ -120,6 +120,41 @@ distanceMatrix <- function(tasObj) {
 }
 
 
+#' @title read TASSEL distance matrix object from file
+#'
+#' @description This function will read a TASSEL distance matrix from
+#'    file and convert it into a \code{TASSELDistanceMatrix} object.
+#'
+#' @name readDistanceMatrix
+#' @rdname readDistanceMatrix
+#'
+#' @param file A file path of type \code{character}
+#'
+#' @return Returns a \code{TASSELDistanceMatrix} object.
+#'
+#' @importFrom methods new
+#' @importFrom rJava J
+#'
+#' @export
+readDistanceMatrix <- function(file) {
+    rJC <- rJava::J("net/maizegenetics/taxa/distance/ReadDistanceMatrix")
+    distMatrix <- rJC$readDistanceMatrix(file)
+
+    tl <- sapply(1:distMatrix$numberOfTaxa(), function(i) {
+        distMatrix$taxaName(as.integer(i))
+    })
+
+    methods::new(
+        Class = "TasselDistanceMatrix",
+        taxa = tl,
+        numTaxa = distMatrix$numberOfTaxa(),
+        jDistMatrix = distMatrix
+    )
+}
+
+
+
+
 #' @title Convert TASSEL distance matrix object to an R matrix class
 #'
 #' @description This function will take a TASSEL distance matrix object and
