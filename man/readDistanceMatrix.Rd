@@ -10,9 +10,9 @@ readDistanceMatrix(file)
 \item{file}{A file path of type \code{character}}
 }
 \value{
-Returns a \code{TASSELDistanceMatrix} object.
+Returns a \code{TasselDistanceMatrix} object.
 }
 \description{
 This function will read a TASSEL distance matrix from
-   file and convert it into a \code{TASSELDistanceMatrix} object.
+   file and convert it into a \code{TasselDistanceMatrix} object.
 }

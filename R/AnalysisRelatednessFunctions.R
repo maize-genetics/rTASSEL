@@ -123,14 +123,14 @@ distanceMatrix <- function(tasObj) {
 #' @title read TASSEL distance matrix object from file
 #'
 #' @description This function will read a TASSEL distance matrix from
-#'    file and convert it into a \code{TASSELDistanceMatrix} object.
+#'    file and convert it into a \code{TasselDistanceMatrix} object.
 #'
 #' @name readDistanceMatrix
 #' @rdname readDistanceMatrix
 #'
 #' @param file A file path of type \code{character}
 #'
-#' @return Returns a \code{TASSELDistanceMatrix} object.
+#' @return Returns a \code{TasselDistanceMatrix} object.
 #'
 #' @importFrom methods new
 #' @importFrom rJava J
@@ -140,43 +140,76 @@ readDistanceMatrix <- function(file) {
     rJC <- rJava::J("net/maizegenetics/taxa/distance/ReadDistanceMatrix")
     distMatrix <- rJC$readDistanceMatrix(file)
 
+    jTl <- distMatrix$getTaxaList()
+
     tl <- sapply(1:distMatrix$numberOfTaxa(), function(i) {
-        distMatrix$taxaName(as.integer(i))
+        jTl$taxaName(as.integer(i - 1))
     })
 
     methods::new(
         Class = "TasselDistanceMatrix",
         taxa = tl,
         numTaxa = distMatrix$numberOfTaxa(),
+        summaryMatrix = summaryDistance(distMatrix),
         jDistMatrix = distMatrix
     )
 }
 
 
-
-
-#' @title Convert TASSEL distance matrix object to an R matrix class
+#' @title Coerce matrix to TasselDistanceMatrix object
 #'
-#' @description This function will take a TASSEL distance matrix object and
-#'    convert it into an R \code{matrix} object.
+#' @description Coerces an object of \code{matrix} class into an rTASSEL
+#'    object of \code{TasselDistanceMatrix} class.
 #'
-#' @name distanceToRMatrix
-#' @rdname distanceToRMatrix
+#' @param m An object of \code{matrix} class of \eqn{m \times m} structure
+#'    (e.g. a pairwise matrix). Additionally, row and column names must be
+#'    the same.
 #'
-#' @param distJobj A TASSEL distance matrix object.
-#'
-#' @return Returns an R \code{matrix} object.
+#' @return Returns a \code{TasselDistanceMatrix} object.
 #'
 #' @export
-distanceToRMatrix <- function(distJobj) {
-    tmp1 <- unlist(strsplit(distJobj$toStringTabDelim(), split = "\n"))
-    tmp2 <- strsplit(tmp1, split = "\t")
-    tmp3 <- t(simplify2array(tmp2))
-    colnames(tmp3) <- as.character(unlist(tmp3[1, ]))
-    tmp3 <- tmp3[-1, ]
-    matRow <- tmp3[, 1]
-    tmp3 <- tmp3[, -1]
-    tmp3 <- apply(tmp3, 2, as.numeric)
-    rownames(tmp3) <- matRow
-    return(tmp3)
+asTasselDistanceMatrix <- function(m) {
+
+    if (nrow(m) != ncol(m)) {
+        stop("Matrix object must have equal rows and columns", call. = FALSE)
+    }
+    if (is.null(colnames(m)) || is.null(rownames(m))) {
+        stop("Matrix object must have column and row names", call. = FALSE)
+    }
+    if (!all(colnames(m) == rownames(m))) {
+        stop("Matrix object must have the same row and column name structure", call. = FALSE)
+    }
+
+    taxa <- colnames(m)
+
+    rJC <- rJava::J("net/maizegenetics/taxa/distance/DistanceMatrixBuilder")
+    distBuilder <- rJC$getInstance(as.integer(length(taxa)))
+
+    for(i in 1:nrow(m)) {
+        for(j in 1:ncol(m)) {
+            distBuilder$set(
+                as.integer(j - 1),
+                as.integer(i - 1),
+                as.double(m[i, j])
+            )
+        }
+        distBuilder$addTaxon(
+            rJava::.jnew(
+                "net/maizegenetics/taxa/Taxon",
+                taxa[i]
+            )
+        )
+    }
+
+    distMatrix <- distBuilder$build()
+
+    methods::new(
+        Class = "TasselDistanceMatrix",
+        taxa = taxa,
+        numTaxa = distMatrix$numberOfTaxa(),
+        summaryMatrix = summaryDistance(distMatrix),
+        jDistMatrix = distMatrix
+    )
 }
+
+
