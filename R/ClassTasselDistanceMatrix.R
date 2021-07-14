@@ -80,3 +80,60 @@ as.matrix.TasselDistanceMatrix <- function(object) {
 }
 
 
+#' @title Get dimensions of TasselDistanceMatrix object
+#'
+#' @description Retrieves dimensions of a \code{TasselDistanceMatrix} object
+#'    as a vector (e.g. \code{c(10, 10)}).
+setMethod(
+    f = "dim",
+    signature = "TasselDistanceMatrix",
+    definition = function(x) {
+        c(x@numTaxa, x@numTaxa)
+    }
+)
+
+#' @export
+setMethod(
+    f = "colnames",
+    signature = "TasselDistanceMatrix",
+    definition = function(x) {
+        x@taxa
+    }
+)
+
+
+#' @export
+setMethod(
+    f = "rownames",
+    signature = "TasselDistanceMatrix",
+    definition = function(x) {
+        x@taxa
+    }
+)
+
+
+#' @export
+setMethod(
+    f = "ncol",
+    signature = "TasselDistanceMatrix",
+    definition = function(x) {
+        x@numTaxa
+    }
+)
+
+
+#' @export
+setMethod(
+    f = "nrow",
+    signature = "TasselDistanceMatrix",
+    definition = function(x) {
+        x@numTaxa
+    }
+)
+
+
+
+
+
+
+

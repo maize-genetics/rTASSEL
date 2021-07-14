@@ -170,6 +170,9 @@ readDistanceMatrix <- function(file) {
 #' @export
 asTasselDistanceMatrix <- function(m) {
 
+    if (!inherits(m, "matrix")) {
+        stop("'m' parameter must be a matrix object", call. = FALSE)
+    }
     if (nrow(m) != ncol(m)) {
         stop("Matrix object must have equal rows and columns", call. = FALSE)
     }
