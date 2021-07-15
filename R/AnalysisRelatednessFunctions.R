@@ -54,7 +54,21 @@ kinshipMatrix <- function(tasObj,
     plugin$setParameter("method", toString(method))
     plugin$setParameter("maxAlleles", toString(maxAlleles))
     plugin$setParameter("algorithmVariation", toString(algorithmVariation))
-    plugin$runPlugin(jGenoTable)
+    distMatrix <- plugin$runPlugin(jGenoTable)
+
+    jTl <- distMatrix$getTaxaList()
+
+    tl <- sapply(1:distMatrix$numberOfTaxa(), function(i) {
+        jTl$taxaName(as.integer(i - 1))
+    })
+
+    methods::new(
+        Class = "TasselDistanceMatrix",
+        taxa = tl,
+        numTaxa = distMatrix$numberOfTaxa(),
+        summaryMatrix = summaryDistance(distMatrix),
+        jDistMatrix = distMatrix
+    )
 }
 
 
