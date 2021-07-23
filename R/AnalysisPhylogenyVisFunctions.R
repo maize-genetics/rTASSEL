@@ -5,7 +5,7 @@
 # Description:   General functions for visualizing phylogeny
 # Author:        Brandon Monier
 # Created:       2021-07-22 at 16:50:16
-# Last Modified: 2021-07-22 at 17:08:53
+# Last Modified: 2021-07-23 at 09:59:30
 #--------------------------------------------------------------------
 
 #--------------------------------------------------------------------
@@ -26,7 +26,6 @@
 #'
 #' @return Returns a Java-based visualization application.
 #'
-#' @importFrom ape read.tree
 #' @importFrom rJava .jnull
 #' @importFrom rJava new
 #' @importFrom rJava J
