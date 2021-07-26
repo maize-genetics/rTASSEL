@@ -1,3 +1,4 @@
+## General ----
 *.swp
 *.swo
 *.html
@@ -11,7 +12,12 @@
 rTASSEL_log
 vignettes/*.log
 
-## R projects
+
+## R projects ----
 *.Rproj
 docs
 docs/
+
+
+## `testthat` problems ----
+tests/testthat/*.rds
