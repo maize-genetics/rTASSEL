@@ -3,7 +3,7 @@
 # Description:   Functions for TASSEL relatedness analyses
 # Author:        Brandon Monier
 # Created:       2019-04-04 at 21:31:09
-# Last Modified: 2019-04-04 at 22:25:19
+# Last Modified: 2021-07-26 at 11:53:18
 #--------------------------------------------------------------------
 
 #--------------------------------------------------------------------
@@ -72,33 +72,6 @@ kinshipMatrix <- function(tasObj,
 }
 
 
-#' @title Convert TASSEL kinship matrix object to an R matrix class
-#'
-#' @description This function will take a TASSEL kinship object and convert
-#'    it into an R \code{matrix} object.
-#'
-#' @name kinshipToRMatrix
-#' @rdname kinshipToRMatrix
-#'
-#' @param kinJobj A TASSEL kinship object.
-#'
-#' @return Returns an R \code{matrix} object.
-#'
-#' @export
-kinshipToRMatrix <- function(kinJobj) {
-    tmp1 <- unlist(strsplit(kinJobj$toStringTabDelim(), split = "\n"))
-    tmp2 <- strsplit(tmp1, split = "\t")
-    tmp3 <- t(simplify2array(tmp2))
-    colnames(tmp3) <- as.character(unlist(tmp3[1, ]))
-    tmp3 <- tmp3[-1, ]
-    matRow <- tmp3[, 1]
-    tmp3 <- tmp3[, -1]
-    tmp3 <- apply(tmp3, 2, as.numeric)
-    rownames(tmp3) <- matRow
-    return(tmp3)
-}
-
-
 #' @title Create a TASSEL distance matrix
 #'
 #' @description This function will calculate a distance matrix using
@@ -130,7 +103,21 @@ distanceMatrix <- function(tasObj) {
         rJava::.jnull(),
         FALSE
     )
-    plugin$getDistanceMatrix(jGenoTable)
+    distMatrix <- plugin$getDistanceMatrix(jGenoTable)
+
+    jTl <- distMatrix$getTaxaList()
+
+    tl <- sapply(1:distMatrix$numberOfTaxa(), function(i) {
+        jTl$taxaName(as.integer(i - 1))
+    })
+
+    methods::new(
+        Class = "TasselDistanceMatrix",
+        taxa = tl,
+        numTaxa = distMatrix$numberOfTaxa(),
+        summaryMatrix = summaryDistance(distMatrix),
+        jDistMatrix = distMatrix
+    )
 }
 
 
@@ -139,8 +126,8 @@ distanceMatrix <- function(tasObj) {
 #' @description This function will read a TASSEL distance matrix from
 #'    file and convert it into a \code{TasselDistanceMatrix} object.
 #'
-#' @name readDistanceMatrix
-#' @rdname readDistanceMatrix
+#' @name readTasselDistanceMatrix
+#' @rdname readTasselDistanceMatrix
 #'
 #' @param file A file path of type \code{character}
 #'
@@ -150,7 +137,12 @@ distanceMatrix <- function(tasObj) {
 #' @importFrom rJava J
 #'
 #' @export
-readDistanceMatrix <- function(file) {
+readTasselDistanceMatrix <- function(file) {
+
+    if (!file.exists(file)) {
+        stop("File does not exist.", call. = FALSE)
+    }
+
     rJC <- rJava::J("net/maizegenetics/taxa/distance/ReadDistanceMatrix")
     distMatrix <- rJC$readDistanceMatrix(file)
 

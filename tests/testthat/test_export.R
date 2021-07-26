@@ -67,7 +67,7 @@ test_that("exportGenotypeTable() returns errors", {
             file = "my_gt",
             format = "csv"
         ),
-        regexp = "'arg' should be one of \"vcf\", \"hapmap\", \"plink\", \"flapjack\", \"hdf5\""
+        regexp = "'arg' should be one of “vcf”, “hapmap”, “plink”, “flapjack”, “hdf5”"
     )
 })
 
