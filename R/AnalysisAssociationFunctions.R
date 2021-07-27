@@ -128,7 +128,14 @@ assocModelFitter <- function(tasObj,
         stop("TASSEL kinship object is not of TasselDistanceMatrix class", call. = FALSE)
     }
     if (!is.null(kinship) && class(kinship) == "TasselDistanceMatrix") {
-        kinship <- kinship@jDistMatrix
+        kinTaxa <- colnames(kinship)
+        genoTaxa <- getTaxaIDs(tasObj)
+
+        if (!any(kinTaxa %in% genoTaxa)) {
+            stop("No taxa IDs in your kinship object match your genotype information.", call. = FALSE)
+        } else {
+            kinship <- kinship@jDistMatrix
+        }
     }
 
     # Logic - Check formula entry
