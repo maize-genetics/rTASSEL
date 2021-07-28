@@ -173,6 +173,10 @@ readTasselDistanceMatrix <- function(file) {
 #'
 #' @return Returns a \code{TasselDistanceMatrix} object.
 #'
+#' @importFrom rJava .jarray
+#' @importFrom rJava J
+#' @importFrom methods new
+#'
 #' @export
 asTasselDistanceMatrix <- function(m) {
 
@@ -189,36 +193,21 @@ asTasselDistanceMatrix <- function(m) {
         stop("Matrix object must have the same row and column name structure", call. = FALSE)
     }
 
-    taxa <- colnames(m)
+    plugin <- rJava::J("net/maizegenetics/plugindef/GenerateRCode")
 
-    rJC <- rJava::J("net/maizegenetics/taxa/distance/DistanceMatrixBuilder")
-    distBuilder <- rJC$getInstance(as.integer(length(taxa)))
+    mJ <- rJava::.jarray(m, dispatch = TRUE)
+    tJ <- rJava::.jarray(colnames(m), dispatch = TRUE)
 
-    for(i in 1:nrow(m)) {
-        for(j in 1:ncol(m)) {
-            distBuilder$set(
-                as.integer(j - 1),
-                as.integer(i - 1),
-                as.double(m[i, j])
-            )
-        }
-        distBuilder$addTaxon(
-            rJava::.jnew(
-                "net/maizegenetics/taxa/Taxon",
-                taxa[i]
-            )
-        )
-    }
-
-    distMatrix <- distBuilder$build()
+    distMatrix <- plugin$asTasselDistanceMatrix(mJ, tJ)
 
     methods::new(
         Class = "TasselDistanceMatrix",
-        taxa = taxa,
+        taxa = colnames(m),
         numTaxa = distMatrix$numberOfTaxa(),
         summaryMatrix = summaryDistance(distMatrix),
         jDistMatrix = distMatrix
     )
+
 }
 
 
