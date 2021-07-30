@@ -925,7 +925,7 @@ for the accuracy estimates. The defaults of k = 5 and iterations = 20 will be
 adequate for most users.
 
 
-```{r, echo=TRUE, eval=TRUE}
+```{r, echo=TRUE, eval=FALSE}
 tasCV <- genomicPrediction(
     tasPhenoObj = tasGenoPheno,
     kinship     = tasKin,
