@@ -92,15 +92,11 @@ test_that("kinshipMatrix() returns correct data.", {
 
     expect_equal(
         object = class(tasKin)[1],
-        expected = "jobjRef"
-    )
-    expect_equal(
-        object = length(names(tasKin)),
-        expected = 35
+        expected = "TasselDistanceMatrix"
     )
 
 
-    tasKinRMat <- kinshipToRMatrix(tasKin)
+    tasKinRMat <- as.matrix(tasKin)
 
     expect_equal(
         object   = class(tasKinRMat),
@@ -120,15 +116,10 @@ test_that("distanceMatrix() returns correct data.", {
 
     expect_equal(
         object = class(tasDist)[1],
-        expected = "jobjRef"
-    )
-    expect_equal(
-        object = length(names(tasDist)),
-        expected = 35
+        expected = "TasselDistanceMatrix"
     )
 
-
-    tasDistRMat <- distanceToRMatrix(tasDist)
+    tasDistRMat <- as.matrix(tasDist)
 
     expect_equal(
         object   = class(tasDistRMat),

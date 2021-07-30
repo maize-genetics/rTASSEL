@@ -86,6 +86,7 @@ following links, depending on your OS:
 * [macOS](https://zhiyzuo.github.io/installation-rJava/)
 * [Windows](https://cimentadaj.github.io/blog/2018-05-25-installing-rjava-on-windows-10/installing-rjava-on-windows-10/)
 
+
 ## Problems with rJava if you have upgraded Java
 On a MAC: if you previously had `rJava` working through RStudio, then you
 upgraded your Java and it now longer works, try the following:
@@ -111,6 +112,7 @@ sudo ln -s $(/usr/libexec/java_home)/lib/server/libjvm.dylib /usr/local/lib
 
 You should now be able to enter RStudio and setup rJava.
 
+
 ## Install from BitBucket
 After you have `rJava` up and running on your machine, install `rTASSEL` by
 installing the source code from our BitBucket repository:
@@ -126,12 +128,29 @@ devtools::install_bitbucket(
 
 After source code has been compiled, the package can be loaded using:
 
-```{r, eval=FALSE, echo=TRUE}
+```{r, eval=TRUE, echo=TRUE}
 library(rTASSEL)
 ```
 
 Or, if you want to use a function without violating your environment you can
 use `rTASSEL::<function>`, where `<function>` is an `rTASSEL` function.
+
+
+## Problems installing if you have both 32- and 64-bit architecture installed for R
+**NOTE:** If you are using a machine that has both architectures installed for R, 
+you might run into problems pulling code using `devtools`. If this is the case,
+one solution would be to add the parameter `--no-multiarch` option in 
+`INSTALL_opts`. This will force building the package for your currently running 
+R version:
+
+```{r, eval=FALSE, echo = TRUE}
+devtools::install_bitbucket(
+    repo = "bucklerlab/rTASSEL",
+    ref = "master",
+    build_vignettes = FALSE,
+    INSTALL_opts = "--no-multiarch"
+)
+```
 
 
 ## Preliminary steps
@@ -346,8 +365,7 @@ or `factor`). This will have to be passed as an R vector of string elements
 be entered in the same order as they are found in the data frame.
 
 
-
-# Loading genotype and phenotype data simultaneously
+## Loading genotype and phenotype data simultaneously
 In association studies, we are interested in combining our genotype and
 phenotype data. To usually run this operation in TASSEL, an intersect
 combination between the two data sets is needed. To run this in `rTASSEL`, we
@@ -389,6 +407,24 @@ tasGenoPhenoDF <- rTASSEL::readGenotypePhenotype(
     attributeTypes = NULL
 )
 tasGenoPhenoDF
+```
+
+
+## Reading kinship data
+rTASSEL also provides users the ability to read in delimited "flat-file" 
+kinship objects as a `TasselDistanceMatrix` object using the function,
+`readTasselDistanceMatrix()`:
+
+```{r, eval=TRUE, echo=TRUE}
+## Get toy kinship data from package ----
+kinshipPath <- system.file(
+  "extdata", 
+  "mdp_kinship.txt", 
+  package = "rTASSEL"
+)
+
+## Read ----
+readTasselDistanceMatrix(kinshipPath)
 ```
 
 
@@ -458,6 +494,11 @@ types are tranlated into within the R environment:
 
 
 # Filtering genotype data
+
+**NOTE**: This is just a "snapshot" of how we can filter genotype information
+in rTASSEL. For more information, please see the additional vignette, 
+*"Filtering Genotype Tables"*.
+
 Prior to association analyses, filtration of genotype data may be necessary.
 In TASSEL, this accomplished through the Filter menu using two primary plugins:
 
@@ -500,46 +541,90 @@ contains genotypic data, regardless of single or combined TASSEL objects.
 ## Create a kinship matrix object
 In TASSEL, for mixed linear model analyses, a kinship matrix calculated from
 genotype data is necessary. This can be accomplished by calculating a kinship
-TASSEL object using the function `rTASSEL::kinshipMatrix()`. The main
+TASSEL object using the function `kinshipMatrix()`. The main
 parameter input is a `TasselGenotypePhenotype` class object that contains a
 genotype data set:
 
 ```{r, eval=TRUE, echo=TRUE}
-tasKin <- rTASSEL::kinshipMatrix(tasObj = tasGenoPheno)
+tasKin <- kinshipMatrix(tasObj = tasGenoPheno)
 ```
 
-Since this object is essentially a TASSEL reference object, it is relatively
-not of use until association analysis. We can coerce this TASSEL object by
-using the following function:
-
-```{r, eval=TRUE, echo=TRUE}
-# Get full R matrix
-tasKinRMat <- rTASSEL::kinshipToRMatrix(tasKin)
-
-# Inspect the first 5 rows and columns
-tasKinRMat[1:5, 1:5]
-```
-
-As you can see, we can take the initial TASSEL object and convert it into a
-standard R object of `matrix` class.
+This function allows for several types of algorithm to used using the `method`
+parameter. More info about these methods can be found
+[here](https://bitbucket.org/tasseladmin/tassel-5-source/wiki/UserManual/Kinship/Kinship).
 
 
 ## Calculate a distance matrix
 Very similar to kinship matrix calculation, a distance matrix can also be
-calculated using genotype data
+calculated using genotype data using the function `distanceMatrix()`:
 
 ```{r, eval=TRUE, echo=TRUE}
-tasDist <- rTASSEL::distanceMatrix(tasObj = tasGenoPheno)
+tasDist <- distanceMatrix(tasObj = tasGenoPheno)
 ```
 
-And just like the kinship matrix, we can also coerce this into an R matrix
+
+## `TasselDistanceMatrix` objects
+
+### Overview
+The prior two functions will generate a pairwise matrix (e.g. $m \times m$ 
+dimensions). The return object is an rTASSEL class, `TasselDistanceMatrix`.
+When we inspect the prior object we will see something like this:
 
 ```{r, eval=TRUE, echo=TRUE}
-# Get full R matrix
-tasDistRMat <- rTASSEL::distanceToRMatrix(tasDist)
+tasKin
+```
 
-# Inspect the first 5 rows and columns
-tasDistRMat[1:5, 1:5]
+This will showcase the first four rows and columns and the last row and column
+if the distance matrix exceeds 5 dimensions (*which it probably will*).
+
+This object, similar to the `TasselGenotypePhenotype` class, essentially holds
+pointers to the Java/TASSEL object in memory. Despite this, we can still use
+some base R methods similar to how we handle `matrix` objects:
+
+```{r, eval=TRUE, echo=TRUE}
+library(magrittr)
+
+tasKin %>% colnames() %>% head()
+tasKin %>% rownames() %>% head()
+
+tasKin %>% dim()
+
+tasKin %>% nrow()
+tasKin %>% ncol()
+```
+
+### Coercion
+If we want to use additional R methods (e.g. plotting, new models, etc.), we
+can coerce this object to a general R data object, in this case, a `matrix`
+object using the base method `as.matrix()`:
+
+```{r, eval=TRUE, echo=TRUE}
+library(magrittr)
+
+tasKinR <- tasKin %>% as.matrix()
+
+## Inspect first 5 rows and columns ----
+tasKinR[1:5, 1:5]
+```
+
+We can also coerce a pairwise `matrix` object to a `TasselDistanceMatrix` 
+object using rTASSEL's function `asTasselDistanceMatrix()`:
+
+```{r, eval=TRUE, echo=TRUE}
+library(magrittr)
+
+## Create a dummy pairwise matrix object ----
+set.seed(123)
+m <- 10
+s <- matrix(rnorm(100), m)
+s[lower.tri(s)] <- t(s)[lower.tri(s)]
+diag(s) <- 2
+
+## Add sample IDs ----
+colnames(s) <- rownames(s) <- paste0("s_", seq_len(m))
+
+testTasselDist <- s %>% asTasselDistanceMatrix()
+testTasselDist
 ```
 
 
@@ -665,7 +750,7 @@ control for field variation. Since genotype data is not needed for this
 method, we can leave the `fitMarkers`, `kinship`, and `fastAssociation` to
 `NULL` or `FALSE`:
 
-```{r, echo=TRUE, eval=FALSE}
+```{r, echo=TRUE, eval=TRUE}
 # Read in phenotype data
 phenoPathCov <- system.file("extdata", "mdp_phenotype.txt", package = "rTASSEL")
 tasPhenoCov <- rTASSEL::readPhenotypeFromPath(phenoPathCov)
@@ -680,7 +765,7 @@ tasBLUE <- rTASSEL::assocModelFitter(
 )
 
 # Return BLUE output
-tasBLUE
+str(tasBLUE)
 ```
 
 
@@ -689,7 +774,7 @@ Similar to BLUEs, we can fit a generalized linear model (GLM) by simply
 fitting marker data to our model. For this, we need a genotype data set
 combined with our phenotype data in a `TasselGenotypePhenotype` class object:
 
-```{r, echo=TRUE, eval=FALSE}
+```{r, echo=TRUE, eval=TRUE}
 # Calculate GLM
 tasGLM <- rTASSEL::assocModelFitter(
     tasObj = tasGenoPheno,             # <- our prior TASSEL object
@@ -700,7 +785,7 @@ tasGLM <- rTASSEL::assocModelFitter(
 )
 
 # Return GLM output
-tasGLM
+str(tasGLM)
 ```
 
 
@@ -710,7 +795,7 @@ kinship to our analysis. In addition to the prior parameters, we will also
 need a TASSEL kinship object (see *Create a kinship matrix object* in the
 *Analysis - Relatedness* section):
 
-```{r, echo=TRUE, eval=FALSE}
+```{r, echo=TRUE, eval=TRUE}
 # Calculate MLM
 tasMLM <- rTASSEL::assocModelFitter(
     tasObj = tasGenoPheno,             # <- our prior TASSEL object
@@ -721,7 +806,7 @@ tasMLM <- rTASSEL::assocModelFitter(
 )
 
 # Return GLM output
-tasMLM
+str(tasMLM)
 ```
 
 
@@ -730,7 +815,7 @@ Finally, we can run fast association analysis in our GLM model by setting
 the `fastAssociation` parameter to `TRUE`. **NOTE**: this is only really
 effective if you have many phenotype traits:
 
-```{r, echo=TRUE, eval=FALSE}
+```{r, echo=TRUE, eval=TRUE}
 # Read data - need only non missing data!
 phenoPathFast <-system.file(
     "extdata",
@@ -755,7 +840,7 @@ tasFAST <- rTASSEL::assocModelFitter(
 )
 
 # Return GLM output
-tasFAST
+str(tasFAST)
 ```
 
 
@@ -774,9 +859,6 @@ manhattanEH <- manhattanPlot(
     trait      = "EarHT",
     threshold  = 5
 )
-
-# View visualization
-manhattanEH
 ```
 
 
@@ -803,9 +885,6 @@ myLD <- ldPlot(
     plotVal = "r2",
     verbose = FALSE
 )
-
-# View LD
-myLD
 ```
 
 
@@ -856,10 +935,5 @@ tasCV <- genomicPrediction(
 )
 head(tasCV)
 ```
-
-
-
-
-
 
 
