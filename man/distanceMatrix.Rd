@@ -10,7 +10,7 @@ distanceMatrix(tasObj)
 \item{tasObj}{an rTASSEL \code{TasselGenotypePhenotype} object}
 }
 \value{
-Returns a Java pointer of a TASSEL distance matrix object.
+Returns a `TasselDistanceMatrix` object.
 }
 \description{
 This function will calculate a distance matrix using

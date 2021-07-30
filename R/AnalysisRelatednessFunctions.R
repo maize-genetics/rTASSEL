@@ -21,11 +21,16 @@
 #' @rdname kinshipMatrix
 #'
 #' @param tasObj An object of class \code{TasselGenotypePenotype}.
-#' @param method A Kinship method.
-#' @param maxAlleles Maximum number of alleles.
-#' @param algorithmVariation Algorithm variation.
+#' @param method A Kinship method. Defaults to \code{Centered_IBS}. Other
+#'    options include \code{Normalized_IBS}, \code{Dominance_Centered_IBS},
+#'    and \code{Dominance_Normalized_IBS}.
+#' @param maxAlleles Maximum number of alleles. Can be within the range of
+#'    \code{2} to \code{6}.
+#' @param algorithmVariation Algorithm variation. If
+#'    \code{Dominance_Centered_IBS} is selected, users can switch between
+#'    \code{Observed_Allele_Freq} and \code{Proportion_Heterozygous}.
 #'
-#' @return Returns a Java pointer of a TASSEL kinship matrix object.
+#' @return Returns a `TasselDistanceMatrix` object.
 #'
 #' @importFrom rJava is.jnull
 #' @importFrom rJava new
@@ -82,7 +87,7 @@ kinshipMatrix <- function(tasObj,
 #'
 #' @param tasObj an rTASSEL \code{TasselGenotypePhenotype} object
 #'
-#' @return Returns a Java pointer of a TASSEL distance matrix object.
+#' @return Returns a `TasselDistanceMatrix` object.
 #'
 #' @importFrom rJava is.jnull
 #' @importFrom rJava new
