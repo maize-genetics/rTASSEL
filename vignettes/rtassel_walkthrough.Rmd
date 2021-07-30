@@ -885,9 +885,6 @@ myLD <- ldPlot(
     plotVal = "r2",
     verbose = FALSE
 )
-
-# View LD
-myLD
 ```
 
 
