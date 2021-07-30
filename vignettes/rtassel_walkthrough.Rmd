@@ -859,9 +859,6 @@ manhattanEH <- manhattanPlot(
     trait      = "EarHT",
     threshold  = 5
 )
-
-# View visualization
-manhattanEH
 ```
 
 
