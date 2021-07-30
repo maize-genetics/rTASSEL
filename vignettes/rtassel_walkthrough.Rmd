@@ -852,7 +852,7 @@ str(tasFAST)
 disequilibrium (LD) analyses. In this example, we will generate a Manhattan 
 plot for our prior MLM object:
 
-```{r, echo=TRUE, eval=TRUE}
+```{r, echo=TRUE, eval=FALSE}
 # Generate Manhattan plot for ear height trait
 manhattanEH <- manhattanPlot(
     assocStats = tasMLM$MLM_Stats,
@@ -867,7 +867,7 @@ Similarly, we can also visualize LD using automated methods. Like most
 LD plots, it is wise to filter your genotype information to a specific region 
 of interest:
 
-```{r, echo=TRUE, eval=TRUE}
+```{r, echo=TRUE, eval=FALSE}
 # Filter genotype table by position
 tasGenoPhenoFilt <- filterGenotypeTableSites(
     tasObj              = tasGenoPheno,
