@@ -1,7 +1,7 @@
 ---
 title: "Getting Started with rTASSEL"
 author: "Brandon Monier"
-date:   "2021-03-10"
+date: "`r format(Sys.Date(), '%Y-%m-%d')`"
 output:
     BiocStyle::html_document:
       toc: true
@@ -845,6 +845,37 @@ str(tasFAST)
 
 
 
+# Analysis - Phylogeny
+`rTASSEL` allows for interfacing with TASSEL's tree generation methods from
+genotype information. This can be performed using the `createTree()` method
+with a `TasselGenotypePhenotype` object containing genotype table information:
+
+```{r, echo=TRUE, eval=TRUE}
+phyloTree <- createTree(
+    tasObj = tasGenoHMP,
+    clustMethod = "Neighbor_Joining"
+)
+```
+
+The above function allows for two clustering methods:
+
+* `Neighbor_Joining` - Neighbor Joining method. More info can be found
+  [here](https://en.wikipedia.org/wiki/Neighbor_joining)
+* `UPGMA` - **U**nweighted **P**air **G**roup **M**ethod with **A**rithmetic 
+  **M**ean. More info can be found [here](https://en.wikipedia.org/wiki/UPGMA).
+
+Upon creation, the `phyloTree` object is returned as a `phylo` object generated
+by the [ape](https://cran.r-project.org/web/packages/ape/ape.pdf) package:
+
+```{r, echo=TRUE, eval=TRUE}
+phyloTree
+```
+
+This object can then be used by common base-R methods (e.g. `plot()`) or other
+visualization libraries such as
+[ggtree](https://bioconductor.org/packages/release/bioc/html/ggtree.html).
+
+
 # Visualizations
 
 ## Manhattan plots
@@ -859,7 +890,11 @@ manhattanEH <- manhattanPlot(
     trait      = "EarHT",
     threshold  = 5
 )
+
+manhattanEH
 ```
+
+![](../man/figures/manhattan_eh.png)
 
 
 ## LD plots
@@ -885,8 +920,58 @@ myLD <- ldPlot(
     plotVal = "r2",
     verbose = FALSE
 )
+
+myLD
 ```
 
+![](../man/figures/ld_static.png)
+
+
+
+# Interactive Visualizations
+
+## Overview
+Since `rTASSEL` can essentially interact with all of TASSEL's API, interactive
+"legacy" Java-based visualizers can be accessed. Currently, `rTASSEL` has
+capabilities to use the LD viewer and Archaeopteryx.
+
+
+## LD Viewer
+TASSEL's linkage disequilibrium (LD) viewer can be used via the `ldJavaApp()`
+function. This method will take a `TasselGenotypePhenotype` object containing
+genotype information. A common parameter to set is the window size 
+(`windowSize`) since creating a full genotype matrix is rather impractical
+at this point in time for most modern machines and experimental design. This
+will create comparisons only within a given range of indexes:
+
+```{r, echo=TRUE, eval=FALSE}
+library(magrittr)
+
+tasGenoHMP %>% ldJavaApp(windowSize = 100)
+```
+
+![](../man/figures/ld_java_viewer.png)
+
+
+## Tree Viewer - Archaeopteryx
+Since TASSEL allows for phylogenetic tree creation, one common Java-based
+visualizer to use is the 
+[Archaeopteryx](https://www.phylosoft.org/archaeopteryx/) tree viewer which is 
+implemented in the source code. To view this, we can use the `treeJavaApp()` 
+function. In the following example, we will first filter 6 taxa and then pass 
+the filtered genotype object to the Java visualizer:
+
+```{r, echo=TRUE, eval=FALSE}
+library(magrittr)
+
+tasGenoHMP %>% 
+    filterGenotypeTableTaxa(
+      taxa = c("33-16", "38-11", "4226", "4722", "A188", "A214N")
+    ) %>% 
+    treeJavaApp()
+```
+
+![](../man/figures/archaeopteryx_view.png)
 
 
 # Genomic Prediction
@@ -934,6 +1019,17 @@ tasCV <- genomicPrediction(
     nIter       = 1
 )
 head(tasCV)
+```
+```
+## DataFrame with 6 rows and 4 columns
+##         Trait Iteration      Fold  Accuracy
+##   <character> <numeric> <numeric> <numeric>
+## 1       EarHT         0         0  0.501444
+## 2       EarHT         0         1  0.376098
+## 3       EarHT         0         2  0.506010
+## 4       EarHT         0         3  0.594796
+## 5       EarHT         0         4  0.528185
+## 6       dpoll         0         0  0.785085
 ```
 
 
