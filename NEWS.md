@@ -12,11 +12,11 @@
     `kinshipToRMatrix()` and `distanceToRMatrix()`.
   + Prior functions that take in a kinship object will now take in this new
     class.
-* Added new method:
+* Added new function:
   + `readTasselDistanceMatrix()`
   + Allows for user to read in delimited distance matrix stored in a flat
     file.
-* Added new method:
+* Added new function:
   + `asTasselDistanceMatrix()`
   + Coerces a pairwise matrix (e.g. m x m dimensions) with the same column
     and row names of type `matrix` to an object of type `TasselDistanceMatrix`.
