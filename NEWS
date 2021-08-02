@@ -20,7 +20,14 @@
   + `asTasselDistanceMatrix()`
   + Coerces a pairwise matrix (e.g. m x m dimensions) with the same column
     and row names of type `matrix` to an object of type `TasselDistanceMatrix`.
-
+* Added new function:
+  + `createTree()`
+  + interface to TASSEL's tree creation methods
+  + Allows for `Neighbor_Joining` and `UPGMA` methods
+* Added new function:
+  + `treeJavaApp()`
+  + wrapper for TASSEL's interface to the Archaeopteryx Java tree Viewer
+  + Implements same methods for tree creation as `createTree()`
 
 
 ## CHANGES IN VERSION 0.9.22

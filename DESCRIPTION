@@ -29,6 +29,7 @@ License: GPL-3 | file LICENSE
 URL:
     https://bitbucket.org/bucklerlab/rtassel/src/master/
 Imports:
+    ape,
     GenomicRanges,
     ggplot2,
     IRanges,
