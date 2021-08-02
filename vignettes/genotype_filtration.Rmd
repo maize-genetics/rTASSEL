@@ -1,7 +1,7 @@
 ---
 title: "Filtering Genotype Tables"
 author: "Brandon Monier"
-date:   "2020-11-11"
+date: "`r format(Sys.Date(), '%Y-%m-%d')`"
 output:
     BiocStyle::html_document:
       toc: true
@@ -9,7 +9,7 @@ output:
       fig_caption: true
       number_sections: false
 vignette: >
-    %\VignetteIndexEntry{Getting Start with `rTASSEL`}
+    %\VignetteIndexEntry{Filtering Genotype Tables}
     %\VignetteEngine{knitr::rmarkdown}
     %\VignetteEncoding{UTF-8}
     %\usepackage[utf8]{inputenc}
