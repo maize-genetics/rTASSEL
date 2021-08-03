@@ -3,7 +3,7 @@
 # Description:   Functions for TASSEL relatedness analyses
 # Author:        Brandon Monier
 # Created:       2019-04-04 at 21:31:09
-# Last Modified: 2019-04-04 at 22:25:19
+# Last Modified: 2021-07-26 at 11:53:18
 #--------------------------------------------------------------------
 
 #--------------------------------------------------------------------
@@ -21,11 +21,16 @@
 #' @rdname kinshipMatrix
 #'
 #' @param tasObj An object of class \code{TasselGenotypePenotype}.
-#' @param method A Kinship method.
-#' @param maxAlleles Maximum number of alleles.
-#' @param algorithmVariation Algorithm variation.
+#' @param method A Kinship method. Defaults to \code{Centered_IBS}. Other
+#'    options include \code{Normalized_IBS}, \code{Dominance_Centered_IBS},
+#'    and \code{Dominance_Normalized_IBS}.
+#' @param maxAlleles Maximum number of alleles. Can be within the range of
+#'    \code{2} to \code{6}.
+#' @param algorithmVariation Algorithm variation. If
+#'    \code{Dominance_Centered_IBS} is selected, users can switch between
+#'    \code{Observed_Allele_Freq} and \code{Proportion_Heterozygous}.
 #'
-#' @return Returns a Java pointer of a TASSEL kinship matrix object.
+#' @return Returns a `TasselDistanceMatrix` object.
 #'
 #' @importFrom rJava is.jnull
 #' @importFrom rJava new
@@ -54,34 +59,21 @@ kinshipMatrix <- function(tasObj,
     plugin$setParameter("method", toString(method))
     plugin$setParameter("maxAlleles", toString(maxAlleles))
     plugin$setParameter("algorithmVariation", toString(algorithmVariation))
-    plugin$runPlugin(jGenoTable)
-}
+    distMatrix <- plugin$runPlugin(jGenoTable)
 
+    jTl <- distMatrix$getTaxaList()
 
-#' @title Convert TASSEL kinship matrix object to an R matrix class
-#'
-#' @description This function will take a TASSEL kinship object and convert
-#'    it into an R \code{matrix} object.
-#'
-#' @name kinshipToRMatrix
-#' @rdname kinshipToRMatrix
-#'
-#' @param kinJobj A TASSEL kinship object.
-#'
-#' @return Returns an R \code{matrix} object.
-#'
-#' @export
-kinshipToRMatrix <- function(kinJobj) {
-    tmp1 <- unlist(strsplit(kinJobj$toStringTabDelim(), split = "\n"))
-    tmp2 <- strsplit(tmp1, split = "\t")
-    tmp3 <- t(simplify2array(tmp2))
-    colnames(tmp3) <- as.character(unlist(tmp3[1, ]))
-    tmp3 <- tmp3[-1, ]
-    matRow <- tmp3[, 1]
-    tmp3 <- tmp3[, -1]
-    tmp3 <- apply(tmp3, 2, as.numeric)
-    rownames(tmp3) <- matRow
-    return(tmp3)
+    tl <- sapply(1:distMatrix$numberOfTaxa(), function(i) {
+        jTl$taxaName(as.integer(i - 1))
+    })
+
+    methods::new(
+        Class = "TasselDistanceMatrix",
+        taxa = tl,
+        numTaxa = distMatrix$numberOfTaxa(),
+        summaryMatrix = summaryDistance(distMatrix),
+        jDistMatrix = distMatrix
+    )
 }
 
 
@@ -95,7 +87,7 @@ kinshipToRMatrix <- function(kinJobj) {
 #'
 #' @param tasObj an rTASSEL \code{TasselGenotypePhenotype} object
 #'
-#' @return Returns a Java pointer of a TASSEL distance matrix object.
+#' @return Returns a `TasselDistanceMatrix` object.
 #'
 #' @importFrom rJava is.jnull
 #' @importFrom rJava new
@@ -116,32 +108,111 @@ distanceMatrix <- function(tasObj) {
         rJava::.jnull(),
         FALSE
     )
-    plugin$getDistanceMatrix(jGenoTable)
+    distMatrix <- plugin$getDistanceMatrix(jGenoTable)
+
+    jTl <- distMatrix$getTaxaList()
+
+    tl <- sapply(1:distMatrix$numberOfTaxa(), function(i) {
+        jTl$taxaName(as.integer(i - 1))
+    })
+
+    methods::new(
+        Class = "TasselDistanceMatrix",
+        taxa = tl,
+        numTaxa = distMatrix$numberOfTaxa(),
+        summaryMatrix = summaryDistance(distMatrix),
+        jDistMatrix = distMatrix
+    )
 }
 
 
-#' @title Convert TASSEL distance matrix object to an R matrix class
+#' @title read TASSEL distance matrix object from file
 #'
-#' @description This function will take a TASSEL distance matrix object and
-#'    convert it into an R \code{matrix} object.
+#' @description This function will read a TASSEL distance matrix from
+#'    file and convert it into a \code{TasselDistanceMatrix} object.
 #'
-#' @name distanceToRMatrix
-#' @rdname distanceToRMatrix
+#' @name readTasselDistanceMatrix
+#' @rdname readTasselDistanceMatrix
 #'
-#' @param distJobj A TASSEL distance matrix object.
+#' @param file A file path of type \code{character}
 #'
-#' @return Returns an R \code{matrix} object.
+#' @return Returns a \code{TasselDistanceMatrix} object.
+#'
+#' @importFrom methods new
+#' @importFrom rJava J
 #'
 #' @export
-distanceToRMatrix <- function(distJobj) {
-    tmp1 <- unlist(strsplit(distJobj$toStringTabDelim(), split = "\n"))
-    tmp2 <- strsplit(tmp1, split = "\t")
-    tmp3 <- t(simplify2array(tmp2))
-    colnames(tmp3) <- as.character(unlist(tmp3[1, ]))
-    tmp3 <- tmp3[-1, ]
-    matRow <- tmp3[, 1]
-    tmp3 <- tmp3[, -1]
-    tmp3 <- apply(tmp3, 2, as.numeric)
-    rownames(tmp3) <- matRow
-    return(tmp3)
+readTasselDistanceMatrix <- function(file) {
+
+    if (!file.exists(file)) {
+        stop("File does not exist.", call. = FALSE)
+    }
+
+    rJC <- rJava::J("net/maizegenetics/taxa/distance/ReadDistanceMatrix")
+    distMatrix <- rJC$readDistanceMatrix(file)
+
+    jTl <- distMatrix$getTaxaList()
+
+    tl <- sapply(1:distMatrix$numberOfTaxa(), function(i) {
+        jTl$taxaName(as.integer(i - 1))
+    })
+
+    methods::new(
+        Class = "TasselDistanceMatrix",
+        taxa = tl,
+        numTaxa = distMatrix$numberOfTaxa(),
+        summaryMatrix = summaryDistance(distMatrix),
+        jDistMatrix = distMatrix
+    )
 }
+
+
+#' @title Coerce matrix to TasselDistanceMatrix object
+#'
+#' @description Coerces an object of \code{matrix} class into an rTASSEL
+#'    object of \code{TasselDistanceMatrix} class.
+#'
+#' @param m An object of \code{matrix} class of \eqn{m \times m} structure
+#'    (e.g. a pairwise matrix). Additionally, row and column names must be
+#'    the same.
+#'
+#' @return Returns a \code{TasselDistanceMatrix} object.
+#'
+#' @importFrom rJava .jarray
+#' @importFrom rJava J
+#' @importFrom methods new
+#'
+#' @export
+asTasselDistanceMatrix <- function(m) {
+
+    if (!inherits(m, "matrix")) {
+        stop("'m' parameter must be a matrix object", call. = FALSE)
+    }
+    if (nrow(m) != ncol(m)) {
+        stop("Matrix object must have equal rows and columns", call. = FALSE)
+    }
+    if (is.null(colnames(m)) || is.null(rownames(m))) {
+        stop("Matrix object must have column and row names", call. = FALSE)
+    }
+    if (!all(colnames(m) == rownames(m))) {
+        stop("Matrix object must have the same row and column name structure", call. = FALSE)
+    }
+
+    plugin <- rJava::J("net/maizegenetics/plugindef/GenerateRCode")
+
+    mJ <- rJava::.jarray(m, dispatch = TRUE)
+    tJ <- rJava::.jarray(colnames(m), dispatch = TRUE)
+
+    distMatrix <- plugin$asTasselDistanceMatrix(mJ, tJ)
+
+    methods::new(
+        Class = "TasselDistanceMatrix",
+        taxa = colnames(m),
+        numTaxa = distMatrix$numberOfTaxa(),
+        summaryMatrix = summaryDistance(distMatrix),
+        jDistMatrix = distMatrix
+    )
+
+}
+
+

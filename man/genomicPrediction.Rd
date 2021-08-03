@@ -10,7 +10,7 @@ genomicPrediction(tasPhenoObj, kinship, doCV = FALSE, kFolds, nIter)
 \item{tasPhenoObj}{An object of class \code{TasselGenotypePenotype} that
 contains a phenotype object.}
 
-\item{kinship}{A TASSEL kinship object.}
+\item{kinship}{A TASSEL kinship object of class \code{TasselDistanceMatrix}.}
 
 \item{doCV}{Do you want to perform k-fold cross-validation? Defaults to
 \code{FALSE}.}

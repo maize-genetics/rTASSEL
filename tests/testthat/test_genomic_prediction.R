@@ -65,7 +65,7 @@ test_that("genomicPrediction() throws general exceptions.", {
             kFolds      = 10,
             nIter       = 10
         ),
-        regexp = "TASSEL kinship object is not of DistanceMatrix class"
+        regexp = "TASSEL kinship object is not of TasselDistanceMatrix class"
     )
 })
 

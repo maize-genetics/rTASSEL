@@ -3,7 +3,7 @@
 # Description:   General functions for running association analysis
 # Author:        Brandon Monier
 # Created:       2019-03-29 at 13:51:02
-# Last Modified: 2020-06-24 at 09:50:27
+# Last Modified: 2021-07-26 at 11:52:59
 #--------------------------------------------------------------------
 
 #--------------------------------------------------------------------
@@ -40,8 +40,8 @@
 #'   analysis will be executed. If \code{FALSE}, BLUEs will be calculated.
 #'   Defaults to \code{FALSE}.
 #' @param kinship Should kinship data be accounted for in the model? If so,
-#'   please submit a TASSEL kinship matrix object using the rTASSEL function,
-#'   \code{kinshipMatrix}. Defaults to \code{NULL}
+#'   a TASSEL kinship matrix object of class \code{TasselDistanceMatrix} must
+#'   be submitted. Defaults to \code{NULL}.
 #' @param fastAssociation Should TASSEL's Fast Association plugin be used?
 #'   Consider setting to \code{TRUE} if you have many phenotypes in your
 #'   data set.
@@ -122,6 +122,21 @@ assocModelFitter <- function(tasObj,
             traitType == "covariate" |
             traitType == "wildcard"
     )
+
+    # Logic - check kinship object
+    if (!is.null(kinship) && class(kinship) != "TasselDistanceMatrix") {
+        stop("TASSEL kinship object is not of TasselDistanceMatrix class", call. = FALSE)
+    }
+    if (!is.null(kinship) && class(kinship) == "TasselDistanceMatrix") {
+        kinTaxa <- colnames(kinship)
+        genoTaxa <- getTaxaIDs(tasObj)
+
+        if (!any(kinTaxa %in% genoTaxa)) {
+            stop("No taxa IDs in your kinship object match your genotype information.", call. = FALSE)
+        } else {
+            kinship <- kinship@jDistMatrix
+        }
+    }
 
     # Logic - Check formula entry
     if (any(!(c(formResp, formPred) %in% phenoAttDf$traitName))) {
