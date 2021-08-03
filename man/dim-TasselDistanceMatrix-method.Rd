@@ -6,6 +6,9 @@
 \usage{
 \S4method{dim}{TasselDistanceMatrix}(x)
 }
+\arguments{
+\item{x}{An object of class \code{TasselDistanceMatrix}.}
+}
 \description{
 Retrieves dimensions of a \code{TasselDistanceMatrix} object
    as a vector (e.g. \code{c(10, 10)}).
