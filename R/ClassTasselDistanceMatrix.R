@@ -63,11 +63,12 @@ setMethod(
 #' @description Coerces an object of class \code{TasselDistanceMatrix} to
 #'    a \code{matrix} object.
 #'
-#' @param object An object of \code{TasselDistanceMatrix} class.
+#' @param x An object of \code{TasselDistanceMatrix} class.
+#' @param ... Additional arguments to be passed to or from methods.
 #'
 #' @export
-as.matrix.TasselDistanceMatrix <- function(object) {
-    tmp1 <- unlist(strsplit(object@jDistMatrix$toStringTabDelim(), split = "\n"))
+as.matrix.TasselDistanceMatrix <- function(x, ...) {
+    tmp1 <- unlist(strsplit(x@jDistMatrix$toStringTabDelim(), split = "\n"))
     tmp2 <- strsplit(tmp1, split = "\t")
     tmp3 <- t(simplify2array(tmp2))
     colnames(tmp3) <- as.character(unlist(tmp3[1, ]))
@@ -84,6 +85,8 @@ as.matrix.TasselDistanceMatrix <- function(object) {
 #'
 #' @description Retrieves dimensions of a \code{TasselDistanceMatrix} object
 #'    as a vector (e.g. \code{c(10, 10)}).
+#'
+#' @param x An object of class \code{TasselDistanceMatrix}.
 setMethod(
     f = "dim",
     signature = "TasselDistanceMatrix",
@@ -92,6 +95,12 @@ setMethod(
     }
 )
 
+#' @title Column names
+#'
+#' @description Get column names of a \code{TasselDistanceMatrix} object.
+#'
+#' @param x An object of class \code{TasselDistanceMatrix}.
+#'
 #' @export
 setMethod(
     f = "colnames",
@@ -102,6 +111,12 @@ setMethod(
 )
 
 
+#' @title Row names
+#'
+#' @description Get row names of a \code{TasselDistanceMatrix} object.
+#'
+#' @param x An object of class \code{TasselDistanceMatrix}.
+#'
 #' @export
 setMethod(
     f = "rownames",
@@ -112,6 +127,12 @@ setMethod(
 )
 
 
+#' @title Number of columns
+#'
+#' @description Get number of columns of a \code{TasselDistanceMatrix} object.
+#'
+#' @param x An object of class \code{TasselDistanceMatrix}.
+#'
 #' @export
 setMethod(
     f = "ncol",
@@ -122,6 +143,12 @@ setMethod(
 )
 
 
+#' @title Number of rows
+#'
+#' @description Get number of rows of a \code{TasselDistanceMatrix} object.
+#'
+#' @param x An object of class \code{TasselDistanceMatrix}.
+#'
 #' @export
 setMethod(
     f = "nrow",
@@ -130,10 +157,5 @@ setMethod(
         x@numTaxa
     }
 )
-
-
-
-
-
 
 

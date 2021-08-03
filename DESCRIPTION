@@ -41,6 +41,7 @@ Imports:
 Suggests:
     BiocStyle,
     knitr,
+    magrittr,
     rmarkdown,
     testthat
 SystemRequirements: Java (>= 8.0)

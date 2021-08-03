@@ -4,10 +4,12 @@
 \alias{as.matrix.TasselDistanceMatrix}
 \title{Coerce matrix from TasselDistanceMatrix class}
 \usage{
-\method{as.matrix}{TasselDistanceMatrix}(object)
+\method{as.matrix}{TasselDistanceMatrix}(x, ...)
 }
 \arguments{
-\item{object}{An object of \code{TasselDistanceMatrix} class.}
+\item{x}{An object of \code{TasselDistanceMatrix} class.}
+
+\item{...}{Additional arguments to be passed to or from methods.}
 }
 \description{
 Coerces an object of class \code{TasselDistanceMatrix} to

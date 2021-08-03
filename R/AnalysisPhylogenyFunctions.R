@@ -23,7 +23,7 @@
 #'    \code{Neighbor_Joining}.
 #'
 #' @return Returns a \code{phylo} tree object. See the
-#'    \link[ape]{https://cran.r-project.org/web/packages/ape/ape.pdf} package
+#'    [ape]{https://cran.r-project.org/web/packages/ape/ape.pdf} package
 #'    for further details.
 #'
 #' @importFrom ape read.tree

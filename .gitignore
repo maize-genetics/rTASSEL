@@ -11,6 +11,7 @@
 .httr-oauth
 rTASSEL_log
 vignettes/*.log
+vignettes/figure/
 
 
 ## R projects ----
