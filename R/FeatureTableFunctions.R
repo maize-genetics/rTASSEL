@@ -52,8 +52,7 @@ readFeatureTableFromVCF <- function(file, verbose = TRUE) {
 #' @name readFeatureTableFromBrapi
 #' @rdname readFeatureTableFromBrapi
 #'
-#' @param brapiObj An BrAPI connection object of \code{BrapiCon} class.
-#' @param method A BrAPI method ID, currently linked to PHG methods.
+#' @param brapiObj An BrAPI to PHG connection object of \code{BrapiCon} class.
 #' @param verbose Show messages to console? Defaults to \code{TRUE}.
 #'
 #' @return Returns an object of \code{FeatureTable} class.
@@ -62,21 +61,24 @@ readFeatureTableFromVCF <- function(file, verbose = TRUE) {
 #' @importFrom rJava .jnew
 #' @importFrom rPHG brapiURL
 #' @export
-readFeatureTableFromBrapi <- function(brapiObj, method, verbose = TRUE) {
+readFeatureTableFromBrapi <- function(brapiObj, verbose = TRUE) {
 
-    if (class(brapiObj) != "BrapiCon") {
-        stop("`tasObj` must be of class `BrapiCon`", call. = FALSE)
+    if (class(brapiObj) != "BrapiConPHG") {
+        stop("`tasObj` must be of class `BrapiConPHG`", call. = FALSE)
     }
 
-    rJC <- rJava::.jnew(
-        "net/maizegenetics/analysis/brapi/BrAPIConnection",
-        rPHG::brapiURL(brapiObj)
-    )
+    rJC <- rJava::.jnew("net/maizegenetics/plugindef/RCodeHelpers")
+
+    vtL <- rPHG::getVTList(brapiObj)
 
     if (verbose) message("Downloading BrAPI feature information...")
     methods::new(
         Class = "FeatureTable",
-        jFeatureTable = rJC$getCalls(method)
+        jFeatureTable = rJC$readFeatureTableFromBrapi(
+            vtL$sampleURL,
+            vtL$rangeURL,
+            vtL$tableURL
+        )
     )
 }
 
