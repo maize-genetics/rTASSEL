@@ -1,3 +1,35 @@
+# rTASSEL 0.9.23
+* Added new `TasselDistanceMatrix` class
+  + Specified function (`kinshipMatrix()` and `distanceMatrix()`) now return
+    an object of type `TasselDistanceMatrix`.
+  + Prevents console overload and freezing as seen with large distance matrix
+    objects.
+  + Now shows summary overview of matrix instead of Java object reference.
+  + Generic functions `colnames()`, `rownames()`, `ncol()`, and `nrow()` will
+    return relative information similar to how these operate with `matrix`
+    type objects.
+  + Primitive function `as.matrix()` now supersedes deprecated functions
+    `kinshipToRMatrix()` and `distanceToRMatrix()`.
+  + Prior functions that take in a kinship object will now take in this new
+    class.
+* Added new function:
+  + `readTasselDistanceMatrix()`
+  + Allows for user to read in delimited distance matrix stored in a flat
+    file.
+* Added new function:
+  + `asTasselDistanceMatrix()`
+  + Coerces a pairwise matrix (e.g. m x m dimensions) with the same column
+    and row names of type `matrix` to an object of type `TasselDistanceMatrix`.
+* Added new function:
+  + `createTree()`
+  + interface to TASSEL's tree creation methods
+  + Allows for `Neighbor_Joining` and `UPGMA` methods
+* Added new function:
+  + `treeJavaApp()`
+  + wrapper for TASSEL's interface to the Archaeopteryx Java tree Viewer
+  + Implements same methods for tree creation as `createTree()`
+
+
 # rTASSEL 0.9.22
 * Fix `manhattanPlot()` aesthetics:
   + Remove redundant marker labels from x-axis

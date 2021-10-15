@@ -15,17 +15,19 @@ kinshipMatrix(
 \arguments{
 \item{tasObj}{An object of class \code{TasselGenotypePenotype}.}
 
-\item{method}{A Kinship method.}
+\item{method}{A Kinship method. Defaults to \code{Centered_IBS}. Other
+options include \code{Normalized_IBS}, \code{Dominance_Centered_IBS},
+and \code{Dominance_Normalized_IBS}.}
 
-\item{maxAlleles}{Maximum number of alleles.}
+\item{maxAlleles}{Maximum number of alleles. Can be within the range of
+\code{2} to \code{6}.}
 
-\item{algorithmVariation}{Algorithm variation.}
-
-\item{featureTable}{Do you want kinship ran on a \code{FactorTable} object?
-Defaults to \code{FALSE}.}
+\item{algorithmVariation}{Algorithm variation. If
+\code{Dominance_Centered_IBS} is selected, users can switch between
+\code{Observed_Allele_Freq} and \code{Proportion_Heterozygous}.}
 }
 \value{
-Returns a Java pointer of a TASSEL kinship matrix object.
+Returns a `TasselDistanceMatrix` object.
 }
 \description{
 This function will calculate a kinship matrix using

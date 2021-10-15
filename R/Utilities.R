@@ -110,3 +110,57 @@ ldCellRotater <- function(ldDF, angle) {
 }
 
 
+## Pretty print distance matrices ----
+summaryDistance <- function(dmJ, m = 6) {
+    etc <- "..."
+    width <- 9
+    simpleMat <- matrix(NA, m + 1, m + 1)
+
+    elements <- c(1:(m - 1), dmJ$numberOfTaxa())
+    taxa <- sapply(elements, function(i) dmJ$getTaxon(as.integer(i - 1))$toString())
+
+    elements <- c(1, elements)
+    taxa <- c("", taxa)
+    mTW <- max(nchar(taxa))
+    cutoff <- 8
+
+    if (mTW > cutoff) {
+        taxa[nchar(taxa) > cutoff] <- paste0(
+            strtrim(taxa[nchar(taxa) > cutoff], cutoff - 3),
+            "..."
+        )
+    }
+
+    taxaR <- paste0("[", format(taxa, width = cutoff, justify = "right"), "]")
+    taxaC <- paste0("[", format(taxa, width = cutoff, justify = "left"), "]")
+
+    for (i in 1:(m + 1)) {
+        for (j in 1:(m + 1)) {
+            simpleMat[i, j] <- format(
+                round(
+                    x = dmJ$getDistance(
+                        as.integer(elements[j] - 1),
+                        as.integer(elements[i] - 1)
+                    ),
+                    digits = 5
+                ),
+                nsmall = 5,
+                width = mTW
+            )
+        }
+    }
+
+    simpleMat[1, ] <- taxaR
+    simpleMat[, 1] <- taxaC
+    simpleMat <- format(simpleMat, width = cutoff, justify = "right")
+    simpleMat[m, ] <- format(etc, justify = "centre", width = cutoff + 2)
+    simpleMat[, m] <- " ... "
+    simpleMat[1, 1] <- format("", width = cutoff + 2)
+
+    return(simpleMat)
+    # for (i in 1:(m + 1)) {
+    #     cat(" ", simpleMat[i, ])
+    #     cat("\n")
+    # }
+}
+

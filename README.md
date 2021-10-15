@@ -1,6 +1,6 @@
 ## rTASSEL
 
-[![Build Status](https://travis-ci.org/maize-genetics/rTASSEL.svg?branch=master)](https://travis-ci.org/maize-genetics/rTASSEL) [![Coverage Status](https://codecov.io/gh/maize-genetics/rTASSEL/branch/master/graph/badge.svg)](https://codecov.io/gh/maize-genetics/rTASSEL) [![Life Cycle Status](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing) [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/maize-genetics/rTASSEL_sandbox/master?filepath=getting_started.ipynb)
+[![Build Status](https://travis-ci.com/maize-genetics/rTASSEL.svg?branch=master)](https://travis-ci.com/maize-genetics/rTASSEL) [![Life Cycle Status](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing) [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/maize-genetics/rTASSEL_sandbox/master?filepath=getting_started.ipynb)
 
 
 ### Objective

@@ -35,8 +35,8 @@ analysis will be executed. If \code{FALSE}, BLUEs will be calculated.
 Defaults to \code{FALSE}.}
 
 \item{kinship}{Should kinship data be accounted for in the model? If so,
-please submit a TASSEL kinship matrix object using the rTASSEL function,
-\code{kinshipMatrix}. Defaults to \code{NULL}}
+a TASSEL kinship matrix object of class \code{TasselDistanceMatrix} must
+be submitted. Defaults to \code{NULL}.}
 
 \item{fastAssociation}{Should TASSEL's Fast Association plugin be used?
 Consider setting to \code{TRUE} if you have many phenotypes in your

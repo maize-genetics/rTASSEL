@@ -1,9 +1,9 @@
 #---------------------------------------------------------------------
-# Script Name:   AllClasses.R
-# Description:   All classes for rTASSEL
+# Script Name:   ClassTasselDataset.R
+# Description:   TasselDataSet class and methods
 # Author:        Brandon Monier & Ed Buckler
 # Created:       2018-11-26 at 11:14:36
-# Last Modified: 2019-09-04 at 14:13:28
+# Last Modified: 2021-07-12 at 15:04:42
 #--------------------------------------------------------------------
 
 #--------------------------------------------------------------------

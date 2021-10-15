@@ -3,7 +3,7 @@
 # Description:   General functions for running genomic prediction
 # Author:        Brandon Monier
 # Created:       2020-06-16 at 16:22:57
-# Last Modified: 2020-06-16 at 16:23:52
+# Last Modified: 2021-07-26 at 11:53:09
 #--------------------------------------------------------------------
 
 #--------------------------------------------------------------------
@@ -55,7 +55,7 @@
 #'
 #' @param tasPhenoObj An object of class \code{TasselGenotypePenotype} that
 #'   contains a phenotype object.
-#' @param kinship A TASSEL kinship object.
+#' @param kinship A TASSEL kinship object of class \code{TasselDistanceMatrix}.
 #' @param doCV Do you want to perform k-fold cross-validation? Defaults to
 #'   \code{FALSE}.
 #' @param kFolds Number of folds to be entered.
@@ -69,22 +69,23 @@
 genomicPrediction <- function(tasPhenoObj, kinship, doCV = FALSE, kFolds, nIter) {
     ## Check for correct rTASSEL class
     if (class(tasPhenoObj) != "TasselGenotypePhenotype") {
-        stop("`tasObj` must be of class `TasselGenotypePhenotype`")
+        stop("`tasObj` must be of class `TasselGenotypePhenotype`", call. = FALSE)
     }
 
     ## Check to see if rTASSEL class object contains phenotype table
     jGenoTable <- getPhenotypeTable(tasPhenoObj)
     if (rJava::is.jnull(jGenoTable)) {
-        stop("TASSEL phenotype object not found")
+        stop("TASSEL phenotype object not found", call. = FALSE)
     }
 
     ## Get phenotype pointer object
     tasPhenoObj <- tasPhenoObj@jPhenotypeTable
 
     ## Check to see if kinship parameter is of rJava and DistanceMatrix class
-    if (class(kinship) != "jobjRef") {
-        stop("TASSEL kinship object is not of DistanceMatrix class")
+    if (class(kinship) != "TasselDistanceMatrix") {
+        stop("TASSEL kinship object is not of TasselDistanceMatrix class", call. = FALSE)
     }
+    kinship <- kinship@jDistMatrix
 
     ## Check to see if doCV parameter and subsequent parameters are right
     if (!doCV) {
