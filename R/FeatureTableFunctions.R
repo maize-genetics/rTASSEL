@@ -54,6 +54,10 @@ readFeatureTableFromVCF <- function(file, verbose = TRUE) {
 #'
 #' @param brapiObj An BrAPI to PHG connection object of \code{BrapiCon} class.
 #' @param verbose Show messages to console? Defaults to \code{TRUE}.
+#' @param pageSize Manually set page size call for BrAPI requests. Defaults to
+#'   1000 elements.
+#' @param varPageSize Manually set page size call for BrAPI \code{\variant}
+#'   requests. Defaults to 1000 elements.
 #'
 #' @return Returns an object of \code{FeatureTable} class.
 #'
@@ -61,7 +65,10 @@ readFeatureTableFromVCF <- function(file, verbose = TRUE) {
 #' @importFrom rJava .jnew
 #' @importFrom rPHG brapiURL
 #' @export
-readFeatureTableFromBrapi <- function(brapiObj, verbose = TRUE) {
+readFeatureTableFromBrapi <- function(brapiObj,
+                                      verbose = TRUE,
+                                      pageSize = 1000,
+                                      varPageSize = 1000) {
 
     if (class(brapiObj) != "BrapiConPHG") {
         stop("`tasObj` must be of class `BrapiConPHG`", call. = FALSE)
@@ -69,17 +76,23 @@ readFeatureTableFromBrapi <- function(brapiObj, verbose = TRUE) {
 
     rJC <- rJava::.jnew("net/maizegenetics/plugindef/RCodeHelpers")
 
-    vtL <- rPHG::getVTList(brapiObj)
+    vtL <- getVTList(brapiObj)
 
-    if (verbose) message("Downloading BrAPI feature information...")
-    methods::new(
-        Class = "FeatureTable",
-        jFeatureTable = rJC$readFeatureTableFromBrapi(
-            vtL$sampleURL,
-            vtL$rangeURL,
-            vtL$tableURL
+    if (verbose) message("Downloading PHG data...")
+    myFT <- suppressWarnings({
+        methods::new(
+            Class = "FeatureTable",
+            jFeatureTable = rJC$readFeatureTableFromBrapi(
+                vtL$sampleURL,
+                vtL$rangeURL,
+                vtL$tableURL,
+                as.integer(pageSize),
+                as.integer(varPageSize)
+            )
         )
-    )
+    })
+
+    return(myFT)
 }
 
 
