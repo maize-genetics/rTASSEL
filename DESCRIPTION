@@ -37,7 +37,6 @@ Imports:
     methods,
     rJava,
     rlang,
-    rPHG,
     S4Vectors,
     SummarizedExperiment
 Suggests:
