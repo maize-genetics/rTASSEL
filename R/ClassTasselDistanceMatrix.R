@@ -50,8 +50,7 @@ setMethod(
         cat("A TasselDistanceMatrix Object of", m, "x", m, "elements:")
         cat("\n\n")
         for (i in seq_len(nrow(s))) {
-            cat(" ", object@summaryMatrix[i, ])
-            cat("\n")
+            cat(" ", s[i, ], "\n")
         }
     }
 )
@@ -68,16 +67,11 @@ setMethod(
 #'
 #' @export
 as.matrix.TasselDistanceMatrix <- function(x, ...) {
-    tmp1 <- unlist(strsplit(x@jDistMatrix$toStringTabDelim(), split = "\n"))
-    tmp2 <- strsplit(tmp1, split = "\t")
-    tmp3 <- t(simplify2array(tmp2))
-    colnames(tmp3) <- as.character(unlist(tmp3[1, ]))
-    tmp3 <- tmp3[-1, ]
-    matRow <- tmp3[, 1]
-    tmp3 <- tmp3[, -1]
-    tmp3 <- apply(tmp3, 2, as.numeric)
-    rownames(tmp3) <- matRow
-    return(tmp3)
+    xJ <- x@jDistMatrix
+    m <- rJava::.jevalArray(xJ$getDistances(), simplify = TRUE)
+    taxa <- cleanUpTaxa(xJ$getTableColumnNames()[-1], width = NULL)
+    colnames(m) <- rownames(m) <- taxa
+    return(m)
 }
 
 
