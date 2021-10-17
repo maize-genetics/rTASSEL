@@ -40,17 +40,16 @@
 kinshipMatrix <- function(tasObj,
                           method = "Centered_IBS",
                           maxAlleles = 6,
-                          algorithmVariation = "Observed_Allele_Freq",
-                          featureTable = FALSE) {
+                          algorithmVariation = "Observed_Allele_Freq") {
     acceptClass <- c("FeatureTable", "TasselGenotypePhenotype")
     if (!(class(tasObj) %in% acceptClass)) {
         stop("`tasObj` must be of appropriate TASSEL class")
     }
 
-    if (!featureTable) {
+    if (!is(tasObj) == "FeatureTable") {
         jGenoTable <- getGenotypeTable(tasObj)
     } else {
-        jGenoTable <- tasObj@jFactorTable
+        jGenoTable <- tasObj@jFeatureTable
     }
 
     if (rJava::is.jnull(jGenoTable)) {
@@ -58,15 +57,41 @@ kinshipMatrix <- function(tasObj,
     }
 
     # Create kinship plugin
-    plugin <- rJava::new(
-        rJava::J("net.maizegenetics.analysis.distance.KinshipPlugin"),
-        rJava::.jnull(),
-        FALSE
-    )
-    plugin$setParameter("method", toString(method))
-    plugin$setParameter("maxAlleles", toString(maxAlleles))
-    plugin$setParameter("algorithmVariation", toString(algorithmVariation))
-    distMatrix <- plugin$runPlugin(jGenoTable)
+    if (!is(tasObj) == "FeatureTable") {
+        plugin <- rJava::new(
+            rJava::J("net.maizegenetics.analysis.distance.KinshipPlugin"),
+            rJava::.jnull(),
+            FALSE
+        )
+        plugin$setParameter("method", toString(method))
+        plugin$setParameter("maxAlleles", toString(maxAlleles))
+        plugin$setParameter("algorithmVariation", toString(algorithmVariation))
+        distMatrix <- plugin$runPlugin(jGenoTable)
+    } else {
+        endelmanInit <- rJava::J("net/maizegenetics/analysis/distance/EndelmanDistanceMatrixBuilder")
+
+        ## TODO weird Java error (works on second try -> co-routines?)
+        endelman <- tryCatch(
+            expr = {
+                rJava::new(
+                    endelmanInit,
+                    jGenoTable,
+                    254L,
+                    rJava::.jnull()
+                )
+            },
+            error = function(cond) {
+                rJava::new(
+                    endelmanInit,
+                    jGenoTable,
+                    254L,
+                    rJava::.jnull()
+                )
+            }
+        )
+        distMatrix <- endelman$build()
+    }
+
 
     jTl <- distMatrix$getTaxaList()
 
