@@ -110,57 +110,143 @@ ldCellRotater <- function(ldDF, angle) {
 }
 
 
-## Pretty print distance matrices ----
-summaryDistance <- function(dmJ, m = 6) {
-    etc <- "..."
-    width <- 9
-    simpleMat <- matrix(NA, m + 1, m + 1)
 
-    elements <- c(1:(m - 1), dmJ$numberOfTaxa())
-    taxa <- sapply(elements, function(i) dmJ$getTaxon(as.integer(i - 1))$toString())
+# === TasselDistanceMatrix functions ================================
 
-    elements <- c(1, elements)
-    taxa <- c("", taxa)
-    mTW <- max(nchar(taxa))
-    cutoff <- 8
-
-    if (mTW > cutoff) {
-        taxa[nchar(taxa) > cutoff] <- paste0(
-            strtrim(taxa[nchar(taxa) > cutoff], cutoff - 3),
-            "..."
-        )
+## Truncate taxa IDs if too long ----
+truncate <- function(t, max = 10, etc = "...") {
+    if (nchar(t) > max) {
+        return(paste0(c(unlist(strsplit(t, ""))[1:(max - 3)], etc), collapse = ""))
+    } else {
+        return(t)
     }
+}
 
-    taxaR <- paste0("[", format(taxa, width = cutoff, justify = "right"), "]")
-    taxaC <- paste0("[", format(taxa, width = cutoff, justify = "left"), "]")
 
-    for (i in 1:(m + 1)) {
-        for (j in 1:(m + 1)) {
-            simpleMat[i, j] <- format(
-                round(
-                    x = dmJ$getDistance(
-                        as.integer(elements[j] - 1),
-                        as.integer(elements[i] - 1)
+## Clean up taxa IDs and format spacing ----
+cleanUpTaxa <- function(v, width = 10, regex = "^\"|\"$") {
+    t <- gsub(regex, "", v)
+    if (!is.null(width)) {
+        t <- vapply(t, truncate, max = width, FUN.VALUE = "character")
+        t <- format(t, width = width, justify = "right")
+    }
+    return(t)
+}
+
+
+## Clean up summary matrix with formatting ----
+cleanUpMatrix <- function(t, d, space = "...", width = 10) {
+    vec <- c(1, length(t) + 1)
+
+    space <- format(space, width = width, justify = "right")
+
+    m1 <- matrix(space, nrow = nrow(d) + length(vec), ncol = ncol(d))
+    m1[-vec, ] <- d
+
+    m2 <- matrix(space, nrow = nrow(m1), ncol = ncol(m1) + length(vec))
+    m2[, -vec] <- m1
+    m2[1, ] <- m2[, 1] <- c(
+        space, t[1:(length(t) - 1)],
+        space, t[length(t)]
+    )
+    m2[, nrow(m2) - 1] <- " ..."
+    m2[1, 1] <- format(" ", width = width)
+
+    return(m2)
+}
+
+
+## "Pretty" print distance matrices ----
+summaryDistance <- function(kinJ,
+                            width = 10,
+                            etc = "...",
+                            size = 5,
+                            regex = "^\"|\"$") {
+
+    if (kinJ$numberOfTaxa() <= size) {
+        taxaCleaned <- cleanUpTaxa(
+            v = kinJ$getTableColumnNames()[-1],
+            width = width,
+            regex = regex
+        )
+
+        distMat <- apply(
+            X = rJava::.jevalArray(kinJ$getDistances(), simplify = TRUE),
+            MARGIN = 1,
+            format, digits = 4, nsmall = 4, justify = "right", width = 10
+        )
+    } else {
+        indexes <- c(2:5, kinJ$numberOfTaxa())
+        taxaCleaned <- cleanUpTaxa(
+            v = kinJ$getTableColumnNames()[indexes],
+            width = width,
+            regex = regex
+        )
+
+        distMat <- matrix(nrow = length(indexes), ncol = length(indexes))
+
+        for (i in seq_along(indexes)) {
+            for (j in seq_along(indexes)) {
+                distMat[i, j] <- format(
+                    x = kinJ$getDistance(
+                        as.integer(indexes[i] - 1),
+                        as.integer(indexes[j] - 1)
                     ),
-                    digits = 5
-                ),
-                nsmall = 5,
-                width = mTW
-            )
+                    digits = 4,
+                    nsmall = 4,
+                    justify = "right",
+                    width = 10
+                )
+            }
         }
     }
 
-    simpleMat[1, ] <- taxaR
-    simpleMat[, 1] <- taxaC
-    simpleMat <- format(simpleMat, width = cutoff, justify = "right")
-    simpleMat[m, ] <- format(etc, justify = "centre", width = cutoff + 2)
-    simpleMat[, m] <- " ... "
-    simpleMat[1, 1] <- format("", width = cutoff + 2)
-
-    return(simpleMat)
-    # for (i in 1:(m + 1)) {
-    #     cat(" ", simpleMat[i, ])
-    #     cat("\n")
-    # }
+    return(cleanUpMatrix(taxaCleaned, distMat, space = etc, width = width))
 }
+
+
+
+# === BrAPI interface functions =====================================
+
+## TODO placeholder to prevent rPHG jar contamination...
+## TODO remedy this with new BLJars package and TASSEL 6 finalization
+getVTList <- function(x) {
+    if (class(x) != "BrapiConPHG") {
+        stop("A `BrapiConPHG` object is needed for the LHS argument", call. = FALSE)
+    }
+
+    baseURL <- paste0(x@url, "/variantTables/", x@methodID)
+
+    ranges <- x@refRangeFilter
+    samples <- x@sampleFilter
+
+    rangeURL <- paste0(
+        baseURL,
+        "/variants",
+        ifelse(is.na(ranges), "", paste0("?", ranges))
+    )
+
+    sampleURL <- paste0(
+        baseURL,
+        "/samples",
+        ifelse(is.na(samples), "", paste0("?", samples))
+    )
+
+    tableURL <- paste0(
+        baseURL, "/table", "?",
+        ifelse(is.na(ranges), "", paste0(ranges)), "&",
+        ifelse(is.na(samples), "", paste0(samples))
+    )
+    tableURL <- gsub("\\?$|\\?&$", "", tableURL)
+    tableURL <- gsub("\\?&", "?", tableURL)
+
+    return(
+        list(
+            rangeURL = rangeURL,
+            sampleURL = sampleURL,
+            tableURL = tableURL
+        )
+    )
+}
+
 

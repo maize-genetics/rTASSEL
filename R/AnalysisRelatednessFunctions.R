@@ -3,7 +3,7 @@
 # Description:   Functions for TASSEL relatedness analyses
 # Author:        Brandon Monier
 # Created:       2019-04-04 at 21:31:09
-# Last Modified: 2021-07-26 at 11:53:18
+# Last Modified: 2022-01-06 at 11:01:40
 #--------------------------------------------------------------------
 
 #--------------------------------------------------------------------
@@ -213,6 +213,124 @@ asTasselDistanceMatrix <- function(m) {
         jDistMatrix = distMatrix
     )
 
+}
+
+
+#' @title Run PCA on Genotype Table
+#'
+#' @description This method performs principal components analysis and returns
+#'    the requested number of PC axes (components).
+#'
+#' @param tasObj an rTASSEL \code{TasselGenotypePhenotype} object.
+#' @param useCovariance If \code{TRUE}, analysis will do an eigenvalue
+#'    decomposition of the covariance matrix. If \code{FALSE}, it will use a
+#'    correlation matrix. NOTE: Using the covariance matrix is recommended for
+#'    genotypes while the correlation matrix is often used for phenotypes.
+#'    Defaults to \code{TRUE}.
+#' @param limitBy This parameter determines the type of value that will be used
+#'    to limit the number of principal components (axes) returned. The possible
+#'    choices are \code{number_of_components}, \code{min_eigenvalue},
+#'    and \code{total_variance}.
+#' @param nComponents The analysis will return this many principal components
+#'    up to the number of taxa.
+#' @param minEigenval All principal components with an eigenvalue greater than
+#'    or equal to this value will be returned. NOTE: works only if
+#'    \code{min_eigenvalue} is set in the \code{limitBy} parameter.
+#' @param totalVar The first principal components that together explain this
+#'    proportion of the total variance will be returned. NOTE: works only if
+#'    \code{total_variance} is set in the \code{limitBy} parameter.
+#'
+#' @return A \code{DataFrame} object.
+#'
+#' @importFrom rJava new
+#' @importFrom rJava J
+#' @importFrom rJava .jnull
+#'
+#' @export
+pca <- function(
+    tasObj,
+    useCovariance = TRUE,
+    limitBy = c("number_of_components", "min_eigenvalue", "total_variance"),
+    nComponents = 5,
+    minEigenval = 0,
+    totalVar = 0.5
+
+) {
+
+    if (class(tasObj) != "TasselGenotypePhenotype") {
+        stop("`tasObj` must be of class `TasselGenotypePhenotype`")
+    }
+
+    limitBy <- match.arg(limitBy)
+    reportEigenvalues <- FALSE
+    reportEigenvectors <- FALSE
+
+    # Create PCA plugin
+    plugin <- rJava::new(
+        rJava::J("net.maizegenetics.analysis.data.PrincipalComponentsPlugin"),
+        rJava::.jnull(),
+        FALSE
+    )
+
+    # Set PCA parameters
+    plugin$setParameter("covariance", tolower(as.character(useCovariance)))
+    plugin$setParameter("limitBy", limitBy)
+    plugin$setParameter("ncomponents", as.character(nComponents))
+    plugin$setParameter("minEigenval", as.character(minEigenval))
+    plugin$setParameter("reportEigenvalues", tolower(as.character(reportEigenvalues)))
+    plugin$setParameter("reportEigenvectors", tolower(as.character(reportEigenvectors)))
+
+    # Run PCA plugin
+    dataSet <- rJava::J("net.maizegenetics.plugindef.DataSet")
+    pcaRes <- plugin$runPlugin(dataSet$getDataSet(getGenotypeTable(tasObj)))
+
+    return(tableReportToDF(pcaRes))
+}
+
+
+#' @title Run MDS on \code{TasselDistanceMatrix} objects
+#'
+#' @description Perform multidimensional scaling (MDS) on
+#'    \code{TasselDistanceMatrix} objects.
+#'
+#' @param distMat A \code{TasselDistanceMatrix} object.
+#' @param nAxes The number of axes or dimensions and associated eigenvalues to
+#'    be returned by the analysis. Defaults to \code{5}.
+#' @param removeNaN Remove \code{NaNs} from matrix before performing MDS.
+#'    Defaults to \code{TRUE}.
+#'
+#' @return A \code{DataFrame} object.
+#'
+#' @importFrom rJava new
+#' @importFrom rJava J
+#' @importFrom rJava .jnull
+#'
+#' @export
+mds <- function(
+    distMat,
+    nAxes = 5,
+    removeNaN = TRUE
+) {
+    if (class(distMat) != "TasselDistanceMatrix") {
+        stop("`distMat` must be of class `TasselDistanceMatrix`")
+    }
+
+    # Create MDS plugin
+    plugin <- rJava::new(
+        rJava::J("net.maizegenetics.analysis.distance.MultiDimensionalScalingPlugin"),
+        rJava::.jnull(),
+        FALSE
+    )
+
+    # Set parameters
+    plugin$setParameter("axes", as.character(nAxes))
+    plugin$setParameter("removeNaN", tolower(as.character(removeNaN)))
+
+    # Run PCA plugin
+    dataSet <- rJava::J("net.maizegenetics.plugindef.DataSet")
+    mdsRes <- plugin$performFunction(dataSet$getDataSet(distMat@jDistMatrix))
+
+    return(tableReportToDF(mdsRes$getData(0L)$getData()))
 }
 
 

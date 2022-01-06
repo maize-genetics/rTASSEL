@@ -1,3 +1,15 @@
+# rTASSEL 0.9.24
+* Added new function:
+  + `pca()`
+  + Allows for user to run PCA on rTASSEL objects containing a `GenotypeTable`
+    object.
+* Added new function:
+  + `mds()`
+  + Allows for user to run MDS on `TasselDistanceMatrix` objects.
+* Enhancements:
+  + New summary print output for `TasselDistanceMatrix` objects.
+
+
 # rTASSEL 0.9.23
 * Added new `TasselDistanceMatrix` class
   + Specified function (`kinshipMatrix()` and `distanceMatrix()`) now return
