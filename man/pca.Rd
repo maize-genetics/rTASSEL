@@ -38,9 +38,10 @@ or equal to this value will be returned. NOTE: works only if
 proportion of the total variance will be returned. NOTE: works only if
 \code{total_variance} is set in the \code{limitBy} parameter.}
 }
+\value{
+A \code{DataFrame} object.
+}
 \description{
 This method performs principal components analysis and returns
-   the requested number of PC axes (components), and, optionally, the
-   eigenvalues and eigenvectors. It can take as input either phenotype data
-   or ReferenceProbability from a GenotypeTable.
+   the requested number of PC axes (components).
 }
