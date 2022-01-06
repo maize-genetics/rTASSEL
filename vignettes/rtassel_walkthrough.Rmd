@@ -628,6 +628,39 @@ testTasselDist
 ```
 
 
+## PCA and MDS
+rTASSEL can run principal component analysis (PCA) and multidimensional
+scaling (MDS) on objects containing a `GenotypeTable` and 
+`TasselDistanceMatrix` respectively. To run PCA, simply use the `pca()` 
+function on a `TasselGenotypePhenotype` object that contains a TASSEL
+`GenotypeTable`
+
+```{r, eval=TRUE, echo=TRUE}
+tasGenoHMP
+
+pcaRes <- pca(tasGenoHMP)
+```
+
+
+To run MDS, simply use the `mds()` function on a `TasselDistanceMatrix` object:
+
+```{r, eval=TRUE, echo=TRUE}
+tasDist
+
+mdsRes <- mds(tasDist)
+```
+
+
+Both of these will return a `DataFrame` object that will contain a Taxa ID
+column and the number of components or axes that were specified in the
+function call. For example, let's take a look at the `pcaRes` object made
+previously:
+
+```{r, eval=TRUE, echo=TRUE}
+pcaRes
+```
+
+
 
 # Analysis - Association
 
