@@ -3,13 +3,13 @@
 # Description:   TasselDataSet class and methods
 # Author:        Brandon Monier & Ed Buckler
 # Created:       2018-11-26 at 11:14:36
-# Last Modified: 2021-07-12 at 15:04:42
+# Last Modified: 2022-03-01 at 17:50:08
 #--------------------------------------------------------------------
 
 #--------------------------------------------------------------------
 # Detailed Purpose:
-#    The main purpose of this Rscript produce wrapper classes for
-#    TASSEL class objects in Java
+#    The main purpose of this Rscript is to produce wrapper classes
+#    for TASSEL class objects in Java
 #--------------------------------------------------------------------
 
 #--------------------------------------------------------------------

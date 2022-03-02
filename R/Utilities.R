@@ -26,7 +26,7 @@ tableReportToDF <- function(x) {
 
     tabRepCols <- do.call("data.frame", c(tabRepCols, stringsAsFactors = FALSE))
     colnames(tabRepCols) <- tabRep$columnNames
-    return(S4Vectors::DataFrame(tabRepCols))
+    return(S4Vectors::DataFrame(tabRepCols, check.names = FALSE))
 }
 
 

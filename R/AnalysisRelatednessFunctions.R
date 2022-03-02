@@ -3,7 +3,7 @@
 # Description:   Functions for TASSEL relatedness analyses
 # Author:        Brandon Monier
 # Created:       2019-04-04 at 21:31:09
-# Last Modified: 2022-01-06 at 11:01:40
+# Last Modified: 2022-03-01 at 17:50:19
 #--------------------------------------------------------------------
 
 #--------------------------------------------------------------------
@@ -239,6 +239,10 @@ asTasselDistanceMatrix <- function(m) {
 #' @param totalVar The first principal components that together explain this
 #'    proportion of the total variance will be returned. NOTE: works only if
 #'    \code{total_variance} is set in the \code{limitBy} parameter.
+#' @param reportEigenvalues Returns a list of eigenvalues sorted high to low.
+#' @param reportEigenvectors Returns the eigenvectors calculated from a
+#'    Singular Value Decomposition of the data. The resulting table can be
+#'    quite large if the number of variants and taxa are big.
 #'
 #' @return A \code{DataFrame} object.
 #'
@@ -253,17 +257,21 @@ pca <- function(
     limitBy = c("number_of_components", "min_eigenvalue", "total_variance"),
     nComponents = 5,
     minEigenval = 0,
-    totalVar = 0.5
-
+    totalVar = 0.5,
+    reportEigenvalues = TRUE,
+    reportEigenvectors = TRUE
 ) {
 
     if (class(tasObj) != "TasselGenotypePhenotype") {
         stop("`tasObj` must be of class `TasselGenotypePhenotype`")
     }
 
+    jGenoTable <- getGenotypeTable(tasObj)
+    if (rJava::is.jnull(jGenoTable)) {
+        stop("TASSEL genotype object not found")
+    }
+
     limitBy <- match.arg(limitBy)
-    reportEigenvalues <- FALSE
-    reportEigenvectors <- FALSE
 
     # Create PCA plugin
     plugin <- rJava::new(
@@ -282,9 +290,24 @@ pca <- function(
 
     # Run PCA plugin
     dataSet <- rJava::J("net.maizegenetics.plugindef.DataSet")
-    pcaRes <- plugin$runPlugin(dataSet$getDataSet(getGenotypeTable(tasObj)))
+    pcaRes <- plugin$processData(dataSet$getDataSet(jGenoTable))
 
-    return(tableReportToDF(pcaRes))
+    reportBody <- lapply(seq_len(pcaRes$getSize()), function(i) {
+        b <- pcaRes$getData(as.integer(i - 1))
+        return(tableReportToDF(b$getData()))
+    })
+
+    reportNames <- lapply(seq_len(pcaRes$getSize()), function(i) {
+        pcaRes$getData(as.integer(i - 1))$getName()
+    })
+
+    names(reportBody) <- unlist(reportNames)
+
+    if (!reportEigenvalues && !reportEigenvectors) {
+        return(reportBody[[1]])
+    } else {
+        return(reportBody)
+    }
 }
 
 

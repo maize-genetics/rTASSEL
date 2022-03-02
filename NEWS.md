@@ -1,3 +1,15 @@
+# rTASSEL 0.9.25
+* Bug fixes:
+  + Fixed character conversion bug in `DataFrame` object returns.
+* `pca()` can optionally report eigenvalues and eigenvectors as a list object.
+* Added new function:
+  + `imputeNumeric()`
+  + Allows for numeric imputation of `GenotypeTable` objects.
+* Added new function:
+  + `imputLDKNNi()`
+  + Allows for LD KNNi imputation of `GenotypeTable` objects.
+
+
 # rTASSEL 0.9.24
 * Added new function:
   + `pca()`

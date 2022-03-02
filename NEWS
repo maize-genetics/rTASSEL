@@ -1,3 +1,13 @@
+# CHANGES IN VERSION 0.9.25
+* `pca()` can optionally report eigenvalues and eigenvectors as a list object.
+* Added new function:
+  + `imputeNumeric()`
+  + Allows for numeric imputation of `GenotypeTable` objects.
+* Added new function:
+  + `imputLDKNNi()`
+  + Allows for LD KNNi imputation of `GenotypeTable` objects.
+
+
 # CHANGES IN VERSION 0.9.24
 * Added new function:
   + `pca()`
