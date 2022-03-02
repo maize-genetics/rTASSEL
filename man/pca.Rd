@@ -10,7 +10,9 @@ pca(
   limitBy = c("number_of_components", "min_eigenvalue", "total_variance"),
   nComponents = 5,
   minEigenval = 0,
-  totalVar = 0.5
+  totalVar = 0.5,
+  reportEigenvalues = TRUE,
+  reportEigenvectors = TRUE
 )
 }
 \arguments{
@@ -37,6 +39,12 @@ or equal to this value will be returned. NOTE: works only if
 \item{totalVar}{The first principal components that together explain this
 proportion of the total variance will be returned. NOTE: works only if
 \code{total_variance} is set in the \code{limitBy} parameter.}
+
+\item{reportEigenvalues}{Returns a list of eigenvalues sorted high to low.}
+
+\item{reportEigenvectors}{Returns the eigenvectors calculated from a
+Singular Value Decomposition of the data. The resulting table can be
+quite large if the number of variants and taxa are big.}
 }
 \value{
 A \code{DataFrame} object.
