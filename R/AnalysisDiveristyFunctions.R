@@ -116,3 +116,121 @@ linkageDiseq <- function(tasObj,
 }
 
 
+
+#' @title Calculate sequence diversity
+#'
+#' @description This performs basic diversity analyses on genetic data,
+#'   specifically, average pairwise divergence (\eqn{\pi}), segregating sites,
+#'   estimated mutation rate (\eqn{\theta}, or \eqn{4N\mu}), and Tajima's D can
+#'   be calculated, as well as sliding windows of diversity.
+#'
+#' @name seqDiversity
+#' @rdname seqDiversity
+#'
+#' @param tasObj An object of class \code{TasselGenotypePenotype} that
+#'   contains a genotype table.
+#' @param startSite Start site.
+#' @param endSite End site. Defaults to the maximum index of markers.
+#' @param slidingWindowAnalysis Do you want to analyze diversity in a sliding
+#'   window? Defaults to \code{FALSE}.
+#' @param stepSize Step size.
+#' @param windowSize Window size.
+#'
+#' @importFrom rJava .jnull
+#' @importFrom rJava is.jnull
+#' @importFrom rJava new
+#' @importFrom rJava J
+#'
+#' @export
+seqDiversity <- function(
+    tasObj,
+    startSite = 0,
+    endSite = NULL,
+    slidingWindowAnalysis = FALSE,
+    stepSize = 100,
+    windowSize = 500
+) {
+    if (class(tasObj) != "TasselGenotypePhenotype") {
+        stop("`tasObj` must be of class `TasselGenotypePhenotype`")
+    }
+
+    jGenoTable <- getGenotypeTable(tasObj)
+    if (rJava::is.jnull(jGenoTable)) {
+        stop("TASSEL genotype object not found")
+    }
+
+
+    maxIndex <- tasObj@jGenotypeTable$numberOfSites() - 1
+    if (is.null(endSite)) {
+        endSite <- maxIndex
+    } else if (endSite > maxIndex) {
+        stop("End site is out of bounds. Max index bound is: ", maxIndex)
+    }
+
+
+    # Create imputation plugin
+    plugin <- rJava::new(
+        rJava::J("net/maizegenetics/analysis/popgen/SequenceDiversityPlugin"),
+        rJava::.jnull(),
+        FALSE
+    )
+
+    # Set parameters
+    plugin$setParameter("startSite", as.character(startSite))
+    plugin$setParameter("endSite", as.character(endSite))
+    plugin$setParameter("slidingWindowAnalysis", tolower(as.character(slidingWindowAnalysis)))
+    plugin$setParameter("stepSize", as.character(stepSize))
+    plugin$setParameter("windowSize", as.character(windowSize))
+
+    # Run method
+    dataSet <- rJava::J("net.maizegenetics.plugindef.DataSet")
+    res <- plugin$performFunction(dataSet$getDataSet(jGenoTable))
+
+    # Get report data
+    reportBody <- lapply(seq_len(res$getSize()), function(i) {
+        b <- res$getData(as.integer(i - 1))
+        return(tableReportToDF(b$getData()))
+    })
+    reportNames <- lapply(seq_len(res$getSize()), function(i) {
+        res$getData(as.integer(i - 1))$getName()
+    })
+
+
+    # Configure data types and clean up report names
+
+    ## Names
+    names(reportBody) <- unlist(reportNames)
+    names(reportBody) <- gsub(":.*$", "", names(reportBody))
+
+    ## Diversity report
+    reportBody$Diversity$StartChrPosition <- as.numeric(gsub(",", "", reportBody$Diversity$StartChrPosition))
+    reportBody$Diversity$EndChrPosition   <- as.numeric(gsub(",", "", reportBody$Diversity$EndChrPosition))
+    reportBody$Diversity$StartSite        <- as.numeric(gsub(",", "", reportBody$Diversity$StartSite))
+    reportBody$Diversity$EndSite          <- as.numeric(gsub(",", "", reportBody$Diversity$EndSite))
+    reportBody$Diversity$MidSite          <- as.numeric(gsub(",", "", reportBody$Diversity$MidSite))
+    reportBody$Diversity$SiteCount        <- as.numeric(gsub(",", "", reportBody$Diversity$SiteCount))
+    reportBody$Diversity$AvgSiteCount     <- as.numeric(gsub(",", "", reportBody$Diversity$AvgSiteCount))
+    reportBody$Diversity$SegSites         <- as.numeric(gsub(",", "", reportBody$Diversity$SegSites))
+    reportBody$Diversity$PiPerBP          <- as.numeric(gsub(",", "", reportBody$Diversity$PiPerBP))
+    reportBody$Diversity$ThetaPerBP       <- as.numeric(gsub(",", "", reportBody$Diversity$ThetaPerBP))
+    reportBody$Diversity$TajimaD          <- as.numeric(gsub(",", "", reportBody$Diversity$TajimaD))
+    # reportBody$Diversity[, c(5:12, 14)] <- apply(reportBody$Diversity[, c(5:12, 14)], 2, function(i) {
+    #     as.numeric(gsub(",", "", i))
+    # })
+
+    ## PolyDist report
+    reportBody$PolyDist[-1] <- apply(reportBody$PolyDist[, -1, drop = FALSE], 2, as.numeric)
+
+
+    return(reportBody)
+}
+
+
+
+
+
+
+
+
+
+

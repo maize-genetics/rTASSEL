@@ -11,7 +11,7 @@
 
 .onAttach <- function(libname, pkgname){
 
-    preview <- FALSE
+    preview <- TRUE
     if (preview) {
         msg <- paste0(
             "Welcome to rTASSEL (version ", utils::packageVersion("rTASSEL"), ") - PREVIEW", "\n",
