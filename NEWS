@@ -1,3 +1,13 @@
+# CHANGES IN VERSION 0.9.26
+* Bug fixes:
+  + Fixed `r2` parameter bug in `ldPlot()`
+  + Fixed space bugs in certain column names of data frame objects.
+    `_` values now replace spaces.
+* Add new function:
+  + `seqDiversity()`
+  + Calculates diversity basic diversity metrics on genetic data.
+
+
 # CHANGES IN VERSION 0.9.25
 * `pca()` can optionally report eigenvalues and eigenvectors as a list object.
 * Added new function:
