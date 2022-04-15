@@ -5,9 +5,7 @@ pipelines:
     - step:
         script:
           - cd /opt/atlassian/pipelines/agent/build
-          - Rscript -e 'install.packages("rhub")'
-          - Rscript -e 'rhub::check(env_vars=c(R_COMPILE_AND_INSTALL_PACKAGES = "always"))'
-          - Rscript -e 'devtools::install_deps(".", dependencies=TRUE, upgrade=FALSE)'
+          - Rscript -e 'devtools::install_deps(".", dependencies=TRUE, upgrade=TRUE)'
           - Rscript -e 'devtools::build()'
           - Rscript -e 'devtools::install(upgrade_dependencies = FALSE)'
           - Rscript -e 'library("methods"); devtools::check()'
