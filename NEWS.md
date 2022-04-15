@@ -1,3 +1,9 @@
+# rTASSEL 0.9.27
+* Improvements:
+  + Made `as.matrix()` coercion ~9 times quicker for `TasselDistanceMatrix`
+    objects.
+
+
 # rTASSEL 0.9.26
 * Bug fixes:
   + Fixed `r2` parameter bug in `ldPlot()`

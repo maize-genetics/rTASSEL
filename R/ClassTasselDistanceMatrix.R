@@ -66,18 +66,22 @@ setMethod(
 #' @param x An object of \code{TasselDistanceMatrix} class.
 #' @param ... Additional arguments to be passed to or from methods.
 #'
+#' @importFrom rJava .jevalArray
+#' @importFrom rJava J
+#'
 #' @export
 as.matrix.TasselDistanceMatrix <- function(x, ...) {
-    tmp1 <- unlist(strsplit(x@jDistMatrix$toStringTabDelim(), split = "\n"))
-    tmp2 <- strsplit(tmp1, split = "\t")
-    tmp3 <- t(simplify2array(tmp2))
-    colnames(tmp3) <- as.character(unlist(tmp3[1, ]))
-    tmp3 <- tmp3[-1, ]
-    matRow <- tmp3[, 1]
-    tmp3 <- tmp3[, -1]
-    tmp3 <- apply(tmp3, 2, as.numeric)
-    rownames(tmp3) <- matRow
-    return(tmp3)
+    jDm <- x@jDistMatrix$getClonedDistances()
+    taxaIds <- rJava::J("net/maizegenetics/plugindef/GenerateRCode")$
+        genotypeTableToSampleNameArray(
+            x@jDistMatrix$getTaxaList()
+        )
+
+    rDm <- rJava::.jevalArray(jDm, simplify = TRUE)
+    colnames(rDm) <- taxaIds
+    rownames(rDm) <- taxaIds
+
+    return(rDm)
 }
 
 
