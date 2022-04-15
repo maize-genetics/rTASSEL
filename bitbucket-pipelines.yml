@@ -1,4 +1,4 @@
-image: rocker/tidyverse:latest
+image: maizegenetics/rtassel_env
 
 pipelines:
   default:
