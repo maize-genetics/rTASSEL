@@ -1,11 +1,10 @@
-image: dividor/rocker-h2o-db-wemmodels
+image: rocker/tidyverse:latest
 
 pipelines:
   default:
     - step:
         script:
-          - cd /opt/atlassian/pipelines/agent/build
-          - Rscript -e 'devtools::install_deps(".", dependencies=TRUE, upgrade=TRUE)'
+          - Rscript -e 'devtools::install_deps(".", dependencies=TRUE, upgrade=FALSE)'
           - Rscript -e 'devtools::build()'
           - Rscript -e 'devtools::install(upgrade_dependencies = FALSE)'
           - Rscript -e 'library("methods"); devtools::check()'
