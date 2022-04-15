@@ -1,3 +1,14 @@
+# rTASSEL 0.9.26
+* Bug fixes:
+  + Fixed `r2` parameter bug in `ldPlot()`
+  + Fixed space bugs in certain column names of data frame objects. 
+    `_` values now replace spaces.
+  + Fixed `show()` method for `TasselDistanceMatrix` objects.
+* Add new function:
+  + `seqDiversity()`
+  + Calculates diversity basic diversity metrics on genetic data.
+
+
 # rTASSEL 0.9.25
 * Bug fixes:
   + Fixed character conversion bug in `DataFrame` object returns.

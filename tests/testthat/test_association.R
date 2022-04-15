@@ -251,7 +251,7 @@ test_that("BLUE analysis return correct data types.", {
         expected = c(
             "Trait", "Marker", "Chr", "Pos", "df", "F", "p", "add_effect",
             "add_F", "add_p", "dom_effect", "dom_F", "dom_p", "errordf",
-            "MarkerR2", "Genetic.Var", "Residual.Var", "X.2LnLikelihood"
+            "MarkerR2", "Genetic_Var", "Residual_Var", "-2LnLikelihood"
         )
     )
     expect_equal(

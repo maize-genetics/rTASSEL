@@ -143,7 +143,7 @@ ldJavaApp <- function(tasObj,
 #'   massive series of combinations; use only on heavily filtered
 #'   genotype tables). If \code{SlidingWindow} is selected, LD will
 #'   be calculated for sites within a window of sites surrounding the
-#'   current site.
+#'   current site. Defaults to \code{"All"}.
 #' @param windowSize What size do you want your LD analysis window? If you
 #'   have chosen \code{SlidingWindow} for the \code{ldType} parameter, you
 #'   will need to specify window size.
@@ -186,7 +186,7 @@ ldJavaApp <- function(tasObj,
 #'
 #' @export
 ldPlot <- function(tasObj,
-                   ldType = c("SlidingWindow", "All"),
+                   ldType = c("All", "SlidingWindow"),
                    windowSize = NULL,
                    hetCalls = c("missing", "ignore", "third"),
                    plotVal = c("r2", "DPrime", "pDiseq"),
@@ -198,6 +198,7 @@ ldPlot <- function(tasObj,
 
     # Plot logic handling
     plotVal <- match.arg(plotVal)
+    ldType  <- match.arg(ldType)
 
     # Generate initial data frame
     ldDF <- linkageDiseq(
@@ -209,7 +210,7 @@ ldPlot <- function(tasObj,
     )
 
     # Subset LD data frame
-    if (plotVal == "r2") plotVal <- "R.2"
+    if (plotVal == "r2") plotVal <- "R^2"
     ldDF$coord1 <- paste0(ldDF$Locus1, "_", ldDF$Position1)
     ldDF$coord2 <- paste0(ldDF$Locus2, "_", ldDF$Position2)
     ldSub        <- ldDF[, c("coord1", "coord2", plotVal)]
@@ -230,7 +231,7 @@ ldPlot <- function(tasObj,
     # Generate "clean" legend label
     legend_lab <- switch(
         EXPR = plotVal,
-        "R.2" = bquote(italic(r)^2),
+        "R^2" = bquote(italic(r)^2),
         "DPrime" = bquote(italic(D)*"'"),
         "pDiseq" = bquote(italic(p)*'-value')
     )
