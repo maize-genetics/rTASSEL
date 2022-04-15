@@ -69,7 +69,7 @@ by using `?<function>` in the console, where `<function>` is an
 ### Citation
 If you plan on using this software for your publications, please cite:
 
-**rTASSEL: an R interface to TASSEL for association mapping of complex traits**\
+**rTASSEL: an R interface to TASSEL for association mapping of complex traits**
 Brandon Monier, Terry M. Casstevens, Peter J. Bradbury, Edward S. Buckler\
 bioRxiv 2020.07.21.209114; doi: https://doi.org/10.1101/2020.07.21.209114
 

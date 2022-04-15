@@ -87,23 +87,20 @@ test_that("linkageDiseq() returns correct data structure.", {
     ldDF <- linkageDiseq(
         tasObj     = tasGeno,
         ldType     = "SlidingWindow",
-        windowSize = 50,
+        windowSize = 10,
         hetCalls   = "missing"
     )
+
+    expect_equal(dim(ldDF), c(30875, 17))
+
+    expect_equal(
+        object   = colnames(ldDF),
+        expected = c(
+            "Locus1", "Position1", "Site1", "NumberOfStates1", "States1",
+            "Frequency1", "Locus2", "Position2", "Site2", "NumberOfStates2",
+            "States2", "Frequency2", "Dist_bp", "R^2", "DPrime", "pDiseq", "N"
+        )
+    )
 })
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 

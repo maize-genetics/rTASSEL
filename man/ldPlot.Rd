@@ -6,7 +6,7 @@
 \usage{
 ldPlot(
   tasObj,
-  ldType = c("SlidingWindow", "All"),
+  ldType = c("All", "SlidingWindow"),
   windowSize = NULL,
   hetCalls = c("missing", "ignore", "third"),
   plotVal = c("r2", "DPrime", "pDiseq"),
@@ -24,7 +24,7 @@ combination of sites in the alignment (NOTE: this may produce a
 massive series of combinations; use only on heavily filtered
 genotype tables). If \code{SlidingWindow} is selected, LD will
 be calculated for sites within a window of sites surrounding the
-current site.}
+current site. Defaults to \code{"All"}.}
 
 \item{windowSize}{What size do you want your LD analysis window? If you
 have chosen \code{SlidingWindow} for the \code{ldType} parameter, you

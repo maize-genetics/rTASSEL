@@ -26,6 +26,7 @@ tableReportToDF <- function(x) {
 
     tabRepCols <- do.call("data.frame", c(tabRepCols, stringsAsFactors = FALSE))
     colnames(tabRepCols) <- tabRep$columnNames
+    colnames(tabRepCols) <- gsub(" ", "_", colnames(tabRepCols))
     return(S4Vectors::DataFrame(tabRepCols, check.names = FALSE))
 }
 
@@ -149,7 +150,7 @@ cleanUpMatrix <- function(t, d, space = "...", width = 10) {
         space, t[1:(length(t) - 1)],
         space, t[length(t)]
     )
-    m2[, nrow(m2) - 1] <- " ..."
+    m2[, nrow(m2) - 1] <- "   ..."
     m2[1, 1] <- format(" ", width = width)
 
     return(m2)
@@ -176,9 +177,9 @@ summaryDistance <- function(kinJ,
             format, digits = 4, nsmall = 4, justify = "right", width = 10
         )
     } else {
-        indexes <- c(2:5, kinJ$numberOfTaxa())
+        indexes <- c(1:4, kinJ$numberOfTaxa())
         taxaCleaned <- cleanUpTaxa(
-            v = kinJ$getTableColumnNames()[indexes],
+            v = kinJ$getTableColumnNames()[indexes + 1],
             width = width,
             regex = regex
         )
@@ -188,12 +189,13 @@ summaryDistance <- function(kinJ,
         for (i in seq_along(indexes)) {
             for (j in seq_along(indexes)) {
                 distMat[i, j] <- format(
-                    x = kinJ$getDistance(
-                        as.integer(indexes[i] - 1),
-                        as.integer(indexes[j] - 1)
+                    sprintf(
+                        kinJ$getDistance(
+                            as.integer(indexes[i] - 1),
+                            as.integer(indexes[j] - 1)
+                        ),
+                        fmt = "%#.4f"
                     ),
-                    digits = 4,
-                    nsmall = 4,
                     justify = "right",
                     width = 10
                 )

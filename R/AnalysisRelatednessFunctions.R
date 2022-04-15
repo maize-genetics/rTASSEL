@@ -302,6 +302,7 @@ pca <- function(
     })
 
     names(reportBody) <- unlist(reportNames)
+    colnames(reportBody$Eigenvalues_Datum) <- gsub(" ", "_", colnames(reportBody$Eigenvalues_Datum))
 
     if (!reportEigenvalues && !reportEigenvectors) {
         return(reportBody[[1]])
