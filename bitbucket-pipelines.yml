@@ -1,4 +1,4 @@
-image: maizegenetics/rtassel_env
+image: maizegenetics/rtassel_env:0.1
 
 pipelines:
   default:
