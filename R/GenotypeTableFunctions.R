@@ -3,7 +3,7 @@
 # Description:   Support working with TASSEL GenotypeTables
 # Author:        Brandon Monier & Ed buckler
 # Created:       2018-11-26 at 11:14:36
-# Last Modified: 2019-07-25 at 14:55:30
+# Last Modified: 2022-04-28 at 18:02:36
 #--------------------------------------------------------------------
 
 #--------------------------------------------------------------------
@@ -43,6 +43,123 @@ readGenotypeTableFromPath <- function(path, keepDepth = FALSE, sortPositions = F
             jrc$read(path, keepDepth, sortPositions)
         )
     )
+}
+
+
+
+#' @title Read \code{GenotypeTable} objects from BrAPI
+#'
+#' @description Reads \code{GenotypeTable} objects from BrAPI
+#'
+#' @name readGenotypeTableFromBrapi
+#' @rdname readGenotypeTableFromBrapi
+#'
+#' @param brapiObj A \code{BrapiCon} object.
+#' @param variantSetDbId What set of variants do you want to read from BrAPI?
+#'
+#' @return Returns an object of \code{TasselGenotypePhenotype} class.
+#'
+#' @export
+readGenotypeTableFromBrapi <- function(
+    brapiObj,
+    variantSetDbId = NULL
+) {
+    if (class(brapiObj) != "BrapiCon") {
+        stop("`brapiObj` must be of class `BrapiCon`")
+    }
+
+    if (is.null(variantSetDbId)) {
+        stop("You must choose a BrAPI database ID")
+    }
+
+    ## Get JSON components ----
+    baseUrl <- rPHG::brapiURL(brapiObj)
+    variantMatUrl <- paste0(baseUrl, "/variantmatrix?variantSetDbId=", variantSetDbId)
+    vMJson <- rPHG:::parseJSON(variantMatUrl)
+
+    ## Get BrAPI components ----
+    ## TODO - how to deal with phasing?
+    snpRMat <- gsub("/|\\|", "", t(vMJson$result$data))
+    taxa    <- vMJson$result$callSetDbIds
+    posDf   <- vMJson$result$variants
+
+
+    ## Internal parameters ----
+    ## TODO - how to get actual alleles for each site?
+    ## Defaults to A, C, or N
+    alleleStates <- list(
+        ref  = "A",
+        alt  = "C",
+        null = "N"
+    )
+
+    ## Instantiate TASSEL API classes ----
+    nucConst          <- rJava::J("net/maizegenetics/dna/snp/NucleotideAlignmentConstants")
+    gtUtils           <- rJava::J("net/maizegenetics/dna/snp/GenotypeTableUtils")
+    genoCallBuilder   <- rJava::J("net/maizegenetics/dna/snp/genotypecall/GenotypeCallTableBuilder")
+    genoTableBuilder  <- rJava::J("net/maizegenetics/dna/snp/GenotypeTableBuilder")
+    posListBuilder    <- rJava::.jnew("net/maizegenetics/dna/map/PositionListBuilder")
+    taxaListBuilder   <- rJava::.jnew("net/maizegenetics/taxa/TaxaListBuilder")
+
+
+    ## GenotypeCallTable ----
+    genotypeCalls <- genoCallBuilder$getUnphasedNucleotideGenotypeBuilder(
+        as.integer(nrow(snpRMat)),
+        as.integer(ncol(snpRMat))
+    )
+    for (i in seq_len(nrow(snpRMat))) {
+        for (j in seq_len(ncol(snpRMat))) {
+
+            # TODO - how to deal with more than one alt state?
+            curAllele <- switch (
+                EXPR = snpRMat[i, j],
+                "00" = c(alleleStates$ref, alleleStates$ref),
+                "10" = c(alleleStates$alt, alleleStates$ref),
+                "01" = c(alleleStates$ref, alleleStates$alt),
+                "11" = c(alleleStates$alt, alleleStates$alt),
+                `NA` = c(alleleStates$null, alleleStates$null)
+            )
+
+            byteVal <- gtUtils$getDiploidValue(
+                rJava::.jbyte(nucConst$getNucleotideDiploidByte(curAllele[1])),
+                rJava::.jbyte(nucConst$getNucleotideDiploidByte(curAllele[2]))
+            )
+            genotypeCalls$setBase(
+                as.integer(i - 1),
+                as.integer(j - 1),
+                rJava::.jbyte(byteVal)
+            )
+        }
+    }
+
+
+    ## TaxaList ----
+    for (i in taxa) {
+        taxaListBuilder$add(rJava::.jnew("net/maizegenetics/taxa/Taxon", i))
+    }
+
+
+    ## PositionList ----
+    for (i in seq_len(nrow(posDf))) {
+        posListBuilder$add(
+            rJava::J(
+                "net/maizegenetics/dna/map/Position", "of",
+                posDf[i, ]$contig,
+                as.integer(posDf[i, ]$start)
+            )
+        )
+    }
+
+
+    ## Build CoreGenotypeTable ----
+    myGt <- genoTableBuilder$getInstance(
+        genotypeCalls$build(),
+        posListBuilder$build(),
+        taxaListBuilder$build()
+    )
+
+    ## Return `TasselGenotypePhenotype` object (rTASSEL) ----
+    return(.tasselObjectConstructor(myGt))
 }
 
 
