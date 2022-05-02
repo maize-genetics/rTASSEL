@@ -94,12 +94,12 @@ readGenotypeTableFromBrapi <- function(
     )
 
     ## Instantiate TASSEL API classes ----
-    nucConst          <- rJava::J("net/maizegenetics/dna/snp/NucleotideAlignmentConstants")
-    gtUtils           <- rJava::J("net/maizegenetics/dna/snp/GenotypeTableUtils")
-    genoCallBuilder   <- rJava::J("net/maizegenetics/dna/snp/genotypecall/GenotypeCallTableBuilder")
-    genoTableBuilder  <- rJava::J("net/maizegenetics/dna/snp/GenotypeTableBuilder")
-    posListBuilder    <- rJava::.jnew("net/maizegenetics/dna/map/PositionListBuilder")
-    taxaListBuilder   <- rJava::.jnew("net/maizegenetics/taxa/TaxaListBuilder")
+    nucConst         <- rJava::J("net/maizegenetics/dna/snp/NucleotideAlignmentConstants")
+    gtUtils          <- rJava::J("net/maizegenetics/dna/snp/GenotypeTableUtils")
+    genoCallBuilder  <- rJava::J("net/maizegenetics/dna/snp/genotypecall/GenotypeCallTableBuilder")
+    genoTableBuilder <- rJava::J("net/maizegenetics/dna/snp/GenotypeTableBuilder")
+    posListBuilder   <- rJava::.jnew("net/maizegenetics/dna/map/PositionListBuilder")
+    taxaListBuilder  <- rJava::.jnew("net/maizegenetics/taxa/TaxaListBuilder")
 
 
     ## GenotypeCallTable ----
