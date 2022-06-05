@@ -9,7 +9,7 @@ output:
       fig_caption: true
       number_sections: false
 vignette: >
-    %\VignetteIndexEntry{Filtering Genotype Tables}
+    %\VignetteIndexEntry{rTASSEL Benchmarks}
     %\VignetteEngine{knitr::rmarkdown}
     %\VignetteEncoding{UTF-8}
     %\usepackage[utf8]{inputenc}
