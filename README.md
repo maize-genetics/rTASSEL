@@ -1,6 +1,6 @@
 ## rTASSEL
 
-[![Build Status](https://travis-ci.com/maize-genetics/rTASSEL.svg?branch=master)](https://travis-ci.com/maize-genetics/rTASSEL) [![Life Cycle Status](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing) [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/maize-genetics/rTASSEL_sandbox/master?filepath=getting_started.ipynb)
+[![Build Status](https://travis-ci.com/maize-genetics/rTASSEL.svg?branch=master)](https://travis-ci.com/maize-genetics/rTASSEL) [![Life Cycle Status](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing) [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/btmonier/rTASSEL_sandbox/HEAD?labpath=getting_started.ipynb)
 
 **Website**: https://maize-genetics.github.io/rTASSEL
 
@@ -11,7 +11,9 @@ to connect to a variety of highly used TASSEL methods and analytical tools.
 By using R as a front-end, we aim to utilize a *unified* scripting workflow that
 exploits the analytical prowess of TASSEL in conjunction with R's popular
 data handling and parsing capabilities without ever having the user to switch
-between these two environments.
+between these two environments. `rTASSEL`  also provide feature and speed
+advantages compared to other commonly used R packages. Take a look [here](https://maize-genetics.github.io/rTASSEL/articles/rtassel_benchmarks.html)
+for more information
 
 
 ### Demo
@@ -19,7 +21,7 @@ If you want to test out what this package does but do not want to install it
 locally, we have set up an interactive Jupyter notebook detailing the
 walkthrough of `rTASSEL` on Binder. The Binder link can be accessed through
 the Binder icon on this page or by clicking 
-[here](https://mybinder.org/v2/gh/maize-genetics/rTASSEL_sandbox/master?filepath=getting_started.ipynb).
+[here](https://mybinder.org/v2/gh/btmonier/rTASSEL_sandbox/HEAD?labpath=getting_started.ipynb).
 
 
 ### Installation
@@ -64,31 +66,6 @@ vignette may take some time to process and analyze test data.)
 If you would like to study a function in full, refer to the R documentation
 by using `?<function>` in the console, where `<function>` is an
 `rTASSEL`-based function.
-
-
-### Citation
-If you plan on using this software for your publications, please cite:
-
-**rTASSEL: an R interface to TASSEL for association mapping of complex traits**
-Brandon Monier, Terry M. Casstevens, Peter J. Bradbury, Edward S. Buckler\
-bioRxiv 2020.07.21.209114; doi: https://doi.org/10.1101/2020.07.21.209114
-
-or for BibTex users:
-
-```
-@article {
-	author = {Monier, Brandon and Casstevens, Terry M. and Bradbury, Peter J. and Buckler, Edward S.},
-	title = {rTASSEL: an R interface to TASSEL for association mapping of complex traits},
-	elocation-id = {2020.07.21.209114},
-	year = {2021},
-	doi = {10.1101/2020.07.21.209114},
-	publisher = {Cold Spring Harbor Laboratory},
-	URL = {https://www.biorxiv.org/content/early/2021/03/31/2020.07.21.209114},
-	eprint = {https://www.biorxiv.org/content/early/2021/03/31/2020.07.21.209114.full.pdf},
-	journal = {bioRxiv}
-}
-```
-
 
 
 ### Contacts
