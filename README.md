@@ -13,7 +13,7 @@ exploits the analytical prowess of TASSEL in conjunction with R's popular
 data handling and parsing capabilities without ever having the user to switch
 between these two environments. `rTASSEL`  also provide feature and speed
 advantages compared to other commonly used R packages. Take a look [here](https://maize-genetics.github.io/rTASSEL/articles/rtassel_benchmarks.html)
-for more information
+for more information.
 
 
 ### Demo
