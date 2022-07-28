@@ -17,6 +17,8 @@ vignette: >
 ---
 
 ```{r setup, include=FALSE}
+library(rTASSEL)
+
 knitr::opts_chunk$set(
     fig.path='figure/graphics-',
     cache.path='cache/graphics-',
@@ -52,8 +54,8 @@ patterns, and linkage disequilibrium. Strengths of this software include:
 
 More information can be found in the following paper:
 
-Bradbury PJ, Zhang Z, Kroon DE, Casstevens TM, Ramdoss Y, Buckler ES. (2007)
-*TASSEL: Software for association mapping of complex traits in diverse samples.* Bioinformatics 23:2633-2635.
+> Bradbury PJ, Zhang Z, Kroon DE, Casstevens TM, Ramdoss Y, Buckler ES. (2007)
+> *TASSEL: Software for association mapping of complex traits in diverse samples.* Bioinformatics 23:2633-2635.
 
 Detailed documentation and source code can be found on our website:
 
@@ -74,88 +76,9 @@ near future.
 
 
 
-# Installation and Preliminary Steps
+# Preliminary steps
 
-## Prerequisites - installing rJava
-Since TASSEL is written in Java, Java JDK will need to be installed on your
-machine. Additionally, for R to communicate with Java, the R package `rJava`
-will need to be installed. Detailed information can be found using the
-following links, depending on your OS:
-
-* [Linux](https://datawookie.netlify.com/blog/2018/02/installing-rjava-on-ubuntu/)
-* [macOS](https://zhiyzuo.github.io/installation-rJava/)
-* [Windows](https://cimentadaj.github.io/blog/2018-05-25-installing-rjava-on-windows-10/installing-rjava-on-windows-10/)
-
-
-## Problems with rJava if you have upgraded Java
-On a MAC: if you previously had `rJava` working through RStudio, then you
-upgraded your Java and it now longer works, try the following:
-
-At the command line type:
-
-```
-R CMD javareconf
-```
-
-Then check for a left over symbolic link via:
-
-```
-ls -ltr /usr/local/lib/libjvm.dylib
-```
-
-If the link exists, remove it, then create it fresh via these commands:
-
-```
-rm /usr/local/lib/libjvm.dylib
-sudo ln -s $(/usr/libexec/java_home)/lib/server/libjvm.dylib /usr/local/lib
-```
-
-You should now be able to enter RStudio and setup rJava.
-
-
-## Install from BitBucket
-After you have `rJava` up and running on your machine, install `rTASSEL` by
-installing the source code from our BitBucket repository:
-
-```{r, eval=FALSE, echo=TRUE}
-if (!require("devtools")) install.packages("devtools")
-devtools::install_bitbucket(
-    repo = "bucklerlab/rtassel",
-    ref = "master",
-    build_vignettes = TRUE
-)
-```
-
-After source code has been compiled, the package can be loaded using:
-
-```{r, eval=TRUE, echo=TRUE}
-library(rTASSEL)
-```
-
-Or, if you want to use a function without violating your environment you can
-use `rTASSEL::<function>`, where `<function>` is an `rTASSEL` function.
-
-
-## Problems installing if you have both 32- and 64-bit architecture installed for R
-**NOTE:** If you are using a machine that has both architectures installed for R, 
-you might run into problems pulling code using `devtools`. If this is the case,
-one solution would be to add the parameter `--no-multiarch` option in 
-`INSTALL_opts`. This will force building the package for your currently running 
-R version:
-
-```{r, eval=FALSE, echo = TRUE}
-devtools::install_bitbucket(
-    repo = "bucklerlab/rTASSEL",
-    ref = "master",
-    build_vignettes = FALSE,
-    INSTALL_opts = "--no-multiarch"
-)
-```
-
-
-## Preliminary steps
-
-### Setting Memory
+## Setting Memory
 Since genome-wide association analyses can use up a lot of computational
 resources, memory allocation to `rTASSEL` can be modified. To change the amount
 of memory, use the base `options()` function and modify the following parameter:
@@ -172,7 +95,7 @@ allocation can be found [here](https://stackoverflow.com/questions/14763079/what
 **NOTE:** Setting Java memory options for `rTASSEL` and any `rJava`-related packages
 *needs* to be set *before* loading the `rTASSEL` package!
 
-### The importance of logging your progress
+## The importance of logging your progress
 Before we begin analyzing data, optional parameters can be set up to make
 `rTASSEL` more efficient. To prevent your R console from being overloaded with
 TASSEL logging information, **it is highly recommended that you start a logging
@@ -424,7 +347,7 @@ kinshipPath <- system.file(
 )
 
 ## Read ----
-readTasselDistanceMatrix(kinshipPath)
+rTASSEL::readTasselDistanceMatrix(kinshipPath)
 ```
 
 
@@ -546,7 +469,7 @@ parameter input is a `TasselGenotypePhenotype` class object that contains a
 genotype data set:
 
 ```{r, eval=TRUE, echo=TRUE}
-tasKin <- kinshipMatrix(tasObj = tasGenoPheno)
+tasKin <- rTASSEL::kinshipMatrix(tasObj = tasGenoPheno)
 ```
 
 This function allows for several types of algorithm to used using the `method`
@@ -559,7 +482,7 @@ Very similar to kinship matrix calculation, a distance matrix can also be
 calculated using genotype data using the function `distanceMatrix()`:
 
 ```{r, eval=TRUE, echo=TRUE}
-tasDist <- distanceMatrix(tasObj = tasGenoPheno)
+tasDist <- rTASSEL::distanceMatrix(tasObj = tasGenoPheno)
 ```
 
 

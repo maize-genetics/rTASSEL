@@ -1,0 +1,159 @@
+---
+title: "Installing rTASSEL"
+author: "Brandon Monier"
+date: "`r format(Sys.Date(), '%Y-%m-%d')`"
+output:
+    BiocStyle::html_document:
+      toc: true
+      fig_caption: true
+      toc_float: true
+      number_sections: false
+vignette: >
+    %\VignetteIndexEntry{Installing rTASSEL}
+    %\VignetteEncoding{UTF-8}
+    %\usepackage[utf8]{inputenc}
+    %\usepackage{float}
+    %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  markdown: 
+    wrap: 72
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+    fig.path='figure/graphics-',
+    cache.path='cache/graphics-',
+    fig.align='center',
+    external=TRUE,
+    echo=TRUE,
+    warning=FALSE
+    # fig.pos="H"
+)
+```
+
+# Prerequisite - installing rJava
+
+Since TASSEL is written primarily in Java, a Java JDK will need to be
+installed on your machine. Additionally, for R to communicate with Java,
+the R package [`rJava`](https://www.rforge.net/rJava/) will need to be
+installed. In order to use `rTASSEL`, ensure that you have:
+
+-   A `JDK` (Java Development Kit $\geq$ `8`) installed on your system.
+-   Your system environment variable `JAVA_HOME` is configured
+    appropriately and points to your `JDK` of choice. This will usually
+    be included in your PATH environment variable as well. Options and
+    system environmental variables that are available from R can be seen
+    with `Sys.getenv()` and more specifically
+    `Sys.getenv("JAVA_HOME")`.
+
+**NOTE**: If you are using a UNIX system (e.g. Ubuntu) and are experiencing 
+issues, you may need to reconfigure R with Java. To perform this, open a 
+terminal and enter the command:
+
+    R CMD javareconf
+
+You may need to have root privileges when performing this so you may
+need to add `sudo` to the prior command.
+
+If you need additional steps on how to perform these actions, detailed
+information can be found using the following links, depending on your
+OS:
+
+-   [Linux](https://datawookie.netlify.com/blog/2018/02/installing-rjava-on-ubuntu/)
+-   [macOS](https://zhiyzuo.github.io/installation-rJava/)
+-   [Windows](https://cimentadaj.github.io/blog/2018-05-25-installing-rjava-on-windows-10/installing-rjava-on-windows-10/)
+
+
+
+# Install from GitHub
+
+After you have `rJava` up and running on your machine, install `rTASSEL`
+by installing the source code from our GitHub repository using the
+`devtools` package:
+
+```{r, eval=FALSE, echo=TRUE}
+if (!require("devtools")) install.packages("devtools")
+devtools::install_github(
+    repo = "maize-genetics/rTASSEL",
+    ref = "master",
+    build_vignettes = TRUE,
+    dependencies = TRUE
+)
+```
+
+After source code has been compiled, the package can be loaded using:
+
+```{r, eval=TRUE, echo=TRUE}
+library(rTASSEL)
+```
+
+Or, if you want to use a function without violating your environment you
+can use `rTASSEL::<function>`, where `<function>` is an `rTASSEL`
+function.
+
+
+# Running from Docker
+
+If you wish to run a containerized version of `rTASSEL`, we also have a 
+[Docker image](https://hub.docker.com/repository/docker/maizegenetics/rtassel)
+available. This can be retrieved from DockerHub using the following command:
+
+```
+docker pull maizegenetics/rtassel:latest
+```
+
+Once downloaded, you can run `rTASSEL` from an R terminal:
+
+```
+docker run --rm -ti maizegenetics/rtassel R
+```
+
+Or you can start an RStudio Server instance. For example:
+
+```
+docker run --rm -ti -p 8787:8787 maizegenetics/rtassel
+```
+
+
+
+# Prior issues and possible resolutions
+
+## Problems with `rJava` if you have upgraded Java
+
+On macOS: if you previously had `rJava` working through RStudio, then
+you upgraded your Java and it now longer works, try the following:
+
+At the command line type:
+
+    R CMD javareconf
+
+Then check for a left over symbolic link via:
+
+    ls -ltr /usr/local/lib/libjvm.dylib
+
+If the link exists, remove it, then create it fresh via these commands:
+
+    rm /usr/local/lib/libjvm.dylib
+    sudo ln -s $(/usr/libexec/java_home)/lib/server/libjvm.dylib /usr/local/lib
+
+You should now be able to enter RStudio and setup `rJava`.
+
+
+## Problems installing if you have both 32- and 64-bit architecture installed for R
+
+**NOTE:** If you are using a machine that has both architectures
+installed for R, you might run into problems pulling code using
+`devtools`. If this is the case, one solution would be to add the
+parameter `--no-multiarch` option in `INSTALL_opts`. This will force
+building the package for your currently running R version:
+
+```{r, eval=FALSE, echo = TRUE}
+devtools::install_github(
+    repo = "maize-genetics/rTASSEL",
+    ref = "master",
+    build_vignettes = FALSE,
+    INSTALL_opts = "--no-multiarch"
+)
+```
+
+
