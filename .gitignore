@@ -22,3 +22,7 @@ docs/
 
 ## `testthat` problems ----
 tests/testthat/*.rds
+
+
+## JOSS ----
+*.jats
