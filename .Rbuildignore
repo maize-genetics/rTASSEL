@@ -1,9 +1,12 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^\.httr-oauth$
-^\.travis\.yml$
 ^NEWS$
+^CONTRIBUTING\.md$
+^\.travis\.yml$
 ^bitbucket-pipelines\.yml$
 ^_pkgdown\.yml$
 ^docs$
 ^pkgdown$
+^paper$
+^\.github$

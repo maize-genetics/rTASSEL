@@ -1,0 +1,20 @@
+template:
+  bootstrap: 5
+
+url: https://maizee-genetics.github.io/rTASSEL/index.html
+
+home:
+  links:
+  - text: Report a bug
+    href: https://github.com/maize-genetics/rTASSEL/issues
+  - text: Buckler Lab Website
+    href: https://www.maizegenetics.net/
+
+articles:
+- title: Articles
+  navbar: ~
+  contents:
+  - rtassel_installation
+  - rtassel_walkthrough
+  - genotype_filtration
+  - rtassel_benchmarks

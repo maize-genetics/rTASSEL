@@ -7,17 +7,26 @@ Authors@R: c(
         given = "Brandon",
         family = "Monier",
         email = "brandon.monier@gmail.com",
-        role = c("aut", "cre")
+        role = c("aut", "cre"),
+        comment = c(ORCID = "0000-0001-6797-1221")
     ),
     person(
         given = "Terry",
         family = "Casstevens",
-        role = c("aut")
+        role = c("aut"),
+        comment = c(ORCID = "0000-0001-7602-0487")
+    ),
+    person(
+        given = "Peter",
+        family = "Bradbury",
+        role = c("aut"),
+        comment = c(ORCID = "0000-0003-3825-8480")
     ),
     person(
         given = "Ed",
         family = "Buckler",
-        role = c("aut")
+        role = c("aut"),
+        comment = c(ORCID = "0000-0002-3100-371X")
     ))
 Description:
     The aim of rTASSEL is to provide an R front-end for the
@@ -27,7 +36,7 @@ Description:
     approaches to association mapping such general and mixed linear modelling.
 License: GPL-3 | file LICENSE
 URL:
-    https://bitbucket.org/bucklerlab/rtassel/src/master/
+    https://github.com/maize-genetics/rTASSEL
 Imports:
     ape,
     GenomicRanges,
@@ -48,6 +57,6 @@ SystemRequirements: Java (>= 8.0)
 Encoding: UTF-8
 LazyData: true
 VignetteBuilder: knitr
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.1
 biocViews:
     GenomeWideAssociation
