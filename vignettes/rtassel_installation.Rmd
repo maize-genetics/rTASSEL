@@ -67,9 +67,12 @@ OS:
 
 # Install from GitHub
 
+## Building with vignettes
+
 After you have `rJava` up and running on your machine, install `rTASSEL`
 by installing the source code from our GitHub repository using the
-`devtools` package:
+`devtools` package. Here, we show how you can install the package and build
+vignettes locally:
 
 ```{r, eval=FALSE, echo=TRUE}
 if (!require("devtools")) install.packages("devtools")
@@ -80,6 +83,26 @@ devtools::install_github(
     dependencies = TRUE
 )
 ```
+
+The `dependencies = TRUE` parameter will have to be set if you do not have the
+suggested packages described in the
+[`DESCRIPTION`](https://github.com/maize-genetics/rTASSEL/blob/master/DESCRIPTION) 
+file of this package.
+
+
+## Building without vignettes
+
+If you wish to **not** build vignettes, the prior method can be simplified
+as shown below:
+
+```{r, eval=FALSE, echo=TRUE}
+if (!require("devtools")) install.packages("devtools")
+devtools::install_github("maize-genetics/rTASSEL")
+```
+
+
+
+# Loading `rTASSEL`
 
 After source code has been compiled, the package can be loaded using:
 
@@ -92,6 +115,7 @@ can use `rTASSEL::<function>`, where `<function>` is an `rTASSEL`
 function.
 
 
+
 # Running from Docker
 
 If you wish to run a containerized version of `rTASSEL`, we also have a 
@@ -102,21 +126,62 @@ available. This can be retrieved from DockerHub using the following command:
 docker pull maizegenetics/rtassel:latest
 ```
 
-Once downloaded, you can run `rTASSEL` from an R terminal:
+## With the terminal
+
+Once downloaded, you can run `rTASSEL` from a terminal window:
 
 ```
 docker run --rm -ti maizegenetics/rtassel R
 ```
 
-Or you can start an RStudio Server instance. For example:
+
+## With RStudio Server
+
+This image also contains an RStudio Server instance. To run this, you will
+need to publish the container's port(s) to the host (`-p`). For example:
 
 ```
 docker run --rm -ti -p 8787:8787 maizegenetics/rtassel
 ```
 
+From here, you can go to `localhost:8787` on a web browser and enter a:
+
+* Username (by default, this will be `rstudio`)
+* Password (this will be a randomly generated password displayed in the 
+  terminal output)
+
 
 
 # Prior issues and possible resolutions
+
+## Problems installing rJava on macOS with M1 CPU architecture
+
+If you are running into issues with installing `rJava` using the newer
+Mac chip architecture, Oracle JDK currently (as of writing this) does not 
+work. Consider an alternative JDK source such as [OpenJDK](https://openjdk.org/)
+or [Azul JDK](https://www.azul.com/downloads/?version=java-8-lts&package=jdk).
+
+More detailed information about a possible workaround can be found in this
+[Stack Overflow post](https://stackoverflow.com/questions/67849830/how-to-install-rjava-package-in-mac-with-m1-architecture).
+
+
+## Problems installing if you have both 32- and 64-bit architecture installed for R
+
+If you are using a machine that has **both architectures
+installed for R**, you might run into problems pulling code using
+`devtools`. If this is the case, one solution would be to add the
+parameter `--no-multiarch` option in `INSTALL_opts`. This will force
+building the package for your currently running R version:
+
+```{r, eval=FALSE, echo = TRUE}
+devtools::install_github(
+    repo = "maize-genetics/rTASSEL",
+    ref = "master",
+    build_vignettes = FALSE,
+    INSTALL_opts = "--no-multiarch"
+)
+```
+
 
 ## Problems with `rJava` if you have upgraded Java
 
@@ -139,21 +204,5 @@ If the link exists, remove it, then create it fresh via these commands:
 You should now be able to enter RStudio and setup `rJava`.
 
 
-## Problems installing if you have both 32- and 64-bit architecture installed for R
-
-**NOTE:** If you are using a machine that has both architectures
-installed for R, you might run into problems pulling code using
-`devtools`. If this is the case, one solution would be to add the
-parameter `--no-multiarch` option in `INSTALL_opts`. This will force
-building the package for your currently running R version:
-
-```{r, eval=FALSE, echo = TRUE}
-devtools::install_github(
-    repo = "maize-genetics/rTASSEL",
-    ref = "master",
-    build_vignettes = FALSE,
-    INSTALL_opts = "--no-multiarch"
-)
-```
 
 
