@@ -5,11 +5,10 @@ Thank you for taking time to contribute!
 Since `rTASSEL` is an open source project and is maintained by a small team, we 
 encourage interested members of the research community to seek out issues and 
 propose changes where needed. In this document, we detail outlines to how you
-may contribute to the `rTASSEL` project. Because our build and check process
-is virtually similar to `usethis` and other `tidyverse` packages, 
+may contribute to the `rTASSEL` project.
 
 
-## Fixing typos
+## Minor changes
 
 You can fix typos, spelling mistakes, or grammatical errors in the 
 documentation directly using the GitHub web interface, as long as the changes 
@@ -19,7 +18,7 @@ generation, please alter only typos found in `.R` files and _not_ `.Rd` files.
 `roxygen2` comments can be identified within `.R` files with the `#'` header.
 
 
-## Bigger changes
+## Bigger changes and bug reporting
 
 If you want to make a bigger change, it's a good idea to first file an
 [issue](https://github.com/maize-genetics/rTASSEL/issues)
@@ -28,28 +27,39 @@ bug, please file an issue that illustrates the bug with a minimal
 [reprex](https://www.tidyverse.org/help/#reprex) (this will also help you write 
 a unit test, if needed).
 
-### Pull request process
+### Submitting a pull request
 
-* Fork the package and clone onto your computer. If you haven't done this 
-  before, we recommend using 
-  `usethis::create_from_github("maize-genetics/rTASSEL", fork = TRUE)`.
+* Fork the `rTASSEL` package from GitHub and clone onto your computer. If you
+  are not familiar with `git` actions, the `usethis` package provides a series
+  of `git`-based methods to help you out. For forking, you can use:
+  
+  ```
+  usethis::create_from_github("maize-genetics/rTASSEL", fork = TRUE)
+  ```
 
-* Install all development dependencies with `devtools::install_dev_deps()`, and 
-  then make sure the package passes R CMD check by running `devtools::check()`. 
-  If R CMD check doesn't pass cleanly, it's a good idea to ask for help before 
-  continuing. 
+* From this fork, make sure you have all dependencies installed for `rTASSEL`. 
+  This can be accomplished using `devtools::install_dev_deps()`.
 
-* Create a Git branch for your pull request (PR). We recommend using
-  `usethis::pr_init("brief-description-of-change")`.
+* Once all dependencies are installed, run an `R CMD` check using either 
+  RStudio's integrated check features under the "Build" tab, or by running 
+  `devtools::check()` in the console.
 
+* **If build check does not fail**, create a Git branch for your pull request 
+  (PR). The `usethis` package has a method for this that you may wish to use:
+  
+  ```
+  usethis::pr_init("brief-description-of-change").
+  ```
 * Make your changes, commit to git, and then create a PR by running 
-  `usethis::pr_push()`, and following the prompts in your browser. The title of
-  your PR should briefly describe the change. The body of your PR should 
-  contain `Fixes #issue-number`.
+  `usethis::pr_push()` or other `git`-related commands/software, and following 
+  the prompts in your browser. **Please provide a descriptive PR**. Your
+  PR should have the following:
+  + Descriptive title (briefly document the change)
+  + What number does this PR fix? Please provide this in the body of the PR
+    with the language `Fixes #<issue number>`.
 
-* For user-facing changes, add a bullet to the top of `NEWS.md` (i.e. just 
-  below the first header). Follow the style described in 
-  <https://style.tidyverse.org/news.html>.
+* If accepted, this will be documented in the NEWS material (`NEWS.md`) with
+  the next version update and acknowledgement of the user.
 
 ### Code style
 
@@ -62,6 +72,7 @@ a unit test, if needed).
   [Markdown syntax](https://roxygen2.r-lib.org/articles/rd-formatting.html),
   for documentation.  
 
+### Unit testing
 * **Please test your code!** Like all good scientific projects, rigorous testing
   is a must. We use [testthat](https://cran.r-project.org/package=testthat) 
   for unit tests. Contributions with test cases included are easier to accept 
