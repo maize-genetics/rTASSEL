@@ -34,9 +34,9 @@ The need for efficient tools and applications for analyzing genomic diversity is
 essential for any genetics research or breeding program. One commonly used tool, 
 TASSEL (**T**rait **A**nalysis by a**SS**ociation, **E**volution, and 
 **L**inkage), provides many core methods for genomic analyses. Despite its 
-efficiency, TASSEL has limited means to use scripting languages for reproducible 
+efficiency, TASSEL has limited automation potential for reproducible 
 research and to interact with other analytical tools. Here we present an R 
-package `rTASSEL`, a front-end to connect to a variety of highly used TASSEL 
+package, `rTASSEL`, a front-end to connect to a variety of highly used TASSEL 
 methods and analytical tools. The goal of this package is to create a unified 
 scripting workflow that leverages the analytical prowess of TASSEL, in 
 conjunction with R's data handling and visualization capabilities without ever 
@@ -46,7 +46,7 @@ having the user switch between these two environments.
 
 # Statement of need
 
-As breakthroughs in genotyping technologies allow for evermore available variant 
+As breakthroughs in genotyping technologies allow for increasing available variant 
 resources, methods and implementations to analyze complex traits in a diverse 
 array of organisms are needed. One such resource is TASSEL (**T**rait 
 **A**nalysis by a**SS**ociation, **E**volution, and **L**inkage). This software 
@@ -86,10 +86,10 @@ format (`.vcf`), HapMap (`.hmp.txt`), and Flapjack (`.flpjk.*`). Phenotype data 
 also be supplied in multiple formats. These include TASSEL formatted data sets 
 or R data frame objects (\autoref{fig:rtassel_concepts}A).
 
-Once data is imported, an S4 object is constructed that is used for all 
-downstream analyses (\autoref{fig:rtassel_concepts}B, \autoref{fig:rtassel_concepts}C). 
-To construct this object, the function, `readGenotypePhenotype`, is used. This 
-S4 object contains slots that exclusively hold references to objects held in 
+Once data is imported, the function `readGenotypePhenotype` is used to construct 
+an S4 object, which is used for all downstream analyses 
+(\autoref{fig:rtassel_concepts}B, \autoref{fig:rtassel_concepts}C). This 
+object contains slots that exclusively hold references to objects held in 
 the Java virtual machine, which can be called with downstream functions. Prior 
 to analysis, genotype objects can be quickly imported and filtered in several 
 ways to help in the reduction of confounding errors. `rTASSEL` can filter 
@@ -110,8 +110,7 @@ estimates (BLUEs). Additionally, fast GLM approaches are implemented in
 `rTASSEL`, which allow for the rapid analysis of many phenotypic traits 
 [@shabalin_matrix_2012].
 
-The data model for analysis can be specified by a formula like R’s `lm` function, 
-which is shown as follows:
+Linear models can be specified following the format used by R’s `lm` function:
 
 $$y \sim A_{1} + A_{2} + \cdots + A_{n}$$
 
@@ -122,7 +121,7 @@ of association statistics are generated as an R list which can then be exported
 as flat files or converted to data frames (\autoref{fig:rtassel_concepts}D). 
 `rTASSEL` can also visualize association statistics with the function, 
 `manhattanPlot`, which utilizes the graphical capabilities of the package, 
-`ggplot2` (Wickham 2016) [@wickham_ggplot2_2016] (\autoref{fig:rtassel_concepts}E).
+`ggplot2` [@wickham_ggplot2_2016] (\autoref{fig:rtassel_concepts}E).
 
 
 ## Linkage disequilibrium
@@ -151,6 +150,8 @@ analysis and multidimensional scaling can be used on genotype data using
 `rTASSEL` methods, `pca` and `mds`, respectively. Finally, phylogenetic analysis
 can be performed on genotype data using the `createTree` method which will
 generate `phylo` objects commonly used by the `ape` package [@paradis_and_schliep_2019].
+The `createTree` method allows for two clustering methods: neighbor joining or
+UPGMA (unweighted pair group method with arithmetic mean).
 
 
 ## Genomic prediction
