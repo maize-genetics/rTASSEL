@@ -1,14 +1,18 @@
+url: https://maize-genetics.github.io/rTASSEL
+
 template:
   bootstrap: 5
 
-url: https://maizee-genetics.github.io/rTASSEL/index.html
+footer:
+  structure:
+    left: acknowledgment
+  components:
+    acknowledgment: <b>rTASSEL</b> is an R package developed by <a href="https://www.maizegenetics.net/">The Buckler Lab</a>
 
 home:
   links:
   - text: Report a bug
     href: https://github.com/maize-genetics/rTASSEL/issues
-  - text: Buckler Lab Website
-    href: https://www.maizegenetics.net/
 
 articles:
 - title: Articles
