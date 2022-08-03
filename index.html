@@ -4,164 +4,200 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="description" content="
+    The aim of rTASSEL is to provide an R front-end for the
+    Java program, TASSEL. TASSEL is a software package used to evaluate
+    trait associations, evolutionary patterns, and linkage disequilibrium.
+    Additionally, this software allows for a number of powerful statistical
+    approaches to association mapping such general and mixed linear modelling.">
 <title>R Front-End for TASSEL • rTASSEL</title>
-<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="bootstrap-toc.css">
-<script src="bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
+<!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+<link rel="apple-touch-icon" type="image/png" sizes="180x180" href="apple-touch-icon.png">
+<link rel="apple-touch-icon" type="image/png" sizes="120x120" href="apple-touch-icon-120x120.png">
+<link rel="apple-touch-icon" type="image/png" sizes="76x76" href="apple-touch-icon-76x76.png">
+<link rel="apple-touch-icon" type="image/png" sizes="60x60" href="apple-touch-icon-60x60.png">
+<script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="deps/bootstrap-5.1.3/bootstrap.min.css" rel="stylesheet">
+<script src="deps/bootstrap-5.1.3/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
-<!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="pkgdown.css" rel="stylesheet">
-<script src="pkgdown.js"></script><meta property="og:title" content="R Front-End for TASSEL">
+<!-- bootstrap-toc --><script src="https://cdn.rawgit.com/afeld/bootstrap-toc/v1.0.1/dist/bootstrap-toc.min.js"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="R Front-End for TASSEL">
 <meta property="og:description" content="
     The aim of rTASSEL is to provide an R front-end for the
     Java program, TASSEL. TASSEL is a software package used to evaluate
     trait associations, evolutionary patterns, and linkage disequilibrium.
     Additionally, this software allows for a number of powerful statistical
     approaches to association mapping such general and mixed linear modelling.">
+<meta property="og:image" content="https://maize-genetics.github.io/rTASSEL/logo.png">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
 </head>
-<body data-spy="scroll" data-target="#toc">
-    <div class="container template-home">
-      <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
-  <div class="container">
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <span class="navbar-brand">
-        <a class="navbar-link" href="index.html">rTASSEL</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.17</span>
-      </span>
-    </div>
+<body>
+    <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
+    
 
-    <div id="navbar" class="navbar-collapse collapse">
-      <ul class="nav navbar-nav">
-<li>
-  <a href="index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
+    <nav class="navbar fixed-top navbar-light navbar-expand-lg bg-light"><div class="container">
+    
+    <a class="navbar-brand me-2" href="index.html">rTASSEL</a>
+
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.26</small>
+
+    
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div id="navbar" class="collapse navbar-collapse ms-3">
+      <ul class="navbar-nav me-auto">
+<li class="nav-item">
+  <a class="nav-link" href="reference/index.html">Reference</a>
 </li>
-<li>
-  <a href="reference/index.html">Reference</a>
+<li class="nav-item dropdown">
+  <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
+  <div class="dropdown-menu" aria-labelledby="dropdown-articles">
+    <a class="dropdown-item" href="articles/rtassel_installation.html">Installing rTASSEL</a>
+    <a class="dropdown-item" href="articles/rtassel_walkthrough.html">Getting Started with rTASSEL</a>
+    <a class="dropdown-item" href="articles/genotype_filtration.html">Filtering Genotype Tables</a>
+    <a class="dropdown-item" href="articles/rtassel_benchmarks.html">rTASSEL Benchmarks</a>
+  </div>
 </li>
-<li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-    Articles
-     
-    <span class="caret"></span>
-  </a>
-  <ul class="dropdown-menu" role="menu">
-<li>
-      <a href="articles/rtassel_walkthrough.html">Getting Started with rTASSEL</a>
-    </li>
-  </ul>
+<li class="nav-item">
+  <a class="nav-link" href="news/index.html">Changelog</a>
 </li>
       </ul>
-<ul class="nav navbar-nav navbar-right"></ul>
+<form class="form-inline my-2 my-lg-0" role="search">
+        <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="search.json" id="search-input" placeholder="Search for" autocomplete="off">
+</form>
+
+      <ul class="navbar-nav">
+<li class="nav-item">
+  <a class="external-link nav-link" href="https://github.com/maize-genetics/rTASSEL/" aria-label="github">
+    <span class="fab fa fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
+      </ul>
 </div>
-<!--/.nav-collapse -->
+
+    
   </div>
-<!--/.container -->
+</nav><div class="container template-home">
+<div class="row">
+  <main id="main" class="col-md-9"><div class="section level1">
+<div class="page-header">
+<img src="logo.png" class="logo" alt=""><h1 id="rtassel">rTASSEL <a class="anchor" aria-label="anchor" href="#rtassel"></a>
+</h1>
 </div>
-<!--/.navbar -->
 
-      
-
-      </header><div class="row">
-  <div class="contents col-md-9">
-<div id="rtassel" class="section level2">
-<h2 class="hasAnchor">
-<a href="#rtassel" class="anchor"></a>rTASSEL</h2>
-
-<div id="objective" class="section level3">
-<h3 class="hasAnchor">
-<a href="#objective" class="anchor"></a>Objective</h3>
-<p>The main goal of developing this package is to construct an R-based front-end to connect to a variety of highly used TASSEL methods and analytical tools. By using R as a front-end, we aim to utilize a <em>unified</em> scripting workflow that exploits the analytical prowess of TASSEL in conjunction with R’s popular data handling and parsing capabilities without ever having the user to switch between these two environments.</p>
+<div class="section level2">
+<h2 id="objective">Objective<a class="anchor" aria-label="anchor" href="#objective"></a>
+</h2>
+<p>The main goal of developing this package is to construct an R-based front-end to connect to a variety of highly used TASSEL methods and analytical tools. By using R as a front-end, we aim to utilize a <em>unified</em> scripting workflow that exploits the analytical prowess of TASSEL in conjunction with R’s popular data handling and parsing capabilities without ever having the user to switch between these two environments. <code>rTASSEL</code> also provide feature and speed advantages compared to other commonly used R packages. Take a look <a href="https://maize-genetics.github.io/rTASSEL/articles/rtassel_benchmarks.html">here</a> for more information.</p>
 </div>
-<div id="installation" class="section level3">
-<h3 class="hasAnchor">
-<a href="#installation" class="anchor"></a>Installation</h3>
-<p>If you do not have experience working with and setting up <code>rJava</code> with your R installation, <em>it is recommended that you read the long-form documentation</em>. This walkthrough can be found <a href="https://bitbucket.org/bucklerlab/rtassel/wiki/Home">here</a>. If you are already fairly comfortable working with Java JDK and <code>rJava</code>, you can follow the following commands.</p>
-<p>Package source code can be installed directly from this BitBucket repository using the <code>remotes</code> package:</p>
-<pre><code>if (!require("devtools")) install.packages("devtools")
-devtools::install_bitbucket(
-    repo = "bucklerlab/rTASSEL",
-    ref = "master",
-    build_vignettes = FALSE
-)</code></pre>
+<div class="section level2">
+<h2 id="demo">Demo<a class="anchor" aria-label="anchor" href="#demo"></a>
+</h2>
+<p>If you want to test out what this package does but do not want to install it locally, we have set up an interactive Jupyter notebook detailing the walkthrough of <code>rTASSEL</code> on Binder. The Binder link can be accessed through the Binder icon on this page or by clicking <a href="https://mybinder.org/v2/gh/btmonier/rTASSEL_sandbox/HEAD?labpath=getting_started.ipynb" class="external-link">here</a>.</p>
 </div>
-<div id="usage" class="section level3">
-<h3 class="hasAnchor">
-<a href="#usage" class="anchor"></a>Usage</h3>
+<div class="section level2">
+<h2 id="installation-and-usage">Installation and usage<a class="anchor" aria-label="anchor" href="#installation-and-usage"></a>
+</h2>
+<p>If you do not have experience working with and setting up <code>rJava</code> with your R installation, <em>it is recommended that you read the long-form documentation</em>. This walkthrough can be found <a href="https://maize-genetics.github.io/rTASSEL/articles/rtassel_walkthrough.html">here</a>. If you are already fairly comfortable working with Java JDK and <code>rJava</code>, you can follow the following commands.</p>
+<p>Package source code can be installed directly from this BitBucket repository using the <code>devtools</code> package:</p>
+<pre><code><span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st"><a href="https://devtools.r-lib.org/" class="external-link">"devtools"</a></span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"devtools"</span><span class="op">)</span></span>
+<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"maize-genetics/rTASSEL"</span><span class="op">)</span></span></code></pre>
+<p>Vignettes (<code>build_vignettes</code>) are optional since there are constantly updated article links on our <a href="https://maize-genetics.github.io/rTASSEL/">website</a>. If you do want to build vignettes locally, please use the following instructions:</p>
+<pre><code><span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st"><a href="https://devtools.r-lib.org/" class="external-link">"devtools"</a></span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"devtools"</span><span class="op">)</span></span>
+<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span></span>
+<span>    repo <span class="op">=</span> <span class="st">"maize-genetics/rTASSEL"</span>,</span>
+<span>    ref <span class="op">=</span> <span class="st">"master"</span>,</span>
+<span>    build_vignettes <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>    dependencies <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="op">)</span></span></code></pre>
+</div>
+<div class="section level2">
+<h2 id="getting-help">Getting help<a class="anchor" aria-label="anchor" href="#getting-help"></a>
+</h2>
 <p>For an overview of available functions, use the following command:</p>
-<pre><code><a href="https://rdrr.io/pkg/rTASSEL/man">help(package = "rTASSEL")</a></code></pre>
-<p>If you need a walkthrough for potential pipelines, long-form documentation can be found on our <a href="https://bitbucket.org/bucklerlab/rtassel/wiki/Home">wiki site</a>. If you prefer to compile a vignette locally, you can set the <code>build_vignettes</code> parameter to <code>TRUE</code> when you download from Bitbucket (<em>Note:</em> compiling the vignette may take some time to process and analyze test data.)</p>
+<pre><code><span><span class="fu"><a href="https://rdrr.io/r/utils/help.html" class="external-link">help</a></span><span class="op">(</span>package <span class="op">=</span> <span class="st">"rTASSEL"</span><span class="op">)</span></span></code></pre>
+<p>If you need a walkthrough for potential pipelines, long-form documentation can be found on our <a href="https://maize-genetics.github.io/rTASSEL/">website</a> including a <a href="https://maize-genetics.github.io/rTASSEL/articles/rtassel_walkthrough.html">getting started article</a>.</p>
 <p>If you would like to study a function in full, refer to the R documentation by using <code>?&lt;function&gt;</code> in the console, where <code>&lt;function&gt;</code> is an <code>rTASSEL</code>-based function.</p>
 </div>
-<div id="contacts" class="section level3">
-<h3 class="hasAnchor">
-<a href="#contacts" class="anchor"></a>Contacts</h3>
-<ul>
-<li>Brandon Monier (<a href="mailto:bm646@cornell.edu">bm646@cornell.edu</a>)</li>
-<li>Terry Casstevens</li>
-<li>Ed Buckler</li>
+</div>
+  </main><aside class="col-md-3"><div class="links">
+<h2 data-toc-skip>Links</h2>
+<ul class="list-unstyled">
+<li><a href="https://github.com/maize-genetics/rTASSEL/" class="external-link">Browse source code</a></li>
+<li><a href="https://github.com/maize-genetics/rTASSEL/issues" class="external-link">Report a bug</a></li>
 </ul>
-<hr>
-<p><em>Last Modified:</em> 2020-06-17 at 19:49:20</p>
 </div>
-</div>
-  </div>
 
-  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
-    <div class="license">
-<h2>License</h2>
+<div class="license">
+<h2 data-toc-skip>License</h2>
 <ul class="list-unstyled">
 <li>
-<a href="https://www.r-project.org/Licenses/GPL-3">GPL-3</a> | file <a href="LICENSE-text.html">LICENSE</a>
+<a href="https://www.r-project.org/Licenses/GPL-3" class="external-link">GPL-3</a> | file <a href="LICENSE-text.html">LICENSE</a>
 </li>
 </ul>
 </div>
+
+<div class="community">
+<h2 data-toc-skip>Community</h2>
+<ul class="list-unstyled">
+<li><a href="CONTRIBUTING.html">Contributing guide</a></li>
+<li><a href="CODE_OF_CONDUCT.html">Code of conduct</a></li>
+</ul>
+</div>
+
+<div class="citation">
+<h2 data-toc-skip>Citation</h2>
+<ul class="list-unstyled">
+<li><a href="authors.html#citation">Citing rTASSEL</a></li>
+</ul>
+</div>
+
 <div class="developers">
-<h2>Developers</h2>
+<h2 data-toc-skip>Developers</h2>
 <ul class="list-unstyled">
-<li>Brandon Monier <br><small class="roles"> Author, maintainer </small>  </li>
-<li>Terry Casstevens <br><small class="roles"> Author </small>  </li>
-<li>Ed Buckler <br><small class="roles"> Author </small>  </li>
+<li>Brandon Monier <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0000-0001-6797-1221" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
+<li>Terry Casstevens <br><small class="roles"> Author </small> <a href="https://orcid.org/0000-0001-7602-0487" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
+<li>Peter Bradbury <br><small class="roles"> Author </small> <a href="https://orcid.org/0000-0003-3825-8480" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
+<li>Ed Buckler <br><small class="roles"> Author </small> <a href="https://orcid.org/0000-0002-3100-371X" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
 </ul>
 </div>
 
-  <div class="dev-status">
-<h2>Dev status</h2>
+<div class="dev-status">
+<h2 data-toc-skip>Dev status</h2>
 <ul class="list-unstyled">
-<li><a href="https://travis-ci.org/maize-genetics/rTASSEL"><img src="https://travis-ci.org/maize-genetics/rTASSEL.svg?branch=master" alt="Build Status"></a></li>
-<li><a href="https://codecov.io/gh/maize-genetics/rTASSEL"><img src="https://codecov.io/gh/maize-genetics/rTASSEL/branch/master/graph/badge.svg" alt="Coverage Status"></a></li>
-<li><a href="https://www.tidyverse.org/lifecycle/#maturing"><img src="https://img.shields.io/badge/lifecycle-maturing-blue.svg" alt="Life Cycle Status"></a></li>
+<li><a href="https://travis-ci.com/maize-genetics/rTASSEL" class="external-link"><img src="https://travis-ci.com/maize-genetics/rTASSEL.svg?branch=master" alt="Build Status"></a></li>
+<li><a href="https://www.tidyverse.org/lifecycle/#maturing" class="external-link"><img src="https://img.shields.io/badge/lifecycle-maturing-blue.svg" alt="Life Cycle Status"></a></li>
+<li><a href="https://mybinder.org/v2/gh/btmonier/rTASSEL_sandbox/HEAD?labpath=getting_started.ipynb" class="external-link"><img src="https://mybinder.org/badge_logo.svg" alt="Binder"></a></li>
 </ul>
 </div>
-</div>
-</div>
 
-
-      <footer><div class="copyright">
-  <p>Developed by Brandon Monier, Terry Casstevens, Ed Buckler.</p>
+  </aside>
 </div>
 
-<div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+
+    <footer><div class="pkgdown-footer-left">
+  <p></p>
+<p><b>rTASSEL</b> is an R package developed by <a href="https://www.maizegenetics.net/" class="external-link">The Buckler Lab</a></p>
 </div>
 
-      </footer>
+<div class="pkgdown-footer-right">
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
+</div>
+
+    </footer>
 </div>
 
   
 
+  
 
   </body>
 </html>
