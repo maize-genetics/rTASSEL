@@ -48,7 +48,7 @@ a unit test, if needed).
   (PR). The `usethis` package has a method for this that you may wish to use:
   
   ```
-  usethis::pr_init("brief-description-of-change").
+  usethis::pr_init("brief-description-of-change")
   ```
 * Make your changes, commit to git, and then create a PR by running 
   `usethis::pr_push()` or other `git`-related commands/software, and following 
