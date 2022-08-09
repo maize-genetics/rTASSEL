@@ -1,3 +1,8 @@
+# CHANGES IN VERSION 0.9.27
+* No significant updates in this version. This version is virtually identical
+  to `0.9.26` and is for linking to Zenodo for archival purposes.
+
+
 # CHANGES IN VERSION 0.9.26
 * Bug fixes:
   + Fixed `r2` parameter bug in `ldPlot()`
