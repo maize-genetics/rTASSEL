@@ -4,10 +4,6 @@ pkgdown_sha: ~
 articles:
   genotype_filtration: genotype_filtration.html
   rtassel_benchmarks: rtassel_benchmarks.html
-  rtassel_installation: rtassel_installation.html
   rtassel_walkthrough: rtassel_walkthrough.html
-last_built: 2022-08-09T17:23Z
-urls:
-  reference: https://maize-genetics.github.io/rTASSEL/reference
-  article: https://maize-genetics.github.io/rTASSEL/articles
+last_built: 2022-08-10T01:52Z
 
