@@ -36,10 +36,10 @@ TASSEL (**T**rait **A**nalysis by a**SS**ociation, **E**volution, and
 **L**inkage), provides many core methods for genomic analyses. Despite its 
 efficiency, TASSEL has limited automation potential for reproducible 
 research and to interact with other analytical tools. Here we present an R 
-package, `rTASSEL`, a front-end to connect to a variety of highly used TASSEL 
+package, `rTASSEL`, that is a front-end to connect to a variety of highly used TASSEL 
 methods and analytical tools. The goal of this package is to create a unified 
 scripting workflow that leverages the analytical prowess of TASSEL, in 
-conjunction with R's data handling and visualization capabilities without ever 
+conjunction with R's data handling and visualization capabilities, without ever 
 having the user switch between these two environments.
 
 
@@ -114,7 +114,7 @@ Linear models can be specified following the format used by R’s `lm` function:
 
 $$y \sim A_{1} + A_{2} + \cdots + A_{n}$$
 
-Where $y$ is phenotype data, and $A_{n}$ is any covariate or factor data. This 
+where $y$ is phenotype data, and $A_{n}$ is any covariate or factor data. This 
 formula parameter and several other parameters allow the user to run BLUE, GLM, 
 or MLM modeling. Once association analysis is completed, TASSEL table reports 
 of association statistics are generated as an R list which can then be exported 
@@ -129,8 +129,8 @@ as flat files or converted to data frames (\autoref{fig:rtassel_concepts}D).
 rTASSEL can also generate linkage disequilibrium (LD) from genotype data via 
 the function `linkageDiseq`. LD is estimated by the standardized disequilibrium 
 coefficient, $D'$, correlation between alleles at two loci ($r^2$), and 
-subsequent $p$-values via a two-sided Fisher’s Exact test. TASSEL Table reports 
-for all pairwise comparisons are generated as `data.frame` objects and heatmap 
+subsequent $p$-values via a two-sided Fisher’s exact test. TASSEL table reports 
+for all pairwise comparisons are generated as `data.frame` objects, and heatmap 
 visualizations for each given metric are generated via TASSEL’s legacy LD 
 Java viewer or `ggplot2` (\autoref{fig:rtassel_concepts}F).
 
