@@ -10,3 +10,4 @@
 ^pkgdown$
 ^paper$
 ^\.github$
+^rTASSEL_log$
