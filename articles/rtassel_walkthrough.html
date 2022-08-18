@@ -4,87 +4,87 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="description" content="rTASSEL">
 <title>Getting Started with rTASSEL • rTASSEL</title>
-<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="../bootstrap-toc.css">
-<script src="../bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
+<!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
+<link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png">
+<link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png">
+<link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png">
+<link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png">
+<script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="../deps/bootstrap-5.1.3/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.1.3/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
-<!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
-<script src="../pkgdown.js"></script><meta property="og:title" content="Getting Started with rTASSEL">
+<!-- bootstrap-toc --><script src="https://cdn.rawgit.com/afeld/bootstrap-toc/v1.0.1/dist/bootstrap-toc.min.js"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Getting Started with rTASSEL">
 <meta property="og:description" content="rTASSEL">
+<meta property="og:image" content="https://maize-genetics.github.io/rTASSEL/logo.png">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
 </head>
-<body data-spy="scroll" data-target="#toc">
+<body>
+    <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
     
 
-    <div class="container template-article">
-      <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
-  <div class="container">
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <span class="navbar-brand">
-        <a class="navbar-link" href="../index.html">rTASSEL</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.9.26</span>
-      </span>
-    </div>
+    <nav class="navbar fixed-top navbar-light navbar-expand-lg bg-light"><div class="container">
+    
+    <a class="navbar-brand me-2" href="../index.html">rTASSEL</a>
 
-    <div id="navbar" class="navbar-collapse collapse">
-      <ul class="nav navbar-nav">
-<li>
-  <a href="../reference/index.html">Reference</a>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.28</small>
+
+    
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div id="navbar" class="collapse navbar-collapse ms-3">
+      <ul class="navbar-nav me-auto">
+<li class="nav-item">
+  <a class="nav-link" href="../reference/index.html">Reference</a>
 </li>
-<li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-    Articles
-     
-    <span class="caret"></span>
-  </a>
-  <ul class="dropdown-menu" role="menu">
-<li>
-      <a href="../articles/genotype_filtration.html">Filtering Genotype Tables</a>
-    </li>
-    <li>
-      <a href="../articles/rtassel_benchmarks.html">rTASSEL Benchmarks</a>
-    </li>
-    <li>
-      <a href="../articles/rtassel_walkthrough.html">Getting Started with rTASSEL</a>
-    </li>
-  </ul>
+<li class="active nav-item dropdown">
+  <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
+  <div class="dropdown-menu" aria-labelledby="dropdown-articles">
+    <a class="dropdown-item" href="../articles/rtassel_installation.html">Installing rTASSEL</a>
+    <a class="dropdown-item" href="../articles/rtassel_walkthrough.html">Getting Started with rTASSEL</a>
+    <a class="dropdown-item" href="../articles/genotype_filtration.html">Filtering Genotype Tables</a>
+    <a class="dropdown-item" href="../articles/rtassel_benchmarks.html">rTASSEL Benchmarks</a>
+  </div>
 </li>
-<li>
-  <a href="../news/index.html">Changelog</a>
+<li class="nav-item">
+  <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
       </ul>
-<ul class="nav navbar-nav navbar-right"></ul>
+<form class="form-inline my-2 my-lg-0" role="search">
+        <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off">
+</form>
+
+      <ul class="navbar-nav">
+<li class="nav-item">
+  <a class="external-link nav-link" href="https://github.com/maize-genetics/rTASSEL/" aria-label="github">
+    <span class="fab fa fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
+      </ul>
 </div>
-<!--/.nav-collapse -->
+
+    
   </div>
-<!--/.container -->
-</div>
-<!--/.navbar -->
+</nav><div class="container template-article">
 
-      
-
-      </header><div class="row">
-  <div class="col-md-9 contents">
-    <div class="page-header toc-ignore">
-      <h1 data-toc-skip>Getting Started with rTASSEL</h1>
+<div class="row">
+  <main id="main" class="col-md-9"><div class="page-header">
+      <img src="../logo.png" class="logo" alt=""><h1>Getting Started with rTASSEL</h1>
                         <h4 data-toc-skip class="author">Brandon Monier</h4>
             
-            <h4 data-toc-skip class="date">2022-08-10</h4>
+            <h4 data-toc-skip class="date">2022-08-18</h4>
       
-      
-      <div class="hidden name"><code>rtassel_walkthrough.Rmd</code></div>
-
+      <small class="dont-index">Source: <a href="https://github.com/maize-genetics/rTASSEL/blob/HEAD/vignettes/rtassel_walkthrough.Rmd" class="external-link"><code>vignettes/rtassel_walkthrough.Rmd</code></a></small>
+      <div class="d-none name"><code>rtassel_walkthrough.Rmd</code></div>
     </div>
 
     
@@ -102,7 +102,9 @@
 <li><p>An ability to handle a wide range of indels (insertion &amp; deletions). Most software ignore this type of polymorphism; however, in some species (like maize), this is the most common type of polymorphism.</p></li>
 </ol>
 <p>More information can be found in the following paper:</p>
+<blockquote>
 <p>Bradbury PJ, Zhang Z, Kroon DE, Casstevens TM, Ramdoss Y, Buckler ES. (2007) <em>TASSEL: Software for association mapping of complex traits in diverse samples.</em> Bioinformatics 23:2633-2635.</p>
+</blockquote>
 <p>Detailed documentation and source code can be found on our website:</p>
 <p><a href="https://www.maizegenetics.net/tassel" class="external-link uri">https://www.maizegenetics.net/tassel</a></p>
 </div>
@@ -116,84 +118,35 @@
 </h3>
 <p>Due to the <em>experimental</em> nature of this package’s lifecycle, end functionalities are prone to change after end-user input is obtained in the near future.</p>
 </div>
+<div class="section level3">
+<h3 id="citation">Citation<a class="anchor" aria-label="anchor" href="#citation"></a>
+</h3>
+<p>To cite <code>rTASSEL</code>, please use the following citation:</p>
+<blockquote>
+<p>Monier et al., (2022). rTASSEL: An R interface to TASSEL for analyzing genomic diversity. Journal of Open Source Software, 7(76), 4530, <a href="https://doi.org/10.21105/joss.04530" class="external-link uri">https://doi.org/10.21105/joss.04530</a></p>
+</blockquote>
+</div>
 </div>
 <div class="section level2">
-<h2 id="installation-and-preliminary-steps">Installation and Preliminary Steps<a class="anchor" aria-label="anchor" href="#installation-and-preliminary-steps"></a>
+<h2 id="preliminary-steps">Preliminary steps<a class="anchor" aria-label="anchor" href="#preliminary-steps"></a>
 </h2>
 <div class="section level3">
-<h3 id="prerequisites---installing-rjava">Prerequisites - installing rJava<a class="anchor" aria-label="anchor" href="#prerequisites---installing-rjava"></a>
+<h3 id="setting-memory">Setting Memory<a class="anchor" aria-label="anchor" href="#setting-memory"></a>
 </h3>
-<p>Since TASSEL is written in Java, Java JDK will need to be installed on your machine. Additionally, for R to communicate with Java, the R package <code>rJava</code> will need to be installed. Detailed information can be found using the following links, depending on your OS:</p>
-<ul>
-<li><a href="https://datawookie.netlify.com/blog/2018/02/installing-rjava-on-ubuntu/" class="external-link">Linux</a></li>
-<li><a href="https://zhiyzuo.github.io/installation-rJava/" class="external-link">macOS</a></li>
-<li><a href="https://cimentadaj.github.io/blog/2018-05-25-installing-rjava-on-windows-10/installing-rjava-on-windows-10/" class="external-link">Windows</a></li>
-</ul>
-</div>
-<div class="section level3">
-<h3 id="problems-with-rjava-if-you-have-upgraded-java">Problems with rJava if you have upgraded Java<a class="anchor" aria-label="anchor" href="#problems-with-rjava-if-you-have-upgraded-java"></a>
-</h3>
-<p>On a MAC: if you previously had <code>rJava</code> working through RStudio, then you upgraded your Java and it now longer works, try the following:</p>
-<p>At the command line type:</p>
-<pre><code>R CMD javareconf</code></pre>
-<p>Then check for a left over symbolic link via:</p>
-<pre><code><span class="va">ls</span> <span class="op">-</span><span class="va">ltr</span> <span class="op">/</span><span class="va">usr</span><span class="op">/</span><span class="va">local</span><span class="op">/</span><span class="va">lib</span><span class="op">/</span><span class="va">libjvm.dylib</span></code></pre>
-<p>If the link exists, remove it, then create it fresh via these commands:</p>
-<pre><code>rm /usr/local/lib/libjvm.dylib
-sudo ln -s $(/usr/libexec/java_home)/lib/server/libjvm.dylib /usr/local/lib</code></pre>
-<p>You should now be able to enter RStudio and setup rJava.</p>
-</div>
-<div class="section level3">
-<h3 id="install-from-bitbucket">Install from BitBucket<a class="anchor" aria-label="anchor" href="#install-from-bitbucket"></a>
-</h3>
-<p>After you have <code>rJava</code> up and running on your machine, install <code>rTASSEL</code> by installing the source code from our BitBucket repository:</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st"><a href="https://devtools.r-lib.org/" class="external-link">"devtools"</a></span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"devtools"</span><span class="op">)</span>
-<span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_bitbucket</span><span class="op">(</span>
-    repo <span class="op">=</span> <span class="st">"bucklerlab/rtassel"</span>,
-    ref <span class="op">=</span> <span class="st">"master"</span>,
-    build_vignettes <span class="op">=</span> <span class="cn">TRUE</span>
-<span class="op">)</span></code></pre></div>
-<p>After source code has been compiled, the package can be loaded using:</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://bitbucket.org/bucklerlab/rtassel/src/master/" class="external-link">rTASSEL</a></span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">## Welcome to rTASSEL (version 0.9.26)</span>
-<span class="co">##  • Consider starting a TASSEL log file (see ?startLogger())</span></code></pre>
-<p>Or, if you want to use a function without violating your environment you can use <code>rTASSEL::&lt;function&gt;</code>, where <code>&lt;function&gt;</code> is an <code>rTASSEL</code> function.</p>
-</div>
-<div class="section level3">
-<h3 id="problems-installing-if-you-have-both-32--and-64-bit-architecture-installed-for-r">Problems installing if you have both 32- and 64-bit architecture installed for R<a class="anchor" aria-label="anchor" href="#problems-installing-if-you-have-both-32--and-64-bit-architecture-installed-for-r"></a>
-</h3>
-<p><strong>NOTE:</strong> If you are using a machine that has both architectures installed for R, you might run into problems pulling code using <code>devtools</code>. If this is the case, one solution would be to add the parameter <code>--no-multiarch</code> option in <code>INSTALL_opts</code>. This will force building the package for your currently running R version:</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_bitbucket</span><span class="op">(</span>
-    repo <span class="op">=</span> <span class="st">"bucklerlab/rTASSEL"</span>,
-    ref <span class="op">=</span> <span class="st">"master"</span>,
-    build_vignettes <span class="op">=</span> <span class="cn">FALSE</span>,
-    INSTALL_opts <span class="op">=</span> <span class="st">"--no-multiarch"</span>
-<span class="op">)</span></code></pre></div>
-</div>
-<div class="section level3">
-<h3 id="preliminary-steps">Preliminary steps<a class="anchor" aria-label="anchor" href="#preliminary-steps"></a>
-</h3>
-<div class="section level4">
-<h4 id="setting-memory">Setting Memory<a class="anchor" aria-label="anchor" href="#setting-memory"></a>
-</h4>
 <p>Since genome-wide association analyses can use up a lot of computational resources, memory allocation to <code>rTASSEL</code> can be modified. To change the amount of memory, use the base <code><a href="https://rdrr.io/r/base/options.html" class="external-link">options()</a></code> function and modify the following parameter:</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>java.parameters <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"-Xmx&lt;memory&gt;"</span>, <span class="st">"-Xms&lt;memory&gt;"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>java.parameters <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"-Xmx&lt;memory&gt;"</span>, <span class="st">"-Xms&lt;memory&gt;"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>Replace <code>&lt;memory&gt;</code> with a specified unit of memory. For example, if I want to allocate a maximum of 6 GB of memory for my operations, I would use the input <code>"-Xmx6g"</code>, where <code>g</code> stands for gigabyte (GB). More information about memory allocation can be found <a href="https://stackoverflow.com/questions/14763079/what-are-the-xms-and-xmx-parameters-when-starting-jvm" class="external-link">here</a>.</p>
 <p><strong>NOTE:</strong> Setting Java memory options for <code>rTASSEL</code> and any <code>rJava</code>-related packages <em>needs</em> to be set <em>before</em> loading the <code>rTASSEL</code> package!</p>
 </div>
-<div class="section level4">
-<h4 id="the-importance-of-logging-your-progress">The importance of logging your progress<a class="anchor" aria-label="anchor" href="#the-importance-of-logging-your-progress"></a>
-</h4>
+<div class="section level3">
+<h3 id="the-importance-of-logging-your-progress">The importance of logging your progress<a class="anchor" aria-label="anchor" href="#the-importance-of-logging-your-progress"></a>
+</h3>
 <p>Before we begin analyzing data, optional parameters can be set up to make <code>rTASSEL</code> more efficient. To prevent your R console from being overloaded with TASSEL logging information, <strong>it is highly recommended that you start a logging file</strong>. This file will house all of TASSEL’s logging output which is beneficial for debugging and tracking the progress of your analytical workflow. To start a logging file, use the following command:</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">rTASSEL</span><span class="fu">::</span><span class="fu"><a href="../reference/startLogger.html">startLogger</a></span><span class="op">(</span>fullPath <span class="op">=</span> <span class="cn">NULL</span>, fileName <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">rTASSEL</span><span class="fu">::</span><span class="fu"><a href="../reference/startLogger.html">startLogger</a></span><span class="op">(</span>fullPath <span class="op">=</span> <span class="cn">NULL</span>, fileName <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
 <p>If the <code><a href="../reference/startLogger.html">rTASSEL::startLogger()</a></code> parameters are set to <code>NULL</code>, the logging file will be created in your current working directory. If you are unsure of what your working directory is in R, use the base <code><a href="https://rdrr.io/r/base/getwd.html" class="external-link">getwd()</a></code> command.</p>
 <p>Additionally, since this is a general walkthrough, certain intricaces of each function may glossed over. If you would like to study a function in full, refer to the R documentation by using <code>?&lt;function&gt;</code> in the console, where <code>&lt;function&gt;</code> is an <code>rTASSEL</code>-based function.</p>
-</div>
 </div>
 </div>
 <div class="section level2">
@@ -223,65 +176,65 @@ sudo ln -s $(/usr/libexec/java_home)/lib/server/libjvm.dylib /usr/local/lib</cod
 <li>Plink</li>
 </ul>
 <p>To load this genotype data, simply store your file location as a string object in R. For this example, we will load two toy data sets - one being a VCF file and the other being a hapmap file. These data sets can be accessed via the <code>rTASSEL</code> package itself:</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># Load hapmap data</span>
-<span class="va">genoPathHMP</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span>
-    <span class="st">"extdata"</span>,
-    <span class="st">"mdp_genotype.hmp.txt"</span>,
-    package <span class="op">=</span> <span class="st">"rTASSEL"</span>
-<span class="op">)</span>
-<span class="va">genoPathHMP</span></code></pre></div>
-<pre><code><span class="co">## [1] "/home/travis/R/Library/rTASSEL/extdata/mdp_genotype.hmp.txt"</span></code></pre>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># Load VCF data</span>
-<span class="va">genoPathVCF</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span>
-    <span class="st">"extdata"</span>,
-    <span class="st">"maize_chr9_10thin40000.recode.vcf"</span>,
-    package <span class="op">=</span> <span class="st">"rTASSEL"</span>
-<span class="op">)</span>
-<span class="va">genoPathVCF</span></code></pre></div>
-<pre><code><span class="co">## [1] "/home/travis/R/Library/rTASSEL/extdata/maize_chr9_10thin40000.recode.vcf"</span></code></pre>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Load hapmap data</span></span>
+<span><span class="va">genoPathHMP</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span></span>
+<span>    <span class="st">"extdata"</span>,</span>
+<span>    <span class="st">"mdp_genotype.hmp.txt"</span>,</span>
+<span>    package <span class="op">=</span> <span class="st">"rTASSEL"</span></span>
+<span><span class="op">)</span></span>
+<span><span class="va">genoPathHMP</span></span></code></pre></div>
+<pre><code><span><span class="co">## [1] "/home/travis/R/Library/rTASSEL/extdata/mdp_genotype.hmp.txt"</span></span></code></pre>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Load VCF data</span></span>
+<span><span class="va">genoPathVCF</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span></span>
+<span>    <span class="st">"extdata"</span>,</span>
+<span>    <span class="st">"maize_chr9_10thin40000.recode.vcf"</span>,</span>
+<span>    package <span class="op">=</span> <span class="st">"rTASSEL"</span></span>
+<span><span class="op">)</span></span>
+<span><span class="va">genoPathVCF</span></span></code></pre></div>
+<pre><code><span><span class="co">## [1] "/home/travis/R/Library/rTASSEL/extdata/maize_chr9_10thin40000.recode.vcf"</span></span></code></pre>
 <p>Now that we have the file paths to this data, we can pass this to TASSEL and create a formal <code>TasselGenotypePhenotype</code> class object in R using the following:</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># Load in hapmap file</span>
-<span class="va">tasGenoHMP</span> <span class="op">&lt;-</span> <span class="fu">rTASSEL</span><span class="fu">::</span><span class="fu"><a href="../reference/readGenotypeTableFromPath.html">readGenotypeTableFromPath</a></span><span class="op">(</span>
-    path <span class="op">=</span> <span class="va">genoPathHMP</span>
-<span class="op">)</span>
-
-<span class="co"># Load in VCF file</span>
-<span class="va">tasGenoVCF</span> <span class="op">&lt;-</span> <span class="fu">rTASSEL</span><span class="fu">::</span><span class="fu"><a href="../reference/readGenotypeTableFromPath.html">readGenotypeTableFromPath</a></span><span class="op">(</span>
-    path <span class="op">=</span> <span class="va">genoPathVCF</span>
-<span class="op">)</span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Load in hapmap file</span></span>
+<span><span class="va">tasGenoHMP</span> <span class="op">&lt;-</span> <span class="fu">rTASSEL</span><span class="fu">::</span><span class="fu"><a href="../reference/readGenotypeTableFromPath.html">readGenotypeTableFromPath</a></span><span class="op">(</span></span>
+<span>    path <span class="op">=</span> <span class="va">genoPathHMP</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Load in VCF file</span></span>
+<span><span class="va">tasGenoVCF</span> <span class="op">&lt;-</span> <span class="fu">rTASSEL</span><span class="fu">::</span><span class="fu"><a href="../reference/readGenotypeTableFromPath.html">readGenotypeTableFromPath</a></span><span class="op">(</span></span>
+<span>    path <span class="op">=</span> <span class="va">genoPathVCF</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 <p>When we call these objects, a summary of the data will be posted to the R console:</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">tasGenoHMP</span></code></pre></div>
-<pre><code><span class="co">## A TasselGenotypePhenotype Dataset</span>
-<span class="co">##   Class.............. TasselGenotypePhenotype </span>
-<span class="co">##   Taxa............... 281 </span>
-<span class="co">##   Positions.......... 3093 </span>
-<span class="co">##   Taxa x Positions... 869133 </span>
-<span class="co">## ---</span>
-<span class="co">##   Genotype Table..... [x]</span>
-<span class="co">##   Phenotype Table.... [ ]</span></code></pre>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">tasGenoHMP</span></span></code></pre></div>
+<pre><code><span><span class="co">## A TasselGenotypePhenotype Dataset</span></span>
+<span><span class="co">##   Class.............. TasselGenotypePhenotype </span></span>
+<span><span class="co">##   Taxa............... 281 </span></span>
+<span><span class="co">##   Positions.......... 3093 </span></span>
+<span><span class="co">##   Taxa x Positions... 869133 </span></span>
+<span><span class="co">## ---</span></span>
+<span><span class="co">##   Genotype Table..... [x]</span></span>
+<span><span class="co">##   Phenotype Table.... [ ]</span></span></code></pre>
 <p>This summary details the number of Taxa (<code>Taxa</code>) and marker positions (<code>Positions</code>) within the data set. Additionally, since we can load both genotype and phenotype information into this object, a helpful check will be displayed to show what is populating the object (<code>[x] or [ ]</code>).</p>
 </div>
 <div class="section level4">
 <h4 id="additional-information-about-tasselphenotypegenotype-data-sets">Additional information about TasselPhenotypeGenotype data sets<a class="anchor" aria-label="anchor" href="#additional-information-about-tasselphenotypegenotype-data-sets"></a>
 </h4>
 <p>In general, this S4 class data object houses “slot” information relating to TASSEL/Java pointers of the respective data.</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span><span class="op">(</span><span class="va">tasGenoHMP</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">## [1] "TasselGenotypePhenotype"</span>
-<span class="co">## attr(,"package")</span>
-<span class="co">## [1] "rTASSEL"</span></code></pre>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">slotNames</span><span class="op">(</span><span class="va">tasGenoHMP</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">## [1] "name"            "jTasselObj"      "jTaxaList"       "jPositionList"  </span>
-<span class="co">## [5] "jGenotypeTable"  "jPhenotypeTable"</span></code></pre>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span><span class="op">(</span><span class="va">tasGenoHMP</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## [1] "TasselGenotypePhenotype"</span></span>
+<span><span class="co">## attr(,"package")</span></span>
+<span><span class="co">## [1] "rTASSEL"</span></span></code></pre>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">slotNames</span><span class="op">(</span><span class="va">tasGenoHMP</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## [1] "name"            "jTasselObj"      "jTaxaList"       "jPositionList"  </span></span>
+<span><span class="co">## [5] "jGenotypeTable"  "jPhenotypeTable"</span></span></code></pre>
 <p>Technically, this object does not contain the full information of the data represented in R space, but merely contains addresses to the memory store of the reference TASSEL object ID. For example, if we wanted to extract the <code>GenotypeTable</code> with the S4 <code>@</code> operator, we would get something that looks like this:</p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">tasGenoHMP</span><span class="op">@</span><span class="va">jGenotypeTable</span></code></pre></div>
-<pre><code><span class="co">## [1] "Java-Object{net.maizegenetics.dna.snp.CoreGenotypeTable@31c88ec8}"</span></code></pre>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">tasGenoHMP</span><span class="op">@</span><span class="va">jGenotypeTable</span></span></code></pre></div>
+<pre><code><span><span class="co">## [1] "Java-Object{net.maizegenetics.dna.snp.CoreGenotypeTable@c33b74f}"</span></span></code></pre>
 <p>This entity is a <code>rJava</code> internal identifier. It isn’t until we call downstream <code>rTASSEL</code> functions where we will bring the TASSEL data into the R environment.</p>
 </div>
 </div>
@@ -293,69 +246,69 @@ sudo ln -s $(/usr/libexec/java_home)/lib/server/libjvm.dylib /usr/local/lib</cod
 </h4>
 <p>Similar to reading in genotype data, phenotype data can also be read in via paths. If you already have preconstructed phenotype data in a file, this option will most likely work best for you. One caveat to this is how the data file is constructed in terms of columns and trait data for TASSEL analyses. More information about how these files can be found at this <a href="https://bitbucket.org/tasseladmin/tassel-5-source/wiki/UserManual/Load/Load" class="external-link">link</a> under the <em>Numerical Data</em> section.</p>
 <p>Loading this type of data is very similar to how genotype data is loaded. here, we will use the <code><a href="../reference/readPhenotypeFromPath.html">rTASSEL::readPhenotypeFromPath()</a></code> function:</p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># Read from phenotype path</span>
-<span class="va">phenoPath</span>  <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"mdp_traits.txt"</span>, package <span class="op">=</span> <span class="st">"rTASSEL"</span><span class="op">)</span>
-<span class="va">phenoPath</span></code></pre></div>
-<pre><code><span class="co">## [1] "/home/travis/R/Library/rTASSEL/extdata/mdp_traits.txt"</span></code></pre>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># Load into rTASSEL `TasselGenotypePhenotype` object</span>
-<span class="va">tasPheno</span> <span class="op">&lt;-</span> <span class="fu">rTASSEL</span><span class="fu">::</span><span class="fu"><a href="../reference/readPhenotypeFromPath.html">readPhenotypeFromPath</a></span><span class="op">(</span>
-    path <span class="op">=</span> <span class="va">phenoPath</span>
-<span class="op">)</span>
-
-<span class="co"># Inspect object</span>
-<span class="va">tasPheno</span></code></pre></div>
-<pre><code><span class="co">## A TasselGenotypePhenotype Dataset</span>
-<span class="co">##   Class.............. TasselGenotypePhenotype </span>
-<span class="co">##   Taxa............... 301 </span>
-<span class="co">##   Positions.......... NA </span>
-<span class="co">##   Taxa x Positions... NA </span>
-<span class="co">## ---</span>
-<span class="co">##   Genotype Table..... [ ]</span>
-<span class="co">##   Phenotype Table.... [x]</span>
-<span class="co">## ---</span>
-<span class="co">##   Traits: Taxa EarHT dpoll EarDia</span></code></pre>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Read from phenotype path</span></span>
+<span><span class="va">phenoPath</span>  <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"mdp_traits.txt"</span>, package <span class="op">=</span> <span class="st">"rTASSEL"</span><span class="op">)</span></span>
+<span><span class="va">phenoPath</span></span></code></pre></div>
+<pre><code><span><span class="co">## [1] "/home/travis/R/Library/rTASSEL/extdata/mdp_traits.txt"</span></span></code></pre>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Load into rTASSEL `TasselGenotypePhenotype` object</span></span>
+<span><span class="va">tasPheno</span> <span class="op">&lt;-</span> <span class="fu">rTASSEL</span><span class="fu">::</span><span class="fu"><a href="../reference/readPhenotypeFromPath.html">readPhenotypeFromPath</a></span><span class="op">(</span></span>
+<span>    path <span class="op">=</span> <span class="va">phenoPath</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Inspect object</span></span>
+<span><span class="va">tasPheno</span></span></code></pre></div>
+<pre><code><span><span class="co">## A TasselGenotypePhenotype Dataset</span></span>
+<span><span class="co">##   Class.............. TasselGenotypePhenotype </span></span>
+<span><span class="co">##   Taxa............... 301 </span></span>
+<span><span class="co">##   Positions.......... NA </span></span>
+<span><span class="co">##   Taxa x Positions... NA </span></span>
+<span><span class="co">## ---</span></span>
+<span><span class="co">##   Genotype Table..... [ ]</span></span>
+<span><span class="co">##   Phenotype Table.... [x]</span></span>
+<span><span class="co">## ---</span></span>
+<span><span class="co">##   Traits: Taxa EarHT dpoll EarDia</span></span></code></pre>
 <p>The object output is very similar to the genotype table output with some minor additions to which traits are displayed in the file.</p>
 </div>
 <div class="section level4">
 <h4 id="from-an-r-data-frame">From an R data frame<a class="anchor" aria-label="anchor" href="#from-an-r-data-frame"></a>
 </h4>
 <p>In some cases you might want to first modify your phenotype data set in R and then load it into the TASSEL environment. If you wish to choose this route, you will need to use the <code><a href="../reference/readPhenotypeFromDataFrame.html">rTASSEL::readPhenotypeFromDataFrame()</a></code> function along with a couple of parameters. First, we will construct an R data frame and load it with this function:</p>
-<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># Create phenotype data frame</span>
-<span class="va">phenoDF</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.table</a></span><span class="op">(</span><span class="va">phenoPath</span>, header <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">phenoDF</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="st">"Taxon"</span>
-
-<span class="co"># Inspect first few rows</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">phenoDF</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">##   Taxon EarHT  dpoll     EarDia</span>
-<span class="co">## 1   811 59.50 -999.0 -999.00000</span>
-<span class="co">## 2 33-16 64.75   64.5 -999.00000</span>
-<span class="co">## 3 38-11 92.25   68.5   37.89700</span>
-<span class="co">## 4  4226 65.50   59.5   32.21933</span>
-<span class="co">## 5  4722 81.13   71.5   32.42100</span>
-<span class="co">## 6  A188 27.50   62.0   31.41900</span></code></pre>
-<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># Load into rTASSEL `TasselGenotypePhenotype` object</span>
-<span class="va">tasPhenoDF</span> <span class="op">&lt;-</span> <span class="fu">rTASSEL</span><span class="fu">::</span><span class="fu"><a href="../reference/readPhenotypeFromDataFrame.html">readPhenotypeFromDataFrame</a></span><span class="op">(</span>
-    phenotypeDF <span class="op">=</span> <span class="va">phenoDF</span>,
-    taxaID <span class="op">=</span> <span class="st">"Taxon"</span>,
-    attributeTypes <span class="op">=</span> <span class="cn">NULL</span>
-<span class="op">)</span>
-
-<span class="co"># Inspect new object</span>
-<span class="va">tasPhenoDF</span></code></pre></div>
-<pre><code><span class="co">## A TasselGenotypePhenotype Dataset</span>
-<span class="co">##   Class.............. TasselGenotypePhenotype </span>
-<span class="co">##   Taxa............... 301 </span>
-<span class="co">##   Positions.......... NA </span>
-<span class="co">##   Taxa x Positions... NA </span>
-<span class="co">## ---</span>
-<span class="co">##   Genotype Table..... [ ]</span>
-<span class="co">##   Phenotype Table.... [x]</span>
-<span class="co">## ---</span>
-<span class="co">##   Traits: Taxa EarHT dpoll EarDia</span></code></pre>
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Create phenotype data frame</span></span>
+<span><span class="va">phenoDF</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.table</a></span><span class="op">(</span><span class="va">phenoPath</span>, header <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">phenoDF</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="st">"Taxon"</span></span>
+<span></span>
+<span><span class="co"># Inspect first few rows</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">phenoDF</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">##   Taxon EarHT  dpoll     EarDia</span></span>
+<span><span class="co">## 1   811 59.50 -999.0 -999.00000</span></span>
+<span><span class="co">## 2 33-16 64.75   64.5 -999.00000</span></span>
+<span><span class="co">## 3 38-11 92.25   68.5   37.89700</span></span>
+<span><span class="co">## 4  4226 65.50   59.5   32.21933</span></span>
+<span><span class="co">## 5  4722 81.13   71.5   32.42100</span></span>
+<span><span class="co">## 6  A188 27.50   62.0   31.41900</span></span></code></pre>
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Load into rTASSEL `TasselGenotypePhenotype` object</span></span>
+<span><span class="va">tasPhenoDF</span> <span class="op">&lt;-</span> <span class="fu">rTASSEL</span><span class="fu">::</span><span class="fu"><a href="../reference/readPhenotypeFromDataFrame.html">readPhenotypeFromDataFrame</a></span><span class="op">(</span></span>
+<span>    phenotypeDF <span class="op">=</span> <span class="va">phenoDF</span>,</span>
+<span>    taxaID <span class="op">=</span> <span class="st">"Taxon"</span>,</span>
+<span>    attributeTypes <span class="op">=</span> <span class="cn">NULL</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Inspect new object</span></span>
+<span><span class="va">tasPhenoDF</span></span></code></pre></div>
+<pre><code><span><span class="co">## A TasselGenotypePhenotype Dataset</span></span>
+<span><span class="co">##   Class.............. TasselGenotypePhenotype </span></span>
+<span><span class="co">##   Taxa............... 301 </span></span>
+<span><span class="co">##   Positions.......... NA </span></span>
+<span><span class="co">##   Taxa x Positions... NA </span></span>
+<span><span class="co">## ---</span></span>
+<span><span class="co">##   Genotype Table..... [ ]</span></span>
+<span><span class="co">##   Phenotype Table.... [x]</span></span>
+<span><span class="co">## ---</span></span>
+<span><span class="co">##   Traits: Taxa EarHT dpoll EarDia</span></span></code></pre>
 <p>The <code>phenotypeDF</code> parameter is for the R data frame object. The <code>taxaID</code> parameter is needed to determine which column of your data frame is your TASSEL taxa data. The final parameter (<code>attributeTypes</code>) is optional. If this parameter is set to <code>NULL</code>, all remaining data frame columns will be classified as TASSEL <code>data</code> types. If this is not the case for your data (e.g. if you have covariate or factor data in your experiment), <strong>you will need to specify which columns are what TASSEL data type</strong> (i.e. <code>data</code>, <code>covariate</code>, or <code>factor</code>). This will have to be passed as an R vector of string elements (e.g. <code>c("data", "factor", "covariate")</code>). <em>Currently</em>, this data type needs to be entered in the same order as they are found in the data frame.</p>
 </div>
 </div>
@@ -374,65 +327,65 @@ sudo ln -s $(/usr/libexec/java_home)/lib/server/libjvm.dylib /usr/local/lib</cod
 <li>an R data frame</li>
 </ul>
 <p>For example, if we wanted to read the prior <code>TasselGenotypePhenotype</code> genotype and phenotype objects from earlier:</p>
-<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">tasGenoPheno</span> <span class="op">&lt;-</span> <span class="fu">rTASSEL</span><span class="fu">::</span><span class="fu"><a href="../reference/readGenotypePhenotype.html">readGenotypePhenotype</a></span><span class="op">(</span>
-    genoPathOrObj <span class="op">=</span> <span class="va">tasGenoHMP</span>,
-    phenoPathDFOrObj <span class="op">=</span> <span class="va">tasPheno</span>
-<span class="op">)</span>
-<span class="va">tasGenoPheno</span></code></pre></div>
-<pre><code><span class="co">## A TasselGenotypePhenotype Dataset</span>
-<span class="co">##   Class.............. TasselGenotypePhenotype </span>
-<span class="co">##   Taxa............... 279 </span>
-<span class="co">##   Positions.......... 3093 </span>
-<span class="co">##   Taxa x Positions... 862947 </span>
-<span class="co">## ---</span>
-<span class="co">##   Genotype Table..... [x]</span>
-<span class="co">##   Phenotype Table.... [x]</span>
-<span class="co">## ---</span>
-<span class="co">##   Traits: Taxa EarHT dpoll EarDia</span></code></pre>
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">tasGenoPheno</span> <span class="op">&lt;-</span> <span class="fu">rTASSEL</span><span class="fu">::</span><span class="fu"><a href="../reference/readGenotypePhenotype.html">readGenotypePhenotype</a></span><span class="op">(</span></span>
+<span>    genoPathOrObj <span class="op">=</span> <span class="va">tasGenoHMP</span>,</span>
+<span>    phenoPathDFOrObj <span class="op">=</span> <span class="va">tasPheno</span></span>
+<span><span class="op">)</span></span>
+<span><span class="va">tasGenoPheno</span></span></code></pre></div>
+<pre><code><span><span class="co">## A TasselGenotypePhenotype Dataset</span></span>
+<span><span class="co">##   Class.............. TasselGenotypePhenotype </span></span>
+<span><span class="co">##   Taxa............... 279 </span></span>
+<span><span class="co">##   Positions.......... 3093 </span></span>
+<span><span class="co">##   Taxa x Positions... 862947 </span></span>
+<span><span class="co">## ---</span></span>
+<span><span class="co">##   Genotype Table..... [x]</span></span>
+<span><span class="co">##   Phenotype Table.... [x]</span></span>
+<span><span class="co">## ---</span></span>
+<span><span class="co">##   Traits: Taxa EarHT dpoll EarDia</span></span></code></pre>
 <p>We can also use a combination of the above parameter options (e.g. load a genotype path and a phenotype data frame, etc.). One caveat though, <strong>if you load in a phenotype data frame object with this function, the prior parameters from the</strong> <code><a href="../reference/readPhenotypeFromDataFrame.html">rTASSEL::readPhenotypeFromDataFrame</a></code> <strong>will be needed</strong> (i.e. the <code>taxaID</code> and <code>attributeTypes</code> parameters):</p>
-<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">tasGenoPhenoDF</span> <span class="op">&lt;-</span> <span class="fu">rTASSEL</span><span class="fu">::</span><span class="fu"><a href="../reference/readGenotypePhenotype.html">readGenotypePhenotype</a></span><span class="op">(</span>
-    genoPathOrObj <span class="op">=</span> <span class="va">genoPathHMP</span>,
-    phenoPathDFOrObj <span class="op">=</span> <span class="va">phenoDF</span>,
-    taxaID <span class="op">=</span> <span class="st">"Taxon"</span>,
-    attributeTypes <span class="op">=</span> <span class="cn">NULL</span>
-<span class="op">)</span>
-<span class="va">tasGenoPhenoDF</span></code></pre></div>
-<pre><code><span class="co">## A TasselGenotypePhenotype Dataset</span>
-<span class="co">##   Class.............. TasselGenotypePhenotype </span>
-<span class="co">##   Taxa............... 279 </span>
-<span class="co">##   Positions.......... 3093 </span>
-<span class="co">##   Taxa x Positions... 862947 </span>
-<span class="co">## ---</span>
-<span class="co">##   Genotype Table..... [x]</span>
-<span class="co">##   Phenotype Table.... [x]</span>
-<span class="co">## ---</span>
-<span class="co">##   Traits: Taxa EarHT dpoll EarDia</span></code></pre>
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">tasGenoPhenoDF</span> <span class="op">&lt;-</span> <span class="fu">rTASSEL</span><span class="fu">::</span><span class="fu"><a href="../reference/readGenotypePhenotype.html">readGenotypePhenotype</a></span><span class="op">(</span></span>
+<span>    genoPathOrObj <span class="op">=</span> <span class="va">genoPathHMP</span>,</span>
+<span>    phenoPathDFOrObj <span class="op">=</span> <span class="va">phenoDF</span>,</span>
+<span>    taxaID <span class="op">=</span> <span class="st">"Taxon"</span>,</span>
+<span>    attributeTypes <span class="op">=</span> <span class="cn">NULL</span></span>
+<span><span class="op">)</span></span>
+<span><span class="va">tasGenoPhenoDF</span></span></code></pre></div>
+<pre><code><span><span class="co">## A TasselGenotypePhenotype Dataset</span></span>
+<span><span class="co">##   Class.............. TasselGenotypePhenotype </span></span>
+<span><span class="co">##   Taxa............... 279 </span></span>
+<span><span class="co">##   Positions.......... 3093 </span></span>
+<span><span class="co">##   Taxa x Positions... 862947 </span></span>
+<span><span class="co">## ---</span></span>
+<span><span class="co">##   Genotype Table..... [x]</span></span>
+<span><span class="co">##   Phenotype Table.... [x]</span></span>
+<span><span class="co">## ---</span></span>
+<span><span class="co">##   Traits: Taxa EarHT dpoll EarDia</span></span></code></pre>
 </div>
 <div class="section level3">
 <h3 id="reading-kinship-data">Reading kinship data<a class="anchor" aria-label="anchor" href="#reading-kinship-data"></a>
 </h3>
 <p>rTASSEL also provides users the ability to read in delimited “flat-file” kinship objects as a <code>TasselDistanceMatrix</code> object using the function, <code><a href="../reference/readTasselDistanceMatrix.html">readTasselDistanceMatrix()</a></code>:</p>
-<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co">## Get toy kinship data from package ----</span>
-<span class="va">kinshipPath</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span>
-  <span class="st">"extdata"</span>, 
-  <span class="st">"mdp_kinship.txt"</span>, 
-  package <span class="op">=</span> <span class="st">"rTASSEL"</span>
-<span class="op">)</span>
-
-<span class="co">## Read ----</span>
-<span class="fu"><a href="../reference/readTasselDistanceMatrix.html">readTasselDistanceMatrix</a></span><span class="op">(</span><span class="va">kinshipPath</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">## A TasselDistanceMatrix Object of 277 x 277 elements:</span>
-<span class="co">## </span>
-<span class="co">##                   33-16      38-11       4226       4722    ...    YU796NS</span>
-<span class="co">##        33-16     2.0000     0.1816     0.0187     0.0000    ...     0.1162</span>
-<span class="co">##        38-11     0.1816     2.0000     0.0000     0.1120    ...     0.1421</span>
-<span class="co">##         4226     0.0187     0.0000     2.0000     0.0000    ...     0.1904</span>
-<span class="co">##         4722     0.0000     0.1120     0.0000     2.0000    ...     0.0000</span>
-<span class="co">##          ...        ...        ...        ...        ...    ...        ...</span>
-<span class="co">##      YU796NS     0.1162     0.1421     0.1904     0.0000    ...     2.0000</span></code></pre>
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">## Get toy kinship data from package ----</span></span>
+<span><span class="va">kinshipPath</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span></span>
+<span>  <span class="st">"extdata"</span>, </span>
+<span>  <span class="st">"mdp_kinship.txt"</span>, </span>
+<span>  package <span class="op">=</span> <span class="st">"rTASSEL"</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">## Read ----</span></span>
+<span><span class="fu">rTASSEL</span><span class="fu">::</span><span class="fu"><a href="../reference/readTasselDistanceMatrix.html">readTasselDistanceMatrix</a></span><span class="op">(</span><span class="va">kinshipPath</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## A TasselDistanceMatrix Object of 277 x 277 elements:</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">##                   33-16      38-11       4226       4722    ...    YU796NS</span></span>
+<span><span class="co">##        33-16     2.0000     0.1816     0.0187     0.0000    ...     0.1162</span></span>
+<span><span class="co">##        38-11     0.1816     2.0000     0.0000     0.1120    ...     0.1421</span></span>
+<span><span class="co">##         4226     0.0187     0.0000     2.0000     0.0000    ...     0.1904</span></span>
+<span><span class="co">##         4722     0.0000     0.1120     0.0000     2.0000    ...     0.0000</span></span>
+<span><span class="co">##          ...        ...        ...        ...        ...    ...        ...</span></span>
+<span><span class="co">##      YU796NS     0.1162     0.1421     0.1904     0.0000    ...     2.0000</span></span></code></pre>
 </div>
 </div>
 <div class="section level2">
@@ -442,97 +395,97 @@ sudo ln -s $(/usr/libexec/java_home)/lib/server/libjvm.dylib /usr/local/lib</cod
 <h3 id="get-genotype-data">Get genotype data<a class="anchor" aria-label="anchor" href="#get-genotype-data"></a>
 </h3>
 <p>If you want to bring in genotype data into the R environment, you can use the <code><a href="../reference/getSumExpFromGenotypeTable.html">rTASSEL::getSumExpFromGenotypeTable()</a></code> function. All this function needs is a <code>TasselGenotypePhenotype</code> class object <em>containing a genotype table</em>:</p>
-<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">tasSumExp</span> <span class="op">&lt;-</span> <span class="fu">rTASSEL</span><span class="fu">::</span><span class="fu"><a href="../reference/getSumExpFromGenotypeTable.html">getSumExpFromGenotypeTable</a></span><span class="op">(</span>
-    tasObj <span class="op">=</span> <span class="va">tasGenoPheno</span>
-<span class="op">)</span>
-<span class="va">tasSumExp</span></code></pre></div>
-<pre><code><span class="co">## class: RangedSummarizedExperiment </span>
-<span class="co">## dim: 3093 279 </span>
-<span class="co">## metadata(0):</span>
-<span class="co">## assays(1): ''</span>
-<span class="co">## rownames: NULL</span>
-<span class="co">## rowData names(3): tasselIndex refAllele altAllele</span>
-<span class="co">## colnames: NULL</span>
-<span class="co">## colData names(2): Sample TasselIndex</span></code></pre>
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">tasSumExp</span> <span class="op">&lt;-</span> <span class="fu">rTASSEL</span><span class="fu">::</span><span class="fu"><a href="../reference/getSumExpFromGenotypeTable.html">getSumExpFromGenotypeTable</a></span><span class="op">(</span></span>
+<span>    tasObj <span class="op">=</span> <span class="va">tasGenoPheno</span></span>
+<span><span class="op">)</span></span>
+<span><span class="va">tasSumExp</span></span></code></pre></div>
+<pre><code><span><span class="co">## class: RangedSummarizedExperiment </span></span>
+<span><span class="co">## dim: 3093 279 </span></span>
+<span><span class="co">## metadata(0):</span></span>
+<span><span class="co">## assays(1): ''</span></span>
+<span><span class="co">## rownames: NULL</span></span>
+<span><span class="co">## rowData names(3): tasselIndex refAllele altAllele</span></span>
+<span><span class="co">## colnames: NULL</span></span>
+<span><span class="co">## colData names(2): Sample TasselIndex</span></span></code></pre>
 <p>As you can see above, the gentoype object is returned as a <code>SummarizedExperiment</code> class R object. More information about these objects can be found <a href="http://www.bioconductor.org/packages/release/bioc/vignettes/SummarizedExperiment/inst/doc/SummarizedExperiment.html" class="external-link">here</a>.</p>
 <p>From this object, we extract taxa information and their respective TASSEL integer locations:</p>
-<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">SummarizedExperiment</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">colData</a></span><span class="op">(</span><span class="va">tasSumExp</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">## DataFrame with 279 rows and 2 columns</span>
-<span class="co">##          Sample TasselIndex</span>
-<span class="co">##     &lt;character&gt;   &lt;integer&gt;</span>
-<span class="co">## 1         33-16           0</span>
-<span class="co">## 2         38-11           1</span>
-<span class="co">## 3          4226           2</span>
-<span class="co">## 4          4722           3</span>
-<span class="co">## 5          A188           4</span>
-<span class="co">## ...         ...         ...</span>
-<span class="co">## 275         W22         274</span>
-<span class="co">## 276        W64A         275</span>
-<span class="co">## 277          WD         276</span>
-<span class="co">## 278         WF9         277</span>
-<span class="co">## 279     YU796NS         278</span></code></pre>
+<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">SummarizedExperiment</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">colData</a></span><span class="op">(</span><span class="va">tasSumExp</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## DataFrame with 279 rows and 2 columns</span></span>
+<span><span class="co">##          Sample TasselIndex</span></span>
+<span><span class="co">##     &lt;character&gt;   &lt;integer&gt;</span></span>
+<span><span class="co">## 1         33-16           0</span></span>
+<span><span class="co">## 2         38-11           1</span></span>
+<span><span class="co">## 3          4226           2</span></span>
+<span><span class="co">## 4          4722           3</span></span>
+<span><span class="co">## 5          A188           4</span></span>
+<span><span class="co">## ...         ...         ...</span></span>
+<span><span class="co">## 275         W22         274</span></span>
+<span><span class="co">## 276        W64A         275</span></span>
+<span><span class="co">## 277          WD         276</span></span>
+<span><span class="co">## 278         WF9         277</span></span>
+<span><span class="co">## 279     YU796NS         278</span></span></code></pre>
 <p>We can also extract the allelic marker data using <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">SummarizedExperiment::rowData()</a></code>:</p>
-<div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">SummarizedExperiment</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">rowData</a></span><span class="op">(</span><span class="va">tasSumExp</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">## DataFrame with 3093 rows and 3 columns</span>
-<span class="co">##      tasselIndex   refAllele   altAllele</span>
-<span class="co">##        &lt;integer&gt; &lt;character&gt; &lt;character&gt;</span>
-<span class="co">## 1              0           A           C</span>
-<span class="co">## 2              1           C           G</span>
-<span class="co">## 3              2           G           T</span>
-<span class="co">## 4              3           A           T</span>
-<span class="co">## 5              4           A           G</span>
-<span class="co">## ...          ...         ...         ...</span>
-<span class="co">## 3089        3088           A           G</span>
-<span class="co">## 3090        3089           C           G</span>
-<span class="co">## 3091        3090           C           G</span>
-<span class="co">## 3092        3091           A           G</span>
-<span class="co">## 3093        3092           C           G</span></code></pre>
-<p>And get marker coordinates using <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/RangedSummarizedExperiment-class.html" class="external-link">SummarizedExperiment::rowRanges()</a></code></p>
-<div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">SummarizedExperiment</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/RangedSummarizedExperiment-class.html" class="external-link">rowRanges</a></span><span class="op">(</span><span class="va">tasSumExp</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">## GRanges object with 3093 ranges and 3 metadata columns:</span>
-<span class="co">##          seqnames    ranges strand | tasselIndex   refAllele   altAllele</span>
-<span class="co">##             &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt; |   &lt;integer&gt; &lt;character&gt; &lt;character&gt;</span>
-<span class="co">##      [1]        1    157104      + |           0           A           C</span>
-<span class="co">##      [2]        1   1947984      + |           1           C           G</span>
-<span class="co">##      [3]        1   2914066      + |           2           G           T</span>
-<span class="co">##      [4]        1   2914171      + |           3           A           T</span>
-<span class="co">##      [5]        1   2915078      + |           4           A           G</span>
-<span class="co">##      ...      ...       ...    ... .         ...         ...         ...</span>
-<span class="co">##   [3089]       10 147819958      + |        3088           A           G</span>
-<span class="co">##   [3090]       10 148332885      + |        3089           C           G</span>
-<span class="co">##   [3091]       10 148488692      + |        3090           C           G</span>
-<span class="co">##   [3092]       10 148816538      + |        3091           A           G</span>
-<span class="co">##   [3093]       10 148907116      + |        3092           C           G</span>
-<span class="co">##   -------</span>
-<span class="co">##   seqinfo: 10 sequences from an unspecified genome; no seqlengths</span></code></pre>
+<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">SummarizedExperiment</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">rowData</a></span><span class="op">(</span><span class="va">tasSumExp</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## DataFrame with 3093 rows and 3 columns</span></span>
+<span><span class="co">##      tasselIndex   refAllele   altAllele</span></span>
+<span><span class="co">##        &lt;integer&gt; &lt;character&gt; &lt;character&gt;</span></span>
+<span><span class="co">## 1              0           A           C</span></span>
+<span><span class="co">## 2              1           C           G</span></span>
+<span><span class="co">## 3              2           G           T</span></span>
+<span><span class="co">## 4              3           A           T</span></span>
+<span><span class="co">## 5              4           A           G</span></span>
+<span><span class="co">## ...          ...         ...         ...</span></span>
+<span><span class="co">## 3089        3088           A           G</span></span>
+<span><span class="co">## 3090        3089           C           G</span></span>
+<span><span class="co">## 3091        3090           C           G</span></span>
+<span><span class="co">## 3092        3091           A           G</span></span>
+<span><span class="co">## 3093        3092           C           G</span></span></code></pre>
+<p>And get marker coordinates using <code><a href="https://rdrr.io/pkg/MatrixGenerics/man/rowRanges.html" class="external-link">SummarizedExperiment::rowRanges()</a></code></p>
+<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">SummarizedExperiment</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/MatrixGenerics/man/rowRanges.html" class="external-link">rowRanges</a></span><span class="op">(</span><span class="va">tasSumExp</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## GRanges object with 3093 ranges and 3 metadata columns:</span></span>
+<span><span class="co">##          seqnames    ranges strand | tasselIndex   refAllele   altAllele</span></span>
+<span><span class="co">##             &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt; |   &lt;integer&gt; &lt;character&gt; &lt;character&gt;</span></span>
+<span><span class="co">##      [1]        1    157104      + |           0           A           C</span></span>
+<span><span class="co">##      [2]        1   1947984      + |           1           C           G</span></span>
+<span><span class="co">##      [3]        1   2914066      + |           2           G           T</span></span>
+<span><span class="co">##      [4]        1   2914171      + |           3           A           T</span></span>
+<span><span class="co">##      [5]        1   2915078      + |           4           A           G</span></span>
+<span><span class="co">##      ...      ...       ...    ... .         ...         ...         ...</span></span>
+<span><span class="co">##   [3089]       10 147819958      + |        3088           A           G</span></span>
+<span><span class="co">##   [3090]       10 148332885      + |        3089           C           G</span></span>
+<span><span class="co">##   [3091]       10 148488692      + |        3090           C           G</span></span>
+<span><span class="co">##   [3092]       10 148816538      + |        3091           A           G</span></span>
+<span><span class="co">##   [3093]       10 148907116      + |        3092           C           G</span></span>
+<span><span class="co">##   -------</span></span>
+<span><span class="co">##   seqinfo: 10 sequences from an unspecified genome; no seqlengths</span></span></code></pre>
 </div>
 <div class="section level3">
 <h3 id="extract-phenotype-data">Extract phenotype data<a class="anchor" aria-label="anchor" href="#extract-phenotype-data"></a>
 </h3>
 <p>If you want to bring in phenotype data into the R environment, you can use the <code><a href="../reference/getPhenotypeDF.html">rTASSEL::getPhenotypeDF()</a></code> function. All this function needs is a <code>TasselGenotypePhenotype</code> class object <em>containing a phenotype table</em>:</p>
-<div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">tasExportPhenoDF</span> <span class="op">&lt;-</span> <span class="fu">rTASSEL</span><span class="fu">::</span><span class="fu"><a href="../reference/getPhenotypeDF.html">getPhenotypeDF</a></span><span class="op">(</span>
-    tasObj <span class="op">=</span> <span class="va">tasGenoPheno</span>
-<span class="op">)</span>
-<span class="va">tasExportPhenoDF</span></code></pre></div>
-<pre><code><span class="co">## DataFrame with 279 rows and 4 columns</span>
-<span class="co">##            Taxa     EarHT     dpoll    EarDia</span>
-<span class="co">##     &lt;character&gt; &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt;</span>
-<span class="co">## 1         33-16     64.75      64.5       NaN</span>
-<span class="co">## 2         38-11     92.25      68.5   37.8970</span>
-<span class="co">## 3          4226     65.50      59.5   32.2193</span>
-<span class="co">## 4          4722     81.13      71.5   32.4210</span>
-<span class="co">## 5          A188     27.50      62.0   31.4190</span>
-<span class="co">## ...         ...       ...       ...       ...</span>
-<span class="co">## 275         W22      44.0      63.5   36.0410</span>
-<span class="co">## 276        W64A      59.5      62.5   35.9820</span>
-<span class="co">## 277          WD      48.5      62.5   30.4790</span>
-<span class="co">## 278         WF9      52.0      64.5   36.6147</span>
-<span class="co">## 279     YU796NS      56.5      64.0   40.7550</span></code></pre>
+<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">tasExportPhenoDF</span> <span class="op">&lt;-</span> <span class="fu">rTASSEL</span><span class="fu">::</span><span class="fu"><a href="../reference/getPhenotypeDF.html">getPhenotypeDF</a></span><span class="op">(</span></span>
+<span>    tasObj <span class="op">=</span> <span class="va">tasGenoPheno</span></span>
+<span><span class="op">)</span></span>
+<span><span class="va">tasExportPhenoDF</span></span></code></pre></div>
+<pre><code><span><span class="co">## DataFrame with 279 rows and 4 columns</span></span>
+<span><span class="co">##            Taxa     EarHT     dpoll    EarDia</span></span>
+<span><span class="co">##     &lt;character&gt; &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt;</span></span>
+<span><span class="co">## 1         33-16     64.75      64.5       NaN</span></span>
+<span><span class="co">## 2         38-11     92.25      68.5   37.8970</span></span>
+<span><span class="co">## 3          4226     65.50      59.5   32.2193</span></span>
+<span><span class="co">## 4          4722     81.13      71.5   32.4210</span></span>
+<span><span class="co">## 5          A188     27.50      62.0   31.4190</span></span>
+<span><span class="co">## ...         ...       ...       ...       ...</span></span>
+<span><span class="co">## 275         W22      44.0      63.5   36.0410</span></span>
+<span><span class="co">## 276        W64A      59.5      62.5   35.9820</span></span>
+<span><span class="co">## 277          WD      48.5      62.5   30.4790</span></span>
+<span><span class="co">## 278         WF9      52.0      64.5   36.6147</span></span>
+<span><span class="co">## 279     YU796NS      56.5      64.0   40.7550</span></span></code></pre>
 <p>As shown above, an R <code>tibble</code>-based data frame is exported with converted data types translated from TASSEL. See the following table what TASSEL data types are tranlated into within the R environment:</p>
 <table class="table">
 <thead><tr class="header">
@@ -575,38 +528,38 @@ sudo ln -s $(/usr/libexec/java_home)/lib/server/libjvm.dylib /usr/local/lib</cod
 <li><code><a href="../reference/filterGenotypeTableTaxa.html">rTASSEL::filterGenotypeTableTaxa()</a></code></li>
 </ul>
 <p>These objects take a <code>TasselGenotypePhenotype</code> class object. For example, in our genotype data set, if we want to remove monomorphic and low coverage sites, we could use the following parameters in <code><a href="../reference/filterGenotypeTableSites.html">rTASSEL::filterGenotypeTableSites()</a></code>:</p>
-<div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">tasGenoPhenoFilt</span> <span class="op">&lt;-</span> <span class="fu">rTASSEL</span><span class="fu">::</span><span class="fu"><a href="../reference/filterGenotypeTableSites.html">filterGenotypeTableSites</a></span><span class="op">(</span>
-    tasObj <span class="op">=</span> <span class="va">tasGenoPheno</span>,
-    siteMinCount <span class="op">=</span> <span class="fl">150</span>,
-    siteMinAlleleFreq <span class="op">=</span> <span class="fl">0.05</span>,
-    siteMaxAlleleFreq <span class="op">=</span> <span class="fl">1.0</span>,
-    siteRangeFilterType <span class="op">=</span> <span class="st">"none"</span>
-<span class="op">)</span>
-<span class="va">tasGenoPhenoFilt</span></code></pre></div>
-<pre><code><span class="co">## A TasselGenotypePhenotype Dataset</span>
-<span class="co">##   Class.............. TasselGenotypePhenotype </span>
-<span class="co">##   Taxa............... 279 </span>
-<span class="co">##   Positions.......... 2555 </span>
-<span class="co">##   Taxa x Positions... 712845 </span>
-<span class="co">## ---</span>
-<span class="co">##   Genotype Table..... [x]</span>
-<span class="co">##   Phenotype Table.... [x]</span>
-<span class="co">## ---</span>
-<span class="co">##   Traits: Taxa EarHT dpoll EarDia</span></code></pre>
+<div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">tasGenoPhenoFilt</span> <span class="op">&lt;-</span> <span class="fu">rTASSEL</span><span class="fu">::</span><span class="fu"><a href="../reference/filterGenotypeTableSites.html">filterGenotypeTableSites</a></span><span class="op">(</span></span>
+<span>    tasObj <span class="op">=</span> <span class="va">tasGenoPheno</span>,</span>
+<span>    siteMinCount <span class="op">=</span> <span class="fl">150</span>,</span>
+<span>    siteMinAlleleFreq <span class="op">=</span> <span class="fl">0.05</span>,</span>
+<span>    siteMaxAlleleFreq <span class="op">=</span> <span class="fl">1.0</span>,</span>
+<span>    siteRangeFilterType <span class="op">=</span> <span class="st">"none"</span></span>
+<span><span class="op">)</span></span>
+<span><span class="va">tasGenoPhenoFilt</span></span></code></pre></div>
+<pre><code><span><span class="co">## A TasselGenotypePhenotype Dataset</span></span>
+<span><span class="co">##   Class.............. TasselGenotypePhenotype </span></span>
+<span><span class="co">##   Taxa............... 279 </span></span>
+<span><span class="co">##   Positions.......... 2555 </span></span>
+<span><span class="co">##   Taxa x Positions... 712845 </span></span>
+<span><span class="co">## ---</span></span>
+<span><span class="co">##   Genotype Table..... [x]</span></span>
+<span><span class="co">##   Phenotype Table.... [x]</span></span>
+<span><span class="co">## ---</span></span>
+<span><span class="co">##   Traits: Taxa EarHT dpoll EarDia</span></span></code></pre>
 <p>We can then compare this to our original pre-filtered data set:</p>
-<div class="sourceCode" id="cb49"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">tasGenoPheno</span></code></pre></div>
-<pre><code><span class="co">## A TasselGenotypePhenotype Dataset</span>
-<span class="co">##   Class.............. TasselGenotypePhenotype </span>
-<span class="co">##   Taxa............... 279 </span>
-<span class="co">##   Positions.......... 3093 </span>
-<span class="co">##   Taxa x Positions... 862947 </span>
-<span class="co">## ---</span>
-<span class="co">##   Genotype Table..... [x]</span>
-<span class="co">##   Phenotype Table.... [x]</span>
-<span class="co">## ---</span>
-<span class="co">##   Traits: Taxa EarHT dpoll EarDia</span></code></pre>
+<div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">tasGenoPheno</span></span></code></pre></div>
+<pre><code><span><span class="co">## A TasselGenotypePhenotype Dataset</span></span>
+<span><span class="co">##   Class.............. TasselGenotypePhenotype </span></span>
+<span><span class="co">##   Taxa............... 279 </span></span>
+<span><span class="co">##   Positions.......... 3093 </span></span>
+<span><span class="co">##   Taxa x Positions... 862947 </span></span>
+<span><span class="co">## ---</span></span>
+<span><span class="co">##   Genotype Table..... [x]</span></span>
+<span><span class="co">##   Phenotype Table.... [x]</span></span>
+<span><span class="co">## ---</span></span>
+<span><span class="co">##   Traits: Taxa EarHT dpoll EarDia</span></span></code></pre>
 <p>These functions can work on any <code>TasselGenotypePhenotype</code> class object that contains genotypic data, regardless of single or combined TASSEL objects.</p>
 </div>
 <div class="section level2">
@@ -616,16 +569,16 @@ sudo ln -s $(/usr/libexec/java_home)/lib/server/libjvm.dylib /usr/local/lib</cod
 <h3 id="create-a-kinship-matrix-object">Create a kinship matrix object<a class="anchor" aria-label="anchor" href="#create-a-kinship-matrix-object"></a>
 </h3>
 <p>In TASSEL, for mixed linear model analyses, a kinship matrix calculated from genotype data is necessary. This can be accomplished by calculating a kinship TASSEL object using the function <code><a href="../reference/kinshipMatrix.html">kinshipMatrix()</a></code>. The main parameter input is a <code>TasselGenotypePhenotype</code> class object that contains a genotype data set:</p>
-<div class="sourceCode" id="cb51"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">tasKin</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/kinshipMatrix.html">kinshipMatrix</a></span><span class="op">(</span>tasObj <span class="op">=</span> <span class="va">tasGenoPheno</span><span class="op">)</span></code></pre></div>
+<div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">tasKin</span> <span class="op">&lt;-</span> <span class="fu">rTASSEL</span><span class="fu">::</span><span class="fu"><a href="../reference/kinshipMatrix.html">kinshipMatrix</a></span><span class="op">(</span>tasObj <span class="op">=</span> <span class="va">tasGenoPheno</span><span class="op">)</span></span></code></pre></div>
 <p>This function allows for several types of algorithm to used using the <code>method</code> parameter. More info about these methods can be found <a href="https://bitbucket.org/tasseladmin/tassel-5-source/wiki/UserManual/Kinship/Kinship" class="external-link">here</a>.</p>
 </div>
 <div class="section level3">
 <h3 id="calculate-a-distance-matrix">Calculate a distance matrix<a class="anchor" aria-label="anchor" href="#calculate-a-distance-matrix"></a>
 </h3>
 <p>Very similar to kinship matrix calculation, a distance matrix can also be calculated using genotype data using the function <code><a href="../reference/distanceMatrix.html">distanceMatrix()</a></code>:</p>
-<div class="sourceCode" id="cb52"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">tasDist</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/distanceMatrix.html">distanceMatrix</a></span><span class="op">(</span>tasObj <span class="op">=</span> <span class="va">tasGenoPheno</span><span class="op">)</span></code></pre></div>
+<div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">tasDist</span> <span class="op">&lt;-</span> <span class="fu">rTASSEL</span><span class="fu">::</span><span class="fu"><a href="../reference/distanceMatrix.html">distanceMatrix</a></span><span class="op">(</span>tasObj <span class="op">=</span> <span class="va">tasGenoPheno</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="tasseldistancematrix-objects">
@@ -635,174 +588,174 @@ sudo ln -s $(/usr/libexec/java_home)/lib/server/libjvm.dylib /usr/local/lib</cod
 <h4 id="overview-2">Overview<a class="anchor" aria-label="anchor" href="#overview-2"></a>
 </h4>
 <p>The prior two functions will generate a pairwise matrix (e.g. <span class="math inline">\(m \times m\)</span> dimensions). The return object is an rTASSEL class, <code>TasselDistanceMatrix</code>. When we inspect the prior object we will see something like this:</p>
-<div class="sourceCode" id="cb53"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">tasKin</span></code></pre></div>
-<pre><code><span class="co">## A TasselDistanceMatrix Object of 279 x 279 elements:</span>
-<span class="co">## </span>
-<span class="co">##                   33-16      38-11       4226       4722    ...    YU796NS</span>
-<span class="co">##        33-16     1.7970     0.0396     0.0606    -0.0087    ...    -0.0010</span>
-<span class="co">##        38-11     0.0396     1.9102     0.0196    -0.0063    ...    -0.0193</span>
-<span class="co">##         4226     0.0606     0.0196     1.9265    -0.0170    ...     0.1296</span>
-<span class="co">##         4722    -0.0087    -0.0063    -0.0170     1.4533    ...     0.0326</span>
-<span class="co">##          ...        ...        ...        ...        ...    ...        ...</span>
-<span class="co">##      YU796NS    -0.0010    -0.0193     0.1296     0.0326    ...     1.8523</span></code></pre>
+<div class="sourceCode" id="cb46"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">tasKin</span></span></code></pre></div>
+<pre><code><span><span class="co">## A TasselDistanceMatrix Object of 279 x 279 elements:</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">##                   33-16      38-11       4226       4722    ...    YU796NS</span></span>
+<span><span class="co">##        33-16     1.7970     0.0396     0.0606    -0.0087    ...    -0.0010</span></span>
+<span><span class="co">##        38-11     0.0396     1.9102     0.0196    -0.0063    ...    -0.0193</span></span>
+<span><span class="co">##         4226     0.0606     0.0196     1.9265    -0.0170    ...     0.1296</span></span>
+<span><span class="co">##         4722    -0.0087    -0.0063    -0.0170     1.4533    ...     0.0326</span></span>
+<span><span class="co">##          ...        ...        ...        ...        ...    ...        ...</span></span>
+<span><span class="co">##      YU796NS    -0.0010    -0.0193     0.1296     0.0326    ...     1.8523</span></span></code></pre>
 <p>This will showcase the first four rows and columns and the last row and column if the distance matrix exceeds 5 dimensions (<em>which it probably will</em>).</p>
 <p>This object, similar to the <code>TasselGenotypePhenotype</code> class, essentially holds pointers to the Java/TASSEL object in memory. Despite this, we can still use some base R methods similar to how we handle <code>matrix</code> objects:</p>
-<div class="sourceCode" id="cb55"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://magrittr.tidyverse.org" class="external-link">magrittr</a></span><span class="op">)</span>
-
-<span class="va">tasKin</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">## [1] "33-16" "38-11" "4226"  "4722"  "A188"  "A214N"</span></code></pre>
-<div class="sourceCode" id="cb57"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">tasKin</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">## [1] "33-16" "38-11" "4226"  "4722"  "A188"  "A214N"</span></code></pre>
-<div class="sourceCode" id="cb59"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">tasKin</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">## [1] 279 279</span></code></pre>
-<div class="sourceCode" id="cb61"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">tasKin</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">## [1] 279</span></code></pre>
-<div class="sourceCode" id="cb63"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">tasKin</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">## [1] 279</span></code></pre>
+<div class="sourceCode" id="cb48"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://magrittr.tidyverse.org" class="external-link">magrittr</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">tasKin</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## [1] "33-16" "38-11" "4226"  "4722"  "A188"  "A214N"</span></span></code></pre>
+<div class="sourceCode" id="cb50"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">tasKin</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## [1] "33-16" "38-11" "4226"  "4722"  "A188"  "A214N"</span></span></code></pre>
+<div class="sourceCode" id="cb52"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">tasKin</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## [1] 279 279</span></span></code></pre>
+<div class="sourceCode" id="cb54"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">tasKin</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## [1] 279</span></span></code></pre>
+<div class="sourceCode" id="cb56"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">tasKin</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## [1] 279</span></span></code></pre>
 </div>
 <div class="section level4">
 <h4 id="coercion">Coercion<a class="anchor" aria-label="anchor" href="#coercion"></a>
 </h4>
 <p>If we want to use additional R methods (e.g. plotting, new models, etc.), we can coerce this object to a general R data object, in this case, a <code>matrix</code> object using the base method <code><a href="https://rdrr.io/r/base/matrix.html" class="external-link">as.matrix()</a></code>:</p>
-<div class="sourceCode" id="cb65"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://magrittr.tidyverse.org" class="external-link">magrittr</a></span><span class="op">)</span>
-
-<span class="va">tasKinR</span> <span class="op">&lt;-</span> <span class="va">tasKin</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">as.matrix</a></span><span class="op">(</span><span class="op">)</span>
-
-<span class="co">## Inspect first 5 rows and columns ----</span>
-<span class="va">tasKinR</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span></code></pre></div>
-<pre><code><span class="co">##              33-16        38-11        4226         4722        A188</span>
-<span class="co">## 33-16  1.796955100  0.039558496  0.06060008 -0.008674403  0.03524417</span>
-<span class="co">## 38-11  0.039558496  1.910150800  0.01960260 -0.006317467 -0.02937613</span>
-<span class="co">## 4226   0.060600080  0.019602600  1.92645620 -0.017025312  0.02449092</span>
-<span class="co">## 4722  -0.008674403 -0.006317467 -0.01702531  1.453315500 -0.02040120</span>
-<span class="co">## A188   0.035244170 -0.029376134  0.02449092 -0.020401197  2.00156020</span></code></pre>
+<div class="sourceCode" id="cb58"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://magrittr.tidyverse.org" class="external-link">magrittr</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">tasKinR</span> <span class="op">&lt;-</span> <span class="va">tasKin</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">as.matrix</a></span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">## Inspect first 5 rows and columns ----</span></span>
+<span><span class="va">tasKinR</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span></span></code></pre></div>
+<pre><code><span><span class="co">##              33-16        38-11        4226         4722        A188</span></span>
+<span><span class="co">## 33-16  1.796955100  0.039558496  0.06060008 -0.008674403  0.03524417</span></span>
+<span><span class="co">## 38-11  0.039558496  1.910150800  0.01960260 -0.006317467 -0.02937613</span></span>
+<span><span class="co">## 4226   0.060600080  0.019602600  1.92645620 -0.017025312  0.02449092</span></span>
+<span><span class="co">## 4722  -0.008674403 -0.006317467 -0.01702531  1.453315500 -0.02040120</span></span>
+<span><span class="co">## A188   0.035244170 -0.029376134  0.02449092 -0.020401197  2.00156020</span></span></code></pre>
 <p>We can also coerce a pairwise <code>matrix</code> object to a <code>TasselDistanceMatrix</code> object using rTASSEL’s function <code><a href="../reference/asTasselDistanceMatrix.html">asTasselDistanceMatrix()</a></code>:</p>
-<div class="sourceCode" id="cb67"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://magrittr.tidyverse.org" class="external-link">magrittr</a></span><span class="op">)</span>
-
-<span class="co">## Create a dummy pairwise matrix object ----</span>
-<span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span>
-<span class="va">m</span> <span class="op">&lt;-</span> <span class="fl">10</span>
-<span class="va">s</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">100</span><span class="op">)</span>, <span class="va">m</span><span class="op">)</span>
-<span class="va">s</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/lower.tri.html" class="external-link">lower.tri</a></span><span class="op">(</span><span class="va">s</span><span class="op">)</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/t.html" class="external-link">t</a></span><span class="op">(</span><span class="va">s</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/lower.tri.html" class="external-link">lower.tri</a></span><span class="op">(</span><span class="va">s</span><span class="op">)</span><span class="op">]</span>
-<span class="fu"><a href="https://rdrr.io/r/base/diag.html" class="external-link">diag</a></span><span class="op">(</span><span class="va">s</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fl">2</span>
-
-<span class="co">## Add sample IDs ----</span>
-<span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">s</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">s</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"s_"</span>, <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span><span class="op">)</span>
-
-<span class="va">testTasselDist</span> <span class="op">&lt;-</span> <span class="va">s</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="../reference/asTasselDistanceMatrix.html">asTasselDistanceMatrix</a></span><span class="op">(</span><span class="op">)</span>
-<span class="va">testTasselDist</span></code></pre></div>
-<pre><code><span class="co">## A TasselDistanceMatrix Object of 10 x 10 elements:</span>
-<span class="co">## </span>
-<span class="co">##                     s_1        s_2        s_3        s_4    ...       s_10</span>
-<span class="co">##          s_1     2.0000     1.2241    -1.0678     0.4265    ...     0.9935</span>
-<span class="co">##          s_2     1.2241     2.0000    -0.2180    -0.2951    ...     0.5484</span>
-<span class="co">##          s_3    -1.0678    -0.2180     2.0000     0.8951    ...     0.2387</span>
-<span class="co">##          s_4     0.4265    -0.2951     0.8951     2.0000    ...    -0.6279</span>
-<span class="co">##          ...        ...        ...        ...        ...    ...        ...</span>
-<span class="co">##         s_10     0.9935     0.5484     0.2387    -0.6279    ...     2.0000</span></code></pre>
+<div class="sourceCode" id="cb60"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://magrittr.tidyverse.org" class="external-link">magrittr</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">## Create a dummy pairwise matrix object ----</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span></span>
+<span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fl">10</span></span>
+<span><span class="va">s</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">100</span><span class="op">)</span>, <span class="va">m</span><span class="op">)</span></span>
+<span><span class="va">s</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/lower.tri.html" class="external-link">lower.tri</a></span><span class="op">(</span><span class="va">s</span><span class="op">)</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/t.html" class="external-link">t</a></span><span class="op">(</span><span class="va">s</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/lower.tri.html" class="external-link">lower.tri</a></span><span class="op">(</span><span class="va">s</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/diag.html" class="external-link">diag</a></span><span class="op">(</span><span class="va">s</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fl">2</span></span>
+<span></span>
+<span><span class="co">## Add sample IDs ----</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">s</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">s</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"s_"</span>, <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">testTasselDist</span> <span class="op">&lt;-</span> <span class="va">s</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="../reference/asTasselDistanceMatrix.html">asTasselDistanceMatrix</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">testTasselDist</span></span></code></pre></div>
+<pre><code><span><span class="co">## A TasselDistanceMatrix Object of 10 x 10 elements:</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">##                     s_1        s_2        s_3        s_4    ...       s_10</span></span>
+<span><span class="co">##          s_1     2.0000     1.2241    -1.0678     0.4265    ...     0.9935</span></span>
+<span><span class="co">##          s_2     1.2241     2.0000    -0.2180    -0.2951    ...     0.5484</span></span>
+<span><span class="co">##          s_3    -1.0678    -0.2180     2.0000     0.8951    ...     0.2387</span></span>
+<span><span class="co">##          s_4     0.4265    -0.2951     0.8951     2.0000    ...    -0.6279</span></span>
+<span><span class="co">##          ...        ...        ...        ...        ...    ...        ...</span></span>
+<span><span class="co">##         s_10     0.9935     0.5484     0.2387    -0.6279    ...     2.0000</span></span></code></pre>
 </div>
 </div>
 <div class="section level3">
 <h3 id="pca-and-mds">PCA and MDS<a class="anchor" aria-label="anchor" href="#pca-and-mds"></a>
 </h3>
 <p>rTASSEL can run principal component analysis (PCA) and multidimensional scaling (MDS) on objects containing a <code>GenotypeTable</code> and <code>TasselDistanceMatrix</code> respectively. To run PCA, simply use the <code><a href="../reference/pca.html">pca()</a></code> function on a <code>TasselGenotypePhenotype</code> object that contains a TASSEL <code>GenotypeTable</code></p>
-<div class="sourceCode" id="cb69"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">tasGenoHMP</span></code></pre></div>
-<pre><code><span class="co">## A TasselGenotypePhenotype Dataset</span>
-<span class="co">##   Class.............. TasselGenotypePhenotype </span>
-<span class="co">##   Taxa............... 281 </span>
-<span class="co">##   Positions.......... 3093 </span>
-<span class="co">##   Taxa x Positions... 869133 </span>
-<span class="co">## ---</span>
-<span class="co">##   Genotype Table..... [x]</span>
-<span class="co">##   Phenotype Table.... [ ]</span></code></pre>
-<div class="sourceCode" id="cb71"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">pcaRes</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/pca.html">pca</a></span><span class="op">(</span><span class="va">tasGenoHMP</span><span class="op">)</span></code></pre></div>
+<div class="sourceCode" id="cb62"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">tasGenoHMP</span></span></code></pre></div>
+<pre><code><span><span class="co">## A TasselGenotypePhenotype Dataset</span></span>
+<span><span class="co">##   Class.............. TasselGenotypePhenotype </span></span>
+<span><span class="co">##   Taxa............... 281 </span></span>
+<span><span class="co">##   Positions.......... 3093 </span></span>
+<span><span class="co">##   Taxa x Positions... 869133 </span></span>
+<span><span class="co">## ---</span></span>
+<span><span class="co">##   Genotype Table..... [x]</span></span>
+<span><span class="co">##   Phenotype Table.... [ ]</span></span></code></pre>
+<div class="sourceCode" id="cb64"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">pcaRes</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/pca.html">pca</a></span><span class="op">(</span><span class="va">tasGenoHMP</span><span class="op">)</span></span></code></pre></div>
 <p>To run MDS, simply use the <code><a href="../reference/mds.html">mds()</a></code> function on a <code>TasselDistanceMatrix</code> object:</p>
-<div class="sourceCode" id="cb72"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">tasDist</span></code></pre></div>
-<pre><code><span class="co">## A TasselDistanceMatrix Object of 279 x 279 elements:</span>
-<span class="co">## </span>
-<span class="co">##                   33-16      38-11       4226       4722    ...    YU796NS</span>
-<span class="co">##        33-16     0.0000     0.2799     0.2794     0.2698    ...     0.2908</span>
-<span class="co">##        38-11     0.2799     0.0000     0.2920     0.2777    ...     0.3001</span>
-<span class="co">##         4226     0.2794     0.2920     0.0000     0.2863    ...     0.2795</span>
-<span class="co">##         4722     0.2698     0.2777     0.2863     0.0000    ...     0.2759</span>
-<span class="co">##          ...        ...        ...        ...        ...    ...        ...</span>
-<span class="co">##      YU796NS     0.2908     0.3001     0.2795     0.2759    ...     0.0000</span></code></pre>
-<div class="sourceCode" id="cb74"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">mdsRes</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mds.html">mds</a></span><span class="op">(</span><span class="va">tasDist</span><span class="op">)</span></code></pre></div>
+<div class="sourceCode" id="cb65"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">tasDist</span></span></code></pre></div>
+<pre><code><span><span class="co">## A TasselDistanceMatrix Object of 279 x 279 elements:</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">##                   33-16      38-11       4226       4722    ...    YU796NS</span></span>
+<span><span class="co">##        33-16     0.0000     0.2799     0.2794     0.2698    ...     0.2908</span></span>
+<span><span class="co">##        38-11     0.2799     0.0000     0.2920     0.2777    ...     0.3001</span></span>
+<span><span class="co">##         4226     0.2794     0.2920     0.0000     0.2863    ...     0.2795</span></span>
+<span><span class="co">##         4722     0.2698     0.2777     0.2863     0.0000    ...     0.2759</span></span>
+<span><span class="co">##          ...        ...        ...        ...        ...    ...        ...</span></span>
+<span><span class="co">##      YU796NS     0.2908     0.3001     0.2795     0.2759    ...     0.0000</span></span></code></pre>
+<div class="sourceCode" id="cb67"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">mdsRes</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mds.html">mds</a></span><span class="op">(</span><span class="va">tasDist</span><span class="op">)</span></span></code></pre></div>
 <p>Both of these will return a <code>DataFrame</code> object that will contain a Taxa ID column and the number of components or axes that were specified in the function call. For example, let’s take a look at the <code>pcaRes</code> object made previously:</p>
-<div class="sourceCode" id="cb75"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">pcaRes</span></code></pre></div>
-<pre><code><span class="co">## $PC_Datum</span>
-<span class="co">## DataFrame with 281 rows and 6 columns</span>
-<span class="co">##            Taxa       PC1       PC2       PC3       PC4       PC5</span>
-<span class="co">##     &lt;character&gt; &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt;</span>
-<span class="co">## 1         33-16  0.915694   2.48118  0.491380 -0.163752  0.164915</span>
-<span class="co">## 2         38-11 -0.812664   2.46674 -0.300508  2.238374 -0.410270</span>
-<span class="co">## 3          4226 -0.298504   3.15912  1.261608  1.228578 -1.203234</span>
-<span class="co">## 4          4722  1.321356   2.93390  2.051775  0.688308  7.642961</span>
-<span class="co">## 5          A188  0.409957   2.55968  0.335238  0.890332  1.343284</span>
-<span class="co">## ...         ...       ...       ...       ...       ...       ...</span>
-<span class="co">## 277         W22 -1.044965   3.44754  0.508978  4.069194 -1.338841</span>
-<span class="co">## 278        W64A -1.085615   2.53996  0.548855  3.834831 -4.705377</span>
-<span class="co">## 279          WD  0.980325   2.55523  0.775117  1.021342  2.990109</span>
-<span class="co">## 280         WF9 -0.741340   3.69137  0.895144  6.207632 -6.822423</span>
-<span class="co">## 281     YU796NS  0.473751   3.38058  1.600519 -0.833065  0.477596</span>
-<span class="co">## </span>
-<span class="co">## $Eigenvalues_Datum</span>
-<span class="co">## DataFrame with 281 rows and 4 columns</span>
-<span class="co">##              PC  eigenvalue proportion_of_total cumulative_proportion</span>
-<span class="co">##     &lt;character&gt;   &lt;numeric&gt;           &lt;numeric&gt;             &lt;numeric&gt;</span>
-<span class="co">## 1             0    26.04891           0.0595745             0.0595745</span>
-<span class="co">## 2             1    14.88287           0.0340375             0.0936121</span>
-<span class="co">## 3             2     9.66480           0.0221037             0.1157157</span>
-<span class="co">## 4             3     8.08808           0.0184976             0.1342134</span>
-<span class="co">## 5             4     7.76326           0.0177548             0.1519681</span>
-<span class="co">## ...         ...         ...                 ...                   ...</span>
-<span class="co">## 277         276 1.05527e+00         2.41344e-03              0.992813</span>
-<span class="co">## 278         277 1.05351e+00         2.40941e-03              0.995222</span>
-<span class="co">## 279         278 1.04424e+00         2.38820e-03              0.997611</span>
-<span class="co">## 280         279 1.04479e+00         2.38945e-03              1.000000</span>
-<span class="co">## 281         280 9.32769e-30         2.13327e-32              1.000000</span>
-<span class="co">## </span>
-<span class="co">## $Eigenvectors_Datum</span>
-<span class="co">## DataFrame with 3093 rows and 6 columns</span>
-<span class="co">##            Trait Eigenvector1 Eigenvector2 Eigenvector3 Eigenvector4</span>
-<span class="co">##      &lt;character&gt;    &lt;numeric&gt;    &lt;numeric&gt;    &lt;numeric&gt;    &lt;numeric&gt;</span>
-<span class="co">## 1     PZB00859.1   0.00176012  -0.01552632  0.000913126 -0.019939134</span>
-<span class="co">## 2     PZA01271.1   0.02924889   0.02205302  0.013536366 -0.006205664</span>
-<span class="co">## 3     PZA03613.2   0.00274342  -0.03278888 -0.001632136 -0.011925573</span>
-<span class="co">## 4     PZA03613.1   0.03527662   0.00612253  0.000795075  0.018909870</span>
-<span class="co">## 5     PZA03614.2  -0.00961028   0.04978358 -0.023482345  0.000811793</span>
-<span class="co">## ...          ...          ...          ...          ...          ...</span>
-<span class="co">## 3089  PZA00179.9  -0.01204620   0.01370081 -0.000263836 -0.007654771</span>
-<span class="co">## 3090  PZA02833.6   0.02248007  -0.01728185 -0.041209525 -0.013223447</span>
-<span class="co">## 3091  PHM1506.23   0.02424869  -0.01129168 -0.041788184 -0.030342851</span>
-<span class="co">## 3092  PZA03402.1  -0.00455524   0.00666827  0.001642963  0.000265586</span>
-<span class="co">## 3093  PZA03429.1  -0.01288907   0.02574358  0.001809185  0.002730796</span>
-<span class="co">##      Eigenvector5</span>
-<span class="co">##         &lt;numeric&gt;</span>
-<span class="co">## 1      -0.0401204</span>
-<span class="co">## 2      -0.0387229</span>
-<span class="co">## 3       0.0139788</span>
-<span class="co">## 4      -0.0407256</span>
-<span class="co">## 5       0.0309542</span>
-<span class="co">## ...           ...</span>
-<span class="co">## 3089 -0.000157810</span>
-<span class="co">## 3090  0.046423191</span>
-<span class="co">## 3091  0.024876333</span>
-<span class="co">## 3092  0.000542628</span>
-<span class="co">## 3093 -0.000127583</span></code></pre>
+<div class="sourceCode" id="cb68"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">pcaRes</span></span></code></pre></div>
+<pre><code><span><span class="co">## $PC_Datum</span></span>
+<span><span class="co">## DataFrame with 281 rows and 6 columns</span></span>
+<span><span class="co">##            Taxa       PC1       PC2       PC3       PC4       PC5</span></span>
+<span><span class="co">##     &lt;character&gt; &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt;</span></span>
+<span><span class="co">## 1         33-16  0.915694   2.48118  0.491380 -0.163752  0.164915</span></span>
+<span><span class="co">## 2         38-11 -0.812664   2.46674 -0.300508  2.238374 -0.410270</span></span>
+<span><span class="co">## 3          4226 -0.298504   3.15912  1.261608  1.228578 -1.203234</span></span>
+<span><span class="co">## 4          4722  1.321356   2.93390  2.051775  0.688308  7.642961</span></span>
+<span><span class="co">## 5          A188  0.409957   2.55968  0.335238  0.890332  1.343284</span></span>
+<span><span class="co">## ...         ...       ...       ...       ...       ...       ...</span></span>
+<span><span class="co">## 277         W22 -1.044965   3.44754  0.508978  4.069194 -1.338841</span></span>
+<span><span class="co">## 278        W64A -1.085615   2.53996  0.548855  3.834831 -4.705377</span></span>
+<span><span class="co">## 279          WD  0.980325   2.55523  0.775117  1.021342  2.990109</span></span>
+<span><span class="co">## 280         WF9 -0.741340   3.69137  0.895144  6.207632 -6.822423</span></span>
+<span><span class="co">## 281     YU796NS  0.473751   3.38058  1.600519 -0.833065  0.477596</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## $Eigenvalues_Datum</span></span>
+<span><span class="co">## DataFrame with 281 rows and 4 columns</span></span>
+<span><span class="co">##              PC  eigenvalue proportion_of_total cumulative_proportion</span></span>
+<span><span class="co">##     &lt;character&gt;   &lt;numeric&gt;           &lt;numeric&gt;             &lt;numeric&gt;</span></span>
+<span><span class="co">## 1             0    26.04891           0.0595745             0.0595745</span></span>
+<span><span class="co">## 2             1    14.88287           0.0340375             0.0936121</span></span>
+<span><span class="co">## 3             2     9.66480           0.0221037             0.1157157</span></span>
+<span><span class="co">## 4             3     8.08808           0.0184976             0.1342134</span></span>
+<span><span class="co">## 5             4     7.76326           0.0177548             0.1519681</span></span>
+<span><span class="co">## ...         ...         ...                 ...                   ...</span></span>
+<span><span class="co">## 277         276 1.05527e+00         2.41344e-03              0.992813</span></span>
+<span><span class="co">## 278         277 1.05351e+00         2.40941e-03              0.995222</span></span>
+<span><span class="co">## 279         278 1.04424e+00         2.38820e-03              0.997611</span></span>
+<span><span class="co">## 280         279 1.04479e+00         2.38945e-03              1.000000</span></span>
+<span><span class="co">## 281         280 9.32769e-30         2.13327e-32              1.000000</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## $Eigenvectors_Datum</span></span>
+<span><span class="co">## DataFrame with 3093 rows and 6 columns</span></span>
+<span><span class="co">##            Trait Eigenvector1 Eigenvector2 Eigenvector3 Eigenvector4</span></span>
+<span><span class="co">##      &lt;character&gt;    &lt;numeric&gt;    &lt;numeric&gt;    &lt;numeric&gt;    &lt;numeric&gt;</span></span>
+<span><span class="co">## 1     PZB00859.1   0.00176012  -0.01552632  0.000913126 -0.019939134</span></span>
+<span><span class="co">## 2     PZA01271.1   0.02924889   0.02205302  0.013536366 -0.006205664</span></span>
+<span><span class="co">## 3     PZA03613.2   0.00274342  -0.03278888 -0.001632136 -0.011925573</span></span>
+<span><span class="co">## 4     PZA03613.1   0.03527662   0.00612253  0.000795075  0.018909870</span></span>
+<span><span class="co">## 5     PZA03614.2  -0.00961028   0.04978358 -0.023482345  0.000811793</span></span>
+<span><span class="co">## ...          ...          ...          ...          ...          ...</span></span>
+<span><span class="co">## 3089  PZA00179.9  -0.01204620   0.01370081 -0.000263836 -0.007654771</span></span>
+<span><span class="co">## 3090  PZA02833.6   0.02248007  -0.01728185 -0.041209525 -0.013223447</span></span>
+<span><span class="co">## 3091  PHM1506.23   0.02424869  -0.01129168 -0.041788184 -0.030342851</span></span>
+<span><span class="co">## 3092  PZA03402.1  -0.00455524   0.00666827  0.001642963  0.000265586</span></span>
+<span><span class="co">## 3093  PZA03429.1  -0.01288907   0.02574358  0.001809185  0.002730796</span></span>
+<span><span class="co">##      Eigenvector5</span></span>
+<span><span class="co">##         &lt;numeric&gt;</span></span>
+<span><span class="co">## 1      -0.0401204</span></span>
+<span><span class="co">## 2      -0.0387229</span></span>
+<span><span class="co">## 3       0.0139788</span></span>
+<span><span class="co">## 4      -0.0407256</span></span>
+<span><span class="co">## 5       0.0309542</span></span>
+<span><span class="co">## ...           ...</span></span>
+<span><span class="co">## 3089 -0.000157810</span></span>
+<span><span class="co">## 3090  0.046423191</span></span>
+<span><span class="co">## 3091  0.024876333</span></span>
+<span><span class="co">## 3092  0.000542628</span></span>
+<span><span class="co">## 3093 -0.000127583</span></span></code></pre>
 </div>
 </div>
 <div class="section level2">
@@ -832,7 +785,7 @@ sudo ln -s $(/usr/libexec/java_home)/lib/server/libjvm.dylib /usr/local/lib</cod
 <code>fastAssociation</code>: a boolean parameter for data sets that have many traits</li>
 </ul>
 <p>Probably the most important concept of this function is <code>formula</code> parameter. If you are familar with standard R linear model functions, this concept is fairly similar. In TASSEL, a linear model is composed of the following scheme:</p>
-<pre><code><span class="va">y</span> <span class="op">~</span> <span class="va">A</span></code></pre>
+<pre><code><span><span class="va">y</span> <span class="op">~</span> <span class="va">A</span></span></code></pre>
 <p>…where <code>y</code> is any TASSEL <code>data</code> type and <code>A</code> is any TASSEL <code>covariate</code> and / or <code>factor</code> types:</p>
 <pre><code>&lt;data&gt; ~ &lt;covariate&gt; and/or &lt;factor&gt;</code></pre>
 <p>This model can be written out in several ways. With an example phenotype data, we can have the following variables that are represented in TASSEL in the following way:</p>
@@ -863,14 +816,14 @@ sudo ln -s $(/usr/libexec/java_home)/lib/server/libjvm.dylib /usr/local/lib</cod
 </li>
 </ul>
 <p>Using this data, we could write out the following formula in R</p>
-<pre><code><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">EarHT</span>, <span class="va">dpoll</span>, <span class="va">EarDia</span><span class="op">)</span> <span class="op">~</span> <span class="va">location</span> <span class="op">+</span> <span class="va">Q1</span> <span class="op">+</span> <span class="va">Q2</span> <span class="op">+</span> <span class="va">Q3</span></code></pre>
+<pre><code><span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">EarHT</span>, <span class="va">dpoll</span>, <span class="va">EarDia</span><span class="op">)</span> <span class="op">~</span> <span class="va">location</span> <span class="op">+</span> <span class="va">Q1</span> <span class="op">+</span> <span class="va">Q2</span> <span class="op">+</span> <span class="va">Q3</span></span></code></pre>
 <p>In the above example, we use a base <code><a href="https://rdrr.io/r/base/list.html" class="external-link">list()</a></code> function to indicate analysis on multiple numeric data types. For covariate and factor information, we use <code>+</code> operator. One problem with this implementation is that it can become cumbersome and prone to error if we want to analyze the entirety of a large data set or all data and/or factor and covariate types.</p>
 <p>A work around for this problem is to utilize a special character to indicate all elements within the model (<code>.</code>). By using the <code>.</code> operator we can simplify the above model into the following:</p>
-<pre><code><span class="va">.</span> <span class="op">~</span> <span class="va">.</span></code></pre>
+<pre><code><span><span class="va">.</span> <span class="op">~</span> <span class="va">.</span></span></code></pre>
 <p>This indicates we want to analyze <em>the whole</em> data set and leave nothing out. If we want to analyze all data types and only a handful of factor and/or covariates, we can use something like this:</p>
-<pre><code><span class="va">.</span> <span class="op">~</span> <span class="va">location</span> <span class="op">+</span> <span class="va">Q1</span> <span class="op">+</span> <span class="va">Q2</span></code></pre>
+<pre><code><span><span class="va">.</span> <span class="op">~</span> <span class="va">location</span> <span class="op">+</span> <span class="va">Q1</span> <span class="op">+</span> <span class="va">Q2</span></span></code></pre>
 <p>Or vice-versa:</p>
-<pre><code><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">EarHT</span>, <span class="va">dpoll</span><span class="op">)</span> <span class="op">~</span> <span class="va">.</span></code></pre>
+<pre><code><span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">EarHT</span>, <span class="va">dpoll</span><span class="op">)</span> <span class="op">~</span> <span class="va">.</span></span></code></pre>
 <p>Take note we can be very specific with what we want to include in our trait model! In the above example we have deliberately left out <code>EarDia</code> from our model.</p>
 <p>Additionally, we can also fit marker and kinship data to our model which can change our analytical methods. Since these options in TASSEL are binary, additional parameters are passed for this function. In this case, genotype/marker data is fitted using the <code>fitMarker</code> parameter and kinship is fitted using the <code>kinship</code> parameter.</p>
 <p>Fast Association implements methods described by Shabalin (2012). This method provides an ordinary least squares solution for fixed effect models. For this method to proper work it is necessary that your have:</p>
@@ -886,238 +839,238 @@ sudo ln -s $(/usr/libexec/java_home)/lib/server/libjvm.dylib /usr/local/lib</cod
 <h3 id="calculate-blues">Calculate BLUEs<a class="anchor" aria-label="anchor" href="#calculate-blues"></a>
 </h3>
 <p>To caclulate best linear unbiased estimates (BLUEs), numeric phenotype data can be used along with covariate and factor data <em>only</em> if it is intended to control for field variation. Since genotype data is not needed for this method, we can leave the <code>fitMarkers</code>, <code>kinship</code>, and <code>fastAssociation</code> to <code>NULL</code> or <code>FALSE</code>:</p>
-<div class="sourceCode" id="cb83"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># Read in phenotype data</span>
-<span class="va">phenoPathCov</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"mdp_phenotype.txt"</span>, package <span class="op">=</span> <span class="st">"rTASSEL"</span><span class="op">)</span>
-<span class="va">tasPhenoCov</span> <span class="op">&lt;-</span> <span class="fu">rTASSEL</span><span class="fu">::</span><span class="fu"><a href="../reference/readPhenotypeFromPath.html">readPhenotypeFromPath</a></span><span class="op">(</span><span class="va">phenoPathCov</span><span class="op">)</span>
-
-<span class="co"># Calculate BLUEs</span>
-<span class="va">tasBLUE</span> <span class="op">&lt;-</span> <span class="fu">rTASSEL</span><span class="fu">::</span><span class="fu"><a href="../reference/assocModelFitter.html">assocModelFitter</a></span><span class="op">(</span>
-    tasObj <span class="op">=</span> <span class="va">tasPhenoCov</span>,
-    formula <span class="op">=</span> <span class="va">.</span> <span class="op">~</span> <span class="va">.</span>,                  <span class="co"># &lt;- All data is used!</span>
-    fitMarkers <span class="op">=</span> <span class="cn">FALSE</span>,
-    kinship <span class="op">=</span> <span class="cn">NULL</span>,
-    fastAssociation <span class="op">=</span> <span class="cn">FALSE</span>
-<span class="op">)</span></code></pre></div>
-<pre><code><span class="co">## Running all traits...</span></code></pre>
-<pre><code><span class="co">## Association Analysis : BLUEs</span></code></pre>
-<div class="sourceCode" id="cb86"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># Return BLUE output</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">tasBLUE</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">## List of 2</span>
-<span class="co">##  $ BLUE      :Formal class 'DFrame' [package "S4Vectors"] with 6 slots</span>
-<span class="co">##   .. ..@ rownames       : NULL</span>
-<span class="co">##   .. ..@ nrows          : int 284</span>
-<span class="co">##   .. ..@ listData       :List of 4</span>
-<span class="co">##   .. .. ..$ Taxa  : chr [1:284] "33-16" "38-11" "4226" "4722" ...</span>
-<span class="co">##   .. .. ..$ EarDia: num [1:284] 47.2 46.8 56.7 46.1 43.3 ...</span>
-<span class="co">##   .. .. ..$ EarHT : num [1:284] 82.6 107.2 81.9 92.8 44.5 ...</span>
-<span class="co">##   .. .. ..$ dpoll : num [1:284] 51.7 56.6 53.8 62.5 49.9 ...</span>
-<span class="co">##   .. ..@ elementType    : chr "ANY"</span>
-<span class="co">##   .. ..@ elementMetadata: NULL</span>
-<span class="co">##   .. ..@ metadata       : list()</span>
-<span class="co">##  $ BLUE_ANOVA:Formal class 'DFrame' [package "S4Vectors"] with 6 slots</span>
-<span class="co">##   .. ..@ rownames       : NULL</span>
-<span class="co">##   .. ..@ nrows          : int 3</span>
-<span class="co">##   .. ..@ listData       :List of 9</span>
-<span class="co">##   .. .. ..$ Trait  : chr [1:3] "EarDia" "EarHT" "dpoll"</span>
-<span class="co">##   .. .. ..$ F      : num [1:3] 6.93 166.54 12.06</span>
-<span class="co">##   .. .. ..$ p      : num [1:3] 1.67e-46 2.30e-225 1.01e-76</span>
-<span class="co">##   .. .. ..$ taxaDF : num [1:3] 281 281 283</span>
-<span class="co">##   .. .. ..$ taxaMS : num [1:3] 28.5 695.8 49.4</span>
-<span class="co">##   .. .. ..$ errorDF: num [1:3] 241 274 269</span>
-<span class="co">##   .. .. ..$ errorMS: num [1:3] 4.11 4.18 4.09</span>
-<span class="co">##   .. .. ..$ modelDF: num [1:3] 284 284 286</span>
-<span class="co">##   .. .. ..$ modelMS: num [1:3] 29.1 815.1 68.9</span>
-<span class="co">##   .. ..@ elementType    : chr "ANY"</span>
-<span class="co">##   .. ..@ elementMetadata: NULL</span>
-<span class="co">##   .. ..@ metadata       : list()</span></code></pre>
+<div class="sourceCode" id="cb76"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Read in phenotype data</span></span>
+<span><span class="va">phenoPathCov</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"mdp_phenotype.txt"</span>, package <span class="op">=</span> <span class="st">"rTASSEL"</span><span class="op">)</span></span>
+<span><span class="va">tasPhenoCov</span> <span class="op">&lt;-</span> <span class="fu">rTASSEL</span><span class="fu">::</span><span class="fu"><a href="../reference/readPhenotypeFromPath.html">readPhenotypeFromPath</a></span><span class="op">(</span><span class="va">phenoPathCov</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Calculate BLUEs</span></span>
+<span><span class="va">tasBLUE</span> <span class="op">&lt;-</span> <span class="fu">rTASSEL</span><span class="fu">::</span><span class="fu"><a href="../reference/assocModelFitter.html">assocModelFitter</a></span><span class="op">(</span></span>
+<span>    tasObj <span class="op">=</span> <span class="va">tasPhenoCov</span>,</span>
+<span>    formula <span class="op">=</span> <span class="va">.</span> <span class="op">~</span> <span class="va">.</span>,                  <span class="co"># &lt;- All data is used!</span></span>
+<span>    fitMarkers <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>    kinship <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>    fastAssociation <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## Running all traits...</span></span></code></pre>
+<pre><code><span><span class="co">## Association Analysis : BLUEs</span></span></code></pre>
+<div class="sourceCode" id="cb79"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Return BLUE output</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">tasBLUE</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## List of 2</span></span>
+<span><span class="co">##  $ BLUE      :Formal class 'DFrame' [package "S4Vectors"] with 6 slots</span></span>
+<span><span class="co">##   .. ..@ rownames       : NULL</span></span>
+<span><span class="co">##   .. ..@ nrows          : int 284</span></span>
+<span><span class="co">##   .. ..@ listData       :List of 4</span></span>
+<span><span class="co">##   .. .. ..$ Taxa  : chr [1:284] "33-16" "38-11" "4226" "4722" ...</span></span>
+<span><span class="co">##   .. .. ..$ EarDia: num [1:284] 47.2 46.8 56.7 46.1 43.3 ...</span></span>
+<span><span class="co">##   .. .. ..$ EarHT : num [1:284] 82.6 107.2 81.9 92.8 44.5 ...</span></span>
+<span><span class="co">##   .. .. ..$ dpoll : num [1:284] 51.7 56.6 53.8 62.5 49.9 ...</span></span>
+<span><span class="co">##   .. ..@ elementType    : chr "ANY"</span></span>
+<span><span class="co">##   .. ..@ elementMetadata: NULL</span></span>
+<span><span class="co">##   .. ..@ metadata       : list()</span></span>
+<span><span class="co">##  $ BLUE_ANOVA:Formal class 'DFrame' [package "S4Vectors"] with 6 slots</span></span>
+<span><span class="co">##   .. ..@ rownames       : NULL</span></span>
+<span><span class="co">##   .. ..@ nrows          : int 3</span></span>
+<span><span class="co">##   .. ..@ listData       :List of 9</span></span>
+<span><span class="co">##   .. .. ..$ Trait  : chr [1:3] "EarDia" "EarHT" "dpoll"</span></span>
+<span><span class="co">##   .. .. ..$ F      : num [1:3] 6.93 166.54 12.06</span></span>
+<span><span class="co">##   .. .. ..$ p      : num [1:3] 1.67e-46 2.30e-225 1.01e-76</span></span>
+<span><span class="co">##   .. .. ..$ taxaDF : num [1:3] 281 281 283</span></span>
+<span><span class="co">##   .. .. ..$ taxaMS : num [1:3] 28.5 695.8 49.4</span></span>
+<span><span class="co">##   .. .. ..$ errorDF: num [1:3] 241 274 269</span></span>
+<span><span class="co">##   .. .. ..$ errorMS: num [1:3] 4.11 4.18 4.09</span></span>
+<span><span class="co">##   .. .. ..$ modelDF: num [1:3] 284 284 286</span></span>
+<span><span class="co">##   .. .. ..$ modelMS: num [1:3] 29.1 815.1 68.9</span></span>
+<span><span class="co">##   .. ..@ elementType    : chr "ANY"</span></span>
+<span><span class="co">##   .. ..@ elementMetadata: NULL</span></span>
+<span><span class="co">##   .. ..@ metadata       : list()</span></span></code></pre>
 </div>
 <div class="section level3">
 <h3 id="calculate-glm">Calculate GLM<a class="anchor" aria-label="anchor" href="#calculate-glm"></a>
 </h3>
 <p>Similar to BLUEs, we can fit a generalized linear model (GLM) by simply fitting marker data to our model. For this, we need a genotype data set combined with our phenotype data in a <code>TasselGenotypePhenotype</code> class object:</p>
-<div class="sourceCode" id="cb88"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># Calculate GLM</span>
-<span class="va">tasGLM</span> <span class="op">&lt;-</span> <span class="fu">rTASSEL</span><span class="fu">::</span><span class="fu"><a href="../reference/assocModelFitter.html">assocModelFitter</a></span><span class="op">(</span>
-    tasObj <span class="op">=</span> <span class="va">tasGenoPheno</span>,             <span class="co"># &lt;- our prior TASSEL object</span>
-    formula <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">EarHT</span>, <span class="va">dpoll</span><span class="op">)</span> <span class="op">~</span> <span class="va">.</span>,  <span class="co"># &lt;- only EarHT and dpoll are ran</span>
-    fitMarkers <span class="op">=</span> <span class="cn">TRUE</span>,                 <span class="co"># &lt;- set this to TRUE for GLM</span>
-    kinship <span class="op">=</span> <span class="cn">NULL</span>,
-    fastAssociation <span class="op">=</span> <span class="cn">FALSE</span>
-<span class="op">)</span></code></pre></div>
-<pre><code><span class="co">## Running all non &lt;data&gt; traits and/or &lt;taxa&gt;...</span></code></pre>
-<pre><code><span class="co">## Association Analysis : GLM</span></code></pre>
-<div class="sourceCode" id="cb91"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># Return GLM output</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">tasGLM</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">## List of 2</span>
-<span class="co">##  $ GLM_Stats    :Formal class 'DFrame' [package "S4Vectors"] with 6 slots</span>
-<span class="co">##   .. ..@ rownames       : NULL</span>
-<span class="co">##   .. ..@ nrows          : int 473</span>
-<span class="co">##   .. ..@ listData       :List of 18</span>
-<span class="co">##   .. .. ..$ Trait     : chr [1:473] "EarHT" "EarHT" "EarHT" "EarHT" ...</span>
-<span class="co">##   .. .. ..$ Marker    : chr [1:473] "PZA00447.8" "PZB00718.1" "PZD00098.1" "PZA02921.4" ...</span>
-<span class="co">##   .. .. ..$ Chr       : chr [1:473] "1" "1" "1" "1" ...</span>
-<span class="co">##   .. .. ..$ Pos       : int [1:473] 9024005 17601375 23267898 25035053 32583282 41505016 47280990 50197162 76054042 90772226 ...</span>
-<span class="co">##   .. .. ..$ marker_F  : num [1:473] 13.62 7.78 13.28 13.19 12.81 ...</span>
-<span class="co">##   .. .. ..$ p         : num [1:473] 0.000275 0.000524 0.000323 0.000341 0.000412 ...</span>
-<span class="co">##   .. .. ..$ marker_Rsq: num [1:473] 0.0517 0.0573 0.0488 0.0499 0.0478 ...</span>
-<span class="co">##   .. .. ..$ add_F     : num [1:473] 13.6 15.1 13.3 13.2 12.8 ...</span>
-<span class="co">##   .. .. ..$ add_p     : num [1:473] 0.000275 0.000129 0.000323 0.000341 0.000412 ...</span>
-<span class="co">##   .. .. ..$ dom_F     : num [1:473] NaN 0.48 NaN NaN NaN ...</span>
-<span class="co">##   .. .. ..$ dom_p     : num [1:473] NaN 0.489 NaN NaN NaN ...</span>
-<span class="co">##   .. .. ..$ marker_df : num [1:473] 1 2 1 1 1 2 2 1 1 2 ...</span>
-<span class="co">##   .. .. ..$ marker_MS : num [1:473] 5363 3030 5217 5170 5093 ...</span>
-<span class="co">##   .. .. ..$ error_df  : num [1:473] 250 256 259 251 255 262 250 270 268 273 ...</span>
-<span class="co">##   .. .. ..$ error_MS  : num [1:473] 394 389 393 392 398 ...</span>
-<span class="co">##   .. .. ..$ model_df  : num [1:473] 1 2 1 1 1 2 2 1 1 2 ...</span>
-<span class="co">##   .. .. ..$ model_MS  : num [1:473] 5363 3030 5217 5170 5093 ...</span>
-<span class="co">##   .. .. ..$ minorObs  : int [1:473] 124 105 108 101 16 55 63 99 104 127 ...</span>
-<span class="co">##   .. ..@ elementType    : chr "ANY"</span>
-<span class="co">##   .. ..@ elementMetadata: NULL</span>
-<span class="co">##   .. ..@ metadata       : list()</span>
-<span class="co">##  $ GLM_Genotypes:Formal class 'DFrame' [package "S4Vectors"] with 6 slots</span>
-<span class="co">##   .. ..@ rownames       : NULL</span>
-<span class="co">##   .. ..@ nrows          : int 1144</span>
-<span class="co">##   .. ..@ listData       :List of 7</span>
-<span class="co">##   .. .. ..$ Trait   : chr [1:1144] "EarHT" "EarHT" "EarHT" "EarHT" ...</span>
-<span class="co">##   .. .. ..$ Marker  : chr [1:1144] "PZA00447.8" "PZA00447.8" "PZB00718.1" "PZB00718.1" ...</span>
-<span class="co">##   .. .. ..$ Chr     : chr [1:1144] "1" "1" "1" "1" ...</span>
-<span class="co">##   .. .. ..$ Pos     : int [1:1144] 9024005 9024005 17601375 17601375 17601375 23267898 23267898 25035053 25035053 32583282 ...</span>
-<span class="co">##   .. .. ..$ Obs     : int [1:1144] 124 128 105 123 31 153 108 152 101 16 ...</span>
-<span class="co">##   .. .. ..$ Allele  : chr [1:1144] "C" "T" "C" "G" ...</span>
-<span class="co">##   .. .. ..$ Estimate: num [1:1144] 9.23 0 -2.45 7.68 0 ...</span>
-<span class="co">##   .. ..@ elementType    : chr "ANY"</span>
-<span class="co">##   .. ..@ elementMetadata: NULL</span>
-<span class="co">##   .. ..@ metadata       : list()</span></code></pre>
+<div class="sourceCode" id="cb81"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Calculate GLM</span></span>
+<span><span class="va">tasGLM</span> <span class="op">&lt;-</span> <span class="fu">rTASSEL</span><span class="fu">::</span><span class="fu"><a href="../reference/assocModelFitter.html">assocModelFitter</a></span><span class="op">(</span></span>
+<span>    tasObj <span class="op">=</span> <span class="va">tasGenoPheno</span>,             <span class="co"># &lt;- our prior TASSEL object</span></span>
+<span>    formula <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">EarHT</span>, <span class="va">dpoll</span><span class="op">)</span> <span class="op">~</span> <span class="va">.</span>,  <span class="co"># &lt;- only EarHT and dpoll are ran</span></span>
+<span>    fitMarkers <span class="op">=</span> <span class="cn">TRUE</span>,                 <span class="co"># &lt;- set this to TRUE for GLM</span></span>
+<span>    kinship <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>    fastAssociation <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## Running all non &lt;data&gt; traits and/or &lt;taxa&gt;...</span></span></code></pre>
+<pre><code><span><span class="co">## Association Analysis : GLM</span></span></code></pre>
+<div class="sourceCode" id="cb84"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Return GLM output</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">tasGLM</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## List of 2</span></span>
+<span><span class="co">##  $ GLM_Stats    :Formal class 'DFrame' [package "S4Vectors"] with 6 slots</span></span>
+<span><span class="co">##   .. ..@ rownames       : NULL</span></span>
+<span><span class="co">##   .. ..@ nrows          : int 473</span></span>
+<span><span class="co">##   .. ..@ listData       :List of 18</span></span>
+<span><span class="co">##   .. .. ..$ Trait     : chr [1:473] "EarHT" "EarHT" "EarHT" "EarHT" ...</span></span>
+<span><span class="co">##   .. .. ..$ Marker    : chr [1:473] "PZA00447.8" "PZB00718.1" "PZD00098.1" "PZA02921.4" ...</span></span>
+<span><span class="co">##   .. .. ..$ Chr       : chr [1:473] "1" "1" "1" "1" ...</span></span>
+<span><span class="co">##   .. .. ..$ Pos       : int [1:473] 9024005 17601375 23267898 25035053 32583282 41505016 47280990 50197162 76054042 90772226 ...</span></span>
+<span><span class="co">##   .. .. ..$ marker_F  : num [1:473] 13.62 7.78 13.28 13.19 12.81 ...</span></span>
+<span><span class="co">##   .. .. ..$ p         : num [1:473] 0.000275 0.000524 0.000323 0.000341 0.000412 ...</span></span>
+<span><span class="co">##   .. .. ..$ marker_Rsq: num [1:473] 0.0517 0.0573 0.0488 0.0499 0.0478 ...</span></span>
+<span><span class="co">##   .. .. ..$ add_F     : num [1:473] 13.6 15.1 13.3 13.2 12.8 ...</span></span>
+<span><span class="co">##   .. .. ..$ add_p     : num [1:473] 0.000275 0.000129 0.000323 0.000341 0.000412 ...</span></span>
+<span><span class="co">##   .. .. ..$ dom_F     : num [1:473] NaN 0.48 NaN NaN NaN ...</span></span>
+<span><span class="co">##   .. .. ..$ dom_p     : num [1:473] NaN 0.489 NaN NaN NaN ...</span></span>
+<span><span class="co">##   .. .. ..$ marker_df : num [1:473] 1 2 1 1 1 2 2 1 1 2 ...</span></span>
+<span><span class="co">##   .. .. ..$ marker_MS : num [1:473] 5363 3030 5217 5170 5093 ...</span></span>
+<span><span class="co">##   .. .. ..$ error_df  : num [1:473] 250 256 259 251 255 262 250 270 268 273 ...</span></span>
+<span><span class="co">##   .. .. ..$ error_MS  : num [1:473] 394 389 393 392 398 ...</span></span>
+<span><span class="co">##   .. .. ..$ model_df  : num [1:473] 1 2 1 1 1 2 2 1 1 2 ...</span></span>
+<span><span class="co">##   .. .. ..$ model_MS  : num [1:473] 5363 3030 5217 5170 5093 ...</span></span>
+<span><span class="co">##   .. .. ..$ minorObs  : int [1:473] 124 105 108 101 16 55 63 99 104 127 ...</span></span>
+<span><span class="co">##   .. ..@ elementType    : chr "ANY"</span></span>
+<span><span class="co">##   .. ..@ elementMetadata: NULL</span></span>
+<span><span class="co">##   .. ..@ metadata       : list()</span></span>
+<span><span class="co">##  $ GLM_Genotypes:Formal class 'DFrame' [package "S4Vectors"] with 6 slots</span></span>
+<span><span class="co">##   .. ..@ rownames       : NULL</span></span>
+<span><span class="co">##   .. ..@ nrows          : int 1144</span></span>
+<span><span class="co">##   .. ..@ listData       :List of 7</span></span>
+<span><span class="co">##   .. .. ..$ Trait   : chr [1:1144] "EarHT" "EarHT" "EarHT" "EarHT" ...</span></span>
+<span><span class="co">##   .. .. ..$ Marker  : chr [1:1144] "PZA00447.8" "PZA00447.8" "PZB00718.1" "PZB00718.1" ...</span></span>
+<span><span class="co">##   .. .. ..$ Chr     : chr [1:1144] "1" "1" "1" "1" ...</span></span>
+<span><span class="co">##   .. .. ..$ Pos     : int [1:1144] 9024005 9024005 17601375 17601375 17601375 23267898 23267898 25035053 25035053 32583282 ...</span></span>
+<span><span class="co">##   .. .. ..$ Obs     : int [1:1144] 124 128 105 123 31 153 108 152 101 16 ...</span></span>
+<span><span class="co">##   .. .. ..$ Allele  : chr [1:1144] "C" "T" "C" "G" ...</span></span>
+<span><span class="co">##   .. .. ..$ Estimate: num [1:1144] 9.23 0 -2.45 7.68 0 ...</span></span>
+<span><span class="co">##   .. ..@ elementType    : chr "ANY"</span></span>
+<span><span class="co">##   .. ..@ elementMetadata: NULL</span></span>
+<span><span class="co">##   .. ..@ metadata       : list()</span></span></code></pre>
 </div>
 <div class="section level3">
 <h3 id="calculate-mlm">Calculate MLM<a class="anchor" aria-label="anchor" href="#calculate-mlm"></a>
 </h3>
 <p>Adding to our complexity, we can fit a mixed linear model (MLM) by adding kinship to our analysis. In addition to the prior parameters, we will also need a TASSEL kinship object (see <em>Create a kinship matrix object</em> in the <em>Analysis - Relatedness</em> section):</p>
-<div class="sourceCode" id="cb93"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># Calculate MLM</span>
-<span class="va">tasMLM</span> <span class="op">&lt;-</span> <span class="fu">rTASSEL</span><span class="fu">::</span><span class="fu"><a href="../reference/assocModelFitter.html">assocModelFitter</a></span><span class="op">(</span>
-    tasObj <span class="op">=</span> <span class="va">tasGenoPheno</span>,             <span class="co"># &lt;- our prior TASSEL object</span>
-    formula <span class="op">=</span> <span class="va">EarHT</span> <span class="op">~</span> <span class="va">.</span>,               <span class="co"># &lt;- run only EarHT</span>
-    fitMarkers <span class="op">=</span> <span class="cn">TRUE</span>,                 <span class="co"># &lt;- set this to TRUE for GLM</span>
-    kinship <span class="op">=</span> <span class="va">tasKin</span>,                  <span class="co"># &lt;- our prior kinship object</span>
-    fastAssociation <span class="op">=</span> <span class="cn">FALSE</span>
-<span class="op">)</span></code></pre></div>
-<pre><code><span class="co">## Running all non &lt;data&gt; traits and/or &lt;taxa&gt;...</span></code></pre>
-<pre><code><span class="co">## Association Analysis : MLM</span></code></pre>
-<div class="sourceCode" id="cb96"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># Return GLM output</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">tasMLM</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">## List of 3</span>
-<span class="co">##  $ MLM_Effects        :Formal class 'DFrame' [package "S4Vectors"] with 6 slots</span>
-<span class="co">##   .. ..@ rownames       : NULL</span>
-<span class="co">##   .. ..@ nrows          : int 7211</span>
-<span class="co">##   .. ..@ listData       :List of 7</span>
-<span class="co">##   .. .. ..$ Trait : chr [1:7211] "EarHT" "EarHT" "EarHT" "EarHT" ...</span>
-<span class="co">##   .. .. ..$ Marker: chr [1:7211] "PZB00859.1" "PZB00859.1" "PZB00859.1" "PZA01271.1" ...</span>
-<span class="co">##   .. .. ..$ Locus : chr [1:7211] "1" "1" "1" "1" ...</span>
-<span class="co">##   .. .. ..$ Site  : chr [1:7211] "157104" "157104" "157104" "1947984" ...</span>
-<span class="co">##   .. .. ..$ Allele: chr [1:7211] "A" "C" "M" "C" ...</span>
-<span class="co">##   .. .. ..$ Effect: num [1:7211] -7.91 -2.72 0 -4.46 0 ...</span>
-<span class="co">##   .. .. ..$ Obs   : int [1:7211] 63 207 3 131 137 78 196 69 207 2 ...</span>
-<span class="co">##   .. ..@ elementType    : chr "ANY"</span>
-<span class="co">##   .. ..@ elementMetadata: NULL</span>
-<span class="co">##   .. ..@ metadata       : list()</span>
-<span class="co">##  $ MLM_Stats          :Formal class 'DFrame' [package "S4Vectors"] with 6 slots</span>
-<span class="co">##   .. ..@ rownames       : NULL</span>
-<span class="co">##   .. ..@ nrows          : int 3094</span>
-<span class="co">##   .. ..@ listData       :List of 18</span>
-<span class="co">##   .. .. ..$ Trait         : chr [1:3094] "EarHT" "EarHT" "EarHT" "EarHT" ...</span>
-<span class="co">##   .. .. ..$ Marker        : chr [1:3094] "None" "PZB00859.1" "PZA01271.1" "PZA03613.2" ...</span>
-<span class="co">##   .. .. ..$ Chr           : chr [1:3094] "" "1" "1" "1" ...</span>
-<span class="co">##   .. .. ..$ Pos           : chr [1:3094] "" "157104" "1947984" "2914066" ...</span>
-<span class="co">##   .. .. ..$ df            : int [1:3094] 0 2 1 1 2 1 1 2 2 1 ...</span>
-<span class="co">##   .. .. ..$ F             : num [1:3094] NaN 1.6664 2.9836 0.4799 0.0377 ...</span>
-<span class="co">##   .. .. ..$ p             : num [1:3094] NaN 0.1909 0.0853 0.4891 0.963 ...</span>
-<span class="co">##   .. .. ..$ add_effect    : num [1:3094] NaN -2.596 NaN NaN 0.126 ...</span>
-<span class="co">##   .. .. ..$ add_F         : num [1:3094] NaN 3.216 NaN NaN 0.00676 ...</span>
-<span class="co">##   .. .. ..$ add_p         : num [1:3094] NaN 0.074 NaN NaN 0.935 ...</span>
-<span class="co">##   .. .. ..$ dom_effect    : num [1:3094] NaN 5.32 NaN NaN -2.67 ...</span>
-<span class="co">##   .. .. ..$ dom_F         : num [1:3094] NaN 0.242 NaN NaN 0.07 ...</span>
-<span class="co">##   .. .. ..$ dom_p         : num [1:3094] NaN 0.623 NaN NaN 0.792 ...</span>
-<span class="co">##   .. .. ..$ errordf       : int [1:3094] 279 273 268 274 278 261 259 257 264 255 ...</span>
-<span class="co">##   .. .. ..$ MarkerR2      : num [1:3094] NaN 0.012231 0.01107 0.001743 0.000271 ...</span>
-<span class="co">##   .. .. ..$ Genetic_Var   : num [1:3094] 145 145 145 145 145 ...</span>
-<span class="co">##   .. .. ..$ Residual_Var  : num [1:3094] 105 105 105 105 105 ...</span>
-<span class="co">##   .. .. ..$ -2LnLikelihood: num [1:3094] 2387 2387 2387 2387 2387 ...</span>
-<span class="co">##   .. ..@ elementType    : chr "ANY"</span>
-<span class="co">##   .. ..@ elementMetadata: NULL</span>
-<span class="co">##   .. ..@ metadata       : list()</span>
-<span class="co">##  $ MLM_Residuals_EarHT:Formal class 'DFrame' [package "S4Vectors"] with 6 slots</span>
-<span class="co">##   .. ..@ rownames       : NULL</span>
-<span class="co">##   .. ..@ nrows          : int 279</span>
-<span class="co">##   .. ..@ listData       :List of 2</span>
-<span class="co">##   .. .. ..$ Taxa : chr [1:279] "33-16" "38-11" "4226" "4722" ...</span>
-<span class="co">##   .. .. ..$ EarHT: num [1:279] 0.836 7.339 4.049 5.796 -5.334 ...</span>
-<span class="co">##   .. ..@ elementType    : chr "ANY"</span>
-<span class="co">##   .. ..@ elementMetadata: NULL</span>
-<span class="co">##   .. ..@ metadata       : list()</span></code></pre>
+<div class="sourceCode" id="cb86"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Calculate MLM</span></span>
+<span><span class="va">tasMLM</span> <span class="op">&lt;-</span> <span class="fu">rTASSEL</span><span class="fu">::</span><span class="fu"><a href="../reference/assocModelFitter.html">assocModelFitter</a></span><span class="op">(</span></span>
+<span>    tasObj <span class="op">=</span> <span class="va">tasGenoPheno</span>,             <span class="co"># &lt;- our prior TASSEL object</span></span>
+<span>    formula <span class="op">=</span> <span class="va">EarHT</span> <span class="op">~</span> <span class="va">.</span>,               <span class="co"># &lt;- run only EarHT</span></span>
+<span>    fitMarkers <span class="op">=</span> <span class="cn">TRUE</span>,                 <span class="co"># &lt;- set this to TRUE for GLM</span></span>
+<span>    kinship <span class="op">=</span> <span class="va">tasKin</span>,                  <span class="co"># &lt;- our prior kinship object</span></span>
+<span>    fastAssociation <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## Running all non &lt;data&gt; traits and/or &lt;taxa&gt;...</span></span></code></pre>
+<pre><code><span><span class="co">## Association Analysis : MLM</span></span></code></pre>
+<div class="sourceCode" id="cb89"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Return GLM output</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">tasMLM</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## List of 3</span></span>
+<span><span class="co">##  $ MLM_Effects        :Formal class 'DFrame' [package "S4Vectors"] with 6 slots</span></span>
+<span><span class="co">##   .. ..@ rownames       : NULL</span></span>
+<span><span class="co">##   .. ..@ nrows          : int 7211</span></span>
+<span><span class="co">##   .. ..@ listData       :List of 7</span></span>
+<span><span class="co">##   .. .. ..$ Trait : chr [1:7211] "EarHT" "EarHT" "EarHT" "EarHT" ...</span></span>
+<span><span class="co">##   .. .. ..$ Marker: chr [1:7211] "PZB00859.1" "PZB00859.1" "PZB00859.1" "PZA01271.1" ...</span></span>
+<span><span class="co">##   .. .. ..$ Locus : chr [1:7211] "1" "1" "1" "1" ...</span></span>
+<span><span class="co">##   .. .. ..$ Site  : chr [1:7211] "157104" "157104" "157104" "1947984" ...</span></span>
+<span><span class="co">##   .. .. ..$ Allele: chr [1:7211] "A" "C" "M" "C" ...</span></span>
+<span><span class="co">##   .. .. ..$ Effect: num [1:7211] -7.91 -2.72 0 -4.46 0 ...</span></span>
+<span><span class="co">##   .. .. ..$ Obs   : int [1:7211] 63 207 3 131 137 78 196 69 207 2 ...</span></span>
+<span><span class="co">##   .. ..@ elementType    : chr "ANY"</span></span>
+<span><span class="co">##   .. ..@ elementMetadata: NULL</span></span>
+<span><span class="co">##   .. ..@ metadata       : list()</span></span>
+<span><span class="co">##  $ MLM_Stats          :Formal class 'DFrame' [package "S4Vectors"] with 6 slots</span></span>
+<span><span class="co">##   .. ..@ rownames       : NULL</span></span>
+<span><span class="co">##   .. ..@ nrows          : int 3094</span></span>
+<span><span class="co">##   .. ..@ listData       :List of 18</span></span>
+<span><span class="co">##   .. .. ..$ Trait         : chr [1:3094] "EarHT" "EarHT" "EarHT" "EarHT" ...</span></span>
+<span><span class="co">##   .. .. ..$ Marker        : chr [1:3094] "None" "PZB00859.1" "PZA01271.1" "PZA03613.2" ...</span></span>
+<span><span class="co">##   .. .. ..$ Chr           : chr [1:3094] "" "1" "1" "1" ...</span></span>
+<span><span class="co">##   .. .. ..$ Pos           : chr [1:3094] "" "157104" "1947984" "2914066" ...</span></span>
+<span><span class="co">##   .. .. ..$ df            : int [1:3094] 0 2 1 1 2 1 1 2 2 1 ...</span></span>
+<span><span class="co">##   .. .. ..$ F             : num [1:3094] NaN 1.6664 2.9836 0.4799 0.0377 ...</span></span>
+<span><span class="co">##   .. .. ..$ p             : num [1:3094] NaN 0.1909 0.0853 0.4891 0.963 ...</span></span>
+<span><span class="co">##   .. .. ..$ add_effect    : num [1:3094] NaN -2.596 NaN NaN 0.126 ...</span></span>
+<span><span class="co">##   .. .. ..$ add_F         : num [1:3094] NaN 3.216 NaN NaN 0.00676 ...</span></span>
+<span><span class="co">##   .. .. ..$ add_p         : num [1:3094] NaN 0.074 NaN NaN 0.935 ...</span></span>
+<span><span class="co">##   .. .. ..$ dom_effect    : num [1:3094] NaN 5.32 NaN NaN -2.67 ...</span></span>
+<span><span class="co">##   .. .. ..$ dom_F         : num [1:3094] NaN 0.242 NaN NaN 0.07 ...</span></span>
+<span><span class="co">##   .. .. ..$ dom_p         : num [1:3094] NaN 0.623 NaN NaN 0.792 ...</span></span>
+<span><span class="co">##   .. .. ..$ errordf       : int [1:3094] 279 273 268 274 278 261 259 257 264 255 ...</span></span>
+<span><span class="co">##   .. .. ..$ MarkerR2      : num [1:3094] NaN 0.012231 0.01107 0.001743 0.000271 ...</span></span>
+<span><span class="co">##   .. .. ..$ Genetic_Var   : num [1:3094] 145 145 145 145 145 ...</span></span>
+<span><span class="co">##   .. .. ..$ Residual_Var  : num [1:3094] 105 105 105 105 105 ...</span></span>
+<span><span class="co">##   .. .. ..$ -2LnLikelihood: num [1:3094] 2387 2387 2387 2387 2387 ...</span></span>
+<span><span class="co">##   .. ..@ elementType    : chr "ANY"</span></span>
+<span><span class="co">##   .. ..@ elementMetadata: NULL</span></span>
+<span><span class="co">##   .. ..@ metadata       : list()</span></span>
+<span><span class="co">##  $ MLM_Residuals_EarHT:Formal class 'DFrame' [package "S4Vectors"] with 6 slots</span></span>
+<span><span class="co">##   .. ..@ rownames       : NULL</span></span>
+<span><span class="co">##   .. ..@ nrows          : int 279</span></span>
+<span><span class="co">##   .. ..@ listData       :List of 2</span></span>
+<span><span class="co">##   .. .. ..$ Taxa : chr [1:279] "33-16" "38-11" "4226" "4722" ...</span></span>
+<span><span class="co">##   .. .. ..$ EarHT: num [1:279] 0.836 7.339 4.049 5.796 -5.334 ...</span></span>
+<span><span class="co">##   .. ..@ elementType    : chr "ANY"</span></span>
+<span><span class="co">##   .. ..@ elementMetadata: NULL</span></span>
+<span><span class="co">##   .. ..@ metadata       : list()</span></span></code></pre>
 </div>
 <div class="section level3">
 <h3 id="calculate-fast-association">Calculate Fast Association<a class="anchor" aria-label="anchor" href="#calculate-fast-association"></a>
 </h3>
 <p>Finally, we can run fast association analysis in our GLM model by setting the <code>fastAssociation</code> parameter to <code>TRUE</code>. <strong>NOTE</strong>: this is only really effective if you have many phenotype traits:</p>
-<div class="sourceCode" id="cb98"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># Read data - need only non missing data!</span>
-<span class="va">phenoPathFast</span> <span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span>
-    <span class="st">"extdata"</span>,
-    <span class="st">"mdp_traits_nomissing.txt"</span>,
-    package <span class="op">=</span> <span class="st">"rTASSEL"</span>
-<span class="op">)</span>
-
-<span class="co"># Creat rTASSEL object - use prior TASSEL genotype object</span>
-<span class="va">tasGenoPhenoFast</span> <span class="op">&lt;-</span> <span class="fu">rTASSEL</span><span class="fu">::</span><span class="fu"><a href="../reference/readGenotypePhenotype.html">readGenotypePhenotype</a></span><span class="op">(</span>
-    genoPathOrObj <span class="op">=</span> <span class="va">tasGenoHMP</span>,
-    phenoPathDFOrObj <span class="op">=</span> <span class="va">phenoPathFast</span>
-<span class="op">)</span>
-
-
-<span class="co"># Calculate MLM</span>
-<span class="va">tasFAST</span> <span class="op">&lt;-</span> <span class="fu">rTASSEL</span><span class="fu">::</span><span class="fu"><a href="../reference/assocModelFitter.html">assocModelFitter</a></span><span class="op">(</span>
-    tasObj <span class="op">=</span> <span class="va">tasGenoPhenoFast</span>,         <span class="co"># &lt;- our prior TASSEL object</span>
-    formula <span class="op">=</span> <span class="va">.</span> <span class="op">~</span> <span class="va">.</span>,                   <span class="co"># &lt;- run all of the phenotype data</span>
-    fitMarkers <span class="op">=</span> <span class="cn">TRUE</span>,                 <span class="co"># &lt;- set this to TRUE for GLM</span>
-    kinship <span class="op">=</span> <span class="cn">NULL</span>,
-    fastAssociation <span class="op">=</span> <span class="cn">TRUE</span>             <span class="co"># &lt;- set this to TRUE for fast assoc.</span>
-<span class="op">)</span></code></pre></div>
-<pre><code><span class="co">## Running all traits...</span></code></pre>
-<pre><code><span class="co">## Association Analysis : Fast Association</span></code></pre>
-<div class="sourceCode" id="cb101"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># Return GLM output</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">tasFAST</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">## List of 1</span>
-<span class="co">##  $ FastAssociation:Formal class 'DFrame' [package "S4Vectors"] with 6 slots</span>
-<span class="co">##   .. ..@ rownames       : NULL</span>
-<span class="co">##   .. ..@ nrows          : int 640</span>
-<span class="co">##   .. ..@ listData       :List of 7</span>
-<span class="co">##   .. .. ..$ Trait : chr [1:640] "dpoll" "EarDia" "EarDia" "EarDia" ...</span>
-<span class="co">##   .. .. ..$ Marker: chr [1:640] "PZA00258.3" "PZA02869.8" "PZA02869.4" "PZA02869.2" ...</span>
-<span class="co">##   .. .. ..$ Chr   : chr [1:640] "1" "1" "1" "1" ...</span>
-<span class="co">##   .. .. ..$ Pos   : int [1:640] 2973508 4429897 4429927 4430055 5562502 8366411 8367944 9023947 9024005 9024005 ...</span>
-<span class="co">##   .. .. ..$ df    : int [1:640] 1 1 1 1 1 1 1 1 1 1 ...</span>
-<span class="co">##   .. .. ..$ r2    : num [1:640] 0.0435 0.0458 0.0606 0.0504 0.0473 ...</span>
-<span class="co">##   .. .. ..$ p     : num [1:640] 4.66e-04 3.25e-04 3.31e-05 1.60e-04 2.60e-04 ...</span>
-<span class="co">##   .. ..@ elementType    : chr "ANY"</span>
-<span class="co">##   .. ..@ elementMetadata: NULL</span>
-<span class="co">##   .. ..@ metadata       : list()</span></code></pre>
+<div class="sourceCode" id="cb91"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Read data - need only non missing data!</span></span>
+<span><span class="va">phenoPathFast</span> <span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span></span>
+<span>    <span class="st">"extdata"</span>,</span>
+<span>    <span class="st">"mdp_traits_nomissing.txt"</span>,</span>
+<span>    package <span class="op">=</span> <span class="st">"rTASSEL"</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Creat rTASSEL object - use prior TASSEL genotype object</span></span>
+<span><span class="va">tasGenoPhenoFast</span> <span class="op">&lt;-</span> <span class="fu">rTASSEL</span><span class="fu">::</span><span class="fu"><a href="../reference/readGenotypePhenotype.html">readGenotypePhenotype</a></span><span class="op">(</span></span>
+<span>    genoPathOrObj <span class="op">=</span> <span class="va">tasGenoHMP</span>,</span>
+<span>    phenoPathDFOrObj <span class="op">=</span> <span class="va">phenoPathFast</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span></span>
+<span><span class="co"># Calculate MLM</span></span>
+<span><span class="va">tasFAST</span> <span class="op">&lt;-</span> <span class="fu">rTASSEL</span><span class="fu">::</span><span class="fu"><a href="../reference/assocModelFitter.html">assocModelFitter</a></span><span class="op">(</span></span>
+<span>    tasObj <span class="op">=</span> <span class="va">tasGenoPhenoFast</span>,         <span class="co"># &lt;- our prior TASSEL object</span></span>
+<span>    formula <span class="op">=</span> <span class="va">.</span> <span class="op">~</span> <span class="va">.</span>,                   <span class="co"># &lt;- run all of the phenotype data</span></span>
+<span>    fitMarkers <span class="op">=</span> <span class="cn">TRUE</span>,                 <span class="co"># &lt;- set this to TRUE for GLM</span></span>
+<span>    kinship <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>    fastAssociation <span class="op">=</span> <span class="cn">TRUE</span>             <span class="co"># &lt;- set this to TRUE for fast assoc.</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## Running all traits...</span></span></code></pre>
+<pre><code><span><span class="co">## Association Analysis : Fast Association</span></span></code></pre>
+<div class="sourceCode" id="cb94"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Return GLM output</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">tasFAST</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## List of 1</span></span>
+<span><span class="co">##  $ FastAssociation:Formal class 'DFrame' [package "S4Vectors"] with 6 slots</span></span>
+<span><span class="co">##   .. ..@ rownames       : NULL</span></span>
+<span><span class="co">##   .. ..@ nrows          : int 640</span></span>
+<span><span class="co">##   .. ..@ listData       :List of 7</span></span>
+<span><span class="co">##   .. .. ..$ Trait : chr [1:640] "dpoll" "EarDia" "EarDia" "EarDia" ...</span></span>
+<span><span class="co">##   .. .. ..$ Marker: chr [1:640] "PZA00258.3" "PZA02869.8" "PZA02869.4" "PZA02869.2" ...</span></span>
+<span><span class="co">##   .. .. ..$ Chr   : chr [1:640] "1" "1" "1" "1" ...</span></span>
+<span><span class="co">##   .. .. ..$ Pos   : int [1:640] 2973508 4429897 4429927 4430055 5562502 8366411 8367944 9023947 9024005 9024005 ...</span></span>
+<span><span class="co">##   .. .. ..$ df    : int [1:640] 1 1 1 1 1 1 1 1 1 1 ...</span></span>
+<span><span class="co">##   .. .. ..$ r2    : num [1:640] 0.0435 0.0458 0.0606 0.0504 0.0473 ...</span></span>
+<span><span class="co">##   .. .. ..$ p     : num [1:640] 4.66e-04 3.25e-04 3.31e-05 1.60e-04 2.60e-04 ...</span></span>
+<span><span class="co">##   .. ..@ elementType    : chr "ANY"</span></span>
+<span><span class="co">##   .. ..@ elementMetadata: NULL</span></span>
+<span><span class="co">##   .. ..@ metadata       : list()</span></span></code></pre>
 </div>
 </div>
 <div class="section level2">
 <h2 id="analysis---phylogeny">Analysis - Phylogeny<a class="anchor" aria-label="anchor" href="#analysis---phylogeny"></a>
 </h2>
 <p><code>rTASSEL</code> allows for interfacing with TASSEL’s tree generation methods from genotype information. This can be performed using the <code><a href="../reference/createTree.html">createTree()</a></code> method with a <code>TasselGenotypePhenotype</code> object containing genotype table information:</p>
-<div class="sourceCode" id="cb103"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">phyloTree</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/createTree.html">createTree</a></span><span class="op">(</span>
-    tasObj <span class="op">=</span> <span class="va">tasGenoHMP</span>,
-    clustMethod <span class="op">=</span> <span class="st">"Neighbor_Joining"</span>
-<span class="op">)</span></code></pre></div>
+<div class="sourceCode" id="cb96"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">phyloTree</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/createTree.html">createTree</a></span><span class="op">(</span></span>
+<span>    tasObj <span class="op">=</span> <span class="va">tasGenoHMP</span>,</span>
+<span>    clustMethod <span class="op">=</span> <span class="st">"Neighbor_Joining"</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 <p>The above function allows for two clustering methods:</p>
 <ul>
 <li>
@@ -1127,15 +1080,15 @@ sudo ln -s $(/usr/libexec/java_home)/lib/server/libjvm.dylib /usr/local/lib</cod
 <code>UPGMA</code> - <strong>U</strong>nweighted <strong>P</strong>air <strong>G</strong>roup <strong>M</strong>ethod with <strong>A</strong>rithmetic <strong>M</strong>ean. More info can be found <a href="https://en.wikipedia.org/wiki/UPGMA" class="external-link">here</a>.</li>
 </ul>
 <p>Upon creation, the <code>phyloTree</code> object is returned as a <code>phylo</code> object generated by the <a href="https://cran.r-project.org/web/packages/ape/ape.pdf" class="external-link">ape</a> package:</p>
-<div class="sourceCode" id="cb104"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">phyloTree</span></code></pre></div>
-<pre><code><span class="co">## </span>
-<span class="co">## Phylogenetic tree with 281 tips and 279 internal nodes.</span>
-<span class="co">## </span>
-<span class="co">## Tip labels:</span>
-<span class="co">##   33-16, CI7, L317, MOG, 38-11, PA91, ...</span>
-<span class="co">## </span>
-<span class="co">## Unrooted; includes branch lengths.</span></code></pre>
+<div class="sourceCode" id="cb97"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">phyloTree</span></span></code></pre></div>
+<pre><code><span><span class="co">## </span></span>
+<span><span class="co">## Phylogenetic tree with 281 tips and 279 internal nodes.</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## Tip labels:</span></span>
+<span><span class="co">##   33-16, CI7, L317, MOG, 38-11, PA91, ...</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## Unrooted; includes branch lengths.</span></span></code></pre>
 <p>This object can then be used by common base-R methods (e.g. <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code>) or other visualization libraries such as <a href="https://bioconductor.org/packages/release/bioc/html/ggtree.html" class="external-link">ggtree</a>.</p>
 </div>
 <div class="section level2">
@@ -1145,41 +1098,41 @@ sudo ln -s $(/usr/libexec/java_home)/lib/server/libjvm.dylib /usr/local/lib</cod
 <h3 id="manhattan-plots">Manhattan plots<a class="anchor" aria-label="anchor" href="#manhattan-plots"></a>
 </h3>
 <p><code>rTASSEL</code> supports automated visualizations for Manhattan plots and linkage disequilibrium (LD) analyses. In this example, we will generate a Manhattan plot for our prior MLM object:</p>
-<div class="sourceCode" id="cb106"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># Generate Manhattan plot for ear height trait</span>
-<span class="va">manhattanEH</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/manhattanPlot.html">manhattanPlot</a></span><span class="op">(</span>
-    assocStats <span class="op">=</span> <span class="va">tasMLM</span><span class="op">$</span><span class="va">MLM_Stats</span>,
-    trait      <span class="op">=</span> <span class="st">"EarHT"</span>,
-    threshold  <span class="op">=</span> <span class="fl">5</span>
-<span class="op">)</span>
-
-<span class="va">manhattanEH</span></code></pre></div>
+<div class="sourceCode" id="cb99"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Generate Manhattan plot for ear height trait</span></span>
+<span><span class="va">manhattanEH</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/manhattanPlot.html">manhattanPlot</a></span><span class="op">(</span></span>
+<span>    assocStats <span class="op">=</span> <span class="va">tasMLM</span><span class="op">$</span><span class="va">MLM_Stats</span>,</span>
+<span>    trait      <span class="op">=</span> <span class="st">"EarHT"</span>,</span>
+<span>    threshold  <span class="op">=</span> <span class="fl">5</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">manhattanEH</span></span></code></pre></div>
 <p><img src="../reference/figures/manhattan_eh.png"></p>
 </div>
 <div class="section level3">
 <h3 id="ld-plots">LD plots<a class="anchor" aria-label="anchor" href="#ld-plots"></a>
 </h3>
 <p>Similarly, we can also visualize LD using automated methods. Like most LD plots, it is wise to filter your genotype information to a specific region of interest:</p>
-<div class="sourceCode" id="cb107"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># Filter genotype table by position</span>
-<span class="va">tasGenoPhenoFilt</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filterGenotypeTableSites.html">filterGenotypeTableSites</a></span><span class="op">(</span>
-    tasObj              <span class="op">=</span> <span class="va">tasGenoPheno</span>,
-    siteRangeFilterType <span class="op">=</span> <span class="st">"position"</span>,
-    startPos            <span class="op">=</span> <span class="fl">228e6</span>,
-    endPos              <span class="op">=</span> <span class="fl">300e6</span>,
-    startChr            <span class="op">=</span> <span class="fl">2</span>,
-    endChr              <span class="op">=</span> <span class="fl">2</span>
-<span class="op">)</span>
-
-<span class="co"># Generate and visualize LD</span>
-<span class="va">myLD</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ldPlot.html">ldPlot</a></span><span class="op">(</span>
-    tasObj  <span class="op">=</span> <span class="va">tasGenoPhenoFilt</span>,
-    ldType  <span class="op">=</span> <span class="st">"All"</span>,
-    plotVal <span class="op">=</span> <span class="st">"r2"</span>,
-    verbose <span class="op">=</span> <span class="cn">FALSE</span>
-<span class="op">)</span>
-
-<span class="va">myLD</span></code></pre></div>
+<div class="sourceCode" id="cb100"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Filter genotype table by position</span></span>
+<span><span class="va">tasGenoPhenoFilt</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filterGenotypeTableSites.html">filterGenotypeTableSites</a></span><span class="op">(</span></span>
+<span>    tasObj              <span class="op">=</span> <span class="va">tasGenoPheno</span>,</span>
+<span>    siteRangeFilterType <span class="op">=</span> <span class="st">"position"</span>,</span>
+<span>    startPos            <span class="op">=</span> <span class="fl">228e6</span>,</span>
+<span>    endPos              <span class="op">=</span> <span class="fl">300e6</span>,</span>
+<span>    startChr            <span class="op">=</span> <span class="fl">2</span>,</span>
+<span>    endChr              <span class="op">=</span> <span class="fl">2</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Generate and visualize LD</span></span>
+<span><span class="va">myLD</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ldPlot.html">ldPlot</a></span><span class="op">(</span></span>
+<span>    tasObj  <span class="op">=</span> <span class="va">tasGenoPhenoFilt</span>,</span>
+<span>    ldType  <span class="op">=</span> <span class="st">"All"</span>,</span>
+<span>    plotVal <span class="op">=</span> <span class="st">"r2"</span>,</span>
+<span>    verbose <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">myLD</span></span></code></pre></div>
 <p><img src="../reference/figures/ld_static.png"></p>
 </div>
 </div>
@@ -1195,24 +1148,24 @@ sudo ln -s $(/usr/libexec/java_home)/lib/server/libjvm.dylib /usr/local/lib</cod
 <h3 id="ld-viewer">LD Viewer<a class="anchor" aria-label="anchor" href="#ld-viewer"></a>
 </h3>
 <p>TASSEL’s linkage disequilibrium (LD) viewer can be used via the <code><a href="../reference/ldJavaApp.html">ldJavaApp()</a></code> function. This method will take a <code>TasselGenotypePhenotype</code> object containing genotype information. A common parameter to set is the window size (<code>windowSize</code>) since creating a full genotype matrix is rather impractical at this point in time for most modern machines and experimental design. This will create comparisons only within a given range of indexes:</p>
-<div class="sourceCode" id="cb108"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://magrittr.tidyverse.org" class="external-link">magrittr</a></span><span class="op">)</span>
-
-<span class="va">tasGenoHMP</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="../reference/ldJavaApp.html">ldJavaApp</a></span><span class="op">(</span>windowSize <span class="op">=</span> <span class="fl">100</span><span class="op">)</span></code></pre></div>
+<div class="sourceCode" id="cb101"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://magrittr.tidyverse.org" class="external-link">magrittr</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">tasGenoHMP</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="../reference/ldJavaApp.html">ldJavaApp</a></span><span class="op">(</span>windowSize <span class="op">=</span> <span class="fl">100</span><span class="op">)</span></span></code></pre></div>
 <p><img src="../reference/figures/ld_java_viewer.png"></p>
 </div>
 <div class="section level3">
 <h3 id="tree-viewer---archaeopteryx">Tree Viewer - Archaeopteryx<a class="anchor" aria-label="anchor" href="#tree-viewer---archaeopteryx"></a>
 </h3>
 <p>Since TASSEL allows for phylogenetic tree creation, one common Java-based visualizer to use is the <a href="https://www.phylosoft.org/archaeopteryx/" class="external-link">Archaeopteryx</a> tree viewer which is implemented in the source code. To view this, we can use the <code><a href="../reference/treeJavaApp.html">treeJavaApp()</a></code> function. In the following example, we will first filter 6 taxa and then pass the filtered genotype object to the Java visualizer:</p>
-<div class="sourceCode" id="cb109"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://magrittr.tidyverse.org" class="external-link">magrittr</a></span><span class="op">)</span>
-
-<span class="va">tasGenoHMP</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
-    <span class="fu"><a href="../reference/filterGenotypeTableTaxa.html">filterGenotypeTableTaxa</a></span><span class="op">(</span>
-      taxa <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"33-16"</span>, <span class="st">"38-11"</span>, <span class="st">"4226"</span>, <span class="st">"4722"</span>, <span class="st">"A188"</span>, <span class="st">"A214N"</span><span class="op">)</span>
-    <span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
-    <span class="fu"><a href="../reference/treeJavaApp.html">treeJavaApp</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<div class="sourceCode" id="cb102"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://magrittr.tidyverse.org" class="external-link">magrittr</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">tasGenoHMP</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>    <span class="fu"><a href="../reference/filterGenotypeTableTaxa.html">filterGenotypeTableTaxa</a></span><span class="op">(</span></span>
+<span>      taxa <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"33-16"</span>, <span class="st">"38-11"</span>, <span class="st">"4226"</span>, <span class="st">"4722"</span>, <span class="st">"A188"</span>, <span class="st">"A214N"</span><span class="op">)</span></span>
+<span>    <span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>    <span class="fu"><a href="../reference/treeJavaApp.html">treeJavaApp</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p><img src="../reference/figures/archaeopteryx_view.png"></p>
 </div>
 </div>
@@ -1225,53 +1178,46 @@ sudo ln -s $(/usr/libexec/java_home)/lib/server/libjvm.dylib /usr/local/lib</cod
 <p><code>rTASSEL</code> also allows for phenotypic prediction through genotype information via genomic best linear unbiased predictors (gBLUPs). It proceeds by fitting a mixed model that uses kinship to capture covariance between taxa. The mixed model can calculate BLUPs for taxa that do not have phenotypes based on the phenotypes of lines with relationship information.</p>
 <p>A phenotype dataset and a kinship matrix must be supplied as input to the method by selecting both then choosing Analysis/Genomic Selection. In addition to trait values, the phenotype dataset may also contain factors or covariates which will be used as fixed effects in the model. All taxa in the phenotype dataset can only appear once. No repeated values are allowed for a single taxon. When the analysis is run, the user is presented with the choice to run k-fold cross-validation. If cross- validation is selected, then the number of folds and the number of iterations can be entered. For each iteration and each fold within an iteration, the correlation between the observed and predicted values will be reported. If cross-validation is not selected, then the original observations, predicted values and PEVs (prediction error variance) will be reported for all taxa in the dataset.</p>
 <p>When k-fold cross-validation is performed, only taxa with phenotypes and rows in the kinship matrix are used. That set of taxa are divided into k subsets of equal size. Each subset in turn is used as the validation set. Phenotypes of the individuals in the validation are set to 0 then predicted using the remaining individuals as the training set. The correlation (r) of the observed values and predicted values is calculated for the validation set and reported. The mean and standard deviation of the mean of the r’s are calculated for each trait and reported in the comments section of the “Accuracy” data set that is output by the analysis. In general, the results are not very sensitive to the choice of k. The number of iterations affects the standard error of the mean for the accuracy estimates. The defaults of k = 5 and iterations = 20 will be adequate for most users.</p>
-<div class="sourceCode" id="cb110"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">tasCV</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/genomicPrediction.html">genomicPrediction</a></span><span class="op">(</span>
-    tasPhenoObj <span class="op">=</span> <span class="va">tasGenoPheno</span>,
-    kinship     <span class="op">=</span> <span class="va">tasKin</span>,
-    doCV        <span class="op">=</span> <span class="cn">TRUE</span>,
-    kFolds      <span class="op">=</span> <span class="fl">5</span>,
-    nIter       <span class="op">=</span> <span class="fl">1</span>
-<span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">tasCV</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">## DataFrame with 6 rows and 4 columns</span>
-<span class="co">##         Trait Iteration      Fold  Accuracy</span>
-<span class="co">##   &lt;character&gt; &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt;</span>
-<span class="co">## 1       EarHT         0         0  0.501444</span>
-<span class="co">## 2       EarHT         0         1  0.376098</span>
-<span class="co">## 3       EarHT         0         2  0.506010</span>
-<span class="co">## 4       EarHT         0         3  0.594796</span>
-<span class="co">## 5       EarHT         0         4  0.528185</span>
-<span class="co">## 6       dpoll         0         0  0.785085</span></code></pre>
+<div class="sourceCode" id="cb103"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">tasCV</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/genomicPrediction.html">genomicPrediction</a></span><span class="op">(</span></span>
+<span>    tasPhenoObj <span class="op">=</span> <span class="va">tasGenoPheno</span>,</span>
+<span>    kinship     <span class="op">=</span> <span class="va">tasKin</span>,</span>
+<span>    doCV        <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>    kFolds      <span class="op">=</span> <span class="fl">5</span>,</span>
+<span>    nIter       <span class="op">=</span> <span class="fl">1</span></span>
+<span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">tasCV</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## DataFrame with 6 rows and 4 columns</span></span>
+<span><span class="co">##         Trait Iteration      Fold  Accuracy</span></span>
+<span><span class="co">##   &lt;character&gt; &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt;</span></span>
+<span><span class="co">## 1       EarHT         0         0  0.501444</span></span>
+<span><span class="co">## 2       EarHT         0         1  0.376098</span></span>
+<span><span class="co">## 3       EarHT         0         2  0.506010</span></span>
+<span><span class="co">## 4       EarHT         0         3  0.594796</span></span>
+<span><span class="co">## 5       EarHT         0         4  0.528185</span></span>
+<span><span class="co">## 6       dpoll         0         0  0.785085</span></span></code></pre>
 </div>
 </div>
-  </div>
-
-  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
-
-        <nav id="toc" data-toggle="toc"><h2 data-toc-skip>Contents</h2>
-    </nav>
-</div>
-
+  </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
+    </nav></aside>
 </div>
 
 
 
-      <footer><div class="copyright">
+    <footer><div class="pkgdown-footer-left">
   <p></p>
-<p>Developed by Brandon Monier, Terry Casstevens, Ed Buckler.</p>
+<p><b>rTASSEL</b> is an R package developed by <a href="https://www.maizegenetics.net/" class="external-link">The Buckler Lab</a></p>
 </div>
 
-<div class="pkgdown">
+<div class="pkgdown-footer-right">
   <p></p>
 <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
-      </footer>
+    </footer>
 </div>
 
   
-
 
   
 
