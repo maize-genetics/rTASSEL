@@ -75,6 +75,11 @@ functionalities are prone to change after end-user input is obtained in the
 near future.
 
 
+## Citation
+To cite `rTASSEL`, please use the following citation:
+
+> Monier et al., (2022). rTASSEL: An R interface to TASSEL for analyzing genomic diversity. Journal of Open Source Software, 7(76), 4530, https://doi.org/10.21105/joss.04530
+
 
 # Preliminary steps
 
