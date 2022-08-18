@@ -1,0 +1,23 @@
+citEntry(
+    entry = "article",
+    title = "rTASSEL: An R interface to TASSEL for analyzing genomic diversity",
+    author = personList(
+        as.person("Brandon Monier"),
+        as.person("Terry M. Casstevens"),
+        as.person("Peter J. Bradbury"),
+        as.person("Edward S. Buckler")
+    ),
+    year = 2022,
+    journal = "Journal of Open Source Software",
+    doi = "10.21105/joss.04530",
+    volume = 7,
+    issue = 76,
+    pages = 4530,
+    textVersion = paste(
+        "Monier et al., (2022).", 
+        "rTASSEL: An R interface to TASSEL for analyzing genomic diversity.",
+        "Journal of Open Source Software, 7(76), 4530, https://doi.org/10.21105/joss.04530" 
+    ) 
+)
+
+
