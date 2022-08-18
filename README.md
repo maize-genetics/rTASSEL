@@ -1,6 +1,6 @@
 # rTASSEL <img src="man/figures/logo.png" align="right" width="120" />
 
-[![Build Status](https://travis-ci.com/maize-genetics/rTASSEL.svg?branch=master)](https://travis-ci.com/maize-genetics/rTASSEL) [![Life Cycle Status](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing) [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/btmonier/rTASSEL_sandbox/HEAD?labpath=getting_started.ipynb)
+[![Build Status](https://travis-ci.com/maize-genetics/rTASSEL.svg?branch=master)](https://travis-ci.com/maize-genetics/rTASSEL) [![Life Cycle Status](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing) [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/btmonier/rTASSEL_sandbox/HEAD?labpath=getting_started.ipynb) [![DOI](https://joss.theoj.org/papers/10.21105/joss.04530/status.svg)](https://doi.org/10.21105/joss.04530)
 
 
 ## Objective
@@ -12,6 +12,12 @@ data handling and parsing capabilities without ever having the user to switch
 between these two environments. `rTASSEL`  also provide feature and speed
 advantages compared to other commonly used R packages. Take a look [here](https://maize-genetics.github.io/rTASSEL/articles/rtassel_benchmarks.html)
 for more information.
+
+
+## Citation
+To cite `rTASSEL`, please use the following citation:
+
+> Monier et al., (2022). rTASSEL: An R interface to TASSEL for analyzing genomic diversity. Journal of Open Source Software, 7(76), 4530, https://doi.org/10.21105/joss.04530
 
 
 ## Demo
