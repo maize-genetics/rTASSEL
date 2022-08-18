@@ -56,8 +56,6 @@ readGenotypeTableFromPath <- function(path, keepDepth = FALSE, sortPositions = F
 #' @rdname getSumExpFromGenotypeTable
 #'
 #' @param tasObj An object of class \code{TasselGenotypePenotype}.
-#' @param useRef Use reference alleles or major alleles at sites. If
-#'    \code{FALSE}, major alleles will be used. Defaults to \code{FALSE}.
 #' @param coerceDosageToInt Should dosage array be returned as \code{integer}
 #'    values? If \code{FALSE}, dosage array will be returned as type
 #'    \code{raw} byte values. Returning \code{raw} byte values. Will greatly
@@ -73,7 +71,6 @@ readGenotypeTableFromPath <- function(path, keepDepth = FALSE, sortPositions = F
 #' @importFrom SummarizedExperiment SummarizedExperiment
 #' @export
 getSumExpFromGenotypeTable <- function(tasObj,
-                                       useRef = FALSE,
                                        coerceDosageToInt = TRUE,
                                        verbose = FALSE) {
 
@@ -94,10 +91,7 @@ getSumExpFromGenotypeTable <- function(tasObj,
     # Create and return byte array from TASSEL
     if (verbose) message("Generating byte array...")
     jc <- rJava::J("net/maizegenetics/plugindef/GenerateRCode")
-    genoCallByteArray <- jc$genotypeTableToDosageByteArray(
-        jGT,
-        useRef
-    )
+    genoCallByteArray <- jc$genotypeTableToDosageByteArray(jGT)
     if (verbose) message("Returning Java byte array to R...")
     dosMat <- lapply(genoCallByteArray, rJava::.jevalArray)
     if (coerceDosageToInt) {

@@ -41,7 +41,6 @@ test_that("getSumExpFromGenotypeTable() throws general exceptions.", {
     expect_error(
         object = getSumExpFromGenotypeTable(
             tasObj            = mtcars,
-            useRef            = FALSE,
             coerceDosageToInt = FALSE,
             verbose           = FALSE
         ),
@@ -50,7 +49,6 @@ test_that("getSumExpFromGenotypeTable() throws general exceptions.", {
     expect_error(
         object = getSumExpFromGenotypeTable(
             tasObj            = tasPheno,
-            useRef            = FALSE,
             coerceDosageToInt = FALSE,
             verbose           = FALSE
         ),
@@ -63,7 +61,6 @@ test_that("getSumExpFromGenotypeTable() throws general exceptions.", {
 test_that("getSumExpFromGenotypeTable() returns correct data.", {
     tasSE <- getSumExpFromGenotypeTable(
         tasObj            = tasGenoPheno,
-        useRef            = FALSE,
         coerceDosageToInt = FALSE,
         verbose           = FALSE
     )
@@ -81,7 +78,6 @@ test_that("getSumExpFromGenotypeTable() returns correct data.", {
 test_that("getSumExpFromGenotypeTable() returns correct dosage types.", {
     tasSERaw <- getSumExpFromGenotypeTable(
         tasObj            = tasGenoPheno,
-        useRef            = FALSE,
         coerceDosageToInt = FALSE,
         verbose           = FALSE
     )
@@ -89,7 +85,6 @@ test_that("getSumExpFromGenotypeTable() returns correct dosage types.", {
 
     tasSEInt <- getSumExpFromGenotypeTable(
         tasObj            = tasGenoPheno,
-        useRef            = FALSE,
         coerceDosageToInt = TRUE,
         verbose           = FALSE
     )
@@ -104,14 +99,5 @@ test_that("getSumExpFromGenotypeTable() returns correct dosage types.", {
         expected = "raw"
     )
 })
-
-
-
-
-
-
-
-
-
 
 

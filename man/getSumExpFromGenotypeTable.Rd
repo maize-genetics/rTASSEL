@@ -4,18 +4,10 @@
 \alias{getSumExpFromGenotypeTable}
 \title{Create Summarized Experiment from a TASSEL Genotype Table}
 \usage{
-getSumExpFromGenotypeTable(
-  tasObj,
-  useRef = FALSE,
-  coerceDosageToInt = TRUE,
-  verbose = FALSE
-)
+getSumExpFromGenotypeTable(tasObj, coerceDosageToInt = TRUE, verbose = FALSE)
 }
 \arguments{
 \item{tasObj}{An object of class \code{TasselGenotypePenotype}.}
-
-\item{useRef}{Use reference alleles or major alleles at sites. If
-\code{FALSE}, major alleles will be used. Defaults to \code{FALSE}.}
 
 \item{coerceDosageToInt}{Should dosage array be returned as \code{integer}
 values? If \code{FALSE}, dosage array will be returned as type
