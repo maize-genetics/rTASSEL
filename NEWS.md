@@ -1,3 +1,16 @@
+# rTASSEL 0.9.28
+* Fixed `log4j` warning issue
+  + This removes `log4j` warning messages when the `startLogger()` function
+    is called.
+* Removed `useRef` parameter from `getSumExpFromGenotypeTable()` function.
+  + This is now automatically detected from the file input.
+  + This fixes ref/alt allele vs major/minor allele encoding issues.
+* Added Journal of Open Source Software citation for the `rTASSEL` package.
+  + For citation information, use `utils::citation("rTASSEL")`
+* Added data object, `rtPaths`
+  + Includes paths to external toy data for `rTASSEL`
+
+
 # rTASSEL 0.9.27
 * No significant updates in this version. This version is virtually identical
   to `0.9.26` and is for linking to Zenodo for archival purposes.
