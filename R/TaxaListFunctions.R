@@ -12,6 +12,7 @@
 #   necessary for extracting TASSEL taxa lists from TASSEL objects.
 #--------------------------------------------------------------------
 
+## ----
 ## Get Taxa - not exported (house keeping)
 getTaxaList <- function(jtsObject) {
     if(is(jtsObject, "TasselGenotypePhenotype")) {
@@ -30,6 +31,25 @@ getTaxaList <- function(jtsObject) {
         return(rJava::.jnull())
     }
 }
+
+
+## ----
+#' @title Get list of taxa from TASSEL data
+#'
+#' @description Returns a list of taxa from a \code{TasselGenotypePhenotype}
+#'    object
+#'
+#' @param tasObj A \code{TasselGenotypePhenotype} object
+#'
+#' @export
+taxaList <- function(tasObj) {
+    if (class(tasObj) != "TasselGenotypePhenotype") {
+        stop("`tasObj` must be of class `TasselGenotypePhenotype`")
+    }
+
+    return(getTaxaIDs(tasObj))
+}
+
 
 
 ## Methods for pulling Taxa or Samples - not exported (house keeping)

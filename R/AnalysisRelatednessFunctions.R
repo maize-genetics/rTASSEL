@@ -304,8 +304,11 @@ pca <- function(
     names(reportBody) <- unlist(reportNames)
     colnames(reportBody$Eigenvalues_Datum) <- gsub(" ", "_", colnames(reportBody$Eigenvalues_Datum))
 
+    # Add `CorePhenotype` object to return
+    reportBody$jPcaObj <- pcaRes$getDataWithName("PC_Datum")$get(0L)$getData()
+
     if (!reportEigenvalues && !reportEigenvectors) {
-        return(reportBody[[1]])
+        return(reportBody[c("PC_Datum", "jPcaObj")])
     } else {
         return(reportBody)
     }

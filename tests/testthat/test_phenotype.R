@@ -104,7 +104,7 @@ test_that("getPhenotypeDF () returns correct data.", {
 
     phenoDF <- getPhenotypeDF(tasGenoPheno)
 
-    expect_true(class(phenoDF) == "DFrame")
+    expect_true(class(phenoDF) == "data.frame")
 
     expect_equal(
         object   = names(phenoDF),
