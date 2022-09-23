@@ -32,7 +32,7 @@ intersectJoin <- function(x) {
         lpca <- x[classes == "jobjRef"]
         capture <- lapply(lpca, function(i) phenotypes$add(i))
 
-        intersectPhenotype <- rTASSEL:::.tasselObjectConstructor(
+        intersectPhenotype <- .tasselObjectConstructor(
             phenoBuilder$
                 fromPhenotypeList(phenotypes)$
                 intersectJoin()$
@@ -80,7 +80,7 @@ unionJoin <- function(x) {
         lpca <- x[classes == "jobjRef"]
         capture <- lapply(lpca, function(i) phenotypes$add(i))
 
-        unionPhenotype <- rTASSEL:::.tasselObjectConstructor(
+        unionPhenotype <- .tasselObjectConstructor(
             phenoBuilder$
                 fromPhenotypeList(phenotypes)$
                 unionJoin()$
