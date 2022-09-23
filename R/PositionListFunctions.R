@@ -31,6 +31,7 @@ getPositionList <- function(jtsObject) {
 }
 
 
+## ----
 ## Constructor for GRanges (GenomicRanges) class object - not exported (<TMP>)
 genomicRanges <- function(genoTable) {
     jtsPL <- .getTASSELClass(genoTable, "PositionList")
@@ -47,3 +48,36 @@ genomicRanges <- function(genoTable) {
     )
     return(gr2)
 }
+
+
+## ----
+#' @title Get position list metadata from genotype table
+#'
+#' @description Returns positional data from a \code{TasselGenotypePhenotype}
+#'    object
+#'
+#' @param tasObj A \code{TasselGenotypePhenotype} object
+#'
+#' @importFrom rJava is.jnull
+#' @importFrom rJava J
+#' @importFrom rJava new
+#'
+#' @export
+positionList <- function(tasObj) {
+    if (class(tasObj) != "TasselGenotypePhenotype") {
+        stop("`tasObj` must be of class `TasselGenotypePhenotype`")
+    }
+
+    if (rJava::is.jnull(tasObj@jGenotypeTable)) {
+        stop("`tasObj` must contain genotype data")
+    }
+
+    sites <- rJava::new(
+        rJava::J("net.maizegenetics.dna.map.PositionListTableReport"),
+        getPositionList(tasObj)
+    )
+
+    return(tableReportToDF(sites))
+}
+
+

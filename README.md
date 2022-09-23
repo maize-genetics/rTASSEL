@@ -1,6 +1,6 @@
 # rTASSEL <img src="man/figures/logo.png" align="right" width="120" />
 
-[![Build Status](https://travis-ci.com/maize-genetics/rTASSEL.svg?branch=master)](https://travis-ci.com/maize-genetics/rTASSEL) [![Life Cycle Status](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing) [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/btmonier/rTASSEL_sandbox/HEAD?labpath=getting_started.ipynb) [![DOI](https://joss.theoj.org/papers/10.21105/joss.04530/status.svg)](https://doi.org/10.21105/joss.04530)
+[![Build Status](https://travis-ci.com/maize-genetics/rTASSEL.svg?branch=master)](https://travis-ci.com/maize-genetics/rTASSEL) [![Life Cycle Status](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing) [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/btmonier/rTASSEL_sandbox/HEAD?labpath=getting_started.ipynb) [![DOI](https://joss.theoj.org/papers/10.21105/joss.04530/status.svg)](https://doi.org/10.21105/joss.04530) [![R-CMD-check](https://github.com/maize-genetics/rTASSEL/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/maize-genetics/rTASSEL/actions/workflows/R-CMD-check.yaml)
 
 
 ## Objective
