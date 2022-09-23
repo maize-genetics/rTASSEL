@@ -33,7 +33,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">rTASSEL</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.28</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.29</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -76,12 +76,14 @@
   </div>
 </nav><div class="container template-article">
 
-<div class="row">
+
+
+<script src="genotype_filtration_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Filtering Genotype Tables</h1>
                         <h4 data-toc-skip class="author">Brandon Monier</h4>
             
-            <h4 data-toc-skip class="date">2022-09-22</h4>
+            <h4 data-toc-skip class="date">2022-09-23</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/maize-genetics/rTASSEL/blob/HEAD/vignettes/genotype_filtration.Rmd" class="external-link"><code>vignettes/genotype_filtration.Rmd</code></a></small>
       <div class="d-none name"><code>genotype_filtration.Rmd</code></div>
@@ -97,7 +99,7 @@
 </h3>
 <p>In this vignette, we will discuss how you can filter genotype tables in <code>rTASSEL</code>. As a reminder, a genotype table in TASSEL is essentially an <span class="math inline">\(n \times p\)</span> matrix consisting of <span class="math inline">\(n\)</span> samples or taxa with <span class="math inline">\(p\)</span> genotypic observations. To illustrate this, see the diagram below:</p>
 <p><img src="../reference/figures/genotype_table_diagram.png"></p>
-<p>In this illustration, sequence information is processed for variant sites of each parental copy. Variant data is partitioned into an <span class="math inline">\(n \times p\)</span> matrix for each sample and relevant variant marker information (e.g. <code>0:2</code>). This includes:</p>
+<p>In this illustration, sequence information is processed for variant sites of each parental copy. Variant data is partitioned into an <span class="math inline">\(n \times p\)</span> matrix for each sample and relevant variant marker information (e.g. <code>0:2</code>). This includes:</p>
 <ul>
 <li>The TASSEL index for each variant site (<code>&lt;this value&gt; :</code>)
 <ul>
@@ -127,12 +129,12 @@
 </tr>
 <tr class="odd">
 <td>Heterozygous</td>
-<td>Sites where parental copies differ (e.g. <code>C:G</code>)</td>
+<td>Sites where parental copies differ (e.g. <code>C:G</code>)</td>
 <td>Green</td>
 </tr>
 <tr class="even">
 <td>Unknown</td>
-<td>Sites where no information is given (e.g. <code>NA</code>s)</td>
+<td>Sites where no information is given (e.g. <code>NA</code>s)</td>
 <td>Grey/White</td>
 </tr>
 </tbody>
@@ -345,11 +347,11 @@
 <h3 id="using-bed-files">…using BED files<a class="anchor" aria-label="anchor" href="#using-bed-files"></a>
 </h3>
 <p><code>rTASSEL</code> allows filtering for both external <a href="https://m.ensembl.org/info/website/upload/bed.html" class="external-link">BED files</a> and chromosomal position files. Similar to our <code>GRanges</code> object, BED files can also represent genomic range information but as a flat file. In our example, let’s take the same range information and save it as a BED file:</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb13-1" data-line-number="1">$ <span class="fu">cat</span> my_ranges.bed</a>
-<a class="sourceLine" id="cb13-2" data-line-number="2"></a>
-<a class="sourceLine" id="cb13-3" data-line-number="3"><span class="ex">chr1</span>    250   500</a>
-<a class="sourceLine" id="cb13-4" data-line-number="4"><span class="ex">chr2</span>    213   400</a>
-<a class="sourceLine" id="cb13-5" data-line-number="5"><span class="ex">chr2</span>    500   700</a></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1"></a>$ <span class="fu">cat</span> my_ranges.bed</span>
+<span id="cb13-2"><a href="#cb13-2"></a></span>
+<span id="cb13-3"><a href="#cb13-3"></a><span class="ex">chr1</span>    250   500</span>
+<span id="cb13-4"><a href="#cb13-4"></a><span class="ex">chr2</span>    213   400</span>
+<span id="cb13-5"><a href="#cb13-5"></a><span class="ex">chr2</span>    500   700</span></code></pre></div>
 <p>This external file can be passed to our filtration method by setting <code>siteRangeFilterType</code> to <code>"none"</code> and entering the location of the file on disk in the <code>bedFile</code> parameter:</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">myGT</span> <span class="op">%&gt;%</span> </span>
@@ -371,12 +373,12 @@
 <code>Position</code> - the physical position (bp) of each marker</li>
 </ul>
 <p>In our example, this would look something like this:</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb15-1" data-line-number="1">$ <span class="fu">cat</span> my_chr_pos.tsv</a>
-<a class="sourceLine" id="cb15-2" data-line-number="2"></a>
-<a class="sourceLine" id="cb15-3" data-line-number="3"><span class="ex">Chromsome</span>   Position</a>
-<a class="sourceLine" id="cb15-4" data-line-number="4"><span class="ex">1</span>   300</a>
-<a class="sourceLine" id="cb15-5" data-line-number="5"><span class="ex">2</span>   213</a>
-<a class="sourceLine" id="cb15-6" data-line-number="6"><span class="ex">2</span>   665</a></code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1"></a>$ <span class="fu">cat</span> my_chr_pos.tsv</span>
+<span id="cb15-2"><a href="#cb15-2"></a></span>
+<span id="cb15-3"><a href="#cb15-3"></a><span class="ex">Chromsome</span>   Position</span>
+<span id="cb15-4"><a href="#cb15-4"></a><span class="ex">1</span>   300</span>
+<span id="cb15-5"><a href="#cb15-5"></a><span class="ex">2</span>   213</span>
+<span id="cb15-6"><a href="#cb15-6"></a><span class="ex">2</span>   665</span></code></pre></div>
 <p>This external file can be passed to our filtration method by setting <code>siteRangeFilterType</code> to <code>"none"</code> and entering the location of the file on disk in the <code>chrPosFile</code> parameter:</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">myGT</span> <span class="op">%&gt;%</span> </span>
@@ -394,7 +396,7 @@
 <div class="section level3">
 <h3 id="overview-1">Overview<a class="anchor" aria-label="anchor" href="#overview-1"></a>
 </h3>
-<p>In the prior sections we have discussed how to filter <span class="math inline">\(p\)</span> observations (i.e. columns). In the following sections, we will illustrate ways to filter <span class="math inline">\(n\)</span> rows. In order to filter by variant sites (e.g. marker information), we can use the function <code><a href="../reference/filterGenotypeTableTaxa.html">filterGenotypeTableTaxa()</a></code>. This function was modeled after TASSEL’s <code>FilterTaxaBuilder</code> plugin to ensure familiarity between the two methods.</p>
+<p>In the prior sections we have discussed how to filter <span class="math inline">\(p\)</span> observations (i.e.  columns). In the following sections, we will illustrate ways to filter <span class="math inline">\(n\)</span> rows. In order to filter by variant sites (e.g. marker information), we can use the function <code><a href="../reference/filterGenotypeTableTaxa.html">filterGenotypeTableTaxa()</a></code>. This function was modeled after TASSEL’s <code>FilterTaxaBuilder</code> plugin to ensure familiarity between the two methods.</p>
 <p>While not as complex as site filtration, taxa filtration parameters can be seperated into the following sections:</p>
 <ul>
 <li>Genotype information
@@ -493,19 +495,19 @@
 <h3 id="example-2">Example 2<a class="anchor" aria-label="anchor" href="#example-2"></a>
 </h3>
 <p>We can also implement the same methods with other <code>rTASSEL</code> methods. In this example we will (1) select taxa IDs that start with the letter “B” or “K”, (2) select indexed TASSEL marker sites 1 through 3, <em>and</em> (3) export to a VCF flat file:</p>
-<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb26-1" data-line-number="1">myGT <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb26-2" data-line-number="2"><span class="st">    </span><span class="kw">filterGenotypeTableTaxa</span>(</a>
-<a class="sourceLine" id="cb26-3" data-line-number="3">        <span class="dt">taxa =</span> allTaxa <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">str_subset</span>(<span class="st">"^B|^Ky"</span>)</a>
-<a class="sourceLine" id="cb26-4" data-line-number="4">    ) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb26-5" data-line-number="5"><span class="st">    </span><span class="kw">filterGenotypeTableSites</span>(</a>
-<a class="sourceLine" id="cb26-6" data-line-number="6">        <span class="dt">siteRangeFilterType =</span> <span class="st">"sites"</span>,</a>
-<a class="sourceLine" id="cb26-7" data-line-number="7">        <span class="dt">startSite =</span> <span class="dv">1</span>,</a>
-<a class="sourceLine" id="cb26-8" data-line-number="8">        <span class="dt">endSite =</span> <span class="dv">3</span></a>
-<a class="sourceLine" id="cb26-9" data-line-number="9">    ) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb26-10" data-line-number="10"><span class="st">    </span><span class="kw">exportGenotypeTable</span>(</a>
-<a class="sourceLine" id="cb26-11" data-line-number="11">        <span class="dt">file =</span> <span class="st">"my_filtered_gt.vcf"</span></a>
-<a class="sourceLine" id="cb26-12" data-line-number="12">        <span class="dt">format =</span> <span class="st">"vcf"</span></a>
-<a class="sourceLine" id="cb26-13" data-line-number="13">    )</a></code></pre></div>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1"></a>myGT <span class="op">%&gt;%</span></span>
+<span id="cb26-2"><a href="#cb26-2"></a><span class="st">    </span><span class="kw">filterGenotypeTableTaxa</span>(</span>
+<span id="cb26-3"><a href="#cb26-3"></a>        <span class="dt">taxa =</span> allTaxa <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">str_subset</span>(<span class="st">"^B|^Ky"</span>)</span>
+<span id="cb26-4"><a href="#cb26-4"></a>    ) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb26-5"><a href="#cb26-5"></a><span class="st">    </span><span class="kw">filterGenotypeTableSites</span>(</span>
+<span id="cb26-6"><a href="#cb26-6"></a>        <span class="dt">siteRangeFilterType =</span> <span class="st">"sites"</span>,</span>
+<span id="cb26-7"><a href="#cb26-7"></a>        <span class="dt">startSite =</span> <span class="dv">1</span>,</span>
+<span id="cb26-8"><a href="#cb26-8"></a>        <span class="dt">endSite =</span> <span class="dv">3</span></span>
+<span id="cb26-9"><a href="#cb26-9"></a>    ) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb26-10"><a href="#cb26-10"></a><span class="st">    </span><span class="kw">exportGenotypeTable</span>(</span>
+<span id="cb26-11"><a href="#cb26-11"></a>        <span class="dt">file =</span> <span class="st">"my_filtered_gt.vcf"</span></span>
+<span id="cb26-12"><a href="#cb26-12"></a>        <span class="dt">format =</span> <span class="st">"vcf"</span></span>
+<span id="cb26-13"><a href="#cb26-13"></a>    )</span></code></pre></div>
 </div>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

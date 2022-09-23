@@ -46,6 +46,9 @@
     <loc>https://maize-genetics.github.io/rTASSEL/reference/as.matrix.TasselDistanceMatrix.html</loc>
   </url>
   <url>
+    <loc>https://maize-genetics.github.io/rTASSEL/reference/as.matrix.TasselGenotypePhenotype.html</loc>
+  </url>
+  <url>
     <loc>https://maize-genetics.github.io/rTASSEL/reference/asTasselDistanceMatrix.html</loc>
   </url>
   <url>
@@ -55,6 +58,9 @@
     <loc>https://maize-genetics.github.io/rTASSEL/reference/colnames-TasselDistanceMatrix-method.html</loc>
   </url>
   <url>
+    <loc>https://maize-genetics.github.io/rTASSEL/reference/concatenate.html</loc>
+  </url>
+  <url>
     <loc>https://maize-genetics.github.io/rTASSEL/reference/createTree.html</loc>
   </url>
   <url>
@@ -62,9 +68,6 @@
   </url>
   <url>
     <loc>https://maize-genetics.github.io/rTASSEL/reference/distanceMatrix.html</loc>
-  </url>
-  <url>
-    <loc>https://maize-genetics.github.io/rTASSEL/reference/distanceToRMatrix.html</loc>
   </url>
   <url>
     <loc>https://maize-genetics.github.io/rTASSEL/reference/exportGenotypeTable.html</loc>
@@ -94,10 +97,10 @@
     <loc>https://maize-genetics.github.io/rTASSEL/reference/index.html</loc>
   </url>
   <url>
-    <loc>https://maize-genetics.github.io/rTASSEL/reference/kinshipMatrix.html</loc>
+    <loc>https://maize-genetics.github.io/rTASSEL/reference/intersectJoin.html</loc>
   </url>
   <url>
-    <loc>https://maize-genetics.github.io/rTASSEL/reference/kinshipToRMatrix.html</loc>
+    <loc>https://maize-genetics.github.io/rTASSEL/reference/kinshipMatrix.html</loc>
   </url>
   <url>
     <loc>https://maize-genetics.github.io/rTASSEL/reference/ldJavaApp.html</loc>
@@ -124,7 +127,13 @@
     <loc>https://maize-genetics.github.io/rTASSEL/reference/pca.html</loc>
   </url>
   <url>
+    <loc>https://maize-genetics.github.io/rTASSEL/reference/positionList.html</loc>
+  </url>
+  <url>
     <loc>https://maize-genetics.github.io/rTASSEL/reference/readGenotypePhenotype.html</loc>
+  </url>
+  <url>
+    <loc>https://maize-genetics.github.io/rTASSEL/reference/readGenotypeTableFromGigwa.html</loc>
   </url>
   <url>
     <loc>https://maize-genetics.github.io/rTASSEL/reference/readGenotypeTableFromPath.html</loc>
@@ -148,9 +157,21 @@
     <loc>https://maize-genetics.github.io/rTASSEL/reference/seqDiversity.html</loc>
   </url>
   <url>
+    <loc>https://maize-genetics.github.io/rTASSEL/reference/siteSummary.html</loc>
+  </url>
+  <url>
     <loc>https://maize-genetics.github.io/rTASSEL/reference/startLogger.html</loc>
   </url>
   <url>
+    <loc>https://maize-genetics.github.io/rTASSEL/reference/taxaList.html</loc>
+  </url>
+  <url>
+    <loc>https://maize-genetics.github.io/rTASSEL/reference/taxaSummary.html</loc>
+  </url>
+  <url>
     <loc>https://maize-genetics.github.io/rTASSEL/reference/treeJavaApp.html</loc>
+  </url>
+  <url>
+    <loc>https://maize-genetics.github.io/rTASSEL/reference/unionJoin.html</loc>
   </url>
 </urlset>

@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">rTASSEL</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.28</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.29</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -54,7 +54,21 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="0.9.28" id="rtassel-0-9-28">rTASSEL 0.9.28<a class="anchor" aria-label="anchor" href="#rtassel-0-9-28"></a></h2>
+<h2 class="pkg-version" data-toc-text="0.9.29" id="rtassel-0929">rTASSEL 0.9.29<a class="anchor" aria-label="anchor" href="#rtassel-0929"></a></h2>
+<ul><li>Added genotype table summary methods:<ul><li><code><a href="../reference/positionList.html">positionList()</a></code></li>
+<li><code><a href="../reference/taxaSummary.html">taxaSummary()</a></code></li>
+<li><code><a href="../reference/siteSummary.html">siteSummary()</a></code></li>
+</ul></li>
+<li>
+<code>TasselGenotypePhenotype</code> objects containing genotype table data can now be coerced into R <code>matrix</code> objects using the function <code><a href="https://rdrr.io/r/base/matrix.html" class="external-link">as.matrix()</a></code><ul><li>This will return a taxa x site matrix where taxa is the number of rows and sites is the number of columns.</li></ul></li>
+<li>Added generalized join methods:<ul><li><code><a href="../reference/intersectJoin.html">intersectJoin()</a></code></li>
+<li><code><a href="../reference/unionJoin.html">unionJoin()</a></code></li>
+<li>Joins phenotype data data based on taxa ID - similar to the TASSEL API</li>
+</ul></li>
+<li>Added read method for importing GIGWA data through <code>QBMS</code>:<ul><li><code><a href="../reference/readGenotypeTableFromGigwa.html">readGenotypeTableFromGigwa()</a></code></li></ul></li>
+</ul></div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.9.28" id="rtassel-0928">rTASSEL 0.9.28<a class="anchor" aria-label="anchor" href="#rtassel-0928"></a></h2>
 <ul><li>Fixed <code>log4j</code> warning issue<ul><li>This removes <code>log4j</code> warning messages when the <code><a href="../reference/startLogger.html">startLogger()</a></code> function is called.</li></ul></li>
 <li>Removed <code>useRef</code> parameter from <code><a href="../reference/getSumExpFromGenotypeTable.html">getSumExpFromGenotypeTable()</a></code> function.<ul><li>This is now automatically detected from the file input.</li>
 <li>This fixes ref/alt allele vs major/minor allele encoding issues.</li>
@@ -65,10 +79,10 @@
 </li></ul></li>
 </ul></div>
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="0.9.27" id="rtassel-0-9-27">rTASSEL 0.9.27<a class="anchor" aria-label="anchor" href="#rtassel-0-9-27"></a></h2>
+<h2 class="pkg-version" data-toc-text="0.9.27" id="rtassel-0927">rTASSEL 0.9.27<a class="anchor" aria-label="anchor" href="#rtassel-0927"></a></h2>
 <ul><li>No significant updates in this version. This version is virtually identical to <code>0.9.26</code> and is for linking to Zenodo for archival purposes.</li></ul></div>
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="0.9.26" id="rtassel-0-9-26">rTASSEL 0.9.26<a class="anchor" aria-label="anchor" href="#rtassel-0-9-26"></a></h2>
+<h2 class="pkg-version" data-toc-text="0.9.26" id="rtassel-0926">rTASSEL 0.9.26<a class="anchor" aria-label="anchor" href="#rtassel-0926"></a></h2>
 <ul><li>Bug fixes:<ul><li>Fixed <code>r2</code> parameter bug in <code><a href="../reference/ldPlot.html">ldPlot()</a></code>
 </li>
 <li>Fixed space bugs in certain column names of data frame objects. <code>_</code> values now replace spaces.</li>
@@ -79,7 +93,7 @@
 </ul></li>
 </ul></div>
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="0.9.25" id="rtassel-0-9-25">rTASSEL 0.9.25<a class="anchor" aria-label="anchor" href="#rtassel-0-9-25"></a></h2>
+<h2 class="pkg-version" data-toc-text="0.9.25" id="rtassel-0925">rTASSEL 0.9.25<a class="anchor" aria-label="anchor" href="#rtassel-0925"></a></h2>
 <ul><li>Bug fixes:<ul><li>Fixed character conversion bug in <code>DataFrame</code> object returns.</li></ul></li>
 <li>
 <code><a href="../reference/pca.html">pca()</a></code> can optionally report eigenvalues and eigenvectors as a list object.</li>
@@ -91,7 +105,7 @@
 </ul></li>
 </ul></div>
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="0.9.24" id="rtassel-0-9-24">rTASSEL 0.9.24<a class="anchor" aria-label="anchor" href="#rtassel-0-9-24"></a></h2>
+<h2 class="pkg-version" data-toc-text="0.9.24" id="rtassel-0924">rTASSEL 0.9.24<a class="anchor" aria-label="anchor" href="#rtassel-0924"></a></h2>
 <ul><li>Added new function:<ul><li><code><a href="../reference/pca.html">pca()</a></code></li>
 <li>Allows for user to run PCA on rTASSEL objects containing a <code>GenotypeTable</code> object.</li>
 </ul></li>
@@ -101,7 +115,7 @@
 <li>Enhancements:<ul><li>New summary print output for <code>TasselDistanceMatrix</code> objects.</li></ul></li>
 </ul></div>
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="0.9.23" id="rtassel-0-9-23">rTASSEL 0.9.23<a class="anchor" aria-label="anchor" href="#rtassel-0-9-23"></a></h2>
+<h2 class="pkg-version" data-toc-text="0.9.23" id="rtassel-0923">rTASSEL 0.9.23<a class="anchor" aria-label="anchor" href="#rtassel-0923"></a></h2>
 <ul><li>Added new <code>TasselDistanceMatrix</code> class<ul><li>Specified function (<code><a href="../reference/kinshipMatrix.html">kinshipMatrix()</a></code> and <code><a href="../reference/distanceMatrix.html">distanceMatrix()</a></code>) now return an object of type <code>TasselDistanceMatrix</code>.</li>
 <li>Prevents console overload and freezing as seen with large distance matrix objects.</li>
 <li>Now shows summary overview of matrix instead of Java object reference.</li>
@@ -126,18 +140,18 @@
 </ul></li>
 </ul></div>
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="0.9.22" id="rtassel-0-9-22">rTASSEL 0.9.22<a class="anchor" aria-label="anchor" href="#rtassel-0-9-22"></a></h2>
+<h2 class="pkg-version" data-toc-text="0.9.22" id="rtassel-0922">rTASSEL 0.9.22<a class="anchor" aria-label="anchor" href="#rtassel-0922"></a></h2>
 <ul><li>Fix <code><a href="../reference/manhattanPlot.html">manhattanPlot()</a></code> aesthetics:<ul><li>Remove redundant marker labels from x-axis</li>
 <li>Change x-axis label to <code>SNP Positions</code>
 </li>
 </ul></li></ul></div>
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="0.9.21" id="rtassel-0-9-21">rTASSEL 0.9.21<a class="anchor" aria-label="anchor" href="#rtassel-0-9-21"></a></h2>
+<h2 class="pkg-version" data-toc-text="0.9.21" id="rtassel-0921">rTASSEL 0.9.21<a class="anchor" aria-label="anchor" href="#rtassel-0921"></a></h2>
 <ul><li>Added new function:<ul><li><code><a href="../reference/exportGenotypeTable.html">exportGenotypeTable()</a></code></li></ul></li>
 <li>Added new vignette:<ul><li>“Filtering Genotype Tables”</li></ul></li>
 </ul></div>
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="0.9.20" id="rtassel-0-9-20">rTASSEL 0.9.20<a class="anchor" aria-label="anchor" href="#rtassel-0-9-20"></a></h2>
+<h2 class="pkg-version" data-toc-text="0.9.20" id="rtassel-0920">rTASSEL 0.9.20<a class="anchor" aria-label="anchor" href="#rtassel-0920"></a></h2>
 <ul><li>Added new parameter to <code><a href="../reference/filterGenotypeTableSites.html">filterGenotypeTableSites()</a></code><ul><li>
 <code>gRangesObj</code>: Filter genotype tables by using a <code>GRanges</code> object.</li></ul></li>
 <li>Added new parameter to <code><a href="../reference/filterGenotypeTableTaxa.html">filterGenotypeTableTaxa()</a></code><ul><li>
@@ -145,7 +159,7 @@
 <li>Fixed <code><a href="../reference/getSumExpFromGenotypeTable.html">getSumExpFromGenotypeTable()</a></code> bug:<ul><li>dosage array now returns <code>NA</code>s instead of <code>128</code> values.</li></ul></li>
 </ul></div>
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="0.9.19" id="rtassel-0-9-19">rTASSEL 0.9.19<a class="anchor" aria-label="anchor" href="#rtassel-0-9-19"></a></h2>
+<h2 class="pkg-version" data-toc-text="0.9.19" id="rtassel-0919">rTASSEL 0.9.19<a class="anchor" aria-label="anchor" href="#rtassel-0919"></a></h2>
 <ul><li>Added two new parameters to <code><a href="../reference/filterGenotypeTableSites.html">filterGenotypeTableSites()</a></code><ul><li>
 <code>removeMinorSNPStates</code>: Boolean; removes minor SNP states.</li>
 <li>
@@ -161,7 +175,7 @@
 </ul></li>
 </ul></div>
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="0.9.18" id="rtassel-0-9-18">rTASSEL 0.9.18<a class="anchor" aria-label="anchor" href="#rtassel-0-9-18"></a></h2>
+<h2 class="pkg-version" data-toc-text="0.9.18" id="rtassel-0918">rTASSEL 0.9.18<a class="anchor" aria-label="anchor" href="#rtassel-0918"></a></h2>
 <ul><li>Added functions to calculate linkage disequilibrium (LD)</li>
 <li>Proposed LD functions:<ul><li>
 <code><a href="../reference/linkageDiseq.html">linkageDiseq()</a></code> - Returns TASSEL LD table report as data frame</li>
@@ -172,12 +186,12 @@
 </ul></li>
 </ul></div>
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="0.9.17" id="rtassel-0-9-17">rTASSEL 0.9.17<a class="anchor" aria-label="anchor" href="#rtassel-0-9-17"></a></h2>
+<h2 class="pkg-version" data-toc-text="0.9.17" id="rtassel-0917">rTASSEL 0.9.17<a class="anchor" aria-label="anchor" href="#rtassel-0917"></a></h2>
 <ul><li>Added new function:<ul><li><code><a href="../reference/manhattanPlot.html">manhattanPlot()</a></code></li></ul></li>
 <li>Removed tidyverse dependencies</li>
 </ul></div>
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="0.9.16" id="rtassel-0-9-16">rTASSEL 0.9.16<a class="anchor" aria-label="anchor" href="#rtassel-0-9-16"></a></h2>
+<h2 class="pkg-version" data-toc-text="0.9.16" id="rtassel-0916">rTASSEL 0.9.16<a class="anchor" aria-label="anchor" href="#rtassel-0916"></a></h2>
 <ul><li>Added write to file parameters for:<ul><li>assocModelFitter()</li></ul></li>
 <li>Added p-value threshold parameters for:<ul><li>assocModelFitter()</li></ul></li>
 <li>Added thread usage paramters for:<ul><li>assocModelFitter()</li></ul></li>
@@ -189,14 +203,14 @@
 </ul></li>
 </ul></div>
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="0.9.13" id="rtassel-0-9-13">rTASSEL 0.9.13<a class="anchor" aria-label="anchor" href="#rtassel-0-9-13"></a></h2>
+<h2 class="pkg-version" data-toc-text="0.9.13" id="rtassel-0913">rTASSEL 0.9.13<a class="anchor" aria-label="anchor" href="#rtassel-0913"></a></h2>
 <ul><li>Added error checks for catching C stack usage errors for the following functions:<ul><li>filterGenotypeTableSites()</li>
 <li>filterGenotypeTableTaxa()</li>
 </ul></li>
 <li>Added NEWS file for tracking version updates.</li>
 </ul></div>
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="0.9.12" id="rtassel-0-9-12">rTASSEL 0.9.12<a class="anchor" aria-label="anchor" href="#rtassel-0-9-12"></a></h2>
+<h2 class="pkg-version" data-toc-text="0.9.12" id="rtassel-0912">rTASSEL 0.9.12<a class="anchor" aria-label="anchor" href="#rtassel-0912"></a></h2>
 <ul><li>Added new functions:<ul><li><code>leaveOneFamilyOut()</code></li>
 <li><code>genomicPredction()</code></li>
 </ul></li>
