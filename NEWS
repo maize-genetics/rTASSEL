@@ -1,3 +1,20 @@
+# CHANGES IN VERSION 0.9.29
+* Added genotype table summary methods:
+  + `positionList()`
+  + `taxaSummary()`
+  + `siteSummary()`
+* `TasselGenotypePhenotype` objects containing genotype table data can now
+  be coerced into R `matrix` objects using the function `as.matrix()`
+  + This will return a taxa x site matrix where taxa is the number of rows and
+    sites is the number of columns.
+* Added generalized join methods:
+  + `intersectJoin()`
+  + `unionJoin()`
+  + Joins phenotype data data based on taxa ID - similar to the TASSEL API
+* Added read method for importing GIGWA data through `QBMS`:
+  + `readGenotypeTableFromGigwa()`
+
+
 # CHANGES IN VERSION 0.9.28
 * Fixed `log4j` warning issue
   + This removes `log4j` warning messages when the `startLogger()` function
