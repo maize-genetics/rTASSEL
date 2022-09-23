@@ -68,7 +68,7 @@
 #' @export
 genomicPrediction <- function(tasPhenoObj, kinship, doCV = FALSE, kFolds, nIter) {
     ## Check for correct rTASSEL class
-    if (class(tasPhenoObj) != "TasselGenotypePhenotype") {
+    if (!inherits(tasPhenoObj, "TasselGenotypePhenotype")) {
         stop("`tasObj` must be of class `TasselGenotypePhenotype`", call. = FALSE)
     }
 
@@ -82,7 +82,8 @@ genomicPrediction <- function(tasPhenoObj, kinship, doCV = FALSE, kFolds, nIter)
     tasPhenoObj <- tasPhenoObj@jPhenotypeTable
 
     ## Check to see if kinship parameter is of rJava and DistanceMatrix class
-    if (class(kinship) != "TasselDistanceMatrix") {
+    ## class(kinship) != "TasselDistanceMatrix"
+    if (!inherits(kinship, "TasselDistanceMatrix")) {
         stop("TASSEL kinship object is not of TasselDistanceMatrix class", call. = FALSE)
     }
     kinship <- kinship@jDistMatrix
