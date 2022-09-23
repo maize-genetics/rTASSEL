@@ -224,32 +224,32 @@ readGenotypeTableFromGigwa <- function(gigwa) {
 #' @description Converts a \code{TasselGenotypePhenotype} class into an R
 #'    matrix if it contains genotype data.
 #'
-#' @param tasObj A \code{TasselGenotypePhenotype} object
+#' @param x A \code{TasselGenotypePhenotype} object
 #' @param ... Additional arguments to be passed to or from methods.
 #'
 #' @importFrom rJava .jevalArray
 #'
 #' @export
-as.matrix.TasselGenotypePhenotype <- function(tasObj, ...) {
+as.matrix.TasselGenotypePhenotype <- function(x, ...) {
     plugin <- rJava::J("net/maizegenetics/plugindef/GenerateRCode")
 
-    if (class(tasObj) != "TasselGenotypePhenotype") {
-        stop("`tasObj` must be of class `TasselGenotypePhenotype`")
+    if (class(x) != "TasselGenotypePhenotype") {
+        stop("`x` must be of class `TasselGenotypePhenotype`")
     }
 
-    if (rJava::is.jnull(tasObj@jGenotypeTable)) {
-        stop("`tasObj` must contain genotype data")
+    if (rJava::is.jnull(x@jGenotypeTable)) {
+        stop("`x` must contain genotype data")
     }
 
-    jg <- tasObj@jGenotypeTable
+    jg <- x@jGenotypeTable
     m <- rJava::.jevalArray(plugin$genotypeTableToDosageByteArray(jg), simplify = TRUE)
     mode(m) <- "integer"
 
-    siteNames <- positionList(tasObj)
+    siteNames <- positionList(x)
 
     m[m == 128] <- NA
     colnames(m) <- siteNames$Name
-    rownames(m) <- getTaxaIDs(tasObj)
+    rownames(m) <- getTaxaIDs(x)
 
     return(m)
 }

@@ -4,10 +4,10 @@
 \alias{as.matrix.TasselGenotypePhenotype}
 \title{Coerce genotype table to R matrix}
 \usage{
-\method{as.matrix}{TasselGenotypePhenotype}(tasObj, ...)
+\method{as.matrix}{TasselGenotypePhenotype}(x, ...)
 }
 \arguments{
-\item{tasObj}{A \code{TasselGenotypePhenotype} object}
+\item{x}{A \code{TasselGenotypePhenotype} object}
 
 \item{...}{Additional arguments to be passed to or from methods.}
 }
