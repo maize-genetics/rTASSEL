@@ -76,9 +76,7 @@
   </div>
 </nav><div class="container template-article">
 
-
-
-<script src="rtassel_walkthrough_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
+<div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Getting Started with rTASSEL</h1>
                         <h4 data-toc-skip class="author">Brandon Monier</h4>
@@ -186,7 +184,7 @@
 <span>    package <span class="op">=</span> <span class="st">"rTASSEL"</span></span>
 <span><span class="op">)</span></span>
 <span><span class="va">genoPathHMP</span></span></code></pre></div>
-<pre><code><span><span class="co">## [1] "/home/runner/work/_temp/Library/rTASSEL/extdata/mdp_genotype.hmp.txt"</span></span></code></pre>
+<pre><code><span><span class="co">## [1] "/home/travis/R/Library/rTASSEL/extdata/mdp_genotype.hmp.txt"</span></span></code></pre>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Load VCF data</span></span>
 <span><span class="va">genoPathVCF</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span></span>
@@ -195,7 +193,7 @@
 <span>    package <span class="op">=</span> <span class="st">"rTASSEL"</span></span>
 <span><span class="op">)</span></span>
 <span><span class="va">genoPathVCF</span></span></code></pre></div>
-<pre><code><span><span class="co">## [1] "/home/runner/work/_temp/Library/rTASSEL/extdata/maize_chr9_10thin40000.recode.vcf"</span></span></code></pre>
+<pre><code><span><span class="co">## [1] "/home/travis/R/Library/rTASSEL/extdata/maize_chr9_10thin40000.recode.vcf"</span></span></code></pre>
 <p>Now that we have the file paths to this data, we can pass this to TASSEL and create a formal <code>TasselGenotypePhenotype</code> class object in R using the following:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Load in hapmap file</span></span>
@@ -236,7 +234,7 @@
 <p>Technically, this object does not contain the full information of the data represented in R space, but merely contains addresses to the memory store of the reference TASSEL object ID. For example, if we wanted to extract the <code>GenotypeTable</code> with the S4 <code>@</code> operator, we would get something that looks like this:</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tasGenoHMP</span><span class="op">@</span><span class="va">jGenotypeTable</span></span></code></pre></div>
-<pre><code><span><span class="co">## [1] "Java-Object{net.maizegenetics.dna.snp.CoreGenotypeTable@35cabb2a}"</span></span></code></pre>
+<pre><code><span><span class="co">## [1] "Java-Object{net.maizegenetics.dna.snp.CoreGenotypeTable@50eac852}"</span></span></code></pre>
 <p>This entity is a <code>rJava</code> internal identifier. It isn’t until we call downstream <code>rTASSEL</code> functions where we will bring the TASSEL data into the R environment.</p>
 </div>
 </div>
@@ -252,7 +250,7 @@
 <code class="sourceCode R"><span><span class="co"># Read from phenotype path</span></span>
 <span><span class="va">phenoPath</span>  <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"mdp_traits.txt"</span>, package <span class="op">=</span> <span class="st">"rTASSEL"</span><span class="op">)</span></span>
 <span><span class="va">phenoPath</span></span></code></pre></div>
-<pre><code><span><span class="co">## [1] "/home/runner/work/_temp/Library/rTASSEL/extdata/mdp_traits.txt"</span></span></code></pre>
+<pre><code><span><span class="co">## [1] "/home/travis/R/Library/rTASSEL/extdata/mdp_traits.txt"</span></span></code></pre>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Load into rTASSEL `TasselGenotypePhenotype` object</span></span>
 <span><span class="va">tasPheno</span> <span class="op">&lt;-</span> <span class="fu">rTASSEL</span><span class="fu">::</span><span class="fu"><a href="../reference/readPhenotypeFromPath.html">readPhenotypeFromPath</a></span><span class="op">(</span></span>
@@ -311,7 +309,7 @@
 <span><span class="co">##   Phenotype Table.... [x]</span></span>
 <span><span class="co">## ---</span></span>
 <span><span class="co">##   Traits: Taxa EarHT dpoll EarDia</span></span></code></pre>
-<p>The <code>phenotypeDF</code> parameter is for the R data frame object. The <code>taxaID</code> parameter is needed to determine which column of your data frame is your TASSEL taxa data. The final parameter (<code>attributeTypes</code>) is optional. If this parameter is set to <code>NULL</code>, all remaining data frame columns will be classified as TASSEL <code>data</code> types. If this is not the case for your data (e.g. if you have covariate or factor data in your experiment), <strong>you will need to specify which columns are what TASSEL data type</strong> (i.e. <code>data</code>, <code>covariate</code>, or <code>factor</code>). This will have to be passed as an R vector of string elements (e.g. <code>c("data", "factor", "covariate")</code>). <em>Currently</em>, this data type needs to be entered in the same order as they are found in the data frame.</p>
+<p>The <code>phenotypeDF</code> parameter is for the R data frame object. The <code>taxaID</code> parameter is needed to determine which column of your data frame is your TASSEL taxa data. The final parameter (<code>attributeTypes</code>) is optional. If this parameter is set to <code>NULL</code>, all remaining data frame columns will be classified as TASSEL <code>data</code> types. If this is not the case for your data (e.g. if you have covariate or factor data in your experiment), <strong>you will need to specify which columns are what TASSEL data type</strong> (i.e. <code>data</code>, <code>covariate</code>, or <code>factor</code>). This will have to be passed as an R vector of string elements (e.g. <code>c("data", "factor", "covariate")</code>). <em>Currently</em>, this data type needs to be entered in the same order as they are found in the data frame.</p>
 </div>
 </div>
 <div class="section level3">
@@ -582,7 +580,7 @@
 <div class="section level4">
 <h4 id="overview-2">Overview<a class="anchor" aria-label="anchor" href="#overview-2"></a>
 </h4>
-<p>The prior two functions will generate a pairwise matrix (e.g. <span class="math inline">\(m \times m\)</span> dimensions). The return object is an rTASSEL class, <code>TasselDistanceMatrix</code>. When we inspect the prior object we will see something like this:</p>
+<p>The prior two functions will generate a pairwise matrix (e.g. <span class="math inline">\(m \times m\)</span> dimensions). The return object is an rTASSEL class, <code>TasselDistanceMatrix</code>. When we inspect the prior object we will see something like this:</p>
 <div class="sourceCode" id="cb46"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tasKin</span></span></code></pre></div>
 <pre><code><span><span class="co">## A TasselDistanceMatrix Object of 279 x 279 elements:</span></span>
@@ -999,7 +997,7 @@
 <span><span class="co">##   33-16, CI7, L317, MOG, 38-11, PA91, ...</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Unrooted; includes branch lengths.</span></span></code></pre>
-<p>This object can then be used by common base-R methods (e.g. <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code>) or other visualization libraries such as <a href="https://bioconductor.org/packages/release/bioc/html/ggtree.html" class="external-link">ggtree</a>.</p>
+<p>This object can then be used by common base-R methods (e.g. <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code>) or other visualization libraries such as <a href="https://bioconductor.org/packages/release/bioc/html/ggtree.html" class="external-link">ggtree</a>.</p>
 </div>
 <div class="section level2">
 <h2 id="visualizations">Visualizations<a class="anchor" aria-label="anchor" href="#visualizations"></a>
