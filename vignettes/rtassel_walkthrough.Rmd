@@ -405,7 +405,7 @@ is a `TasselGenotypePhenotype` class object *containing a phenotype table*:
 tasExportPhenoDF <- rTASSEL::getPhenotypeDF(
     tasObj = tasGenoPheno
 )
-tasExportPhenoDF
+head(tasExportPhenoDF)
 ```
 
 As shown above, an R `tibble`-based data frame is exported with converted
@@ -585,7 +585,7 @@ function call. For example, let's take a look at the `pcaRes` object made
 previously:
 
 ```{r, eval=TRUE, echo=TRUE}
-pcaRes
+str(pcaRes)
 ```
 
 
