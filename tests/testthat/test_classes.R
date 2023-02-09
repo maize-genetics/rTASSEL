@@ -65,6 +65,16 @@ test_that("rTASSEL read functions return correct data type.", {
         object = tmp,
         expected = c("character", rep("jobjRef", 5))
     )
+
+    showGeno <- utils::capture.output(tasGeno)
+    showPheno <- utils::capture.output(tasPheno)
+    expect_equal(length(showGeno), 8)
+    expect_equal(length(showPheno), 10)
+    expect_equal(showGeno[7], "  Genotype Table..... [x]")
+    expect_equal(showGeno[8], "  Phenotype Table.... [ ]")
+    expect_equal(showPheno[7], "  Genotype Table..... [ ]")
+    expect_equal(showPheno[8], "  Phenotype Table.... [x]")
+
 })
 
 

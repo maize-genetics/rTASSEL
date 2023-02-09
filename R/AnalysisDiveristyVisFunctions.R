@@ -239,7 +239,7 @@ ldPlot <- function(tasObj,
     # Make ggplot2 object
     cell_plot <- ggplot2::ggplot(data = ldSubRot) +
         ggplot2::aes(x = .data$x, y = .data$y, fill = .data$val, group = .data$group) +
-        ggplot2::geom_polygon(color = "white", size = 1) +
+        ggplot2::geom_polygon(color = "white", linewidth = 1) +
         ggplot2::annotate(
             geom = "text",
             x = id_coord$x,
