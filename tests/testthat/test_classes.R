@@ -77,7 +77,25 @@ test_that("rTASSEL read functions return correct data type.", {
 
 })
 
+test_that("TasselDistanceMatrix object return correct output", {
+    tasGeno <- readGenotypeTableFromPath(
+        path = genoPathHMP
+    )
+    tasKin <- kinshipMatrix(tasGeno)
 
+    showKin <- utils::capture.output(tasKin)
+    expect_equal(length(showKin), 9)
+    expect_equal(showKin[1], "A TasselDistanceMatrix Object of 281 x 281 elements:")
+    expect_equal(showKin[2], "")
+    expect_equal(showKin[3], "                  33-16      38-11       4226       4722    ...    YU796NS")
+    expect_equal(showKin[4], "       33-16     1.7978     0.0396     0.0614    -0.0083    ...    -0.0003")
+    expect_equal(showKin[5], "       38-11     0.0396     1.9100     0.0198    -0.0063    ...    -0.0190")
+    expect_equal(showKin[6], "        4226     0.0614     0.0198     1.9277    -0.0165    ...     0.1306")
+    expect_equal(showKin[7], "        4722    -0.0083    -0.0063    -0.0165     1.4539    ...     0.0331")
+    expect_equal(showKin[8], "         ...        ...        ...        ...        ...    ...        ...")
+    expect_equal(showKin[9], "     YU796NS    -0.0003    -0.0190     0.1306     0.0331    ...     1.8536")
+    expect_equal(length(rownames(tasKin)), 281)
+})
 
 
 

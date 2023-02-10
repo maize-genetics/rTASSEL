@@ -181,10 +181,8 @@ assocModelFitter <- function(tasObj,
     # Logic - Convert p-values to Java data types
     if (!is.numeric(maxP)) {
         stop("p-value must be numeric")
-    } else if (!fastAssociation) {
-        maxP <- as.double(maxP)
     } else {
-        maxP <- rJava::.jnew("java/lang/Double", as.character(maxP))
+        maxP <- as.double(maxP)
     }
 
     # Logic - Convert threads to Java data types
@@ -309,7 +307,7 @@ assocModelFitter <- function(tasObj,
                     )
                     assocOut <- jRC$fastAssociation(
                         blueOut,
-                        maxP,
+                        rJava::.jnew("java/lang/Double", maxP),
                         maxThreads,
                         saveToFile,
                         outputFile
@@ -319,7 +317,7 @@ assocModelFitter <- function(tasObj,
                     message("Association Analysis : Fast Association")
                     assocOut <- jRC$fastAssociation(
                         jTasFilt$genotypePhenotype,
-                        maxP,
+                        rJava::.jnew("java/lang/Double", maxP),
                         maxThreads,
                         saveToFile,
                         outputFile

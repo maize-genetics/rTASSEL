@@ -137,22 +137,28 @@ cleanUpTaxa <- function(v, width = 10, regex = "^\"|\"$") {
 
 
 ## Clean up summary matrix with formatting ----
-cleanUpMatrix <- function(t, d, space = "...", width = 10) {
-    vec <- c(1, length(t) + 1)
+cleanUpMatrix <- function(t, d, space = "...", size = 5, width = 10, nTaxa) {
+    if (nTaxa <= size) {
+        m2 <- rbind(t, d)
+        m2 <- cbind(c(format(" ", width = width), t), m2)
+    } else {
+        vec <- c(1, length(t) + 1)
 
-    space <- format(space, width = width, justify = "right")
+        space <- format(space, width = width, justify = "right")
 
-    m1 <- matrix(space, nrow = nrow(d) + length(vec), ncol = ncol(d))
-    m1[-vec, ] <- d
+        m1 <- matrix(space, nrow = nrow(d) + length(vec), ncol = ncol(d))
+        m1[-vec, ] <- d
 
-    m2 <- matrix(space, nrow = nrow(m1), ncol = ncol(m1) + length(vec))
-    m2[, -vec] <- m1
-    m2[1, ] <- m2[, 1] <- c(
-        space, t[1:(length(t) - 1)],
-        space, t[length(t)]
-    )
-    m2[, nrow(m2) - 1] <- "   ..."
-    m2[1, 1] <- format(" ", width = width)
+        m2 <- matrix(space, nrow = nrow(m1), ncol = ncol(m1) + length(vec))
+        m2[, -vec] <- m1
+        m2[1, ] <- m2[, 1] <- c(
+            space, t[1:(length(t) - 1)],
+            space, t[length(t)]
+        )
+        m2[, nrow(m2) - 1] <- "   ..."
+        m2[1, 1] <- format(" ", width = width)
+    }
+
 
     return(m2)
 }
@@ -204,7 +210,15 @@ summaryDistance <- function(kinJ,
         }
     }
 
-    return(cleanUpMatrix(taxaCleaned, distMat, space = etc, width = width))
+    return(
+        cleanUpMatrix(
+            t     = taxaCleaned,
+            d     = distMat,
+            space = etc,
+            width = width,
+            size  = size, nTaxa = kinJ$numberOfTaxa()
+        )
+    )
 }
 
 

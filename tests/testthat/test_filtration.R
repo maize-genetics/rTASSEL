@@ -1,5 +1,41 @@
 # === Tests for filter functions ====================================
 
+## Preamble - load data ----
+
+### Start logging info
+startLogger()
+
+### Load hapmap data
+genoPathHMP <- system.file(
+    "extdata",
+    "mdp_genotype.hmp.txt",
+    package = "rTASSEL"
+)
+
+### Read data - need only non missing data!
+phenoPathFast <- system.file(
+    "extdata",
+    "mdp_traits_nomissing.txt",
+    package = "rTASSEL"
+)
+
+### Create rTASSEL phenotype only object
+tasPheno <- readPhenotypeFromPath(
+    path = phenoPathFast
+)
+
+### Create rTASSEL genotype only object
+tasGeno <- readGenotypeTableFromPath(
+    path = genoPathHMP
+)
+
+### Create rTASSEL object - use prior TASSEL genotype object
+tasGenoPhenoFast <- readGenotypePhenotype(
+    genoPathOrObj = genoPathHMP,
+    phenoPathDFOrObj = phenoPathFast
+)
+
+
 ## Error tests ----
 test_that("filterGenotypeTableSites returns error when parameters not specified", {
 
@@ -121,6 +157,15 @@ test_that("filterGenotypeTableSites returns error when parameters not specified"
         ),
         regexp = "Start site cannot be larger than end site."
     )
+
+    expect_error(filterGenotypeTableSites(mtcars))
+    expect_error(filterGenotypeTableSites(tasPheno))
+    expect_error(filterGenotypeTableSites(tasGeno, siteMinAlleleFreq = 5))
+    expect_error(filterGenotypeTableSites(tasGeno, siteMinAlleleFreq = -1))
+    expect_error(filterGenotypeTableSites(tasGeno, minHeterozygous = 5))
+    expect_error(filterGenotypeTableSites(tasGeno, minHeterozygous = -1))
+    expect_error(filterGenotypeTableSites(tasGeno, siteRangeFilterType = "noon"))
+    expect_error(filterGenotypeTableSites(tasGeno, gRangesObj = mtcars))
 })
 
 
@@ -154,6 +199,11 @@ test_that("filterGenotypeTableSites returns correct positions.", {
     expect_equal(
         object = c(test_taxa, test_site),
         expected = c(obs_taxa, obs_site)
+    )
+
+    expect_equal(
+        object = length(taxaList(filterGenotypeTableSites(tasGenoPhenoFast))),
+        expected = length(taxaList(tasGenoPhenoFast))
     )
 })
 
@@ -649,3 +699,55 @@ test_that("filterGenotypeTableSites properly filters by a GRanges object with ot
         expected = c(obs_taxa, obs_site)
     )
 })
+
+test_that("filterGenotypeTableTaxa() returns correct exceptions", {
+    expect_error(filterGenotypeTableTaxa(mtcars))
+    expect_error(filterGenotypeTableTaxa(tasPheno))
+    expect_error(filterGenotypeTableTaxa(tasGeno, minNotMissing = 45))
+    expect_error(filterGenotypeTableTaxa(tasGeno, minNotMissing = -2))
+
+    expect_error(filterGenotypeTableTaxa(tasGeno, minHeterozygous = 45))
+    expect_error(filterGenotypeTableTaxa(tasGeno, minHeterozygous = -2))
+
+    expect_error(filterGenotypeTableTaxa(tasGeno, maxHeterozygous = 45))
+    expect_error(filterGenotypeTableTaxa(tasGeno, maxHeterozygous = -2))
+
+    expect_error(filterGenotypeTableTaxa(tasGeno, taxa = mtcars))
+    expect_error(filterGenotypeTableTaxa(tasGeno, taxa = 1:50))
+})
+
+test_that("filterGenotypeTableTaxa() returns correct data", {
+    expect_equal(
+        object = length(taxaList(filterGenotypeTableTaxa(tasGenoPhenoFast))),
+        expected = length(taxaList(tasGenoPhenoFast))
+    )
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
