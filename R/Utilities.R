@@ -223,47 +223,47 @@ summaryDistance <- function(kinJ,
 
 
 
-# === BrAPI interface functions =====================================
-
-## TODO placeholder to prevent rPHG jar contamination...
-## TODO remedy this with new BLJars package and TASSEL 6 finalization
-getVTList <- function(x) {
-    if (class(x) != "BrapiConPHG") {
-        stop("A `BrapiConPHG` object is needed for the LHS argument", call. = FALSE)
-    }
-
-    baseURL <- paste0(x@url, "/variantTables/", x@methodID)
-
-    ranges <- x@refRangeFilter
-    samples <- x@sampleFilter
-
-    rangeURL <- paste0(
-        baseURL,
-        "/variants",
-        ifelse(is.na(ranges), "", paste0("?", ranges))
-    )
-
-    sampleURL <- paste0(
-        baseURL,
-        "/samples",
-        ifelse(is.na(samples), "", paste0("?", samples))
-    )
-
-    tableURL <- paste0(
-        baseURL, "/table", "?",
-        ifelse(is.na(ranges), "", paste0(ranges)), "&",
-        ifelse(is.na(samples), "", paste0(samples))
-    )
-    tableURL <- gsub("\\?$|\\?&$", "", tableURL)
-    tableURL <- gsub("\\?&", "?", tableURL)
-
-    return(
-        list(
-            rangeURL = rangeURL,
-            sampleURL = sampleURL,
-            tableURL = tableURL
-        )
-    )
-}
+# # === BrAPI interface functions (DEPRECATED) ========================
+#
+# ## TODO placeholder to prevent rPHG jar contamination...
+# ## TODO remedy this with new BLJars package and TASSEL 6 finalization
+# getVTList <- function(x) {
+#     if (class(x) != "BrapiConPHG") {
+#         stop("A `BrapiConPHG` object is needed for the LHS argument", call. = FALSE)
+#     }
+#
+#     baseURL <- paste0(x@url, "/variantTables/", x@methodID)
+#
+#     ranges <- x@refRangeFilter
+#     samples <- x@sampleFilter
+#
+#     rangeURL <- paste0(
+#         baseURL,
+#         "/variants",
+#         ifelse(is.na(ranges), "", paste0("?", ranges))
+#     )
+#
+#     sampleURL <- paste0(
+#         baseURL,
+#         "/samples",
+#         ifelse(is.na(samples), "", paste0("?", samples))
+#     )
+#
+#     tableURL <- paste0(
+#         baseURL, "/table", "?",
+#         ifelse(is.na(ranges), "", paste0(ranges)), "&",
+#         ifelse(is.na(samples), "", paste0(samples))
+#     )
+#     tableURL <- gsub("\\?$|\\?&$", "", tableURL)
+#     tableURL <- gsub("\\?&", "?", tableURL)
+#
+#     return(
+#         list(
+#             rangeURL = rangeURL,
+#             sampleURL = sampleURL,
+#             tableURL = tableURL
+#         )
+#     )
+# }
 
 

@@ -35,7 +35,7 @@ tasGenoPhenoFast <- readGenotypePhenotype(
     phenoPathDFOrObj = phenoPathFast
 )
 
-### Filter object for further tests
+### Filter object for further tests (just genotype)
 filterGenoObj <- filterGenotypeTableSites(
     tasObj = tasGeno,
     siteRangeFilterType = "sites",
@@ -47,6 +47,18 @@ filterGenoObj <- filterGenotypeTableTaxa(
     taxa = taxaList(tasGeno)[grep("^[0-9]|^A", taxaList(tasGeno))]
 )
 
+
+### Filter object for further tests (genotype and phenotype)
+filterGenoPhenoObj <- filterGenotypeTableSites(
+    tasObj = tasGenoPhenoFast,
+    siteRangeFilterType = "sites",
+    startSite = 0,
+    endSite = 10
+)
+filterGenoPhenoObj <- filterGenotypeTableTaxa(
+    tasObj = filterGenoPhenoObj,
+    taxa = taxaList(tasGeno)[grep("^[0-9]|^A", taxaList(tasGeno))]
+)
 
 
 ## Imputation (Numeric) ----
@@ -108,6 +120,53 @@ test_that("imputeNumeric() returns correct data", {
             "TasselGenotypePhenotype"
         )
     )
+
+
+
+    expect_true(
+        inherits(
+            imputeNumeric(
+                tasObj = filterGenoPhenoObj,
+                byMean = TRUE,
+                nearestNeighbors = 5,
+                distance = "Euclidean"
+            ),
+            "TasselGenotypePhenotype"
+        )
+    )
+    expect_true(
+        inherits(
+            imputeNumeric(
+                tasObj = filterGenoPhenoObj,
+                byMean = FALSE,
+                nearestNeighbors = 5,
+                distance = "Euclidean"
+            ),
+            "TasselGenotypePhenotype"
+        )
+    )
+    expect_true(
+        inherits(
+            imputeNumeric(
+                tasObj = filterGenoPhenoObj,
+                byMean = FALSE,
+                nearestNeighbors = 5,
+                distance = "Manhattan"
+            ),
+            "TasselGenotypePhenotype"
+        )
+    )
+    expect_true(
+        inherits(
+            imputeNumeric(
+                tasObj = filterGenoPhenoObj,
+                byMean = FALSE,
+                nearestNeighbors = 5,
+                distance = "Cosine"
+            ),
+            "TasselGenotypePhenotype"
+        )
+    )
 })
 
 
@@ -147,6 +206,15 @@ test_that("imputeLDKNNi() returns correct data", {
         inherits(
             imputeLDKNNi(
                 tasObj = filterGenoObj
+            ),
+            "TasselGenotypePhenotype"
+        )
+    )
+
+    expect_true(
+        inherits(
+            imputeLDKNNi(
+                tasObj = filterGenoPhenoObj
             ),
             "TasselGenotypePhenotype"
         )

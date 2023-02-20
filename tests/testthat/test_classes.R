@@ -98,6 +98,65 @@ test_that("TasselDistanceMatrix object return correct output", {
 })
 
 
+test_that("TasselGenotypePhenotype() returns correct NAs", {
+    testDf <- data.frame(
+        Taxa = c("t_a", "t_b", "t_c"),
+        trait = c(0.5, 0.1, 0.9)
+    )
+
+    testData <- readPhenotypeFromDataFrame(testDf, "Taxa")
+    testData@jTaxaList <- rJava::.jnull()
+
+    testOut <- capture.output(testData)
+
+    expect_true(grepl("NA", testOut[3]))
+
+    set.seed(123)
+    testDf <- data.frame(
+        Taxa = c("t_a", "t_b", "t_c"),
+        trait_1 = rnorm(3),
+        trait_2 = rnorm(3),
+        trait_3 = rnorm(3),
+        trait_4 = rnorm(3),
+        trait_5 = rnorm(3),
+        trait_6 = rnorm(3),
+        trait_7 = rnorm(3)
+    )
+    testData <- readPhenotypeFromDataFrame(testDf, "Taxa")
+    testOut <- capture.output(testData)
+    expect_true(grepl("with 3 more IDs", testOut[10]))
+})
+
+
+test_that(".getTASSELClass() returns correct data and exceptions", {
+    expect_error(.getTASSELClass(rJava::.jnull(), "non_entity"))
+    expect_error(.getTASSELClass(rJava::.jnull(), "GenotypePhenotype"))
+    expect_error(.getTASSELClass(rJava::.jnull(), "GenotypeTable"))
+    expect_error(.getTASSELClass(rJava::.jnull(), "Phenotype"))
+    expect_error(.getTASSELClass(rJava::.jnull(), "TaxaList"))
+    expect_error(.getTASSELClass(rJava::.jnull(), "PositionList"))
+
+
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
