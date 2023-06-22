@@ -1,177 +1,177 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://maize-genetics.github.io/rTASSEL/404.html</loc>
+    <loc>https://rtassel.maizegenetics.net/404.html</loc>
   </url>
   <url>
-    <loc>https://maize-genetics.github.io/rTASSEL/CODE_OF_CONDUCT.html</loc>
+    <loc>https://rtassel.maizegenetics.net/CODE_OF_CONDUCT.html</loc>
   </url>
   <url>
-    <loc>https://maize-genetics.github.io/rTASSEL/CONTRIBUTING.html</loc>
+    <loc>https://rtassel.maizegenetics.net/CONTRIBUTING.html</loc>
   </url>
   <url>
-    <loc>https://maize-genetics.github.io/rTASSEL/LICENSE-text.html</loc>
+    <loc>https://rtassel.maizegenetics.net/LICENSE-text.html</loc>
   </url>
   <url>
-    <loc>https://maize-genetics.github.io/rTASSEL/articles/genotype_filtration.html</loc>
+    <loc>https://rtassel.maizegenetics.net/articles/genotype_filtration.html</loc>
   </url>
   <url>
-    <loc>https://maize-genetics.github.io/rTASSEL/articles/index.html</loc>
+    <loc>https://rtassel.maizegenetics.net/articles/index.html</loc>
   </url>
   <url>
-    <loc>https://maize-genetics.github.io/rTASSEL/articles/rtassel_benchmarks.html</loc>
+    <loc>https://rtassel.maizegenetics.net/articles/rtassel_benchmarks.html</loc>
   </url>
   <url>
-    <loc>https://maize-genetics.github.io/rTASSEL/articles/rtassel_installation.html</loc>
+    <loc>https://rtassel.maizegenetics.net/articles/rtassel_installation.html</loc>
   </url>
   <url>
-    <loc>https://maize-genetics.github.io/rTASSEL/articles/rtassel_walkthrough.html</loc>
+    <loc>https://rtassel.maizegenetics.net/articles/rtassel_walkthrough.html</loc>
   </url>
   <url>
-    <loc>https://maize-genetics.github.io/rTASSEL/authors.html</loc>
+    <loc>https://rtassel.maizegenetics.net/authors.html</loc>
   </url>
   <url>
-    <loc>https://maize-genetics.github.io/rTASSEL/index.html</loc>
+    <loc>https://rtassel.maizegenetics.net/index.html</loc>
   </url>
   <url>
-    <loc>https://maize-genetics.github.io/rTASSEL/news/index.html</loc>
+    <loc>https://rtassel.maizegenetics.net/news/index.html</loc>
   </url>
   <url>
-    <loc>https://maize-genetics.github.io/rTASSEL/reference/TasselDistanceMatrix-class.html</loc>
+    <loc>https://rtassel.maizegenetics.net/reference/TasselDistanceMatrix-class.html</loc>
   </url>
   <url>
-    <loc>https://maize-genetics.github.io/rTASSEL/reference/TasselGenotypePhenotype-class.html</loc>
+    <loc>https://rtassel.maizegenetics.net/reference/TasselGenotypePhenotype-class.html</loc>
   </url>
   <url>
-    <loc>https://maize-genetics.github.io/rTASSEL/reference/as.matrix.TasselDistanceMatrix.html</loc>
+    <loc>https://rtassel.maizegenetics.net/reference/as.matrix.TasselDistanceMatrix.html</loc>
   </url>
   <url>
-    <loc>https://maize-genetics.github.io/rTASSEL/reference/as.matrix.TasselGenotypePhenotype.html</loc>
+    <loc>https://rtassel.maizegenetics.net/reference/as.matrix.TasselGenotypePhenotype.html</loc>
   </url>
   <url>
-    <loc>https://maize-genetics.github.io/rTASSEL/reference/asTasselDistanceMatrix.html</loc>
+    <loc>https://rtassel.maizegenetics.net/reference/asTasselDistanceMatrix.html</loc>
   </url>
   <url>
-    <loc>https://maize-genetics.github.io/rTASSEL/reference/assocModelFitter.html</loc>
+    <loc>https://rtassel.maizegenetics.net/reference/assocModelFitter.html</loc>
   </url>
   <url>
-    <loc>https://maize-genetics.github.io/rTASSEL/reference/colnames-TasselDistanceMatrix-method.html</loc>
+    <loc>https://rtassel.maizegenetics.net/reference/colnames-TasselDistanceMatrix-method.html</loc>
   </url>
   <url>
-    <loc>https://maize-genetics.github.io/rTASSEL/reference/concatenate.html</loc>
+    <loc>https://rtassel.maizegenetics.net/reference/concatenate.html</loc>
   </url>
   <url>
-    <loc>https://maize-genetics.github.io/rTASSEL/reference/createTree.html</loc>
+    <loc>https://rtassel.maizegenetics.net/reference/createTree.html</loc>
   </url>
   <url>
-    <loc>https://maize-genetics.github.io/rTASSEL/reference/dim-TasselDistanceMatrix-method.html</loc>
+    <loc>https://rtassel.maizegenetics.net/reference/dim-TasselDistanceMatrix-method.html</loc>
   </url>
   <url>
-    <loc>https://maize-genetics.github.io/rTASSEL/reference/distanceMatrix.html</loc>
+    <loc>https://rtassel.maizegenetics.net/reference/distanceMatrix.html</loc>
   </url>
   <url>
-    <loc>https://maize-genetics.github.io/rTASSEL/reference/exportGenotypeTable.html</loc>
+    <loc>https://rtassel.maizegenetics.net/reference/exportGenotypeTable.html</loc>
   </url>
   <url>
-    <loc>https://maize-genetics.github.io/rTASSEL/reference/filterGenotypeTableSites.html</loc>
+    <loc>https://rtassel.maizegenetics.net/reference/filterGenotypeTableSites.html</loc>
   </url>
   <url>
-    <loc>https://maize-genetics.github.io/rTASSEL/reference/filterGenotypeTableTaxa.html</loc>
+    <loc>https://rtassel.maizegenetics.net/reference/filterGenotypeTableTaxa.html</loc>
   </url>
   <url>
-    <loc>https://maize-genetics.github.io/rTASSEL/reference/genomicPrediction.html</loc>
+    <loc>https://rtassel.maizegenetics.net/reference/genomicPrediction.html</loc>
   </url>
   <url>
-    <loc>https://maize-genetics.github.io/rTASSEL/reference/getPhenotypeDF.html</loc>
+    <loc>https://rtassel.maizegenetics.net/reference/getPhenotypeDF.html</loc>
   </url>
   <url>
-    <loc>https://maize-genetics.github.io/rTASSEL/reference/getSumExpFromGenotypeTable.html</loc>
+    <loc>https://rtassel.maizegenetics.net/reference/getSumExpFromGenotypeTable.html</loc>
   </url>
   <url>
-    <loc>https://maize-genetics.github.io/rTASSEL/reference/imputeLDKNNi.html</loc>
+    <loc>https://rtassel.maizegenetics.net/reference/imputeLDKNNi.html</loc>
   </url>
   <url>
-    <loc>https://maize-genetics.github.io/rTASSEL/reference/imputeNumeric.html</loc>
+    <loc>https://rtassel.maizegenetics.net/reference/imputeNumeric.html</loc>
   </url>
   <url>
-    <loc>https://maize-genetics.github.io/rTASSEL/reference/index.html</loc>
+    <loc>https://rtassel.maizegenetics.net/reference/index.html</loc>
   </url>
   <url>
-    <loc>https://maize-genetics.github.io/rTASSEL/reference/intersectJoin.html</loc>
+    <loc>https://rtassel.maizegenetics.net/reference/intersectJoin.html</loc>
   </url>
   <url>
-    <loc>https://maize-genetics.github.io/rTASSEL/reference/kinshipMatrix.html</loc>
+    <loc>https://rtassel.maizegenetics.net/reference/kinshipMatrix.html</loc>
   </url>
   <url>
-    <loc>https://maize-genetics.github.io/rTASSEL/reference/ldJavaApp.html</loc>
+    <loc>https://rtassel.maizegenetics.net/reference/ldJavaApp.html</loc>
   </url>
   <url>
-    <loc>https://maize-genetics.github.io/rTASSEL/reference/ldPlot.html</loc>
+    <loc>https://rtassel.maizegenetics.net/reference/ldPlot.html</loc>
   </url>
   <url>
-    <loc>https://maize-genetics.github.io/rTASSEL/reference/linkageDiseq.html</loc>
+    <loc>https://rtassel.maizegenetics.net/reference/linkageDiseq.html</loc>
   </url>
   <url>
-    <loc>https://maize-genetics.github.io/rTASSEL/reference/manhattanPlot.html</loc>
+    <loc>https://rtassel.maizegenetics.net/reference/manhattanPlot.html</loc>
   </url>
   <url>
-    <loc>https://maize-genetics.github.io/rTASSEL/reference/mds.html</loc>
+    <loc>https://rtassel.maizegenetics.net/reference/mds.html</loc>
   </url>
   <url>
-    <loc>https://maize-genetics.github.io/rTASSEL/reference/ncol-TasselDistanceMatrix-method.html</loc>
+    <loc>https://rtassel.maizegenetics.net/reference/ncol-TasselDistanceMatrix-method.html</loc>
   </url>
   <url>
-    <loc>https://maize-genetics.github.io/rTASSEL/reference/nrow-TasselDistanceMatrix-method.html</loc>
+    <loc>https://rtassel.maizegenetics.net/reference/nrow-TasselDistanceMatrix-method.html</loc>
   </url>
   <url>
-    <loc>https://maize-genetics.github.io/rTASSEL/reference/pca.html</loc>
+    <loc>https://rtassel.maizegenetics.net/reference/pca.html</loc>
   </url>
   <url>
-    <loc>https://maize-genetics.github.io/rTASSEL/reference/positionList.html</loc>
+    <loc>https://rtassel.maizegenetics.net/reference/positionList.html</loc>
   </url>
   <url>
-    <loc>https://maize-genetics.github.io/rTASSEL/reference/readGenotypePhenotype.html</loc>
+    <loc>https://rtassel.maizegenetics.net/reference/readGenotypePhenotype.html</loc>
   </url>
   <url>
-    <loc>https://maize-genetics.github.io/rTASSEL/reference/readGenotypeTableFromGigwa.html</loc>
+    <loc>https://rtassel.maizegenetics.net/reference/readGenotypeTableFromGigwa.html</loc>
   </url>
   <url>
-    <loc>https://maize-genetics.github.io/rTASSEL/reference/readGenotypeTableFromPath.html</loc>
+    <loc>https://rtassel.maizegenetics.net/reference/readGenotypeTableFromPath.html</loc>
   </url>
   <url>
-    <loc>https://maize-genetics.github.io/rTASSEL/reference/readPhenotypeFromDataFrame.html</loc>
+    <loc>https://rtassel.maizegenetics.net/reference/readPhenotypeFromDataFrame.html</loc>
   </url>
   <url>
-    <loc>https://maize-genetics.github.io/rTASSEL/reference/readPhenotypeFromPath.html</loc>
+    <loc>https://rtassel.maizegenetics.net/reference/readPhenotypeFromPath.html</loc>
   </url>
   <url>
-    <loc>https://maize-genetics.github.io/rTASSEL/reference/readTasselDistanceMatrix.html</loc>
+    <loc>https://rtassel.maizegenetics.net/reference/readTasselDistanceMatrix.html</loc>
   </url>
   <url>
-    <loc>https://maize-genetics.github.io/rTASSEL/reference/rownames-TasselDistanceMatrix-method.html</loc>
+    <loc>https://rtassel.maizegenetics.net/reference/rownames-TasselDistanceMatrix-method.html</loc>
   </url>
   <url>
-    <loc>https://maize-genetics.github.io/rTASSEL/reference/rtPaths.html</loc>
+    <loc>https://rtassel.maizegenetics.net/reference/rtPaths.html</loc>
   </url>
   <url>
-    <loc>https://maize-genetics.github.io/rTASSEL/reference/seqDiversity.html</loc>
+    <loc>https://rtassel.maizegenetics.net/reference/seqDiversity.html</loc>
   </url>
   <url>
-    <loc>https://maize-genetics.github.io/rTASSEL/reference/siteSummary.html</loc>
+    <loc>https://rtassel.maizegenetics.net/reference/siteSummary.html</loc>
   </url>
   <url>
-    <loc>https://maize-genetics.github.io/rTASSEL/reference/startLogger.html</loc>
+    <loc>https://rtassel.maizegenetics.net/reference/startLogger.html</loc>
   </url>
   <url>
-    <loc>https://maize-genetics.github.io/rTASSEL/reference/taxaList.html</loc>
+    <loc>https://rtassel.maizegenetics.net/reference/taxaList.html</loc>
   </url>
   <url>
-    <loc>https://maize-genetics.github.io/rTASSEL/reference/taxaSummary.html</loc>
+    <loc>https://rtassel.maizegenetics.net/reference/taxaSummary.html</loc>
   </url>
   <url>
-    <loc>https://maize-genetics.github.io/rTASSEL/reference/treeJavaApp.html</loc>
+    <loc>https://rtassel.maizegenetics.net/reference/treeJavaApp.html</loc>
   </url>
   <url>
-    <loc>https://maize-genetics.github.io/rTASSEL/reference/unionJoin.html</loc>
+    <loc>https://rtassel.maizegenetics.net/reference/unionJoin.html</loc>
   </url>
 </urlset>
