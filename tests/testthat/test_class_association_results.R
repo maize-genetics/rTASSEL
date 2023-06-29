@@ -1,4 +1,4 @@
-# === Tests for association class ===================================
+# === Tests for AssociationClass objects ============================
 
 test_that("AssociationResults methods return correct data and exceptions", {
     # Test instantiation
@@ -52,8 +52,59 @@ test_that("AssociationResults methods return correct data and exceptions", {
             )
         )
     )
-
     expect_true(grepl("AssociationResults object with 2", classShowFew))
     expect_true(grepl("(with 5 more values)", classShowMany))
+
+    # Test getters
+    testClass2 <- methods::new(
+        "AssociationResults",
+        results = list("td_1" = iris, "td_2" = mtcars),
+        traits = paste0("trait_", 1:10)
+    )
+
+    expect_equal(reportNames(testClass2), c("td_1", "td_2"))
+    expect_equal(traitNames(testClass2), paste0("trait_", 1:10))
+
+    expect_equal(tableReport(testClass2, "td_1"), iris)
+    expect_equal(tableReport(testClass2, "td_2"), mtcars)
+    expect_true(is(tableReport(testClass2), "list"))
+    expect_equal(length(tableReport(testClass2)), 2)
+    expect_error(
+        tableReport(testClass2, 123),
+        regexp = "'reportName' must be of type 'character'"
+    )
+    expect_error(
+        tableReport(testClass2, "td_3"),
+        regexp = "Report ID not found in object"
+    )
 })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

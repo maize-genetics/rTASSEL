@@ -21,6 +21,8 @@ setClass(
     )
 )
 
+
+## ----
 #' @title AssociationResults validation
 #'
 #' @name AssociationResults-validity
@@ -96,7 +98,9 @@ setMethod(
         # trait text
         cat("Traits:\n")
         if (length(object@traits) <= maxTraitsToPrint) {
-            msgTraits <- paste(object@traits, collapse = ", ")
+            for (i in seq_len(length(object@traits))) {
+                cat(indentStyle, object@traits[i], "\n")
+            }
         } else {
             remTraits <- length(object@traits) - maxTraitsToPrint
 
@@ -110,14 +114,94 @@ setMethod(
 )
 
 
+## ----
+#' @title Return report names
+#'
+#' @description
+#' Returns a \code{character} vector of table report names
+#'
+#' @param object a \code{\linkS4class{AssociationResults}} object
+#'
+#' @rdname reportNames
+#' @export
+setGeneric("reportNames", function(object) standardGeneric("reportNames"))
+
+#' @rdname reportNames
+#' @export
+setMethod(
+    f = "reportNames",
+    signature = "AssociationResults",
+    definition = function(object) {
+        return(names(object@results))
+    }
+)
 
 
+## ----
+#' @title Return trait names
+#'
+#' @description
+#' Returns a \code{character} vector of trait names
+#'
+#' @param object a \code{\linkS4class{AssociationResults}} object
+#'
+#' @rdname traitNames
+#' @export
+setGeneric("traitNames", function(object) standardGeneric("traitNames"))
+
+#' @rdname reportNames
+#' @export
+setMethod(
+    f = "traitNames",
+    signature = "AssociationResults",
+    definition = function(object) {
+        return(object@traits)
+    }
+)
 
 
+## ----
+#' @title Return selected table report
+#'
+#' @description
+#' Returns a \code{data.frame} object of association table reports
+#'
+#' @param assocRes a \code{\linkS4class{AssociationResults}} object
+#' @param reportName a specific table report to return
+#'
+#' @rdname tableReport
+#' @export
+setGeneric("tableReport", function(assocRes = missing(), reportName = missing()) {
+    standardGeneric("tableReport")
+})
 
+#' @rdname tableReport
+#' @export
+setMethod(
+    f = "tableReport",
+    signature = signature(
+        assocRes   = "AssociationResults",
+        reportName = "ANY"
+    ),
+    definition = function(assocRes, reportName) {
+        if (missing(reportName)) {
+            reportName <- NULL
+        }
 
+        if (!is.character(reportName) && !is.null(reportName)) {
+            stop("'reportName' must be of type 'character'")
+        }
 
-
+        if (is.null(reportName)) {
+            return(assocRes@results)
+        } else {
+            if (!reportName %in% reportNames(assocRes)) {
+                stop("Report ID not found in object")
+            }
+            return(assocRes@results[[reportName]])
+        }
+    }
+)
 
 
 
