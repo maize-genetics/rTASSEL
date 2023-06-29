@@ -55,30 +55,34 @@ tableReportListToAssociationResults <- function(trl, aType) {
     result <- switch (aType,
         "BLUE" = {
             methods::new(
-                Class = "AssociationResults",
+                Class = "AssociationResultsBLUE",
                 results = trl,
-                traits = trl$BLUE_ANOVA$Trait
+                traits = trl$BLUE_ANOVA$Trait,
+                assocType = aType
             )
         },
         "GLM" = {
             methods::new(
-                Class = "AssociationResults",
+                Class = "AssociationResultsGLM",
                 results = trl,
-                traits = unique(trl$GLM_Stats$Trait)
+                traits = unique(trl$GLM_Stats$Trait),
+                assocType = aType
             )
         },
         "MLM" = {
             methods::new(
-                Class = "AssociationResults",
+                Class = "AssociationResultsMLM",
                 results = trl,
-                traits = unique(trl$MLM_Stats$Trait)
+                traits = unique(trl$MLM_Stats$Trait),
+                assocType = aType
             )
         },
         "FastAssoc" = {
             methods::new(
-                Class = "AssociationResults",
+                Class = "AssociationResultsFast",
                 results = trl,
-                traits = unique(trl$FastAssociation$Trait)
+                traits = unique(trl$FastAssociation$Trait),
+                assocType = aType
             )
         },
         "default" = {

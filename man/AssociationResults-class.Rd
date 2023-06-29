@@ -16,5 +16,7 @@ from *WAS studies.
 
 \item{\code{traits}}{A vector of type \code{character} containing the trait IDs
 modeled.}
+
+\item{\code{assocType}}{\code{character} object describing association type}
 }}
 

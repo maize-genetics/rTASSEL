@@ -9,6 +9,7 @@
 #' @slot results A list of \code{data.frame} objects containing summary results
 #' @slot traits A vector of type \code{character} containing the trait IDs
 #'    modeled.
+#' @slot assocType \code{character} object describing association type
 #'
 #' @name AssociationResults-class
 #' @rdname AssociationResults-class
@@ -17,7 +18,8 @@ setClass(
     Class = "AssociationResults",
     representation = representation(
         results = "list",
-        traits = "character"
+        traits = "character",
+        assocType = "character"
     )
 )
 
@@ -204,18 +206,29 @@ setMethod(
 )
 
 
+## ----
+#' @title Return GWAS association type
+#'
+#' @description
+#' Returns association type for given  \code{\linkS4class{AssociationResults}}
+#' object.
+#'
+#' @param assocRes a \code{\linkS4class{AssociationResults}} object
+#'
+#' @rdname associationType
+#' @export
+setGeneric("associationType", function(assocRes) {
+    standardGeneric("associationType")
+})
 
-
-
-
-
-
-
-
-
-
-
-
-
+#' @rdname associationType
+#' @export
+setMethod(
+    f = "associationType",
+    signature = signature("AssociationResults"),
+    definition = function(assocRes) {
+        return(assocRes@assocType)
+    }
+)
 
 
