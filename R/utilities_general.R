@@ -48,6 +48,52 @@ tableReportList <- function(x) {
 }
 
 
+## Convert list to AssociationResults object ----
+# @param trl A tableReportList object
+# @param aType Association type
+tableReportListToAssociationResults <- function(trl, aType) {
+    result <- switch (aType,
+        "BLUE" = {
+            methods::new(
+                Class = "AssociationResults",
+                results = trl,
+                traits = trl$BLUE_ANOVA$Trait
+            )
+        },
+        "GLM" = {
+            methods::new(
+                Class = "AssociationResults",
+                results = trl,
+                traits = unique(trl$GLM_Stats$Trait)
+            )
+        },
+        "MLM" = {
+            methods::new(
+                Class = "AssociationResults",
+                results = trl,
+                traits = unique(trl$MLM_Stats$Trait)
+            )
+        },
+        "FastAssoc" = {
+            methods::new(
+                Class = "AssociationResults",
+                results = trl,
+                traits = unique(trl$FastAssociation$Trait)
+            )
+        },
+        "default" = {
+            NULL
+        }
+    )
+
+    if (is.null(result)) {
+        stop("Association Type ('aType') not defined")
+    } else {
+        return(result)
+    }
+}
+
+
 
 # === LD plot functions =============================================
 

@@ -38,7 +38,7 @@ License: GPL-3 | file LICENSE
 URL:
     https://github.com/maize-genetics/rTASSEL
 Depends:
-    R (>= 3.5.0)
+    R (>= 4.1.0)
 Imports:
     ape,
     GenomicRanges,
@@ -59,6 +59,6 @@ SystemRequirements: Java (>= 8.0)
 Encoding: UTF-8
 LazyData: true
 VignetteBuilder: knitr
-RoxygenNote: 7.2.1
+RoxygenNote: 7.2.3
 biocViews:
     GenomeWideAssociation
