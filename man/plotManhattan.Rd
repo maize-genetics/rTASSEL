@@ -9,12 +9,26 @@ plotManhattan(
   trait = NULL,
   threshold = NULL,
   colors = c("#91baff", "#3e619b"),
-  pltTheme = c("default", "classic"),
-  showSigMarkers = FALSE
+  pltTheme = c("default", "classic")
 )
 }
 \arguments{
 \item{assocRes}{An object of type \code{AssociationResults}}
+
+\item{trait}{Which phenotypic trait do you want to plot? If set to
+\code{NULL}, this will generate a faceted plot with all mapped traits}
+
+\item{threshold}{User-defined \eqn{-log_{10}(p)}-value threshold for
+significant marker determination. Once specified any marker points
+higher than this line will be highlighted.}
+
+\item{colors}{A vector of \code{character} colors used for differentiating
+multiple chromosomes. Defaults to 2 shades of blue.}
+
+\item{pltTheme}{A given plot}
+}
+\value{
+Returns a \code{ggplot2} object
 }
 \description{
 This function allows for quick generation of a Manhattan
