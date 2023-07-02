@@ -95,20 +95,6 @@ plotManhattanCore <- function(
 
 
 ## ----
-# aesthetic module - "classic"
-plotManhattanCoreClassic <- function() {
-
-}
-
-
-## ----
-# aesthetic module - "default"
-plotManhattanCoreDefault <- function() {
-
-}
-
-
-## ----
 # plotManhattan dataframe primer
 primeManhattanData <- function(
     assocStats,
