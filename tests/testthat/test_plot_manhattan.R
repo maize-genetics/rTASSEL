@@ -158,6 +158,34 @@ test_that("plotManhattan utilities work", {
         ),
         regexp = "'Chr' column not found in stats dataframe"
     )
+    expect_error(
+        object = primeManhattanData(
+            assocStats = data.frame(
+                "Chr" = c("1", "2", "3"),
+                "Pos" = c(100, 200, 300),
+                "not_important" = c("a", "b", "c")
+            ),
+            trait = NULL,
+            threshold = 2
+        ),
+        regexp = "'Trait' column not found in stats dataframe"
+    )
+    expect_error(
+        object = primeManhattanData(
+            assocStats = data.frame(
+                "Chr" = c("1", "2", "3"),
+                "Trait" = c(
+                    "important_trait_1",
+                    "more_important_trait_2",
+                    "the_most_important_trait_in_known_existence"
+                ),
+                "not_important" = c("a", "b", "c")
+            ),
+            trait = NULL,
+            threshold = 2
+        ),
+        regexp = "'Pos' column not found in stats dataframe"
+    )
 
 })
 
