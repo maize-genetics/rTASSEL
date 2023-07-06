@@ -1,5 +1,5 @@
 ## ----
-#' @title Create Manhattan plot from rTASSEL association output
+#' @title Create a Manhattan plot from rTASSEL association output
 #'
 #' @description This function allows for quick generation of a Manhattan
 #'    plot from rTASSEL association statistical output data.
@@ -32,9 +32,7 @@ plotManhattan <- function(
         )
     }
 
-    if (!is.null(trait) && !trait %in% traitNames(assocRes)) {
-        stop("Trait: '", trait, "' is not a valid trait ID found in this object")
-    }
+    traitValidityChecker(trait, assocRes)
 
     assocStats <- switch (
         associationType(assocRes),
@@ -62,7 +60,7 @@ plotManhattan <- function(
 
 
 ## ----
-#' @title Core visual engine
+#' @title Core visual engine for Manhattan plotting
 #' @param params A list of parameter variables
 #' @importFrom rlang .data
 plotManhattanCore <- function(params) {
@@ -166,21 +164,6 @@ primeManhattanData <- function(params) {
     }
 
     return(filtStats)
-}
-
-
-## ----
-#' @title Sanity checker for association results
-#' @param x A given column to check
-#' @param assocStats A \code{data.frame} object containing association stats
-#' @param neededCols A \code{character} vector containing desired columns
-assocStatsColumnChecker <- function(x, assocStats, neededCols) {
-    if (!x %in% colnames(assocStats)) {
-        stop(
-            "'", x, "' column not found in stats dataframe - need at least: ",
-            paste(neededCols, collapse = ",")
-        )
-    }
 }
 
 

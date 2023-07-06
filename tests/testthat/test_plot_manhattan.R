@@ -42,7 +42,7 @@ test_that("plotManhattan returns correct plot layers", {
     )
     expect_error(
         object = plotManhattan(fastRep, "dog"),
-        regexp = "Trait: 'dog' is not a valid trait ID found in this object"
+        regexp = "No traits specified are found in results"
     )
 
     ## Check colors ----

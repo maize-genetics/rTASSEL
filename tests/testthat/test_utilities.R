@@ -107,4 +107,14 @@ test_that("getGenotypePhenotype() returns correct data", {
     expect_true(rJava::is.jnull(testObj))
 })
 
+test_that("assocStatsColumnChecker returns correct errors", {
+    expect_error(
+        object = tableReportListToAssociationResults(
+            trl = list(),
+            "FFF"
+        ),
+        regexp = "Association Type"
+    )
+})
+
 
