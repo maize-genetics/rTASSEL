@@ -63,6 +63,7 @@ plotManhattan <- function(
 
 ## ----
 #' @title Core visual engine
+#' @param params A list of parameter variables
 #' @importFrom rlang .data
 plotManhattanCore <- function(params) {
 
@@ -110,7 +111,8 @@ plotManhattanCore <- function(params) {
 
 
 ## ----
-# plotManhattan dataframe primer
+#' @title plotManhattan dataframe primer
+#' @param params A list of parameter variables
 primeManhattanData <- function(params) {
     ## Parse parameters
     assocStats <- params$assocStats
@@ -168,7 +170,10 @@ primeManhattanData <- function(params) {
 
 
 ## ----
-# sanity checker for association results
+#' @title Sanity checker for association results
+#' @param x A given column to check
+#' @param assocStats A \code{data.frame} object containing association stats
+#' @param neededCols A \code{character} vector containing desired columns
 assocStatsColumnChecker <- function(x, assocStats, neededCols) {
     if (!x %in% colnames(assocStats)) {
         stop(

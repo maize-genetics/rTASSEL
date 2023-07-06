@@ -25,7 +25,8 @@ higher than this line will be highlighted.}
 \item{colors}{A vector of \code{character} colors used for differentiating
 multiple chromosomes. Defaults to 2 shades of blue.}
 
-\item{pltTheme}{A given plot}
+\item{pltTheme}{What theme would like to display for the plot? Only
+supports one theme currently.}
 }
 \value{
 Returns a \code{ggplot2} object

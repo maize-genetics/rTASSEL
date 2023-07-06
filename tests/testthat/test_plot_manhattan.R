@@ -198,27 +198,3 @@ test_that("plotManhattan utilities work", {
 })
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
