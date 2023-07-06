@@ -3,11 +3,22 @@
 \docType{class}
 \name{AssociationResults-class}
 \alias{AssociationResults-class}
+\alias{show,AssociationResults-method}
+\alias{show,}
+\alias{AssociationResults-method}
 \title{AssociationResults Class}
+\usage{
+\S4method{show}{AssociationResults}(object)
+}
+\arguments{
+\item{object}{a \code{\linkS4class{AssociationResults}} object}
+}
 \description{
 Class \code{AssociationResults} defines a \code{rTASSEL}
 Class for storing TASSEL 5 and general-purpose association results
 from *WAS studies.
+
+Prints outs summary information from \code{AssociationResults} objects
 }
 \section{Slots}{
 

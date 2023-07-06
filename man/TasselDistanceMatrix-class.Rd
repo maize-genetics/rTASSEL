@@ -3,8 +3,18 @@
 \docType{class}
 \name{TasselDistanceMatrix-class}
 \alias{TasselDistanceMatrix-class}
+\alias{show,TasselDistanceMatrix-method}
 \title{TasselDistanceMatrix Class}
+\usage{
+\S4method{show}{TasselDistanceMatrix}(object)
+}
+\arguments{
+\item{object}{a \code{TasselGenotypePhenotype} class object}
+}
 \description{
 Class \code{TasselDistanceMatrix} defines a \code{rTASSEL}
    Class for storing TASSEL genotype and phenotype objects.
+
+Prints out information related taxa, positions, genotype, and
+   phenotype information.
 }

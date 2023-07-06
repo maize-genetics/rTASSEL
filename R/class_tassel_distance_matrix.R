@@ -30,15 +30,15 @@ setClass(
 )
 
 
-#' @title Show method TasselGenotypePhenotype objects
+#' @title Show method TasselDistanceMatrix objects
 #'
 #' @description Prints out information related taxa, positions, genotype, and
 #'    phenotype information.
 #'
 #' @param object a \code{TasselGenotypePhenotype} class object
 #'
-#' @rdname TasselGenotypePhenotype-class
-#' @aliases show,TasselGenotypePhenotype-method
+#' @rdname TasselDistanceMatrix-class
+#' @aliases show,TasselDistanceMatrix-method
 #'
 #' @importFrom rJava .jnull
 setMethod(

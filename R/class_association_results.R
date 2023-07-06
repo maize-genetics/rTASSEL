@@ -70,8 +70,7 @@ setValidity("AssociationResults", function(object) {
 #' @param object a \code{\linkS4class{AssociationResults}} object
 #'
 #' @docType methods
-#' @name show
-#' @rdname show
+#' @rdname AssociationResults-class
 #' @aliases show, AssociationResults-method
 setMethod(
     f = "show",
