@@ -168,6 +168,7 @@ generateQQData <- function(params) {
 ## ----
 #' @title Get expected quantiles from p-val vectors
 #' @param pVal A \code{numeric} vector containing association p-values
+#' @param trait A trait ID that correlates with p-value data
 expectedQuantiles <- function(pVal, trait) {
     ## Remove NaN values
     filtPVal <- pVal[!is.na(pVal)]

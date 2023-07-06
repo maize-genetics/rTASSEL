@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot_manhattan.R
 \name{plotManhattanCore}
 \alias{plotManhattanCore}
-\title{Core visual engine}
+\title{Core visual engine for Manhattan plotting}
 \usage{
 plotManhattanCore(params)
 }
@@ -10,5 +10,5 @@ plotManhattanCore(params)
 \item{params}{A list of parameter variables}
 }
 \description{
-Core visual engine
+Core visual engine for Manhattan plotting
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot_manhattan.R
 \name{plotManhattan}
 \alias{plotManhattan}
-\title{Create Manhattan plot from rTASSEL association output}
+\title{Create a Manhattan plot from rTASSEL association output}
 \usage{
 plotManhattan(
   assocRes,
