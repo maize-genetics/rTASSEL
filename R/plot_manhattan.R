@@ -25,7 +25,10 @@ plotManhattan <- function(
         pltTheme = c("default", "classic")
 ) {
     if (!is(assocRes, "AssociationResults")) {
-        stop("The object '", deparse(substitute(assocRes)), "' is not an 'AssociationResults' object")
+        stop(
+            "The object '", deparse(substitute(assocRes)),
+            "' is not an 'AssociationResults' object"
+        )
     }
 
     if (!is.null(trait) && !trait %in% traitNames(assocRes)) {
@@ -34,10 +37,10 @@ plotManhattan <- function(
 
     assocStats <- switch (
         associationType(assocRes),
-        "GLM" = tableReport(assocRes, "GLM_Stats"),
-        "MLM" = tableReport(assocRes, "MLM_Stats"),
+        "GLM"       = tableReport(assocRes, "GLM_Stats"),
+        "MLM"       = tableReport(assocRes, "MLM_Stats"),
         "FastAssoc" = tableReport(assocRes, "FastAssociation"),
-        "default" = NULL
+        "default"   = NULL
     )
 
     if (is.null(assocStats)) {
@@ -101,7 +104,9 @@ primeManhattanData <- function(
     trait,
     threshold
 ) {
-    ## Sanity check coerce data frame from `DataFrame` object
+    ## Sanity check coerce data frame from assocStats object
+    # NOTE - probably don't need to do this right now but a security
+    #        feature if I change TableReport classes in the future...
     assocStats <- as.data.frame(assocStats)
 
     ## Sanity check for columns
