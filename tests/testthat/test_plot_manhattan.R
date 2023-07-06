@@ -137,9 +137,11 @@ test_that("plotManhattan utilities work", {
 
     ## Test data 1 -----
     testPrime <- primeManhattanData(
-        assocStats = tableReport(fastRep, "FastAssociation"),
-        trait = NULL,
-        threshold = 2
+        list(
+            "assocStats" = tableReport(fastRep, "FastAssociation"),
+            "trait"      = NULL,
+            "threshold"  = 2
+        )
     )
 
     ## Check object type -----
@@ -152,37 +154,43 @@ test_that("plotManhattan utilities work", {
     ## Check error
     expect_error(
         object = primeManhattanData(
-            assocStats = mtcars,
-            trait = NULL,
-            threshold = 2
+            list(
+                "assocStats" = mtcars,
+                "trait"      = NULL,
+                "threshold"  = 2
+            )
         ),
         regexp = "'Chr' column not found in stats dataframe"
     )
     expect_error(
         object = primeManhattanData(
-            assocStats = data.frame(
-                "Chr" = c("1", "2", "3"),
-                "Pos" = c(100, 200, 300),
-                "not_important" = c("a", "b", "c")
-            ),
-            trait = NULL,
-            threshold = 2
+            list(
+                "assocStats" = data.frame(
+                    "Chr" = c("1", "2", "3"),
+                    "Pos" = c(100, 200, 300),
+                    "not_important" = c("a", "b", "c")
+                ),
+                "trait"     = NULL,
+                "threshold" = 2
+            )
         ),
         regexp = "'Trait' column not found in stats dataframe"
     )
     expect_error(
         object = primeManhattanData(
-            assocStats = data.frame(
-                "Chr" = c("1", "2", "3"),
-                "Trait" = c(
-                    "important_trait_1",
-                    "more_important_trait_2",
-                    "the_most_important_trait_in_known_existence"
+            list(
+                "assocStats" = data.frame(
+                    "Chr" = c("1", "2", "3"),
+                    "Trait" = c(
+                        "important_trait_1",
+                        "more_important_trait_2",
+                        "the_most_important_trait_in_known_existence"
+                    ),
+                    "not_important" = c("a", "b", "c")
                 ),
-                "not_important" = c("a", "b", "c")
-            ),
-            trait = NULL,
-            threshold = 2
+                "trait" = NULL,
+                "threshold" = 2
+            )
         ),
         regexp = "'Pos' column not found in stats dataframe"
     )

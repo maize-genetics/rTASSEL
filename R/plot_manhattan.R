@@ -12,17 +12,18 @@
 #'    higher than this line will be highlighted.
 #' @param colors A vector of \code{character} colors used for differentiating
 #'    multiple chromosomes. Defaults to 2 shades of blue.
-#' @param pltTheme A given plot
+#' @param pltTheme What theme would like to display for the plot? Only
+#'    supports one theme currently.
 #'
 #' @return Returns a \code{ggplot2} object
 #'
 #' @export
 plotManhattan <- function(
-        assocRes,
-        trait = NULL,
-        threshold = NULL,
-        colors = c("#91baff", "#3e619b"),
-        pltTheme = c("default", "classic")
+    assocRes,
+    trait = NULL,
+    threshold = NULL,
+    colors = c("#91baff", "#3e619b"),
+    pltTheme = c("default", "classic")
 ) {
     if (!is(assocRes, "AssociationResults")) {
         stop(
@@ -47,22 +48,33 @@ plotManhattan <- function(
         stop("Association Type not defined")
     }
 
-    plotManhattanCore(assocStats, trait, threshold, colors, pltTheme)
+    # Make a more robust/'OOP' object to pass
+    pManCoreParams <- list(
+        "assocStats" = assocStats,
+        "colors"     = colors,
+        "pltTheme"   = pltTheme,
+        "threshold"  = threshold,
+        "trait"      = trait
+    )
+
+    plotManhattanCore(pManCoreParams)
 }
 
 
 ## ----
 #' @title Core visual engine
 #' @importFrom rlang .data
-plotManhattanCore <- function(
-    assocStats,
-    trait,
-    threshold,
-    colors,
-    pltTheme
-) {
+plotManhattanCore <- function(params) {
 
-    filtStats <- primeManhattanData(assocStats, trait, threshold)
+    ## Parse parameters
+    assocStats <- params$assocStats
+    trait      <- params$trait
+    threshold  <- params$threshold
+    colors     <- params$colors
+    pltTheme   <- params$pltTheme
+
+    ## "Prime" and filter data for plotting
+    filtStats <- primeManhattanData(params)
 
     ## Dynamic facet generation
     if (is.null(trait) || length(trait) > 1) {
@@ -99,11 +111,12 @@ plotManhattanCore <- function(
 
 ## ----
 # plotManhattan dataframe primer
-primeManhattanData <- function(
-    assocStats,
-    trait,
-    threshold
-) {
+primeManhattanData <- function(params) {
+    ## Parse parameters
+    assocStats <- params$assocStats
+    trait      <- params$trait
+    threshold  <- params$threshold
+
     ## Sanity check coerce data frame from assocStats object
     # NOTE - probably don't need to do this right now but a security
     #        feature if I change TableReport classes in the future...
