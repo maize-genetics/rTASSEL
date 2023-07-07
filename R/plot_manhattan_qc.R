@@ -33,7 +33,7 @@ plotManhattanQC <- function(
     window       = 100000,
     threshold    = NULL,
     classicNames = FALSE,
-    verbose      = FALSE
+    verbose      = TRUE
 ) {
     if (!is(assocRes, "AssociationResults")) {
         stop(
