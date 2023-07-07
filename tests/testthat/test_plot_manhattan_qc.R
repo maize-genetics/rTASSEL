@@ -23,16 +23,20 @@ test_that("plotManhattanQC works correctly", {
     )
 
     testGRData <- GenomicRanges::GRanges(
-        seqnames = c("1", "2", "5"),
+        seqnames = c("8", "2", "5"),
         ranges = IRanges::IRanges(
-            start = c(1,      3000000, 1000000),
-            end   = c(250000, 3005000, 1050000)
+            start = c(131576889, 3000000, 1000000),
+            end   = c(131580316, 3070000, 1050000)
         ),
         range_id = c("Zm01", "Zm02", "Zm03"),
-        canonical_id = c("Canon_01", "Canon_02", "Canon_03")
+        classical_id = c("rap2.7", "classic_02", "classic_03")
     )
 
-    testPlt <- plotManhattanQC(fastRep, testGRData, window = 1000000)
+    testPlt <- plotManhattanQC(fastRep, gr = testGRData, window = 1000000)
     expect_true(is(testPlt, "gg"))
+    expect_error(
+        object = plotManhattanQC(fastRep, gr = testGRData, window = 100),
+        regexp = "No association results found for any trait"
+    )
 })
 

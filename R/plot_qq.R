@@ -134,9 +134,7 @@ generateQQData <- function(params) {
 
     ## Sanity check for columns
     neededCols <- c("Trait", "p")
-    for (col in neededCols) {
-        assocStatsColumnChecker(col, assocStats, neededCols)
-    }
+    checkForValidColumns(assocStats, neededCols)
 
     ## Coerce association stats trait to character to stop ghost levels
     assocStats       <- assocStats[, c("Trait", "p")]

@@ -124,9 +124,7 @@ primeManhattanData <- function(params) {
 
     ## Sanity check for columns
     neededCols <- c("Chr", "Pos", "Trait")
-    for (col in neededCols) {
-        assocStatsColumnChecker(col, assocStats, neededCols)
-    }
+    checkForValidColumns(assocStats, neededCols)
 
     ## Coerce Chr and Pos vectors
     assocStats$Chr <- as.character(assocStats$Chr)
