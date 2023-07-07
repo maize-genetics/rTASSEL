@@ -103,6 +103,11 @@ test_that("plotManhattan returns correct plot layers", {
     expect_equal(length(testPlt2$layout$facet_params$rows), 0)
     expect_equal(length(testPlt2$layout$facet_params$cols), 1)
 
+    ## Test for interactive components ----
+    testPlt <- plotManhattan(fastRep, interactive = TRUE)
+    expect_true(is(testPlt, "plotly"))
+    expect_true(is(testPlt, "htmlwidget"))
+
 })
 
 

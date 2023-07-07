@@ -1,6 +1,7 @@
 # === Tests for Manhattan QC plotting ===============================
 
 test_that("plotManhattanQC works correctly", {
+    ## Load data ----
     genoPathHMP <- system.file(
         "extdata",
         "mdp_genotype.hmp.txt",
@@ -22,6 +23,7 @@ test_that("plotManhattanQC works correctly", {
         maxP = 1
     )
 
+    ## Test for proper data return (static) ----
     testGRData <- GenomicRanges::GRanges(
         seqnames = c("8", "2", "5"),
         ranges = IRanges::IRanges(
@@ -33,11 +35,13 @@ test_that("plotManhattanQC works correctly", {
     )
     testPlt <- plotManhattanQC(fastRep, gr = testGRData)
     expect_true(is(testPlt, "gg"))
-    expect_error(
-        object = plotManhattanQC(fastRep, gr = testGRData, window = 100),
-        regexp = "No association results found for any trait"
-    )
 
+    ## Test for proper data return (interactive) ----
+    testPlt <- plotManhattanQC(fastRep, gr = testGRData, interactive = TRUE)
+    expect_true(is(testPlt, "plotly"))
+    expect_true(is(testPlt, "htmlwidget"))
+
+    ## Test for messages and warnings ----
     testGRData <- GenomicRanges::GRanges(
         seqnames = c("8", "2", "5"),
         ranges = IRanges::IRanges(
@@ -55,7 +59,7 @@ test_that("plotManhattanQC works correctly", {
         regexp = "No association results found"
     )
 
-
+    ## Test for general errors ----
     tasBLUE <- rTASSEL::assocModelFitter(
         tasGenoPhenoFast,
         . ~ .,
@@ -63,5 +67,10 @@ test_that("plotManhattanQC works correctly", {
     )
     expect_error(plotManhattanQC(mtcars, gr = testGRData))
     expect_error(plotManhattanQC(tasBLUE, gr = testGRData))
+    expect_error(
+        object = plotManhattanQC(fastRep, gr = testGRData, window = 100),
+        regexp = "No association results found for any trait"
+    )
+
 })
 

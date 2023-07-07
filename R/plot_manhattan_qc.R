@@ -20,6 +20,8 @@
 #' @param classicNames Do you want to plot classical gene names instead?
 #'    NOTE: this will need a \code{classical_id} column for the "ranges of
 #'    interest" data. Defaults to \code{FALSE}.
+#' @param interactive Do you want to produce an interactive visualization?
+#'    Defaults to \code{FALSE}.
 #' @param verbose Should messages be printed to console? Defaults to
 #'    \code{FALSE}.
 #'
@@ -33,6 +35,7 @@ plotManhattanQC <- function(
     window       = 100000,
     threshold    = NULL,
     classicNames = FALSE,
+    interactive  = FALSE,
     verbose      = TRUE
 ) {
     if (!is(assocRes, "AssociationResults")) {
@@ -67,14 +70,18 @@ plotManhattanQC <- function(
         "verbose"      = verbose
     )
 
-    plotManhattanQCCore(pManQCCoreParams)
+    if (!interactive) {
+        plotManhattanQCCore(pManQCCoreParams)
+    } else {
+        plotManhattanQCCoreInteractive(pManQCCoreParams)
+    }
 }
 
 
 ## ----
-#' @title Core visual engine for QQ plotting
-#' @param params A list of parameter variables
-#' @importFrom rlang .data
+# @title Core visual engine for QQ plotting
+# @param params A list of parameter variables
+# @importFrom rlang .data
 plotManhattanQCCore <- function(params) {
 
     ## Parse parameters
@@ -102,6 +109,13 @@ plotManhattanQCCore <- function(params) {
         main_title  <- ggplot2::ggtitle(label = paste("Trait:", paste(trait, collapse = ", ")))
     }
 
+    ## Check for threshold
+    if (is.null(threshold)) {
+        thresholdAes <- NULL
+    } else {
+        thresholdAes <- ggplot2::geom_hline(yintercept = threshold, linetype = "dashed")
+    }
+
     ## Plot components
     p <- ggplot2::ggplot() +
         ggplot2::geom_point(
@@ -120,7 +134,7 @@ plotManhattanQCCore <- function(params) {
             ),
             linetype = "dashed"
         ) +
-        ggplot2::geom_hline(yintercept = threshold, linetype = "dashed") +
+        thresholdAes +
         ggplot2::geom_rect(
             data    = grDfAes$aes_rect,
             fill    = "blue",
@@ -160,6 +174,17 @@ plotManhattanQCCore <- function(params) {
         )
 
     return(p)
+}
+
+
+## ----
+# @title Modify fancy quotes for plotly
+# @param params A list of parameter variables
+plotManhattanQCCoreInteractive <- function(params) {
+    p <- plotManhattanQCCore(params) +
+        ggplot2::ylab("-log10(p)")
+
+    return(plotly::ggplotly(p))
 }
 
 

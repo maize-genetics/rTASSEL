@@ -29,16 +29,22 @@ test_that("plotQQ works correctly", {
         fitMarkers = FALSE
     )
 
+    ## Test for errors ----
     expect_error(plotQQ(mtcars))
     expect_error(plotQQ(tasBLUE))
 
+    ## Test for proper data return (static) ----
     testPlt <- plotQQ(fastRep)
     expect_true(object = is(testPlt, "gg"))
-
     testPlt <- plotQQ(fastRep, overlay = FALSE)
     testPltBld <- ggplot2::ggplot_build(testPlt)
     expect_equal(length(testPltBld$layout$facet_params$rows), 0)
     expect_equal(length(testPltBld$layout$facet_params$cols), 0)
+
+    ## Test for proper data return (interactive) ----
+    testPlt <- plotQQ(fastRep, interactive = TRUE)
+    expect_true(is(testPlt, "plotly"))
+    expect_true(is(testPlt, "htmlwidget"))
 })
 
 

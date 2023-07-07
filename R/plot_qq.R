@@ -9,6 +9,8 @@
 #'    \code{NULL}, this will generate a faceted plot with all mapped traits.
 #' @param overlay Do you want trait results faceted or overlayed into one
 #'    single plot? Defaults to \code{TRUE}.
+#' @param interactive Do you want to produce an interactive visualization?
+#'    Defaults to \code{FALSE}.
 #'
 #' @return Returns a \code{ggplot2} object
 #'
@@ -16,7 +18,8 @@
 plotQQ <- function(
     assocRes,
     trait = NULL,
-    overlay = TRUE
+    overlay = TRUE,
+    interactive = FALSE
 ) {
     if (!is(assocRes, "AssociationResults")) {
         stop(
@@ -46,14 +49,18 @@ plotQQ <- function(
         "overlay"    = overlay
     )
 
-    plotQQCore(pQQCoreParams)
+    if (!interactive) {
+        plotQQCore(pQQCoreParams)
+    } else {
+        plotQQCoreInteractive(pQQCoreParams)
+    }
 }
 
 
 ## ----
-#' @title Core visual engine for QQ plotting
-#' @param params A list of parameter variables
-#' @importFrom rlang .data
+# @title Core visual engine for QQ plotting
+# @param params A list of parameter variables
+# @importFrom rlang .data
 plotQQCore <- function(params) {
 
     ## Parse parameters
@@ -120,8 +127,20 @@ plotQQCore <- function(params) {
 
 
 ## ----
-#' @title Generate QQ plot data
-#' @param params A list of parameter variables
+# @title Modify fancy quotes for plotly
+# @param params A list of parameter variables
+plotQQCoreInteractive <- function(params) {
+    p <- plotQQCore(params) +
+        ggplot2::ylab("-log10(p) (observed)") +
+        ggplot2::xlab("-log10(p) (expected)")
+
+    return(plotly::ggplotly(p))
+}
+
+
+## ----
+# @title Generate QQ plot data
+# @param params A list of parameter variables
 generateQQData <- function(params) {
     ## Parse parameters
     assocStats <- params$assocStats
@@ -164,9 +183,9 @@ generateQQData <- function(params) {
 
 
 ## ----
-#' @title Get expected quantiles from p-val vectors
-#' @param pVal A \code{numeric} vector containing association p-values
-#' @param trait A trait ID that correlates with p-value data
+# @title Get expected quantiles from p-val vectors
+# @param pVal A \code{numeric} vector containing association p-values
+# @param trait A trait ID that correlates with p-value data
 expectedQuantiles <- function(pVal, trait) {
     ## Remove NaN values
     filtPVal <- pVal[!is.na(pVal)]

@@ -12,6 +12,8 @@
 #'    higher than this line will be highlighted.
 #' @param colors A vector of \code{character} colors used for differentiating
 #'    multiple chromosomes. Defaults to 2 shades of blue.
+#' @param interactive Do you want to produce an interactive visualization?
+#'    Defaults to \code{FALSE}.
 #' @param pltTheme What theme would like to display for the plot? Only
 #'    supports one theme currently.
 #'
@@ -23,6 +25,7 @@ plotManhattan <- function(
     trait = NULL,
     threshold = NULL,
     colors = c("#91baff", "#3e619b"),
+    interactive = FALSE,
     pltTheme = c("default", "classic")
 ) {
     if (!is(assocRes, "AssociationResults")) {
@@ -55,14 +58,18 @@ plotManhattan <- function(
         "trait"      = trait
     )
 
-    plotManhattanCore(pManCoreParams)
+    if (!interactive) {
+        plotManhattanCore(pManCoreParams)
+    } else {
+        plotManhattanCoreInteractive(pManCoreParams)
+    }
 }
 
 
 ## ----
-#' @title Core visual engine for Manhattan plotting
-#' @param params A list of parameter variables
-#' @importFrom rlang .data
+# @title Core visual engine for Manhattan plotting
+# @param params A list of parameter variables
+# @importFrom rlang .data
 plotManhattanCore <- function(params) {
 
     ## Parse parameters
@@ -74,6 +81,7 @@ plotManhattanCore <- function(params) {
 
     ## "Prime" and filter data for plotting
     filtStats <- primeManhattanData(params)
+    nUniqChr   <- length(unique(filtStats$Chr))
 
     ## Dynamic facet generation
     if (is.null(trait) || length(trait) > 1) {
@@ -84,15 +92,22 @@ plotManhattanCore <- function(params) {
         main_title <- ggplot2::ggtitle(label = paste("Trait:", paste(trait, collapse = ", ")))
     }
 
+    ## Check for threshold
+    if (is.null(threshold)) {
+        thresholdAes <- NULL
+    } else {
+        thresholdAes <- ggplot2::geom_hline(yintercept = threshold, linetype = "dashed")
+    }
+
     ## Plot components
     p <- ggplot2::ggplot(data = filtStats) +
         ggplot2::aes(x = .data$pos_mbp, y = -log10(.data$p)) +
         ggplot2::geom_point(size = 0.8, na.rm = TRUE) +
         ggplot2::aes(color = .data$Chr) +
         ggplot2::scale_color_manual(
-            values = rep(colors, length(levels(filtStats$Chr)))
+            values = rep(colors, nUniqChr)
         ) +
-        ggplot2::geom_hline(yintercept = threshold, linetype = "dashed") +
+        thresholdAes +
         ggplot2::xlab("SNP Position (Mbp)") +
         ggplot2::ylab(bquote(~-log[10]~ '('*italic(p)*'-value)')) +
         main_title +
@@ -109,8 +124,19 @@ plotManhattanCore <- function(params) {
 
 
 ## ----
-#' @title plotManhattan dataframe primer
-#' @param params A list of parameter variables
+# @title Modify fancy quotes for plotly
+# @param params A list of parameter variables
+plotManhattanCoreInteractive <- function(params) {
+    p <- plotManhattanCore(params) +
+        ggplot2::ylab("-log10(p)")
+
+    return(plotly::ggplotly(p))
+}
+
+
+## ----
+# @title plotManhattan dataframe primer
+# @param params A list of parameter variables
 primeManhattanData <- function(params) {
     ## Parse parameters
     assocStats <- params$assocStats
