@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">rTASSEL</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.29</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.30</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -53,6 +53,22 @@
       <small>Source: <a href="https://github.com/maize-genetics/rTASSEL/blob/HEAD/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.9.30" id="rtassel-0930">rTASSEL 0.9.30<a class="anchor" aria-label="anchor" href="#rtassel-0930"></a></h2>
+<ul><li>Added new <code>AssociationResults</code> class
+<ul><li>Allows for more controlled access of data and simplified downstream functions for end users</li>
+</ul></li>
+<li>Added new function <code><a href="../reference/plotManhattan.html">plotManhattan()</a></code>:
+<ul><li>Supercedes older Manhattan plotting methods to work with new <code>AssociationResults</code> class.</li>
+</ul></li>
+<li>Added new function <code><a href="../reference/plotQQ.html">plotQQ()</a></code>:
+<ul><li>Plotting function for QQ results from <code>AssociationResults</code> class</li>
+</ul></li>
+<li>Added new function <code><a href="../reference/plotManhattanQC.html">plotManhattanQC()</a></code>:
+<ul><li>Plotting function and QC method for zoomed in regions of interest across genome</li>
+</ul></li>
+<li>Prior 3 functions also include interactive component that wraps <code>ggplot2</code> objects with PlotlyJS components</li>
+</ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.9.29" id="rtassel-0929">rTASSEL 0.9.29<a class="anchor" aria-label="anchor" href="#rtassel-0929"></a></h2>
 <ul><li>Added genotype table summary methods:
@@ -170,7 +186,7 @@
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.9.22" id="rtassel-0922">rTASSEL 0.9.22<a class="anchor" aria-label="anchor" href="#rtassel-0922"></a></h2>
-<ul><li>Fix <code><a href="../reference/manhattanPlot.html">manhattanPlot()</a></code> aesthetics:
+<ul><li>Fix <code>manhattanPlot()</code> aesthetics:
 <ul><li>Remove redundant marker labels from x-axis</li>
 <li>Change x-axis label to <code>SNP Positions</code>
 </li>
@@ -232,7 +248,7 @@
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.9.17" id="rtassel-0917">rTASSEL 0.9.17<a class="anchor" aria-label="anchor" href="#rtassel-0917"></a></h2>
 <ul><li>Added new function:
-<ul><li><code><a href="../reference/manhattanPlot.html">manhattanPlot()</a></code></li>
+<ul><li><code>manhattanPlot()</code></li>
 </ul></li>
 <li>Removed tidyverse dependencies</li>
 </ul></div>

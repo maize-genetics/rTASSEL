@@ -33,7 +33,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">rTASSEL</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.29</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.30</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -85,7 +85,7 @@
                         <h4 data-toc-skip class="author">Brandon
 Monier</h4>
             
-            <h4 data-toc-skip class="date">2023-06-22</h4>
+            <h4 data-toc-skip class="date">2023-07-07</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/maize-genetics/rTASSEL/blob/HEAD/vignettes/rtassel_walkthrough.Rmd" class="external-link"><code>vignettes/rtassel_walkthrough.Rmd</code></a></small>
       <div class="d-none name"><code>rtassel_walkthrough.Rmd</code></div>
@@ -308,7 +308,7 @@ extract the <code>GenotypeTable</code> with the S4 <code>@</code>
 operator, we would get something that looks like this:</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tasGenoHMP</span><span class="op">@</span><span class="va">jGenotypeTable</span></span></code></pre></div>
-<pre><code><span><span class="co">## [1] "Java-Object{net.maizegenetics.dna.snp.CoreGenotypeTable@8dbdac1}"</span></span></code></pre>
+<pre><code><span><span class="co">## [1] "Java-Object{net.maizegenetics.dna.snp.CoreGenotypeTable@44ebcd03}"</span></span></code></pre>
 <p>This entity is a <code>rJava</code> internal identifier. It isn’t
 until we call downstream <code>rTASSEL</code> functions where we will
 bring the TASSEL data into the R environment.</p>
@@ -1038,22 +1038,25 @@ genotype data is not needed for this method, we can leave the
 <div class="sourceCode" id="cb79"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Return BLUE output</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">tasBLUE</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## List of 2</span></span>
-<span><span class="co">##  $ BLUE      :'data.frame':  284 obs. of  4 variables:</span></span>
-<span><span class="co">##   ..$ Taxa  : chr [1:284] "33-16" "38-11" "4226" "4722" ...</span></span>
-<span><span class="co">##   ..$ EarDia: num [1:284] 47.2 46.8 56.7 46.1 43.3 ...</span></span>
-<span><span class="co">##   ..$ EarHT : num [1:284] 82.6 107.2 81.9 92.8 44.5 ...</span></span>
-<span><span class="co">##   ..$ dpoll : num [1:284] 51.7 56.6 53.8 62.5 49.9 ...</span></span>
-<span><span class="co">##  $ BLUE_ANOVA:'data.frame':  3 obs. of  9 variables:</span></span>
-<span><span class="co">##   ..$ Trait  : chr [1:3] "EarDia" "EarHT" "dpoll"</span></span>
-<span><span class="co">##   ..$ F      : num [1:3] 6.93 166.54 12.06</span></span>
-<span><span class="co">##   ..$ p      : num [1:3] 1.67e-46 2.30e-225 1.01e-76</span></span>
-<span><span class="co">##   ..$ taxaDF : num [1:3] 281 281 283</span></span>
-<span><span class="co">##   ..$ taxaMS : num [1:3] 28.5 695.8 49.4</span></span>
-<span><span class="co">##   ..$ errorDF: num [1:3] 241 274 269</span></span>
-<span><span class="co">##   ..$ errorMS: num [1:3] 4.11 4.18 4.09</span></span>
-<span><span class="co">##   ..$ modelDF: num [1:3] 284 284 286</span></span>
-<span><span class="co">##   ..$ modelMS: num [1:3] 29.1 815.1 68.9</span></span></code></pre>
+<pre><code><span><span class="co">## Formal class 'AssociationResultsBLUE' [package "rTASSEL"] with 3 slots</span></span>
+<span><span class="co">##   ..@ results  :List of 2</span></span>
+<span><span class="co">##   .. ..$ BLUE      :'data.frame':    284 obs. of  4 variables:</span></span>
+<span><span class="co">##   .. .. ..$ Taxa  : chr [1:284] "33-16" "38-11" "4226" "4722" ...</span></span>
+<span><span class="co">##   .. .. ..$ EarDia: num [1:284] 47.2 46.8 56.7 46.1 43.3 ...</span></span>
+<span><span class="co">##   .. .. ..$ EarHT : num [1:284] 82.6 107.2 81.9 92.8 44.5 ...</span></span>
+<span><span class="co">##   .. .. ..$ dpoll : num [1:284] 51.7 56.6 53.8 62.5 49.9 ...</span></span>
+<span><span class="co">##   .. ..$ BLUE_ANOVA:'data.frame':    3 obs. of  9 variables:</span></span>
+<span><span class="co">##   .. .. ..$ Trait  : chr [1:3] "EarDia" "EarHT" "dpoll"</span></span>
+<span><span class="co">##   .. .. ..$ F      : num [1:3] 6.93 166.54 12.06</span></span>
+<span><span class="co">##   .. .. ..$ p      : num [1:3] 1.67e-46 2.30e-225 1.01e-76</span></span>
+<span><span class="co">##   .. .. ..$ taxaDF : num [1:3] 281 281 283</span></span>
+<span><span class="co">##   .. .. ..$ taxaMS : num [1:3] 28.5 695.8 49.4</span></span>
+<span><span class="co">##   .. .. ..$ errorDF: num [1:3] 241 274 269</span></span>
+<span><span class="co">##   .. .. ..$ errorMS: num [1:3] 4.11 4.18 4.09</span></span>
+<span><span class="co">##   .. .. ..$ modelDF: num [1:3] 284 284 286</span></span>
+<span><span class="co">##   .. .. ..$ modelMS: num [1:3] 29.1 815.1 68.9</span></span>
+<span><span class="co">##   ..@ traits   : chr [1:3] "EarDia" "EarHT" "dpoll"</span></span>
+<span><span class="co">##   ..@ assocType: chr "BLUE"</span></span></code></pre>
 </div>
 <div class="section level3">
 <h3 id="calculate-glm">Calculate GLM<a class="anchor" aria-label="anchor" href="#calculate-glm"></a>
@@ -1076,34 +1079,37 @@ data set combined with our phenotype data in a
 <div class="sourceCode" id="cb84"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Return GLM output</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">tasGLM</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## List of 2</span></span>
-<span><span class="co">##  $ GLM_Stats    :'data.frame':   473 obs. of  18 variables:</span></span>
-<span><span class="co">##   ..$ Trait     : chr [1:473] "EarHT" "EarHT" "EarHT" "EarHT" ...</span></span>
-<span><span class="co">##   ..$ Marker    : chr [1:473] "PZA00447.8" "PZB00718.1" "PZD00098.1" "PZA02921.4" ...</span></span>
-<span><span class="co">##   ..$ Chr       : chr [1:473] "1" "1" "1" "1" ...</span></span>
-<span><span class="co">##   ..$ Pos       : int [1:473] 9024005 17601375 23267898 25035053 32583282 41505016 47280990 50197162 76054042 90772226 ...</span></span>
-<span><span class="co">##   ..$ marker_F  : num [1:473] 13.62 7.78 13.28 13.19 12.81 ...</span></span>
-<span><span class="co">##   ..$ p         : num [1:473] 0.000275 0.000524 0.000323 0.000341 0.000412 ...</span></span>
-<span><span class="co">##   ..$ marker_Rsq: num [1:473] 0.0517 0.0573 0.0488 0.0499 0.0478 ...</span></span>
-<span><span class="co">##   ..$ add_F     : num [1:473] 13.6 15.1 13.3 13.2 12.8 ...</span></span>
-<span><span class="co">##   ..$ add_p     : num [1:473] 0.000275 0.000129 0.000323 0.000341 0.000412 ...</span></span>
-<span><span class="co">##   ..$ dom_F     : num [1:473] NaN 0.48 NaN NaN NaN ...</span></span>
-<span><span class="co">##   ..$ dom_p     : num [1:473] NaN 0.489 NaN NaN NaN ...</span></span>
-<span><span class="co">##   ..$ marker_df : num [1:473] 1 2 1 1 1 2 2 1 1 2 ...</span></span>
-<span><span class="co">##   ..$ marker_MS : num [1:473] 5363 3030 5217 5170 5093 ...</span></span>
-<span><span class="co">##   ..$ error_df  : num [1:473] 250 256 259 251 255 262 250 270 268 273 ...</span></span>
-<span><span class="co">##   ..$ error_MS  : num [1:473] 394 389 393 392 398 ...</span></span>
-<span><span class="co">##   ..$ model_df  : num [1:473] 1 2 1 1 1 2 2 1 1 2 ...</span></span>
-<span><span class="co">##   ..$ model_MS  : num [1:473] 5363 3030 5217 5170 5093 ...</span></span>
-<span><span class="co">##   ..$ minorObs  : int [1:473] 124 105 108 101 16 55 63 99 104 127 ...</span></span>
-<span><span class="co">##  $ GLM_Genotypes:'data.frame':   1144 obs. of  7 variables:</span></span>
-<span><span class="co">##   ..$ Trait   : chr [1:1144] "EarHT" "EarHT" "EarHT" "EarHT" ...</span></span>
-<span><span class="co">##   ..$ Marker  : chr [1:1144] "PZA00447.8" "PZA00447.8" "PZB00718.1" "PZB00718.1" ...</span></span>
-<span><span class="co">##   ..$ Chr     : chr [1:1144] "1" "1" "1" "1" ...</span></span>
-<span><span class="co">##   ..$ Pos     : int [1:1144] 9024005 9024005 17601375 17601375 17601375 23267898 23267898 25035053 25035053 32583282 ...</span></span>
-<span><span class="co">##   ..$ Obs     : int [1:1144] 124 128 105 123 31 153 108 152 101 16 ...</span></span>
-<span><span class="co">##   ..$ Allele  : chr [1:1144] "C" "T" "C" "G" ...</span></span>
-<span><span class="co">##   ..$ Estimate: num [1:1144] 9.23 0 -2.45 7.68 0 ...</span></span></code></pre>
+<pre><code><span><span class="co">## Formal class 'AssociationResultsGLM' [package "rTASSEL"] with 3 slots</span></span>
+<span><span class="co">##   ..@ results  :List of 2</span></span>
+<span><span class="co">##   .. ..$ GLM_Stats    :'data.frame': 473 obs. of  18 variables:</span></span>
+<span><span class="co">##   .. .. ..$ Trait     : chr [1:473] "EarHT" "EarHT" "EarHT" "EarHT" ...</span></span>
+<span><span class="co">##   .. .. ..$ Marker    : chr [1:473] "PZA00447.8" "PZB00718.1" "PZD00098.1" "PZA02921.4" ...</span></span>
+<span><span class="co">##   .. .. ..$ Chr       : chr [1:473] "1" "1" "1" "1" ...</span></span>
+<span><span class="co">##   .. .. ..$ Pos       : int [1:473] 9024005 17601375 23267898 25035053 32583282 41505016 47280990 50197162 76054042 90772226 ...</span></span>
+<span><span class="co">##   .. .. ..$ marker_F  : num [1:473] 13.62 7.78 13.28 13.19 12.81 ...</span></span>
+<span><span class="co">##   .. .. ..$ p         : num [1:473] 0.000275 0.000524 0.000323 0.000341 0.000412 ...</span></span>
+<span><span class="co">##   .. .. ..$ marker_Rsq: num [1:473] 0.0517 0.0573 0.0488 0.0499 0.0478 ...</span></span>
+<span><span class="co">##   .. .. ..$ add_F     : num [1:473] 13.6 15.1 13.3 13.2 12.8 ...</span></span>
+<span><span class="co">##   .. .. ..$ add_p     : num [1:473] 0.000275 0.000129 0.000323 0.000341 0.000412 ...</span></span>
+<span><span class="co">##   .. .. ..$ dom_F     : num [1:473] NaN 0.48 NaN NaN NaN ...</span></span>
+<span><span class="co">##   .. .. ..$ dom_p     : num [1:473] NaN 0.489 NaN NaN NaN ...</span></span>
+<span><span class="co">##   .. .. ..$ marker_df : num [1:473] 1 2 1 1 1 2 2 1 1 2 ...</span></span>
+<span><span class="co">##   .. .. ..$ marker_MS : num [1:473] 5363 3030 5217 5170 5093 ...</span></span>
+<span><span class="co">##   .. .. ..$ error_df  : num [1:473] 250 256 259 251 255 262 250 270 268 273 ...</span></span>
+<span><span class="co">##   .. .. ..$ error_MS  : num [1:473] 394 389 393 392 398 ...</span></span>
+<span><span class="co">##   .. .. ..$ model_df  : num [1:473] 1 2 1 1 1 2 2 1 1 2 ...</span></span>
+<span><span class="co">##   .. .. ..$ model_MS  : num [1:473] 5363 3030 5217 5170 5093 ...</span></span>
+<span><span class="co">##   .. .. ..$ minorObs  : int [1:473] 124 105 108 101 16 55 63 99 104 127 ...</span></span>
+<span><span class="co">##   .. ..$ GLM_Genotypes:'data.frame': 1144 obs. of  7 variables:</span></span>
+<span><span class="co">##   .. .. ..$ Trait   : chr [1:1144] "EarHT" "EarHT" "EarHT" "EarHT" ...</span></span>
+<span><span class="co">##   .. .. ..$ Marker  : chr [1:1144] "PZA00447.8" "PZA00447.8" "PZB00718.1" "PZB00718.1" ...</span></span>
+<span><span class="co">##   .. .. ..$ Chr     : chr [1:1144] "1" "1" "1" "1" ...</span></span>
+<span><span class="co">##   .. .. ..$ Pos     : int [1:1144] 9024005 9024005 17601375 17601375 17601375 23267898 23267898 25035053 25035053 32583282 ...</span></span>
+<span><span class="co">##   .. .. ..$ Obs     : int [1:1144] 124 128 105 123 31 153 108 152 101 16 ...</span></span>
+<span><span class="co">##   .. .. ..$ Allele  : chr [1:1144] "C" "T" "C" "G" ...</span></span>
+<span><span class="co">##   .. .. ..$ Estimate: num [1:1144] 9.23 0 -2.45 7.68 0 ...</span></span>
+<span><span class="co">##   ..@ traits   : chr [1:2] "EarHT" "dpoll"</span></span>
+<span><span class="co">##   ..@ assocType: chr "GLM"</span></span></code></pre>
 </div>
 <div class="section level3">
 <h3 id="calculate-mlm">Calculate MLM<a class="anchor" aria-label="anchor" href="#calculate-mlm"></a>
@@ -1126,37 +1132,40 @@ object</em> in the <em>Analysis - Relatedness</em> section):</p>
 <div class="sourceCode" id="cb89"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Return GLM output</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">tasMLM</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## List of 3</span></span>
-<span><span class="co">##  $ MLM_Effects        :'data.frame': 7211 obs. of  7 variables:</span></span>
-<span><span class="co">##   ..$ Trait : chr [1:7211] "EarHT" "EarHT" "EarHT" "EarHT" ...</span></span>
-<span><span class="co">##   ..$ Marker: chr [1:7211] "PZB00859.1" "PZB00859.1" "PZB00859.1" "PZA01271.1" ...</span></span>
-<span><span class="co">##   ..$ Locus : chr [1:7211] "1" "1" "1" "1" ...</span></span>
-<span><span class="co">##   ..$ Site  : chr [1:7211] "157104" "157104" "157104" "1947984" ...</span></span>
-<span><span class="co">##   ..$ Allele: chr [1:7211] "A" "C" "M" "C" ...</span></span>
-<span><span class="co">##   ..$ Effect: num [1:7211] -7.91 -2.72 0 -4.46 0 ...</span></span>
-<span><span class="co">##   ..$ Obs   : int [1:7211] 63 207 3 131 137 78 196 69 207 2 ...</span></span>
-<span><span class="co">##  $ MLM_Stats          :'data.frame': 3094 obs. of  18 variables:</span></span>
-<span><span class="co">##   ..$ Trait         : chr [1:3094] "EarHT" "EarHT" "EarHT" "EarHT" ...</span></span>
-<span><span class="co">##   ..$ Marker        : chr [1:3094] "None" "PZB00859.1" "PZA01271.1" "PZA03613.2" ...</span></span>
-<span><span class="co">##   ..$ Chr           : chr [1:3094] "" "1" "1" "1" ...</span></span>
-<span><span class="co">##   ..$ Pos           : chr [1:3094] "" "157104" "1947984" "2914066" ...</span></span>
-<span><span class="co">##   ..$ df            : int [1:3094] 0 2 1 1 2 1 1 2 2 1 ...</span></span>
-<span><span class="co">##   ..$ F             : num [1:3094] NaN 1.6664 2.9836 0.4799 0.0377 ...</span></span>
-<span><span class="co">##   ..$ p             : num [1:3094] NaN 0.1909 0.0853 0.4891 0.963 ...</span></span>
-<span><span class="co">##   ..$ add_effect    : num [1:3094] NaN -2.596 NaN NaN 0.126 ...</span></span>
-<span><span class="co">##   ..$ add_F         : num [1:3094] NaN 3.216 NaN NaN 0.00676 ...</span></span>
-<span><span class="co">##   ..$ add_p         : num [1:3094] NaN 0.074 NaN NaN 0.935 ...</span></span>
-<span><span class="co">##   ..$ dom_effect    : num [1:3094] NaN 5.32 NaN NaN -2.67 ...</span></span>
-<span><span class="co">##   ..$ dom_F         : num [1:3094] NaN 0.242 NaN NaN 0.07 ...</span></span>
-<span><span class="co">##   ..$ dom_p         : num [1:3094] NaN 0.623 NaN NaN 0.792 ...</span></span>
-<span><span class="co">##   ..$ errordf       : int [1:3094] 279 273 268 274 278 261 259 257 264 255 ...</span></span>
-<span><span class="co">##   ..$ MarkerR2      : num [1:3094] NaN 0.012231 0.01107 0.001743 0.000271 ...</span></span>
-<span><span class="co">##   ..$ Genetic_Var   : num [1:3094] 145 145 145 145 145 ...</span></span>
-<span><span class="co">##   ..$ Residual_Var  : num [1:3094] 105 105 105 105 105 ...</span></span>
-<span><span class="co">##   ..$ -2LnLikelihood: num [1:3094] 2387 2387 2387 2387 2387 ...</span></span>
-<span><span class="co">##  $ MLM_Residuals_EarHT:'data.frame': 279 obs. of  2 variables:</span></span>
-<span><span class="co">##   ..$ Taxa : chr [1:279] "33-16" "38-11" "4226" "4722" ...</span></span>
-<span><span class="co">##   ..$ EarHT: num [1:279] 0.836 7.339 4.049 5.796 -5.334 ...</span></span></code></pre>
+<pre><code><span><span class="co">## Formal class 'AssociationResultsMLM' [package "rTASSEL"] with 3 slots</span></span>
+<span><span class="co">##   ..@ results  :List of 3</span></span>
+<span><span class="co">##   .. ..$ MLM_Effects        :'data.frame':   7211 obs. of  7 variables:</span></span>
+<span><span class="co">##   .. .. ..$ Trait : chr [1:7211] "EarHT" "EarHT" "EarHT" "EarHT" ...</span></span>
+<span><span class="co">##   .. .. ..$ Marker: chr [1:7211] "PZB00859.1" "PZB00859.1" "PZB00859.1" "PZA01271.1" ...</span></span>
+<span><span class="co">##   .. .. ..$ Locus : chr [1:7211] "1" "1" "1" "1" ...</span></span>
+<span><span class="co">##   .. .. ..$ Site  : chr [1:7211] "157104" "157104" "157104" "1947984" ...</span></span>
+<span><span class="co">##   .. .. ..$ Allele: chr [1:7211] "A" "C" "M" "C" ...</span></span>
+<span><span class="co">##   .. .. ..$ Effect: num [1:7211] -7.91 -2.72 0 -4.46 0 ...</span></span>
+<span><span class="co">##   .. .. ..$ Obs   : int [1:7211] 63 207 3 131 137 78 196 69 207 2 ...</span></span>
+<span><span class="co">##   .. ..$ MLM_Stats          :'data.frame':   3094 obs. of  18 variables:</span></span>
+<span><span class="co">##   .. .. ..$ Trait         : chr [1:3094] "EarHT" "EarHT" "EarHT" "EarHT" ...</span></span>
+<span><span class="co">##   .. .. ..$ Marker        : chr [1:3094] "None" "PZB00859.1" "PZA01271.1" "PZA03613.2" ...</span></span>
+<span><span class="co">##   .. .. ..$ Chr           : chr [1:3094] "" "1" "1" "1" ...</span></span>
+<span><span class="co">##   .. .. ..$ Pos           : chr [1:3094] "" "157104" "1947984" "2914066" ...</span></span>
+<span><span class="co">##   .. .. ..$ df            : int [1:3094] 0 2 1 1 2 1 1 2 2 1 ...</span></span>
+<span><span class="co">##   .. .. ..$ F             : num [1:3094] NaN 1.6664 2.9836 0.4799 0.0377 ...</span></span>
+<span><span class="co">##   .. .. ..$ p             : num [1:3094] NaN 0.1909 0.0853 0.4891 0.963 ...</span></span>
+<span><span class="co">##   .. .. ..$ add_effect    : num [1:3094] NaN -2.596 NaN NaN 0.126 ...</span></span>
+<span><span class="co">##   .. .. ..$ add_F         : num [1:3094] NaN 3.216 NaN NaN 0.00676 ...</span></span>
+<span><span class="co">##   .. .. ..$ add_p         : num [1:3094] NaN 0.074 NaN NaN 0.935 ...</span></span>
+<span><span class="co">##   .. .. ..$ dom_effect    : num [1:3094] NaN 5.32 NaN NaN -2.67 ...</span></span>
+<span><span class="co">##   .. .. ..$ dom_F         : num [1:3094] NaN 0.242 NaN NaN 0.07 ...</span></span>
+<span><span class="co">##   .. .. ..$ dom_p         : num [1:3094] NaN 0.623 NaN NaN 0.792 ...</span></span>
+<span><span class="co">##   .. .. ..$ errordf       : int [1:3094] 279 273 268 274 278 261 259 257 264 255 ...</span></span>
+<span><span class="co">##   .. .. ..$ MarkerR2      : num [1:3094] NaN 0.012231 0.01107 0.001743 0.000271 ...</span></span>
+<span><span class="co">##   .. .. ..$ Genetic_Var   : num [1:3094] 145 145 145 145 145 ...</span></span>
+<span><span class="co">##   .. .. ..$ Residual_Var  : num [1:3094] 105 105 105 105 105 ...</span></span>
+<span><span class="co">##   .. .. ..$ -2LnLikelihood: num [1:3094] 2387 2387 2387 2387 2387 ...</span></span>
+<span><span class="co">##   .. ..$ MLM_Residuals_EarHT:'data.frame':   279 obs. of  2 variables:</span></span>
+<span><span class="co">##   .. .. ..$ Taxa : chr [1:279] "33-16" "38-11" "4226" "4722" ...</span></span>
+<span><span class="co">##   .. .. ..$ EarHT: num [1:279] 0.836 7.339 4.049 5.796 -5.334 ...</span></span>
+<span><span class="co">##   ..@ traits   : chr "EarHT"</span></span>
+<span><span class="co">##   ..@ assocType: chr "MLM"</span></span></code></pre>
 </div>
 <div class="section level3">
 <h3 id="calculate-fast-association">Calculate Fast Association<a class="anchor" aria-label="anchor" href="#calculate-fast-association"></a>
@@ -1193,15 +1202,18 @@ phenotype traits:</p>
 <div class="sourceCode" id="cb94"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Return GLM output</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">tasFAST</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## List of 1</span></span>
-<span><span class="co">##  $ FastAssociation:'data.frame': 640 obs. of  7 variables:</span></span>
-<span><span class="co">##   ..$ Trait : chr [1:640] "dpoll" "EarDia" "EarDia" "EarDia" ...</span></span>
-<span><span class="co">##   ..$ Marker: chr [1:640] "PZA00258.3" "PZA02869.8" "PZA02869.4" "PZA02869.2" ...</span></span>
-<span><span class="co">##   ..$ Chr   : chr [1:640] "1" "1" "1" "1" ...</span></span>
-<span><span class="co">##   ..$ Pos   : int [1:640] 2973508 4429897 4429927 4430055 5562502 8366411 8367944 9023947 9024005 9024005 ...</span></span>
-<span><span class="co">##   ..$ df    : int [1:640] 1 1 1 1 1 1 1 1 1 1 ...</span></span>
-<span><span class="co">##   ..$ r2    : num [1:640] 0.0435 0.0458 0.0606 0.0504 0.0473 ...</span></span>
-<span><span class="co">##   ..$ p     : num [1:640] 4.66e-04 3.25e-04 3.31e-05 1.60e-04 2.60e-04 ...</span></span></code></pre>
+<pre><code><span><span class="co">## Formal class 'AssociationResultsFast' [package "rTASSEL"] with 3 slots</span></span>
+<span><span class="co">##   ..@ results  :List of 1</span></span>
+<span><span class="co">##   .. ..$ FastAssociation:'data.frame':   640 obs. of  7 variables:</span></span>
+<span><span class="co">##   .. .. ..$ Trait : chr [1:640] "dpoll" "EarDia" "EarDia" "EarDia" ...</span></span>
+<span><span class="co">##   .. .. ..$ Marker: chr [1:640] "PZA00258.3" "PZA02869.8" "PZA02869.4" "PZA02869.2" ...</span></span>
+<span><span class="co">##   .. .. ..$ Chr   : chr [1:640] "1" "1" "1" "1" ...</span></span>
+<span><span class="co">##   .. .. ..$ Pos   : int [1:640] 2973508 4429897 4429927 4430055 5562502 8366411 8367944 9023947 9024005 9024005 ...</span></span>
+<span><span class="co">##   .. .. ..$ df    : int [1:640] 1 1 1 1 1 1 1 1 1 1 ...</span></span>
+<span><span class="co">##   .. .. ..$ r2    : num [1:640] 0.0435 0.0458 0.0606 0.0504 0.0473 ...</span></span>
+<span><span class="co">##   .. .. ..$ p     : num [1:640] 4.66e-04 3.25e-04 3.31e-05 1.60e-04 2.60e-04 ...</span></span>
+<span><span class="co">##   ..@ traits   : chr [1:3] "dpoll" "EarDia" "EarHT"</span></span>
+<span><span class="co">##   ..@ assocType: chr "FastAssoc"</span></span></code></pre>
 </div>
 </div>
 <div class="section level2">
@@ -1255,7 +1267,7 @@ plots and linkage disequilibrium (LD) analyses. In this example, we will
 generate a Manhattan plot for our prior MLM object:</p>
 <div class="sourceCode" id="cb99"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Generate Manhattan plot for ear height trait</span></span>
-<span><span class="va">manhattanEH</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/manhattanPlot.html">manhattanPlot</a></span><span class="op">(</span></span>
+<span><span class="va">manhattanEH</span> <span class="op">&lt;-</span> <span class="fu">manhattanPlot</span><span class="op">(</span></span>
 <span>    assocStats <span class="op">=</span> <span class="va">tasMLM</span><span class="op">$</span><span class="va">MLM_Stats</span>,</span>
 <span>    trait      <span class="op">=</span> <span class="st">"EarHT"</span>,</span>
 <span>    threshold  <span class="op">=</span> <span class="fl">5</span></span>

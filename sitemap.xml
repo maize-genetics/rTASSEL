@@ -37,6 +37,24 @@
     <loc>https://rtassel.maizegenetics.net/news/index.html</loc>
   </url>
   <url>
+    <loc>https://rtassel.maizegenetics.net/reference/AssociationResults-class.html</loc>
+  </url>
+  <url>
+    <loc>https://rtassel.maizegenetics.net/reference/AssociationResults-validity.html</loc>
+  </url>
+  <url>
+    <loc>https://rtassel.maizegenetics.net/reference/AssociationResultsBLUE-class.html</loc>
+  </url>
+  <url>
+    <loc>https://rtassel.maizegenetics.net/reference/AssociationResultsFast-class.html</loc>
+  </url>
+  <url>
+    <loc>https://rtassel.maizegenetics.net/reference/AssociationResultsGLM-class.html</loc>
+  </url>
+  <url>
+    <loc>https://rtassel.maizegenetics.net/reference/AssociationResultsMLM-class.html</loc>
+  </url>
+  <url>
     <loc>https://rtassel.maizegenetics.net/reference/TasselDistanceMatrix-class.html</loc>
   </url>
   <url>
@@ -53,6 +71,9 @@
   </url>
   <url>
     <loc>https://rtassel.maizegenetics.net/reference/assocModelFitter.html</loc>
+  </url>
+  <url>
+    <loc>https://rtassel.maizegenetics.net/reference/associationType.html</loc>
   </url>
   <url>
     <loc>https://rtassel.maizegenetics.net/reference/colnames-TasselDistanceMatrix-method.html</loc>
@@ -112,9 +133,6 @@
     <loc>https://rtassel.maizegenetics.net/reference/linkageDiseq.html</loc>
   </url>
   <url>
-    <loc>https://rtassel.maizegenetics.net/reference/manhattanPlot.html</loc>
-  </url>
-  <url>
     <loc>https://rtassel.maizegenetics.net/reference/mds.html</loc>
   </url>
   <url>
@@ -125,6 +143,15 @@
   </url>
   <url>
     <loc>https://rtassel.maizegenetics.net/reference/pca.html</loc>
+  </url>
+  <url>
+    <loc>https://rtassel.maizegenetics.net/reference/plotManhattan.html</loc>
+  </url>
+  <url>
+    <loc>https://rtassel.maizegenetics.net/reference/plotManhattanQC.html</loc>
+  </url>
+  <url>
+    <loc>https://rtassel.maizegenetics.net/reference/plotQQ.html</loc>
   </url>
   <url>
     <loc>https://rtassel.maizegenetics.net/reference/positionList.html</loc>
@@ -148,6 +175,9 @@
     <loc>https://rtassel.maizegenetics.net/reference/readTasselDistanceMatrix.html</loc>
   </url>
   <url>
+    <loc>https://rtassel.maizegenetics.net/reference/reportNames.html</loc>
+  </url>
+  <url>
     <loc>https://rtassel.maizegenetics.net/reference/rownames-TasselDistanceMatrix-method.html</loc>
   </url>
   <url>
@@ -163,10 +193,16 @@
     <loc>https://rtassel.maizegenetics.net/reference/startLogger.html</loc>
   </url>
   <url>
+    <loc>https://rtassel.maizegenetics.net/reference/tableReport.html</loc>
+  </url>
+  <url>
     <loc>https://rtassel.maizegenetics.net/reference/taxaList.html</loc>
   </url>
   <url>
     <loc>https://rtassel.maizegenetics.net/reference/taxaSummary.html</loc>
+  </url>
+  <url>
+    <loc>https://rtassel.maizegenetics.net/reference/traitNames.html</loc>
   </url>
   <url>
     <loc>https://rtassel.maizegenetics.net/reference/treeJavaApp.html</loc>
