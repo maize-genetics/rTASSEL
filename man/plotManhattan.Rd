@@ -9,6 +9,7 @@ plotManhattan(
   trait = NULL,
   threshold = NULL,
   colors = c("#91baff", "#3e619b"),
+  interactive = FALSE,
   pltTheme = c("default", "classic")
 )
 }
@@ -24,6 +25,9 @@ higher than this line will be highlighted.}
 
 \item{colors}{A vector of \code{character} colors used for differentiating
 multiple chromosomes. Defaults to 2 shades of blue.}
+
+\item{interactive}{Do you want to produce an interactive visualization?
+Defaults to \code{FALSE}.}
 
 \item{pltTheme}{What theme would like to display for the plot? Only
 supports one theme currently.}

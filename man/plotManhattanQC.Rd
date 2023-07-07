@@ -6,21 +6,23 @@
 \usage{
 plotManhattanQC(
   assocRes,
-  gr,
   trait = NULL,
+  gr,
   window = 1e+05,
   threshold = NULL,
-  classicNames = FALSE
+  classicNames = FALSE,
+  interactive = FALSE,
+  verbose = TRUE
 )
 }
 \arguments{
 \item{assocRes}{An object of type \code{AssociationResults}}
 
-\item{gr}{Genomic ranges of interest. Can be passed as a \code{GRanges}
-object or a \code{data.frame} object.}
-
 \item{trait}{Which phenotypic trait do you want to plot? If set to
 \code{NULL}, this will generate a faceted plot with all mapped traits.}
+
+\item{gr}{Genomic ranges of interest. Can be passed as a \code{GRanges}
+object or a \code{data.frame} object.}
 
 \item{window}{Window size (base-pairs) flanking surround reference range.
 Defaults to \code{100000} (100,000 base-pairs).}
@@ -32,6 +34,12 @@ higher than this line will be highlighted.}
 \item{classicNames}{Do you want to plot classical gene names instead?
 NOTE: this will need a \code{classical_id} column for the "ranges of
 interest" data. Defaults to \code{FALSE}.}
+
+\item{interactive}{Do you want to produce an interactive visualization?
+Defaults to \code{FALSE}.}
+
+\item{verbose}{Should messages be printed to console? Defaults to
+\code{FALSE}.}
 }
 \value{
 Returns a \code{ggplot2} object

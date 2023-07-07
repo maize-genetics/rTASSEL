@@ -4,7 +4,7 @@
 \alias{plotQQ}
 \title{Create a QQ plot from rTASSEL association output}
 \usage{
-plotQQ(assocRes, trait = NULL, overlay = TRUE)
+plotQQ(assocRes, trait = NULL, overlay = TRUE, interactive = FALSE)
 }
 \arguments{
 \item{assocRes}{An object of type \code{AssociationResults}}
@@ -14,6 +14,9 @@ plotQQ(assocRes, trait = NULL, overlay = TRUE)
 
 \item{overlay}{Do you want trait results faceted or overlayed into one
 single plot? Defaults to \code{TRUE}.}
+
+\item{interactive}{Do you want to produce an interactive visualization?
+Defaults to \code{FALSE}.}
 }
 \value{
 Returns a \code{ggplot2} object
