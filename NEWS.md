@@ -1,3 +1,18 @@
+# rTASSEL 0.9.30
+* Added new `AssociationResults` class
+  + Allows for more controlled access of data and simplified downstream
+    functions for end users
+* Added new function `plotManhattan()`:
+  + Supercedes older Manhattan plotting methods to work with new
+    `AssociationResults` class.
+* Added new function `plotQQ()`:
+  + Plotting function for QQ results from `AssociationResults` class
+* Added new function `plotManhattanQC()`:
+  + Plotting function and QC method for zoomed in regions of interest
+    across genome
+* Prior 3 functions also include interactive component that wraps
+  `ggplot2` objects with PlotlyJS components
+
 # rTASSEL 0.9.29
 * Added genotype table summary methods:
   + `positionList()`
