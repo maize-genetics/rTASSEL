@@ -1,5 +1,5 @@
 Package: rTASSEL
-Version: 0.9.29
+Version: 0.9.30
 Date: 2018-12-21
 Title: R Front-End for TASSEL
 Authors@R: c(
@@ -38,13 +38,14 @@ License: GPL-3 | file LICENSE
 URL:
     https://github.com/maize-genetics/rTASSEL
 Depends:
-    R (>= 3.5.0)
+    R (>= 4.1.0)
 Imports:
     ape,
     GenomicRanges,
     ggplot2,
     IRanges,
     methods,
+    plotly,
     rJava,
     rlang,
     S4Vectors,
@@ -59,6 +60,6 @@ SystemRequirements: Java (>= 8.0)
 Encoding: UTF-8
 LazyData: true
 VignetteBuilder: knitr
-RoxygenNote: 7.2.1
+RoxygenNote: 7.2.3
 biocViews:
     GenomeWideAssociation

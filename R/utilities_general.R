@@ -1,17 +1,3 @@
-#--------------------------------------------------------------------
-# Script Name:   Utilities.R
-# Description:   Utility functions for rTASSEL
-# Author:        Brandon Monier
-# Created:       2020-06-24 at 09:29:59
-# Last Modified: 2020-06-24 at 09:37:10
-#--------------------------------------------------------------------
-
-#--------------------------------------------------------------------
-# Detailed Purpose:
-#    The main purpose of this Rscript is to house functions for
-#    utility and house-keeping purposes of main exported functions.
-#--------------------------------------------------------------------
-
 # === Table report functions ========================================
 
 ## Table reports to S4Vectors::DataFrame objects ----
@@ -45,6 +31,56 @@ tableReportList <- function(x) {
 
     names(myList) <- hashVectors
     return(myList)
+}
+
+
+## Convert list to AssociationResults object ----
+# @param trl A tableReportList object
+# @param aType Association type
+tableReportListToAssociationResults <- function(trl, aType) {
+    result <- switch (aType,
+        "BLUE" = {
+            methods::new(
+                Class = "AssociationResultsBLUE",
+                results = trl,
+                traits = trl$BLUE_ANOVA$Trait,
+                assocType = aType
+            )
+        },
+        "GLM" = {
+            methods::new(
+                Class = "AssociationResultsGLM",
+                results = trl,
+                traits = unique(trl$GLM_Stats$Trait),
+                assocType = aType
+            )
+        },
+        "MLM" = {
+            methods::new(
+                Class = "AssociationResultsMLM",
+                results = trl,
+                traits = unique(trl$MLM_Stats$Trait),
+                assocType = aType
+            )
+        },
+        "FastAssoc" = {
+            methods::new(
+                Class = "AssociationResultsFast",
+                results = trl,
+                traits = unique(trl$FastAssociation$Trait),
+                assocType = aType
+            )
+        },
+        "default" = {
+            NULL
+        }
+    )
+
+    if (is.null(result)) {
+        stop("Association Type ('aType') not defined")
+    } else {
+        return(result)
+    }
 }
 
 
@@ -222,48 +258,22 @@ summaryDistance <- function(kinJ,
 }
 
 
+# === Data frame functions ==========================================
 
-# # === BrAPI interface functions (DEPRECATED) ========================
-#
-# ## TODO placeholder to prevent rPHG jar contamination...
-# ## TODO remedy this with new BLJars package and TASSEL 6 finalization
-# getVTList <- function(x) {
-#     if (class(x) != "BrapiConPHG") {
-#         stop("A `BrapiConPHG` object is needed for the LHS argument", call. = FALSE)
-#     }
-#
-#     baseURL <- paste0(x@url, "/variantTables/", x@methodID)
-#
-#     ranges <- x@refRangeFilter
-#     samples <- x@sampleFilter
-#
-#     rangeURL <- paste0(
-#         baseURL,
-#         "/variants",
-#         ifelse(is.na(ranges), "", paste0("?", ranges))
-#     )
-#
-#     sampleURL <- paste0(
-#         baseURL,
-#         "/samples",
-#         ifelse(is.na(samples), "", paste0("?", samples))
-#     )
-#
-#     tableURL <- paste0(
-#         baseURL, "/table", "?",
-#         ifelse(is.na(ranges), "", paste0(ranges)), "&",
-#         ifelse(is.na(samples), "", paste0(samples))
-#     )
-#     tableURL <- gsub("\\?$|\\?&$", "", tableURL)
-#     tableURL <- gsub("\\?&", "?", tableURL)
-#
-#     return(
-#         list(
-#             rangeURL = rangeURL,
-#             sampleURL = sampleURL,
-#             tableURL = tableURL
-#         )
-#     )
-# }
+## ----
+# @title Check for valid columns in a data frame object
+# @param x A given column to check
+# @param assocStats A \code{data.frame} object containing association stats
+# @param neededCols A \code{character} vector containing desired columns
+checkForValidColumns <- function(assocStats, neededCols) {
+    for (col in neededCols) {
+        if (!col %in% colnames(assocStats)) {
+            stop(
+                "'", col, "' column not found in stats dataframe - need at least: ",
+                paste(neededCols, collapse = ",")
+            )
+        }
+    }
+}
 
 

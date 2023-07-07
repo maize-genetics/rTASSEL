@@ -166,6 +166,9 @@ test_that("filterGenotypeTableSites returns error when parameters not specified"
     expect_error(filterGenotypeTableSites(tasGeno, minHeterozygous = -1))
     expect_error(filterGenotypeTableSites(tasGeno, siteRangeFilterType = "noon"))
     expect_error(filterGenotypeTableSites(tasGeno, gRangesObj = mtcars))
+    expect_error(filterGenotypeTableSites(tasGeno, siteMaxAlleleFreq = 2))
+    expect_error(filterGenotypeTableSites(tasGeno, maxHeterozygous = 2))
+    expect_error(filterGenotypeTableSites(tasGeno, maxHeterozygous = 2))
 })
 
 

@@ -72,17 +72,19 @@
 #' @importFrom rJava new
 #' @importFrom rlang .data
 #' @export
-assocModelFitter <- function(tasObj,
-                             formula,
-                             fitMarkers = FALSE,
-                             kinship = NULL,
-                             fastAssociation = FALSE,
-                             maxP = 0.001,
-                             maxThreads = NULL,
-                             minClassSize = 0,
-                             outputFile = NULL,
-                             biallelicOnly = FALSE,
-                             appendAddDom = FALSE) {
+assocModelFitter <- function(
+    tasObj,
+    formula,
+    fitMarkers = FALSE,
+    kinship = NULL,
+    fastAssociation = FALSE,
+    maxP = 0.001,
+    maxThreads = NULL,
+    minClassSize = 0,
+    outputFile = NULL,
+    biallelicOnly = FALSE,
+    appendAddDom = FALSE
+) {
 
     # Logic - Check for TasselGenotypePhenotype class
     if (!is(tasObj, "TasselGenotypePhenotype")) {
@@ -387,7 +389,21 @@ assocModelFitter <- function(tasObj,
         stop("Don't know how to analyze with given parameter inputs.")
     }
 
-    return(tableReportList(assocOut))
+    # DEBUG
+    # return(tableReportList(assocOut))
+
+    if (!saveToFile) {
+        return(
+            tableReportListToAssociationResults(
+                trl   = tableReportList(assocOut),
+                aType = assocType
+            )
+        )
+    } else {
+        message("Saved output to disk")
+        return(NULL)
+    }
+
 }
 
 

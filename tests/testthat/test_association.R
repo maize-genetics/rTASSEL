@@ -284,32 +284,37 @@ test_that("assocModelFitter() throws exceptions (fast association).", {
 
 ### Return data objects - general ----
 test_that("BLUE analysis return correct data types.", {
-    expect_identical(class(tasBLUE), "list")
-    expect_identical(class(tasGLM), "list")
-    expect_identical(class(tasMLM), "list")
-    expect_identical(class(tasFast), "list")
+    expect_true(is(tasBLUE, "AssociationResults"))
+    expect_true(is(tasGLM, "AssociationResults"))
+    expect_true(is(tasMLM, "AssociationResults"))
+    expect_true(is(tasFast, "AssociationResults"))
 
-    expect_equal(dim(tasBLUE$BLUE), c(298, 4))
-    expect_equal(dim(tasBLUE$BLUE_ANOVA), c(3, 9))
-    expect_equal(dim(tasGLM$GLM_Stats), c(559, 18))
-    expect_equal(dim(tasGLM$GLM_Genotypes), c(1337, 7))
-    expect_equal(dim(tasMLM$MLM_Effects), c(21615, 7))
-    expect_equal(dim(tasMLM$MLM_Stats), c(9282, 18))
-    expect_equal(dim(tasFast$FastAssociation), c(640, 7))
+    # expect_identical(class(tasBLUE), "AssociationResults")
+    # expect_identical(class(tasGLM), "AssociationResults")
+    # expect_identical(class(tasMLM), "AssociationResults")
+    # expect_identical(class(tasFast), "AssociationResults")
+
+    expect_equal(dim(tableReport(tasBLUE, "BLUE")), c(298, 4))
+    expect_equal(dim(tableReport(tasBLUE, "BLUE_ANOVA")), c(3, 9))
+    expect_equal(dim(tableReport(tasGLM, "GLM_Stats")), c(559, 18))
+    expect_equal(dim(tableReport(tasGLM, "GLM_Genotypes")), c(1337, 7))
+    expect_equal(dim(tableReport(tasMLM, "MLM_Effects")), c(21615, 7))
+    expect_equal(dim(tableReport(tasMLM, "MLM_Stats")), c(9282, 18))
+    expect_equal(dim(tableReport(tasFast, "FastAssociation")), c(640, 7))
 
     expect_equal(
-        object   = colnames(tasBLUE$BLUE),
+        object   = colnames(tableReport(tasBLUE, "BLUE")),
         expected = c("Taxa", "EarHT", "dpoll", "EarDia")
     )
     expect_equal(
-        object   = colnames(tasBLUE$BLUE_ANOVA),
+        object   = colnames(tableReport(tasBLUE, "BLUE_ANOVA")),
         expected = c(
             "Trait", "F", "p", "taxaDF", "taxaMS", "errorDF",
             "errorMS", "modelDF", "modelMS"
         )
     )
     expect_equal(
-        object   = colnames(tasGLM$GLM_Stats),
+        object   = colnames(tableReport(tasGLM, "GLM_Stats")),
         expected = c(
             "Trait", "Marker", "Chr", "Pos", "marker_F", "p",
             "marker_Rsq", "add_F", "add_p", "dom_F", "dom_p",
@@ -318,19 +323,19 @@ test_that("BLUE analysis return correct data types.", {
         )
     )
     expect_equal(
-        object   = colnames(tasGLM$GLM_Genotypes),
+        object   = colnames(tableReport(tasGLM, "GLM_Genotypes")),
         expected = c(
             "Trait", "Marker", "Chr", "Pos", "Obs", "Allele", "Estimate"
         )
     )
     expect_equal(
-        object   = colnames(tasMLM$MLM_Effects),
+        object   = colnames(tableReport(tasMLM, "MLM_Effects")),
         expected = c(
             "Trait", "Marker", "Locus", "Site", "Allele", "Effect", "Obs"
         )
     )
     expect_equal(
-        object   = colnames(tasMLM$MLM_Stats),
+        object   = colnames(tableReport(tasMLM, "MLM_Stats")),
         expected = c(
             "Trait", "Marker", "Chr", "Pos", "df", "F", "p", "add_effect",
             "add_F", "add_p", "dom_effect", "dom_F", "dom_p", "errordf",
@@ -338,7 +343,7 @@ test_that("BLUE analysis return correct data types.", {
         )
     )
     expect_equal(
-        object   = colnames(tasFast$FastAssociation),
+        object   = colnames(tableReport(tasFast, "FastAssociation")),
         expected = c(
             "Trait", "Marker", "Chr", "Pos", "df", "r2", "p"
         )
@@ -352,7 +357,7 @@ test_that("assocModelFitter() handles '.' variables correctly", {
     expect_message(
         object = assocModelFitter(
             tasObj     = tasGenoPhenoCov,
-            formula    = . ~ Q1,
+            formula    = . ~ location,
             fitMarkers = TRUE
         ),
         regexp = "Running all <data> traits..."
