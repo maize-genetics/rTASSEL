@@ -33,7 +33,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">rTASSEL</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.30</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.31</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -85,7 +85,7 @@
                         <h4 data-toc-skip class="author">Brandon
 Monier</h4>
             
-            <h4 data-toc-skip class="date">2023-07-07</h4>
+            <h4 data-toc-skip class="date">2023-07-09</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/maize-genetics/rTASSEL/blob/HEAD/vignettes/rtassel_walkthrough.Rmd" class="external-link"><code>vignettes/rtassel_walkthrough.Rmd</code></a></small>
       <div class="d-none name"><code>rtassel_walkthrough.Rmd</code></div>
@@ -308,7 +308,7 @@ extract the <code>GenotypeTable</code> with the S4 <code>@</code>
 operator, we would get something that looks like this:</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tasGenoHMP</span><span class="op">@</span><span class="va">jGenotypeTable</span></span></code></pre></div>
-<pre><code><span><span class="co">## [1] "Java-Object{net.maizegenetics.dna.snp.CoreGenotypeTable@44ebcd03}"</span></span></code></pre>
+<pre><code><span><span class="co">## [1] "Java-Object{net.maizegenetics.dna.snp.CoreGenotypeTable@323b36e0}"</span></span></code></pre>
 <p>This entity is a <code>rJava</code> internal identifier. It isn’t
 until we call downstream <code>rTASSEL</code> functions where we will
 bring the TASSEL data into the R environment.</p>
@@ -861,29 +861,30 @@ specified in the function call. For example, let’s take a look at the
 <code>pcaRes</code> object made previously:</p>
 <div class="sourceCode" id="cb68"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">pcaRes</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## List of 4</span></span>
-<span><span class="co">##  $ PC_Datum          :'data.frame':  281 obs. of  6 variables:</span></span>
-<span><span class="co">##   ..$ Taxa: chr [1:281] "33-16" "38-11" "4226" "4722" ...</span></span>
-<span><span class="co">##   ..$ PC1 : num [1:281] 0.916 -0.813 -0.299 1.321 0.41 ...</span></span>
-<span><span class="co">##   ..$ PC2 : num [1:281] 2.48 2.47 3.16 2.93 2.56 ...</span></span>
-<span><span class="co">##   ..$ PC3 : num [1:281] 0.491 -0.301 1.262 2.052 0.335 ...</span></span>
-<span><span class="co">##   ..$ PC4 : num [1:281] -0.164 2.238 1.229 0.688 0.89 ...</span></span>
-<span><span class="co">##   ..$ PC5 : num [1:281] 0.165 -0.41 -1.203 7.643 1.343 ...</span></span>
-<span><span class="co">##  $ Eigenvalues_Datum :'data.frame':  281 obs. of  4 variables:</span></span>
-<span><span class="co">##   ..$ PC                   : chr [1:281] "0" "1" "2" "3" ...</span></span>
-<span><span class="co">##   ..$ eigenvalue           : num [1:281] 26.05 14.88 9.66 8.09 7.76 ...</span></span>
-<span><span class="co">##   ..$ proportion_of_total  : num [1:281] 0.0596 0.034 0.0221 0.0185 0.0178 ...</span></span>
-<span><span class="co">##   ..$ cumulative_proportion: num [1:281] 0.0596 0.0936 0.1157 0.1342 0.152 ...</span></span>
-<span><span class="co">##  $ Eigenvectors_Datum:'data.frame':  3093 obs. of  6 variables:</span></span>
-<span><span class="co">##   ..$ Trait       : chr [1:3093] "PZB00859.1" "PZA01271.1" "PZA03613.2" "PZA03613.1" ...</span></span>
-<span><span class="co">##   ..$ Eigenvector1: num [1:3093] 0.00176 0.02925 0.00274 0.03528 -0.00961 ...</span></span>
-<span><span class="co">##   ..$ Eigenvector2: num [1:3093] -0.01553 0.02205 -0.03279 0.00612 0.04978 ...</span></span>
-<span><span class="co">##   ..$ Eigenvector3: num [1:3093] 0.000913 0.013536 -0.001632 0.000795 -0.023482 ...</span></span>
-<span><span class="co">##   ..$ Eigenvector4: num [1:3093] -0.019939 -0.006206 -0.011926 0.01891 0.000812 ...</span></span>
-<span><span class="co">##   ..$ Eigenvector5: num [1:3093] -0.0401 -0.0387 0.014 -0.0407 0.031 ...</span></span>
-<span><span class="co">##  $ jPcaObj           :Formal class 'jobjRef' [package "rJava"] with 2 slots</span></span>
-<span><span class="co">##   .. ..@ jobj  :&lt;externalptr&gt; </span></span>
-<span><span class="co">##   .. ..@ jclass: chr "net/maizegenetics/phenotype/CorePhenotype"</span></span></code></pre>
+<pre><code><span><span class="co">## Formal class 'PCAResults' [package "rTASSEL"] with 2 slots</span></span>
+<span><span class="co">##   ..@ results:List of 3</span></span>
+<span><span class="co">##   .. ..$ PC_Datum          :'data.frame':    281 obs. of  6 variables:</span></span>
+<span><span class="co">##   .. .. ..$ Taxa: chr [1:281] "33-16" "38-11" "4226" "4722" ...</span></span>
+<span><span class="co">##   .. .. ..$ PC1 : num [1:281] 0.916 -0.813 -0.299 1.321 0.41 ...</span></span>
+<span><span class="co">##   .. .. ..$ PC2 : num [1:281] 2.48 2.47 3.16 2.93 2.56 ...</span></span>
+<span><span class="co">##   .. .. ..$ PC3 : num [1:281] 0.491 -0.301 1.262 2.052 0.335 ...</span></span>
+<span><span class="co">##   .. .. ..$ PC4 : num [1:281] -0.164 2.238 1.229 0.688 0.89 ...</span></span>
+<span><span class="co">##   .. .. ..$ PC5 : num [1:281] 0.165 -0.41 -1.203 7.643 1.343 ...</span></span>
+<span><span class="co">##   .. ..$ Eigenvalues_Datum :'data.frame':    281 obs. of  4 variables:</span></span>
+<span><span class="co">##   .. .. ..$ PC                   : chr [1:281] "0" "1" "2" "3" ...</span></span>
+<span><span class="co">##   .. .. ..$ eigenvalue           : num [1:281] 26.05 14.88 9.66 8.09 7.76 ...</span></span>
+<span><span class="co">##   .. .. ..$ proportion_of_total  : num [1:281] 0.0596 0.034 0.0221 0.0185 0.0178 ...</span></span>
+<span><span class="co">##   .. .. ..$ cumulative_proportion: num [1:281] 0.0596 0.0936 0.1157 0.1342 0.152 ...</span></span>
+<span><span class="co">##   .. ..$ Eigenvectors_Datum:'data.frame':    3093 obs. of  6 variables:</span></span>
+<span><span class="co">##   .. .. ..$ Trait       : chr [1:3093] "PZB00859.1" "PZA01271.1" "PZA03613.2" "PZA03613.1" ...</span></span>
+<span><span class="co">##   .. .. ..$ Eigenvector1: num [1:3093] 0.00176 0.02925 0.00274 0.03528 -0.00961 ...</span></span>
+<span><span class="co">##   .. .. ..$ Eigenvector2: num [1:3093] -0.01553 0.02205 -0.03279 0.00612 0.04978 ...</span></span>
+<span><span class="co">##   .. .. ..$ Eigenvector3: num [1:3093] 0.000913 0.013536 -0.001632 0.000795 -0.023482 ...</span></span>
+<span><span class="co">##   .. .. ..$ Eigenvector4: num [1:3093] -0.019939 -0.006206 -0.011926 0.01891 0.000812 ...</span></span>
+<span><span class="co">##   .. .. ..$ Eigenvector5: num [1:3093] -0.0401 -0.0387 0.014 -0.0407 0.031 ...</span></span>
+<span><span class="co">##   ..@ jObj   :Formal class 'jobjRef' [package "rJava"] with 2 slots</span></span>
+<span><span class="co">##   .. .. ..@ jobj  :&lt;externalptr&gt; </span></span>
+<span><span class="co">##   .. .. ..@ jclass: chr "net/maizegenetics/phenotype/CorePhenotype"</span></span></code></pre>
 </div>
 </div>
 <div class="section level2">

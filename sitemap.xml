@@ -55,6 +55,12 @@
     <loc>https://rtassel.maizegenetics.net/reference/AssociationResultsMLM-class.html</loc>
   </url>
   <url>
+    <loc>https://rtassel.maizegenetics.net/reference/PCAResults-class.html</loc>
+  </url>
+  <url>
+    <loc>https://rtassel.maizegenetics.net/reference/PCAResults-validity.html</loc>
+  </url>
+  <url>
     <loc>https://rtassel.maizegenetics.net/reference/TasselDistanceMatrix-class.html</loc>
   </url>
   <url>
@@ -151,7 +157,13 @@
     <loc>https://rtassel.maizegenetics.net/reference/plotManhattanQC.html</loc>
   </url>
   <url>
+    <loc>https://rtassel.maizegenetics.net/reference/plotPCA.html</loc>
+  </url>
+  <url>
     <loc>https://rtassel.maizegenetics.net/reference/plotQQ.html</loc>
+  </url>
+  <url>
+    <loc>https://rtassel.maizegenetics.net/reference/plotScree.html</loc>
   </url>
   <url>
     <loc>https://rtassel.maizegenetics.net/reference/positionList.html</loc>
