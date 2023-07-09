@@ -258,6 +258,7 @@ summaryDistance <- function(kinJ,
 }
 
 
+
 # === Data frame functions ==========================================
 
 ## ----
@@ -274,6 +275,37 @@ checkForValidColumns <- function(assocStats, neededCols) {
             )
         }
     }
+}
+
+
+
+# === Class helper functions (TEMP) =================================
+
+## ----
+# @title Get report elements
+returnReportElements <- function(
+    assocRes,
+    reportName,
+    defaultCatchAll = "ALL",
+    defaultReportElement
+) {
+        if (!is.character(reportName) && !is.null(reportName)) {
+            stop("'reportName' must be of type 'character'")
+        }
+
+        if (is.null(reportName)) {
+            return(assocRes@results[[defaultReportElement]])
+        }
+
+        if (toupper(reportName) == defaultCatchAll) {
+            return(assocRes@results)
+        }
+
+        if(reportName %in% reportNames(assocRes)) {
+            return(assocRes@results[[reportName]])
+        } else {
+            stop("Report ID not found in object")
+        }
 }
 
 

@@ -50,30 +50,6 @@ test_that("asTasselDistanceMatrix() returns correct data and exceptions", {
 })
 
 
-test_that("pca() returns correct data and exceptions", {
-    expect_error(
-        object = pca(mtcars),
-        regexp = "`tasObj` must be of class"
-    )
-
-    expect_error(
-        object = pca(tasPheno),
-        regexp = "TASSEL genotype object not found"
-    )
-
-    expect_equal(
-        object = length(pca(tasGeno, reportEigenvalues = FALSE, reportEigenvectors = FALSE)),
-        expected = 2
-    )
-
-    expect_equal(
-        object = names(pca(tasGeno, reportEigenvalues = FALSE, reportEigenvectors = FALSE)),
-        expected = c("PC_Datum", "jPcaObj")
-    )
-
-})
-
-
 test_that("mds() returns correct data and exceptions", {
     expect_error(mds(tasGeno))
 

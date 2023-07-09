@@ -1,4 +1,4 @@
-# === Tests for AssociationClass objects ============================
+# === Tests for AssociationResults objects ==========================
 
 test_that("AssociationResults methods return correct data and exceptions", {
     # Test instantiation
