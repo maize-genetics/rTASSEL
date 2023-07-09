@@ -1,3 +1,16 @@
+# CHANGES IN VERSION 0.9.31
+* Added new `PCAResults` class
+  + Allows for more controlled access of data and simplified downstream
+    functions for end users
+* Add new function `plotScree()`:
+  + Generates quick scree plots from `PCAResults` objects
+* Add new function `plotPCA()`:
+  + Generates quick PCA plots from `PCAResults` objects
+  + Allows for grouping from generated hierarchical clustering or grouping
+    from metadata via the `metadata` parameter and subsequent `mCol`
+    parameters.
+
+
 # CHANGES IN VERSION 0.9.30
 * Added new `AssociationResults` class
   + Allows for more controlled access of data and simplified downstream

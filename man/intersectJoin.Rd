@@ -7,7 +7,7 @@
 intersectJoin(x)
 }
 \arguments{
-\item{x}{A vector of phenotype objects.}
+\item{x}{A list of rTASSEL objects containing a phenotype.}
 }
 \description{
 Intersect join multiple phenotype objects based on \code{Taxa}

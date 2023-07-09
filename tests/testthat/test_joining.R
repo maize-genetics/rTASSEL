@@ -78,7 +78,7 @@ pcaRes <- pca(tasGeno)
 
 test_that("Joining returns correct values with PCA objects", {
     intersectPheno <- intersectJoin(c(pcaRes, tasPheno))
-    phenoAttrib <- extractPhenotypeAttDf(intersectPheno@jPhenotypeTable)
+    phenoAttrib <- rTASSEL:::extractPhenotypeAttDf(intersectPheno@jPhenotypeTable)
     expect_equal(
         phenoAttrib$traitName,
         c("Taxa", "EarHT", "dpoll", "EarDia", "PC1", "PC2", "PC3", "PC4", "PC5")

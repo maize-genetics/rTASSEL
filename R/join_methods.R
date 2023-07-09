@@ -4,7 +4,7 @@
 #' @description Intersect join multiple phenotype objects based on \code{Taxa}
 #'    column.
 #'
-#' @param x A vector of phenotype objects.
+#' @param x A list of rTASSEL objects containing a phenotype.
 #'
 #' @importFrom rJava .jnew
 #'
@@ -29,8 +29,8 @@ intersectJoin <- function(x) {
         gp <- x[classes == "TasselGenotypePhenotype"]
         capture <- lapply(gp, function(i) phenotypes$add(i@jPhenotypeTable))
 
-        lpca <- x[classes == "jobjRef"]
-        capture <- lapply(lpca, function(i) phenotypes$add(i))
+        lpca <- x[classes == "PCAResults"]
+        capture <- lapply(lpca, function(i) phenotypes$add(i@jObj))
 
         intersectPhenotype <- .tasselObjectConstructor(
             phenoBuilder$
@@ -77,8 +77,8 @@ unionJoin <- function(x) {
         gp <- x[classes == "TasselGenotypePhenotype"]
         capture <- lapply(gp, function(i) phenotypes$add(i@jPhenotypeTable))
 
-        lpca <- x[classes == "jobjRef"]
-        capture <- lapply(lpca, function(i) phenotypes$add(i))
+        lpca <- x[classes == "PCAResults"]
+        capture <- lapply(lpca, function(i) phenotypes$add(i@jObj))
 
         unionPhenotype <- .tasselObjectConstructor(
             phenoBuilder$

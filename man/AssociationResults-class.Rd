@@ -4,8 +4,6 @@
 \name{AssociationResults-class}
 \alias{AssociationResults-class}
 \alias{show,AssociationResults-method}
-\alias{show,}
-\alias{AssociationResults-method}
 \title{AssociationResults Class}
 \usage{
 \S4method{show}{AssociationResults}(object)
