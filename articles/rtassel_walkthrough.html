@@ -33,7 +33,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">rTASSEL</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.31</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.32</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -85,7 +85,7 @@
                         <h4 data-toc-skip class="author">Brandon
 Monier</h4>
             
-            <h4 data-toc-skip class="date">2023-07-09</h4>
+            <h4 data-toc-skip class="date">2023-07-10</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/maize-genetics/rTASSEL/blob/HEAD/vignettes/rtassel_walkthrough.Rmd" class="external-link"><code>vignettes/rtassel_walkthrough.Rmd</code></a></small>
       <div class="d-none name"><code>rtassel_walkthrough.Rmd</code></div>
@@ -308,7 +308,7 @@ extract the <code>GenotypeTable</code> with the S4 <code>@</code>
 operator, we would get something that looks like this:</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tasGenoHMP</span><span class="op">@</span><span class="va">jGenotypeTable</span></span></code></pre></div>
-<pre><code><span><span class="co">## [1] "Java-Object{net.maizegenetics.dna.snp.CoreGenotypeTable@323b36e0}"</span></span></code></pre>
+<pre><code><span><span class="co">## [1] "Java-Object{net.maizegenetics.dna.snp.CoreGenotypeTable@3bb9a3ff}"</span></span></code></pre>
 <p>This entity is a <code>rJava</code> internal identifier. It isn’t
 until we call downstream <code>rTASSEL</code> functions where we will
 bring the TASSEL data into the R environment.</p>
