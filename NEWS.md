@@ -1,3 +1,7 @@
+# rTASSEL 0.9.33
+* Fixed typo in `plotPCA()` error message
+
+
 # rTASSEL 0.9.32
 * Updated `tableReport()` method dispatch for all `AssociationResults`
   objects:

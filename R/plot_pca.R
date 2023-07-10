@@ -88,7 +88,7 @@ plotPCACore <- function(params) {
             stop("Metadata is missing 'Taxa' column")
         }
         if (!mCol %in% colnames(metaData)) {
-            stop("Metadata column missing from metdata")
+            stop("Metadata column missing from metadata")
         }
         if (!any(pcDf$Taxa %in% metaData$Taxa)) {
             stop("No samples match what is found in given metadata column")
