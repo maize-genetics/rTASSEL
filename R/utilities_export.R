@@ -27,7 +27,6 @@
 #'     \item \code{hapmap} - HapMap files
 #'     \item \code{plink} - Plink files
 #'     \item \code{flapjack} - FlapJack files
-#'     \item \code{hdf5} - HDF5 (hierarchical data format v5) files
 #'   }
 #'
 #' @param keepDepth Whether to keep depth if format supports depth. Defaults
@@ -44,7 +43,7 @@
 #' @export
 exportGenotypeTable <- function(tasObj,
                                 file,
-                                format = c("vcf", "hapmap", "plink", "flapjack", "hdf5"),
+                                format = c("vcf", "hapmap", "plink", "flapjack"),
                                 keepDepth = TRUE,
                                 taxaAnnotations = TRUE,
                                 branchLengths = TRUE) {
@@ -87,13 +86,6 @@ exportGenotypeTable <- function(tasObj,
             jGenoTable,
             file,
             rJava::.jchar(9) # <- tab delimited UTF char
-        )
-    } else if (format == "hdf5") {
-        rJC$writeGenotypeHDF5(
-            jGenoTable,
-            file,
-            NULL, # <- export taxa annotation
-            keepDepth
         )
     } else if (format == "flapjack") {
         rJC <- rJava::J("net.maizegenetics.plugindef.GenerateRCode")
