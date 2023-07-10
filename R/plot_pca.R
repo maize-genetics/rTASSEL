@@ -84,10 +84,16 @@ plotPCACore <- function(params) {
     }
 
     if (!is.null(metaData)) {
-        pcDf <- merge(pcDf, metaData, by = "Taxa")
-        if (!mCol %in% colnames(pcDf)) {
+        if (!"Taxa" %in% colnames(metaData)) {
+            stop("Metadata is missing 'Taxa' column")
+        }
+        if (!mCol %in% colnames(metaData)) {
             stop("Metadata column missing from metdata")
         }
+        if (!any(pcDf$Taxa %in% metaData$Taxa)) {
+            stop("No samples match what is found in given metadata column")
+        }
+        pcDf <- merge(pcDf, metaData, by = "Taxa")
     }
 
     if (grepl("PC", x)) x <- suppressWarnings(as.numeric(gsub("PC", "", x)))
