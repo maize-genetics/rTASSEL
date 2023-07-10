@@ -7,7 +7,7 @@
 exportGenotypeTable(
   tasObj,
   file,
-  format = c("vcf", "hapmap", "plink", "flapjack", "hdf5"),
+  format = c("vcf", "hapmap", "plink", "flapjack"),
   keepDepth = TRUE,
   taxaAnnotations = TRUE,
   branchLengths = TRUE
@@ -27,7 +27,6 @@ contains a genotype table.}
     \item \code{hapmap} - HapMap files
     \item \code{plink} - Plink files
     \item \code{flapjack} - FlapJack files
-    \item \code{hdf5} - HDF5 (hierarchical data format v5) files
   }}
 
 \item{keepDepth}{Whether to keep depth if format supports depth. Defaults
