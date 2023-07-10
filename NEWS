@@ -1,3 +1,13 @@
+# CHANGES IN VERSION 0.9.32
+* Updated `tableReport()` method dispatch for all `AssociationResults`
+  objects:
+  + Will now return default statistics output for all association results
+    when running `tableReport(assocObj)` where `assocObj` is an object
+    of type `AssociationResults`
+* Removed HDF5 file export support
+* Improved logic support for `plotPCA()`
+
+
 # CHANGES IN VERSION 0.9.31
 * Added new `PCAResults` class
   + Allows for more controlled access of data and simplified downstream

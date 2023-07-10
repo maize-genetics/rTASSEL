@@ -1,3 +1,13 @@
+# rTASSEL 0.9.32
+* Updated `tableReport()` method dispatch for all `AssociationResults`
+  objects:
+  + Will now return default statistics output for all association results
+    when running `tableReport(assocObj)` where `assocObj` is an object
+    of type `AssociationResults`
+* Removed HDF5 file export support
+* Improved logic support for `plotPCA()`
+
+
 # rTASSEL 0.9.31
 * Added new `PCAResults` class
   + Allows for more controlled access of data and simplified downstream
@@ -9,6 +19,7 @@
   + Allows for grouping from generated hierarchical clustering or grouping
     from metadata via the `metadata` parameter and subsequent `mCol`
     parameters.
+
 
 # rTASSEL 0.9.30
 * Added new `AssociationResults` class
@@ -24,6 +35,7 @@
     across genome
 * Prior 3 functions also include interactive component that wraps
   `ggplot2` objects with PlotlyJS components
+
 
 # rTASSEL 0.9.29
 * Added genotype table summary methods:
