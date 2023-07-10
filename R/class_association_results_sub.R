@@ -1,3 +1,5 @@
+# === BLUE Reports ==================================================
+
 ## ----
 #' @title AssociationResultsBLUE Class
 #'
@@ -13,6 +15,29 @@ setClass(
     contains = "AssociationResults"
 )
 
+
+## ----
+#' @rdname tableReport
+#' @export
+setMethod(
+    f = "tableReport",
+    signature = signature(
+        assocRes   = "AssociationResultsBLUE",
+        reportName = "ANY"
+    ),
+    definition = function(assocRes, reportName) {
+        if (missing(reportName)) reportName <- NULL
+        returnReportElements(
+            assocRes             = assocRes,
+            reportName           = reportName,
+            defaultReportElement = "BLUE"
+        )
+    }
+)
+
+
+
+# === GLM Reports ===================================================
 
 ## ----
 #' @title AssociationResultsGLM Class
@@ -31,6 +56,29 @@ setClass(
 
 
 ## ----
+#' @rdname tableReport
+#' @export
+setMethod(
+    f = "tableReport",
+    signature = signature(
+        assocRes   = "AssociationResultsGLM",
+        reportName = "ANY"
+    ),
+    definition = function(assocRes, reportName) {
+        if (missing(reportName)) reportName <- NULL
+        returnReportElements(
+            assocRes             = assocRes,
+            reportName           = reportName,
+            defaultReportElement = "GLM_Stats"
+        )
+    }
+)
+
+
+
+# === MLM Reports ===================================================
+
+## ----
 #' @title AssociationResultsMLM Class
 #'
 #' @description
@@ -47,6 +95,29 @@ setClass(
 
 
 ## ----
+#' @rdname tableReport
+#' @export
+setMethod(
+    f = "tableReport",
+    signature = signature(
+        assocRes   = "AssociationResultsMLM",
+        reportName = "ANY"
+    ),
+    definition = function(assocRes, reportName) {
+        if (missing(reportName)) reportName <- NULL
+        returnReportElements(
+            assocRes             = assocRes,
+            reportName           = reportName,
+            defaultReportElement = "MLM_Stats"
+        )
+    }
+)
+
+
+
+# === Fast Association (Shabalin) Reports ===========================
+
+## ----
 #' @title AssociationResultsFast Class
 #'
 #' @description
@@ -59,6 +130,26 @@ setClass(
 setClass(
     Class = "AssociationResultsFast",
     contains = "AssociationResults"
+)
+
+
+## ----
+#' @rdname tableReport
+#' @export
+setMethod(
+    f = "tableReport",
+    signature = signature(
+        assocRes   = "AssociationResultsFast",
+        reportName = "ANY"
+    ),
+    definition = function(assocRes, reportName) {
+        if (missing(reportName)) reportName <- NULL
+        returnReportElements(
+            assocRes             = assocRes,
+            reportName           = reportName,
+            defaultReportElement = "FastAssociation"
+        )
+    }
 )
 
 

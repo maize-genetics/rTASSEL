@@ -118,29 +118,3 @@ test_that("AssociationResults sub classes return correct data.", {
 })
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
