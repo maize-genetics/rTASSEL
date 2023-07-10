@@ -16,6 +16,8 @@ test_that("plotPCA works correctly.", {
         path = genoPathHMP
     )
     tasMeta <- read.csv(metadataPath)
+    tasMetaFaulty <- tasMeta
+    colnames(tasMetaFaulty) <- c("sample", "Subpopulation")
     mockPCAResults <- list(
         "PC_Datum" = data.frame(
             "Taxa" = letters[1:3],
@@ -57,9 +59,11 @@ test_that("plotPCA works correctly.", {
     expect_error(plotPCA(pcaObj, 1, "PC20"))
     expect_error(plotPCA(pcaObj, "PC100", 2))
     expect_error(plotPCA(pcaObj, "PCDF", 2))
+    expect_error(plotPCA(pcaObj, metadata = iris, mCol = "Species"))
     expect_message(plotPCA(pcaObj2))
     expect_true(is(plotPCA(pcaObj, cluster = TRUE), "gg"))
     expect_true(is(plotPCA(pcaObj, metadata = tasMeta, mCol = "Subpopulation"), "gg"))
+    expect_error(plotPCA(pcaObj, metadata = tasMetaFaulty, mCol = "Subpopulation"))
 })
 
 
