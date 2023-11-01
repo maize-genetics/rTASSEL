@@ -122,3 +122,41 @@ concatenate <- function(x) {
 }
 
 
+##----
+#' @title Merge genotype tables
+#'
+#' @description
+#' Merges multiple genotype tables together by site information
+#'
+#' @return Returns an object of \code{TasselGenotypePhenotype} class.
+#'
+#' @name mergeGenotypeTables
+#' @rdname mergeGenotypeTables
+#'
+#' @param tasObjL A list of objects of class \code{TasselGenotypePenotype}.
+#'
+#' @export
+mergeGenotypeTables <- function(tasObjL) {
+    mergeGtClassPath <- "net/maizegenetics/analysis/data/MergeGenotypeTablesPlugin"
+    gtClassPath      <- "net/maizegenetics/dna/snp/GenotypeTable"
+    frameClassPath   <- "java/awt/Frame"
+
+    gtArray <- rJava::.jarray(
+        x = lapply(tasObjL, rTASSEL:::getGenotypeTable),
+        contents.class = gtClassPath
+    )
+
+    mergeGtPlugin <- rJava::new(
+        rJava::J(mergeGtClassPath),
+        rJava::.jnull(frameClassPath),
+        FALSE
+    )
+
+    mergedGt <- rTASSEL:::.tasselObjectConstructor(
+        mergeGtPlugin$mergeGenotypeTables(gtArray)
+    )
+
+    return(mergedGt)
+}
+
+

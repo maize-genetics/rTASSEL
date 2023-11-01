@@ -1,5 +1,9 @@
 # rTASSEL 0.9.33
 * Fixed typo in `plotPCA()` error message
+* Add new function `filterGenotypeTableBySiteName()`:
+  + Filters genotype tables using literal marker names/IDs
+* Add new function `mergeGenotypeTables()`:
+  + Merges multiple genotype tables by site values
 
 
 # rTASSEL 0.9.32

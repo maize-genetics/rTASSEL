@@ -278,7 +278,7 @@ filterGenotypeTableBySiteName <- function(tasObj, siteNames) {
         rJava::.jnull(),
         FALSE
     )
-    plugin$siteNamesList(siteNames)
+    plugin$siteNamesList(idsToKeep)
 
     dataSet <- rJava::J("net.maizegenetics.plugindef.DataSet")
 
