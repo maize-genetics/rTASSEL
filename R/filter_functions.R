@@ -264,15 +264,19 @@ filterGenotypeTableSites <- function(
 #' @export
 filterGenotypeTableBySiteName <- function(tasObj, siteNames) {
 
+    # Rudimentary type check
     if (class(tasObj) != "TasselGenotypePhenotype") {
         stop("`tasObj` must be of class `TasselGenotypePhenotype`")
     }
 
+    # Get Java memory pointer
     gtJava <- getGenotypeTable(tasObj)
 
+    # Instantiate new ArrayList object and populate with site names
     idsToKeep <- rJava::.jnew("java.util.ArrayList")
     for (id in siteNames) idsToKeep$add(id)
 
+    # Instantiate filter site builder plugin
     plugin <- rJava::new(
         rJava::J("net.maizegenetics.analysis.filter.FilterSiteBuilderPlugin"),
         rJava::.jnull(),
@@ -280,10 +284,21 @@ filterGenotypeTableBySiteName <- function(tasObj, siteNames) {
     )
     plugin$siteNamesList(idsToKeep)
 
+    # Instantiate DataSet object
     dataSet <- rJava::J("net.maizegenetics.plugindef.DataSet")
 
-    gtFilter <- .tasselObjectConstructor(
-        plugin$runPlugin(dataSet$getDataSet(gtJava))
+    # Try to filter data - if outofbounds exception - no sites returned
+    gtFilter <- tryCatch(
+        expr = {
+            # run plugin and return S4 rTASSEL object (filtered)
+            .tasselObjectConstructor(
+                plugin$runPlugin(dataSet$getDataSet(gtJava))
+            )
+        },
+        error = function(e) {
+            message("Error. No sites found: ")
+            message(" ", conditionMessage(e), "\n")
+        }
     )
 
     return(gtFilter)

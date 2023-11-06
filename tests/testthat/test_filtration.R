@@ -726,6 +726,35 @@ test_that("filterGenotypeTableTaxa() returns correct data", {
     )
 })
 
+test_that("filterGenotypeTableBySiteName() tests", {
+
+    # positive control - known sites
+    testSitesPos <- head(siteSummary(tasGeno)$Site_Name)
+
+    # Known and not valid sites
+    testSitesExp <- c(
+        head(siteSummary(tasGeno)$Site_Name),
+        "not_valid_a"
+    )
+
+    # negative control - not valid sites
+    testSitesNeg <- c("not_valid_a", "not_valid_b")
+
+    expect_null(filterGenotypeTableBySiteName(tasGeno, testSitesNeg))
+    expect_error(object = filterGenotypeTableBySiteName(mtcars, testSitesPos))
+    expect_equal(
+        object = siteSummary(
+            filterGenotypeTableBySiteName(tasGeno, testSitesPos)
+        )$Site_Name,
+        expected = testSitesPos
+    )
+    expect_equal(
+        object = siteSummary(
+            filterGenotypeTableBySiteName(tasGeno, testSitesExp)
+        )$Site_Name,
+        expected = testSitesPos
+    )
+})
 
 
 

@@ -93,3 +93,26 @@ test_that("Joining returns correct values with PCA objects", {
 })
 
 
+test_that("mergeGenotypeTables() tests", {
+    gtA <- readGenotypeTableFromPath(system.file(
+        "extdata",
+        "rt_sub_chr1.vcf",
+        package = "rTASSEL"
+    ))
+    gtB <- readGenotypeTableFromPath(system.file(
+        "extdata",
+        "rt_sub_chr5.vcf",
+        package = "rTASSEL"
+    ))
+
+    gtMerged <- mergeGenotypeTables(list(gtA, gtB))
+
+    expect_true(is(gtMerged, "TasselGenotypePhenotype"))
+    expect_error(mergeGenotypeTables(list(gtA, mtcars)))
+    expect_error(mergeGenotypeTables(LETTERS))
+    expect_equal(gtMerged@jTaxaList$numberOfTaxa(), 5)
+    expect_equal(gtMerged@jPositionList$numberOfSites(), 17)
+})
+
+
+

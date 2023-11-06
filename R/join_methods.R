@@ -141,6 +141,14 @@ mergeGenotypeTables <- function(tasObjL) {
     gtClassPath      <- "net/maizegenetics/dna/snp/GenotypeTable"
     frameClassPath   <- "java/awt/Frame"
 
+    if (!is(tasObjL, "list")) {
+        stop("`tasObjL` must be a list")
+    }
+
+    if (!all(unlist(lapply(tasObjL, is, "TasselGenotypePhenotype")))) {
+        stop("All elements in `tasObjL` must be of type TasselGenotypePhenotype")
+    }
+
     gtArray <- rJava::.jarray(
         x = lapply(tasObjL, rTASSEL:::getGenotypeTable),
         contents.class = gtClassPath
