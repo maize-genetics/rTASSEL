@@ -150,7 +150,7 @@ mergeGenotypeTables <- function(tasObjL) {
     }
 
     gtArray <- rJava::.jarray(
-        x = lapply(tasObjL, rTASSEL:::getGenotypeTable),
+        x = lapply(tasObjL, getGenotypeTable),
         contents.class = gtClassPath
     )
 
@@ -160,7 +160,7 @@ mergeGenotypeTables <- function(tasObjL) {
         FALSE
     )
 
-    mergedGt <- rTASSEL:::.tasselObjectConstructor(
+    mergedGt <- .tasselObjectConstructor(
         mergeGtPlugin$mergeGenotypeTables(gtArray)
     )
 
