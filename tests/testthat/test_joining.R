@@ -78,7 +78,7 @@ pcaRes <- pca(tasGeno)
 
 test_that("Joining returns correct values with PCA objects", {
     intersectPheno <- intersectJoin(c(pcaRes, tasPheno))
-    phenoAttrib <- rTASSEL:::extractPhenotypeAttDf(intersectPheno@jPhenotypeTable)
+    phenoAttrib <- extractPhenotypeAttDf(intersectPheno@jPhenotypeTable)
     expect_equal(
         phenoAttrib$traitName,
         c("Taxa", "EarHT", "dpoll", "EarDia", "PC1", "PC2", "PC3", "PC4", "PC5")
@@ -91,5 +91,36 @@ test_that("Joining returns correct values with PCA objects", {
         c("Taxa", "EarHT", "dpoll", "EarDia", "PC1", "PC2", "PC3", "PC4", "PC5")
     )
 })
+
+
+test_that("mergeGenotypeTables() tests", {
+    gtA <- readGenotypeTableFromPath(system.file(
+        "extdata",
+        "rt_sub_chr1.vcf",
+        package = "rTASSEL"
+    ))
+    gtB <- readGenotypeTableFromPath(system.file(
+        "extdata",
+        "rt_sub_chr5.vcf",
+        package = "rTASSEL"
+    ))
+
+    gtBFilter <- filterGenotypeTableTaxa(gtB, taxa = c("33-16", "38-11"))
+
+    gtMerged <- mergeGenotypeTables(list(gtA, gtB))
+    gtMergedFilter <- mergeGenotypeTables(list(gtA, gtBFilter))
+
+    expect_true(is(gtMerged, "TasselGenotypePhenotype"))
+    expect_error(mergeGenotypeTables(list(gtA, mtcars)))
+    expect_error(mergeGenotypeTables(LETTERS))
+    expect_equal(gtMerged@jTaxaList$numberOfTaxa(), 5)
+    expect_equal(gtMergedFilter@jTaxaList$numberOfTaxa(), 5)
+    expect_equal(gtMerged@jPositionList$numberOfSites(), 17)
+})
+
+
+
+
+
 
 

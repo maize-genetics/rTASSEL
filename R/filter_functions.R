@@ -1,17 +1,4 @@
-#---------------------------------------------------------------------
-# Script Name:   FilterFunctions.R
-# Description:   Functions for TASSEL filtration
-# Author:        Brandon Monier & Ed buckler
-# Created:       2018-11-26 at 11:14:36
-# Last Modified: 2020-10-26 at 13:14:55
-#--------------------------------------------------------------------
-
-#--------------------------------------------------------------------
-# Detailed Purpose:
-#   The main purpose of this Rscript to host functions necessary for
-#   filtration methods of TASSEL genotype tables
-#--------------------------------------------------------------------
-
+## ----
 #' @title Filter genotype table by sites
 #'
 #' @description This function will filter R objects of
@@ -78,24 +65,26 @@
 #' @importFrom rJava new
 #' @importFrom rJava J
 #' @export
-filterGenotypeTableSites <- function(tasObj,
-                                     siteMinCount = 0,
-                                     siteMinAlleleFreq = 0.0,
-                                     siteMaxAlleleFreq = 1.0,
-                                     minHeterozygous = 0.0,
-                                     maxHeterozygous = 1.0,
-                                     removeMinorSNPStates = FALSE,
-                                     removeSitesWithIndels = FALSE,
-                                     siteRangeFilterType = c("none", "sites", "position"),
-                                     startSite = NULL,
-                                     endSite = NULL,
-                                     startChr = NULL,
-                                     startPos = NULL,
-                                     endChr = NULL,
-                                     endPos = NULL,
-                                     gRangesObj = NULL,
-                                     chrPosFile = NULL,
-                                     bedFile = NULL) {
+filterGenotypeTableSites <- function(
+    tasObj,
+    siteMinCount = 0,
+    siteMinAlleleFreq = 0.0,
+    siteMaxAlleleFreq = 1.0,
+    minHeterozygous = 0.0,
+    maxHeterozygous = 1.0,
+    removeMinorSNPStates = FALSE,
+    removeSitesWithIndels = FALSE,
+    siteRangeFilterType = c("none", "sites", "position"),
+    startSite = NULL,
+    endSite = NULL,
+    startChr = NULL,
+    startPos = NULL,
+    endChr = NULL,
+    endPos = NULL,
+    gRangesObj = NULL,
+    chrPosFile = NULL,
+    bedFile = NULL
+) {
 
     if (class(tasObj) != "TasselGenotypePhenotype") {
         stop("`tasObj` must be of class `TasselGenotypePhenotype`")
@@ -257,7 +246,66 @@ filterGenotypeTableSites <- function(tasObj,
 }
 
 
+## ----
+#' @title Filter genotype table by site IDs
+#'
+#' @description
+#' Filter a genotype table object by specifying literal site names (IDs)
+#' for variant markers.
+#'
+#' @name filterGenotypeTableBySiteName
+#' @rdname filterGenotypeTableBySiteName
+#'
+#' @param tasObj An object of class \code{TasselGenotypePenotype}.
+#' @param siteNames A character vector of site names to filter on.
+#'
+#' @return Returns an object of \code{TasselGenotypePhenotype} class.
+#'
+#' @export
+filterGenotypeTableBySiteName <- function(tasObj, siteNames) {
 
+    # Rudimentary type check
+    if (class(tasObj) != "TasselGenotypePhenotype") {
+        stop("`tasObj` must be of class `TasselGenotypePhenotype`")
+    }
+
+    # Get Java memory pointer
+    gtJava <- getGenotypeTable(tasObj)
+
+    # Instantiate new ArrayList object and populate with site names
+    idsToKeep <- rJava::.jnew("java.util.ArrayList")
+    for (id in siteNames) idsToKeep$add(id)
+
+    # Instantiate filter site builder plugin
+    plugin <- rJava::new(
+        rJava::J("net.maizegenetics.analysis.filter.FilterSiteBuilderPlugin"),
+        rJava::.jnull(),
+        FALSE
+    )
+    plugin$siteNamesList(idsToKeep)
+
+    # Instantiate DataSet object
+    dataSet <- rJava::J("net.maizegenetics.plugindef.DataSet")
+
+    # Try to filter data - if outofbounds exception - no sites returned
+    gtFilter <- tryCatch(
+        expr = {
+            # run plugin and return S4 rTASSEL object (filtered)
+            .tasselObjectConstructor(
+                plugin$runPlugin(dataSet$getDataSet(gtJava))
+            )
+        },
+        error = function(e) {
+            message("Error. No sites found: ")
+            message(" ", conditionMessage(e), "\n")
+        }
+    )
+
+    return(gtFilter)
+}
+
+
+## ----
 #' @title Filter genotype table by taxa
 #'
 #' @description This function will filter R objects of
@@ -285,11 +333,13 @@ filterGenotypeTableSites <- function(tasObj,
 #' @importFrom rJava J
 #' @importFrom rJava .jnull
 #' @export
-filterGenotypeTableTaxa <- function(tasObj,
-                                    minNotMissing = 0.0,
-                                    minHeterozygous = 0.0,
-                                    maxHeterozygous = 1.0,
-                                    taxa = NULL) {
+filterGenotypeTableTaxa <- function(
+    tasObj,
+    minNotMissing = 0.0,
+    minHeterozygous = 0.0,
+    maxHeterozygous = 1.0,
+    taxa = NULL
+) {
 
     if (class(tasObj) != "TasselGenotypePhenotype") {
         stop("`tasObj` must be of class `TasselGenotypePhenotype`")

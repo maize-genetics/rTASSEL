@@ -1,0 +1,17 @@
+##fileformat=VCFv4.0
+##Tassel=<ID=GenotypeTable,Version=5,Description="Reference allele is not known. The major allele was used as reference allele">
+##FORMAT=<ID=GT,Number=1,Type=String,Description="Genotype">
+##FORMAT=<ID=AD,Number=.,Type=Integer,Description="Allelic depths for the reference and alternate alleles in the order listed">
+##FORMAT=<ID=DP,Number=1,Type=Integer,Description="Read Depth (only filtered reads used for calling)">
+##FORMAT=<ID=GQ,Number=1,Type=Float,Description="Genotype Quality">
+##FORMAT=<ID=PL,Number=.,Type=Float,Description="Normalized, Phred-scaled likelihoods for AA,AB,BB genotypes where A=ref and B=alt; not applicable if site is not biallelic">
+##INFO=<ID=NS,Number=1,Type=Integer,Description="Number of Samples With Data">
+##INFO=<ID=DP,Number=1,Type=Integer,Description="Total Depth">
+##INFO=<ID=AF,Number=.,Type=Float,Description="Allele Frequency">
+#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO	FORMAT	33-16	38-11	4226	4722	A188
+5	656148	PZA01887.1	G	A	.	PASS	.	GT	1/1	1/1	0/0	0/0	0/0
+5	920922	PZA00684.12	C	T	.	PASS	.	GT	0/0	1/1	0/0	0/0	0/0
+5	945545	PZA02894.1	C	G	.	PASS	.	GT	0/0	1/1	0/0	./.	1/1
+5	2123914	PZA00191.5	T	C	.	PASS	.	GT	1/1	0/0	0/0	1/1	0/0
+5	2123961	PZA00191.4	T	C	.	PASS	.	GT	1/1	0/0	0/0	1/1	0/0
+5	3142800	PZB01352.6	C	T	.	PASS	.	GT	0/0	0/0	0/0	0/0	0/0
