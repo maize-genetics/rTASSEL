@@ -103,6 +103,9 @@
     <loc>https://rtassel.maizegenetics.net/reference/exportGenotypeTable.html</loc>
   </url>
   <url>
+    <loc>https://rtassel.maizegenetics.net/reference/filterGenotypeTableBySiteName.html</loc>
+  </url>
+  <url>
     <loc>https://rtassel.maizegenetics.net/reference/filterGenotypeTableSites.html</loc>
   </url>
   <url>
@@ -143,6 +146,9 @@
   </url>
   <url>
     <loc>https://rtassel.maizegenetics.net/reference/mds.html</loc>
+  </url>
+  <url>
+    <loc>https://rtassel.maizegenetics.net/reference/mergeGenotypeTables.html</loc>
   </url>
   <url>
     <loc>https://rtassel.maizegenetics.net/reference/ncol-TasselDistanceMatrix-method.html</loc>

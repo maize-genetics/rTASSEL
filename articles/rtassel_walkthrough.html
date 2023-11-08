@@ -33,7 +33,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">rTASSEL</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.32</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.33</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -85,7 +85,7 @@
                         <h4 data-toc-skip class="author">Brandon
 Monier</h4>
             
-            <h4 data-toc-skip class="date">2023-09-22</h4>
+            <h4 data-toc-skip class="date">2023-11-08</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/maize-genetics/rTASSEL/blob/HEAD/vignettes/rtassel_walkthrough.Rmd" class="external-link"><code>vignettes/rtassel_walkthrough.Rmd</code></a></small>
       <div class="d-none name"><code>rtassel_walkthrough.Rmd</code></div>
@@ -308,7 +308,7 @@ extract the <code>GenotypeTable</code> with the S4 <code>@</code>
 operator, we would get something that looks like this:</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tasGenoHMP</span><span class="op">@</span><span class="va">jGenotypeTable</span></span></code></pre></div>
-<pre><code><span><span class="co">## [1] "Java-Object{net.maizegenetics.dna.snp.CoreGenotypeTable@661972b0}"</span></span></code></pre>
+<pre><code><span><span class="co">## [1] "Java-Object{net.maizegenetics.dna.snp.CoreGenotypeTable@3ce1e309}"</span></span></code></pre>
 <p>This entity is a <code>rJava</code> internal identifier. It isn’t
 until we call downstream <code>rTASSEL</code> functions where we will
 bring the TASSEL data into the R environment.</p>
@@ -784,12 +784,12 @@ case, a <code>matrix</code> object using the base method
 <span></span>
 <span><span class="co">## Inspect first 5 rows and columns ----</span></span>
 <span><span class="va">tasKinR</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span></span></code></pre></div>
-<pre><code><span><span class="co">##              33-16        38-11        4226         4722        A188</span></span>
-<span><span class="co">## 33-16  1.796955100  0.039558496  0.06060008 -0.008674403  0.03524417</span></span>
-<span><span class="co">## 38-11  0.039558496  1.910150800  0.01960260 -0.006317467 -0.02937613</span></span>
-<span><span class="co">## 4226   0.060600080  0.019602600  1.92645620 -0.017025312  0.02449092</span></span>
-<span><span class="co">## 4722  -0.008674403 -0.006317467 -0.01702531  1.453315500 -0.02040120</span></span>
-<span><span class="co">## A188   0.035244170 -0.029376134  0.02449092 -0.020401197  2.00156020</span></span></code></pre>
+<pre><code><span><span class="co">##             33-16        38-11        4226         4722        A188</span></span>
+<span><span class="co">## 33-16  1.79695500  0.039558496  0.06060006 -0.008674400  0.03524417</span></span>
+<span><span class="co">## 38-11  0.03955850  1.910150900  0.01960259 -0.006317447 -0.02937614</span></span>
+<span><span class="co">## 4226   0.06060006  0.019602593  1.92645570 -0.017025305  0.02449093</span></span>
+<span><span class="co">## 4722  -0.00867440 -0.006317447 -0.01702531  1.453315500 -0.02040117</span></span>
+<span><span class="co">## A188   0.03524417 -0.029376138  0.02449093 -0.020401174  2.00155970</span></span></code></pre>
 <p>We can also coerce a pairwise <code>matrix</code> object to a
 <code>TasselDistanceMatrix</code> object using rTASSEL’s function
 <code><a href="../reference/asTasselDistanceMatrix.html">asTasselDistanceMatrix()</a></code>:</p>
