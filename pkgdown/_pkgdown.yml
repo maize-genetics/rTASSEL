@@ -2,6 +2,16 @@ url: https://rtassel.maizegenetics.net
 
 template:
   bootstrap: 5
+  bslib:
+    base_font: {google: "Barlow"}
+    heading_font: {google: "Oswald"}
+    code_font: {google: "Roboto Mono"}
+  extra_css: pkgdown/extra.css
+
+navbar:
+  structure:
+    left:  [intro, articles, reference, news]
+    right: [search, github]
 
 footer:
   structure:
@@ -19,6 +29,5 @@ articles:
   navbar: ~
   contents:
   - rtassel_installation
-  - rtassel_walkthrough
   - genotype_filtration
   - rtassel_benchmarks

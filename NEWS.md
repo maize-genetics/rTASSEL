@@ -1,6 +1,10 @@
+# rTASSEL 0.9.34
+* Added new function `loadDemoData()`:
+  + Loads example genotype, phenotype, or combined `rTASSEL` datasets
+
 # rTASSEL 0.9.33
 * Fixed typo in `plotPCA()` error message
-* Add new function `filterGenotypeTableBySiteName()`:
+* Added new function `filterGenotypeTableBySiteName()`:
   + Filters genotype tables using literal marker names/IDs
 * Add new function `mergeGenotypeTables()`:
   + Merges multiple genotype tables by site values

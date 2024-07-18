@@ -1,0 +1,6 @@
+.navbar-brand {
+  font-family: 'Oswald', sans-serif; /* Change font family */
+  font-size: 20px; /* Change font size */
+  font-weight: bold; /* Make font bold */
+  color: #363636; /* Change font color to red */
+}
