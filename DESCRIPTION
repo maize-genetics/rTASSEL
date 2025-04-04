@@ -1,6 +1,6 @@
 Package: rTASSEL
-Version: 0.9.33
-Date: 2018-12-21
+Version: 1.0.0
+Date: 2025-04-01
 Title: R Front-End for TASSEL
 Authors@R: c(
     person(
@@ -41,15 +41,19 @@ Depends:
     R (>= 4.1.0)
 Imports:
     ape,
+    cli,
     GenomicRanges,
     ggplot2,
     IRanges,
     methods,
+    pillar,
     plotly,
     rJava,
     rlang,
     S4Vectors,
-    SummarizedExperiment
+    SummarizedExperiment,
+    tibble,
+    vctrs
 Suggests:
     BiocStyle,
     knitr,

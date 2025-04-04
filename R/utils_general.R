@@ -71,6 +71,14 @@ tableReportListToAssociationResults <- function(trl, aType) {
                 assocType = aType
             )
         },
+        "Stepwise" = {
+            methods::new(
+                Class = "AssociationResultsStepwise",
+                results = trl,
+                traits = unique(trl$ANOVA_report$Trait),
+                assocType = aType
+            )
+        },
         "default" = {
             NULL
         }

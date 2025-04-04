@@ -153,3 +153,42 @@ setMethod(
 )
 
 
+
+# === Stepwise results ==============================================
+
+## ----
+#' @title AssociationResultsStepwise Class
+#'
+#' @description
+#' Class \code{AssociationResultsStepwise} defines a \code{rTASSEL}
+#' Class for storing TASSEL 5 Stepwise results
+#'
+#' @name AssociationResultsStepwise-class
+#' @rdname AssociationResultsStepwise-class
+#' @exportClass AssociationResultsStepwise
+setClass(
+    Class = "AssociationResultsStepwise",
+    contains = "AssociationResults"
+)
+
+
+## ----
+#' @rdname tableReport
+#' @export
+setMethod(
+    f = "tableReport",
+    signature = signature(
+        assocRes   = "AssociationResultsStepwise",
+        reportName = "ANY"
+    ),
+    definition = function(assocRes, reportName) {
+        if (missing(reportName)) reportName <- NULL
+        returnReportElements(
+            assocRes             = assocRes,
+            reportName           = reportName,
+            defaultReportElement = "ANOVA_report"
+        )
+    }
+)
+
+
