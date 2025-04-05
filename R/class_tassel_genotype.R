@@ -5,7 +5,7 @@
 setClass(
     Class = "TasselGenotype",
     slots = c(
-        dispData    = "matrix",
+        dispData    = "list",
         jGeno       = "jobjRef",
         jMemAddress = "character",
         jClass      = "character"
@@ -27,10 +27,33 @@ readGenotype <- function(x, sortPositions = FALSE, keepDepth = FALSE) {
             rlang::abort("The input path is not a valid file")
         }
 
-        rJc <- rJava::.jnew(TASSEL_JVM$R_METHODS)
+        rJc         <- rJava::.jnew(TASSEL_JVM$R_METHODS)
+        javaGt      <- rJc$read(xNorm, keepDepth, sortPositions)
+        jClass      <- rJava::.jclass(javaGt)
+        jMemAddress <- gsub(".*@", "", rJava::.jstrVal(javaGt))
 
-        return(rJc$read(xNorm, keepDepth, sortPositions))
+        methods::new(
+            Class = "TasselGenotype",
+            dispData    = formatGtStrings(javaGt),
+            jGeno       = javaGt,
+            jMemAddress = jMemAddress,
+            jClass      = jClass
+        )
     }
 }
+
+
+
+# /// Methods (show) ////////////////////////////////////////////////
+
+#' @export
+setMethod("show", "TasselGenotype", function(object) {
+    printGtDisp(
+        fgs    = object@dispData,
+        nTaxa  = object@jGeno$numberOfTaxa(),
+        nSites = object@jGeno$numberOfSites(),
+        jMem   = object@jMemAddress
+    )
+})
 
 
