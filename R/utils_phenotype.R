@@ -56,8 +56,6 @@ formatPhenotypeDisplay <- function(df, attrDf, nCap = 5, nTaxa, jMem) {
 
 # /// General utilities /////////////////////////////////////////////
 
-
-
 ## ----
 validateAttrDf <- function(attrDf) {
     # Ensure attrDf is a data frame and has required columns

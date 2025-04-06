@@ -11,9 +11,21 @@
 }
 
 .onAttach <- function(libname, pkgname){
-    msg <- paste0(
-        "Welcome to rTASSEL (version ", utils::packageVersion("rTASSEL"), ")", "\n",
-        " \u2022 Consider starting a TASSEL log file (see ?startLogger())", "\n"
+    tasselVersion <- "5.2.96"
+    info          <- intToUtf8(0x2139)       # ℹ
+    bold_on       <- "\033[1m"           # Start bold
+    bold_off      <- "\033[22m"         # End bold
+
+    msg <- sprintf(
+        paste0(
+            "Welcome to rTASSEL (version ", bold_on, "%s", bold_off, ")\n",
+            "%s Running TASSEL version ", bold_on, "%s", bold_off, "\n",
+            "%s Consider starting a TASSEL log file (see ?startLogger())\n"
+        ),
+        utils::packageVersion("rTASSEL"),
+        info,
+        tasselVersion,
+        info
     )
     packageStartupMessage(msg)
 }

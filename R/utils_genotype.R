@@ -201,7 +201,8 @@ printGtDisp <- function(fgs, nTaxa, nSites, jMem) {
         cat(fgs[[i]])
         cat("\n")
     }
-    cat("\n", footer, "\n")
+    cat("\n")
+    cat(footer, "\n")
 }
 
 
