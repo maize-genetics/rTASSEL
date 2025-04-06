@@ -4,24 +4,24 @@
 #'    from TASSEL.
 #'
 #' @param filePath
-#' File path and name of log file location. If \code{NULL}, a logging file (\code{rtasel_log}will
-#' be added to current working directory.
+#' File path and name of log file location. If \code{NULL}, a logging file
+#' (\code{rtasel_log.txt} will be added to current working directory.
 #'
 #' @export
-startLogger <- function(filePath = NULL) {
-    if (is.null(fileName)) {
+startLogger <- function(filePath = NULL, verbose = TRUE) {
+    if (is.null(filePath)) {
         filePath <- "rtassel_log.txt"
     } else {
-        # TODO
+        if (!dir.exists(dirname(filePath))) {
+            rlang::stop("No such directory exists provided for logging file")
+        }
+
+        filePath <- normalizePath(filePath, mustWork = FALSE)
     }
 
+    jLogUtils <- rJava::.jnew(TASSEL_JVM$LOGGING_UTILS)
+    jLogUtils$closeLogfile()
+    jLogUtils$setupLogfile(filePath)
 
-    rJava::.jcall(
-        "net.maizegenetics/util/LoggingUtils",
-        "V",
-        "setupLogfile",
-        rtlog
-    )
-
-    message("TASSEL logging file created at: ", rtlog)
+    if (verbose) message("TASSEL logging file created at: ", filePath)
 }

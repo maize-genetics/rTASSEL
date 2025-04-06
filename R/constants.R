@@ -2,6 +2,7 @@
 # Commonly used JVM and PHG API classes
 TASSEL_JVM <- list(
     "ARRAY_LIST"      = "java.util.ArrayList",
+    "LOGGING_UTILS"   = "net.maizegenetics.util.LoggingUtils",
     "PHENO_BUILDER"   = "net.maizegenetics.phenotype.PhenotypeBuilder",
     "R_METHODS"       = "net.maizegenetics.plugindef.GenerateRCode",
     "STEPWISE_FITTER" = "net.maizegenetics.analysis.modelfitter.StepwiseOLSModelFitter",
