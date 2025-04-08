@@ -90,7 +90,7 @@ setClass(
         attrSummary = "list",
         dispData    = "java_pheno_tbl",
         rData       = "tbl_df",
-        jPheno      = "jobjRef",
+        jRefObj     = "jobjRef",
         jMemAddress = "character",
         jClass      = "character"
     )
@@ -117,6 +117,7 @@ readPhenotype <- function(x, attr = NULL) {
 
 # /// Methods (show) ////////////////////////////////////////////////
 
+## ----
 #' @export
 setMethod("show", "TasselPhenotype", function(object) {
     print(object@dispData)
@@ -125,5 +126,36 @@ setMethod("show", "TasselPhenotype", function(object) {
 
 
 # /// Methods (general) /////////////////////////////////////////////
+
+## ----
+#' @rdname attributeData
+#' @export
+setMethod(
+    f = "attributeData",
+    signature = signature(object = "TasselPhenotype"),
+    definition = function(object) {
+        return(object@attrData)
+    }
+)
+
+
+## ----
+#' @rdname javaRefObj
+#' @export
+setMethod(
+    f = "javaRefObj",
+    signature = signature(object = "TasselPhenotype"),
+    definition = function(object) {
+        return(object@jRefObj)
+    }
+)
+
+
+
+
+
+
+
+
 
 

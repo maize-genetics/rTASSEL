@@ -1,3 +1,5 @@
+# /// Display functions /////////////////////////////////////////////
+
 ## ----
 # Mini functions for CLI formatting
 # NOTE: hard-coding ANSI escapes here since calling CLI commands in a list at

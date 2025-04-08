@@ -57,6 +57,40 @@ formatPhenotypeDisplay <- function(df, attrDf, nCap = 5, nTaxa, jMem) {
 # /// General utilities /////////////////////////////////////////////
 
 ## ----
+selectPhenotypeTraits <- function(ph, traits) {
+    # Check for "Taxa" id - this is needed!
+    if (!"Taxa" %in% traits) {
+        traits <- c("Taxa", traits)
+    }
+
+    # Identify missing traits (excluding "Taxa" from the check)
+    missingTraits <- setdiff(traits, attrData$trait_id)
+    if (length(missingTraits) > 0) {
+        rlang::warn(paste(
+            "The following traits were not found in the phenotype data and will be ignored:",
+            paste(missingTraits, collapse = ", ")
+        ))
+    }
+
+    # Filter attribute data for selected traits
+    attrData <- attributeData(ph)
+    attrDataSub <- attrData[attrData$trait_id %in% traits, ]
+
+    if (nrow(attrDataSub) == 0) {
+        rlang::abort("No provided traits found in phenotype data")
+    }
+
+    phenoBuilder <- rJava::.jnew(rTASSEL:::TASSEL_JVM$PHENO_BUILDER)$
+        fromPhenotype(javaRefObj(ph))$
+        keepAttributes(rJava::.jarray(attrDataSub$attr_idx))$
+        build()$
+        get(0L)
+
+    return(rTASSEL:::createTasselPhenotype(phenoBuilder))
+}
+
+
+## ----
 validateAttrDf <- function(attrDf) {
     # Ensure attrDf is a data frame and has required columns
     if (!inherits(attrDf, "data.frame")) {
@@ -69,6 +103,8 @@ validateAttrDf <- function(attrDf) {
     }
 }
 
+
+## ----
 validateTasselAttributes <- function(df, attrDf) {
     validTasselAttrs <- c("taxa", "covariate", "data", "factor")
 
@@ -92,6 +128,8 @@ validateTasselAttributes <- function(df, attrDf) {
     }
 }
 
+
+## ----
 validateColumns <- function(df, attrDf) {
     # Validate that each column specified in attrDf exists in df and is of the correct type
     for (i in seq_len(nrow(attrDf))) {
@@ -111,6 +149,30 @@ validateColumns <- function(df, attrDf) {
 
 
 ## ----
+makeAttributeData <- function(javaPh, rData) {
+    # Extract attribute metadata
+    attrData <- extractPhenotypeAttDf(javaPh)
+    colnames(attrData) <- c("trait_id", "trait_type", "trait_attribute")
+
+    # Append R-side type info
+    attrData$r_type <- vapply(rData, class, "character")
+
+    # Get trait index from Java side
+    attrList <- rJava::.jevalArray(javaPh$attributeListCopy()$toArray())
+    attrIdxXRef <- data.frame(
+        attr_idx = as.integer(seq_along(attrList) - 1),
+        trait_id = vapply(attrList, function(it) it$toString(), character(1))
+    )
+
+    # Merge index data and return sorted df by attribute index
+    attrData <- merge(attrData, attrIdxXRef, by = "trait_id")
+    attrData <- attrData[order(attrData$attr_idx), ]
+
+    tibble::as_tibble(attrData)
+}
+
+
+## ----
 # Create a TasselPhenotype from a Java phenotype object
 #
 # This internal function builds a `TasselPhenotype` S4 object from a Java
@@ -123,11 +185,9 @@ createTasselPhenotype <- function(javaPh) {
     rData       <- tibble::as_tibble(tableReportToDF(javaPh))
     jClass      <- rJava::.jclass(javaPh)
     jMemAddress <- gsub(".*@", "", rJava::.jstrVal(javaPh))
-    attrData    <- tibble::as_tibble(extractPhenotypeAttDf(javaPh))
 
-    colnames(attrData) <- c("trait_id", "trait_type", "trait_attribute")
-    attrData$r_type    <- vapply(rData, class, "character")
-    attrSummary        <- as.list(table(attrData$trait_type))
+    attrData    <- makeAttributeData(javaPh, rData)
+    attrSummary <- as.list(table(attrData$trait_type))
 
     dispData <- formatPhenotypeDisplay(
         df     = rData,
@@ -143,7 +203,7 @@ createTasselPhenotype <- function(javaPh) {
         attrSummary = attrSummary,
         dispData    = dispData,
         rData       = rData,
-        jPheno      = javaPh,
+        jRefObj     = javaPh,
         jMemAddress = jMemAddress,
         jClass      = jClass
     )
