@@ -55,7 +55,7 @@ formatAllele <- function(currAllele, minAllele) {
            "W" = styleCache[["W"]],
            "K" = styleCache[["K"]],
            "M" = styleCache[["M"]],
-           "…" = sprintf(" %s ", cli::symbol$ellipsis),
+           "…" = sprintf(" %s ", pillar::style_subtle(cli::symbol$ellipsis)),
            cli::style_bold(paste0(" ", currAllele, " "))  # Default for any other allele
     )
 }

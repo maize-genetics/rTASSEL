@@ -89,8 +89,8 @@ test_that("evalExpr aborts on unknown operator", {
 ## Tests for the parseFormula() function ----
 
 df <- data.frame(
-    trait_id = c("a", "b", "c", "d", "e"),
-    trait_type = c("data", "covariate", "factor", "data", "covariate"),
+    trait_id = c("a", "b", "c", "d", "e", "e.2"),
+    trait_type = c("data", "covariate", "factor", "data", "covariate", "data"),
     stringsAsFactors = FALSE
 )
 

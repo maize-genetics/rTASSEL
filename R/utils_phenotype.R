@@ -57,11 +57,26 @@ formatPhenotypeDisplay <- function(df, attrDf, nCap = 5, nTaxa, jMem) {
 # /// General utilities /////////////////////////////////////////////
 
 ## ----
-selectPhenotypeTraits <- function(ph, traits) {
+selectTraitsFromFormula <- function(ph, f) {
+    attrDf <- attributeData(ph)
+
+    traitsToKeep <- parseFormula(f, attrDf)
+
+    subPh <- selectTraits(ph, unlist(traitsToKeep))
+
+    return(subPh)
+}
+
+## ----
+selectTraits <- function(ph, traits) {
     # Check for "Taxa" id - this is needed!
     if (!"Taxa" %in% traits) {
         traits <- c("Taxa", traits)
     }
+
+    # Filter attribute data for selected traits
+    attrData <- attributeData(ph)
+    attrDataSub <- attrData[attrData$trait_id %in% traits, ]
 
     # Identify missing traits (excluding "Taxa" from the check)
     missingTraits <- setdiff(traits, attrData$trait_id)
@@ -71,10 +86,6 @@ selectPhenotypeTraits <- function(ph, traits) {
             paste(missingTraits, collapse = ", ")
         ))
     }
-
-    # Filter attribute data for selected traits
-    attrData <- attributeData(ph)
-    attrDataSub <- attrData[attrData$trait_id %in% traits, ]
 
     if (nrow(attrDataSub) == 0) {
         rlang::abort("No provided traits found in phenotype data")
