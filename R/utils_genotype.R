@@ -63,38 +63,65 @@ formatAllele <- function(currAllele, minAllele) {
 
 ## ----
 genGtDispStrings <- function(gt, nTaxa = 5, nSites = 10) {
-    seqData <- vector("list", length = nTaxa + 2)
-    for (i in seq_len(nTaxa)) {
-        head <- gt$genotypeAsStringRange(as.integer(i - 1), as.integer(0), as.integer(nSites))
-        tail <- gt$genotypeAsString(as.integer(i - 1), as.integer(gt$numberOfSites() - 1))
-        full <- paste0(head, cli::symbol$ellipsis, tail)
+    maxTaxa <- gt$numberOfTaxa()
+    maxSite <- gt$numberOfSites()
 
-        seqData[[i]] <- full
+    getGt <- function(i) {
+        i0 <- as.integer(i - 1)
+        if (maxSite > nSites + 2) {
+            head <- gt$genotypeAsStringRange(i0, 0L, as.integer(nSites))
+            tail <- gt$genotypeAsString(i0, as.integer(maxSite - 1))
+            paste0(head, cli::symbol$ellipsis, tail)
+        } else {
+            gt$genotypeAsStringRange(i0, 0L, as.integer(maxSite))
+        }
     }
 
-    seqData[[nTaxa + 1]] <- strrep(cli::symbol$ellipsis, nSites + 2)
+    if (maxTaxa > nTaxa + 2) {
+        seqData <- c(
+            seqData <- c(
+                lapply(seq_len(nTaxa), getGt),
+                list(
+                    if (maxSite > nSites + 2) {
+                        strrep(cli::symbol$ellipsis, nSites + 2)
+                    } else {
+                        strrep(cli::symbol$ellipsis, maxSite)
+                    }
+                ),
+                list(getGt(maxTaxa))
+            )
+        )
+    } else {
+        seqData <- lapply(seq_len(maxTaxa), getGt)
+    }
 
-    seqData[[nTaxa + 2]] <- paste0(
-        gt$genotypeAsStringRange(as.integer(gt$numberOfTaxa() - 1), as.integer(0), as.integer(nSites)),
-        cli::symbol$ellipsis,
-        gt$genotypeAsString(as.integer(gt$numberOfTaxa() - 1), as.integer(gt$numberOfSites() - 1))
-    )
-
-    return(lapply(seqData, function(it) unlist(strsplit(it, split = ""))))
+    lapply(seqData, function(it) unlist(strsplit(it, split = "")))
 }
 
 
 ## ----
 genMinorAlleles <- function(gt, nSites = 10) {
-    minAlleles <- vapply(seq_len(nSites), function(it){
-        gt$minorAlleleAsString(as.integer(it - 1))
-    }, FUN.VALUE = character(1))
+    maxSite <- gt$numberOfSites()
 
-    minAlleles <- c(
-        minAlleles,
-        cli::symbol$ellipsis,
-        gt$minorAlleleAsString(as.integer(gt$numberOfSites() - 1))
-    )
+
+    if (maxSite > nSites + 2) {
+        minAlleles <- vapply(seq_len(nSites), function(it){
+            gt$minorAlleleAsString(as.integer(it - 1))
+        }, FUN.VALUE = character(1))
+        minAlleles <- c(
+            minAlleles,
+            cli::symbol$ellipsis,
+            gt$minorAlleleAsString(as.integer(gt$numberOfSites() - 1))
+        )
+    } else if (maxSite == nSites + 1) {
+        minAlleles <- vapply(seq_len(nSites + 1), function(it){
+            gt$minorAlleleAsString(as.integer(it - 1))
+        }, FUN.VALUE = character(1))
+    } else {
+        minAlleles <- vapply(seq_len(maxSite), function(it){
+            gt$minorAlleleAsString(as.integer(it - 1))
+        }, FUN.VALUE = character(1))
+    }
 
     return(minAlleles)
 }
@@ -112,16 +139,29 @@ truncateGtName <- function(id, maxLength = 5) {
 
 ## ----
 formatGtNames <- function(gt, nTaxa = 5, maxLength = 5) {
-    taxaIds <- vapply(seq_len(nTaxa), function(it) {
-        gt$taxaName(as.integer(it - 1))
-    }, FUN.VALUE = character(1))
+    maxTaxa <- gt$numberOfTaxa()
 
-    taxaIds <- c(
-        "",
-        taxaIds,
-        paste0(strrep(" ", maxLength - 1), cli::symbol$ellipsis),
-        gt$taxaName(as.integer(gt$numberOfTaxa() - 1))
-    )
+    if (maxTaxa > nTaxa + 2) {
+        taxaIds <- vapply(seq_len(nTaxa), function(it) {
+            gt$taxaName(as.integer(it - 1))
+        }, FUN.VALUE = character(1))
+
+        taxaIds <- c(
+            "",
+            taxaIds,
+            paste0(strrep(" ", maxLength - 1), cli::symbol$ellipsis),
+            gt$taxaName(as.integer(gt$numberOfTaxa() - 1))
+        )
+    } else {
+        taxaIds <- vapply(seq_len(maxTaxa), function(it) {
+            gt$taxaName(as.integer(it - 1))
+        }, FUN.VALUE = character(1))
+
+        taxaIds <- c(
+            "",
+            taxaIds
+        )
+    }
 
     truncTaxaIds <- vapply(
         taxaIds,
@@ -141,13 +181,19 @@ formatGtNames <- function(gt, nTaxa = 5, maxLength = 5) {
 
 
 ## ----
-addGtRowColIds <- function(gt, fgs, nTaxa = 5, nSites = 10) {
-    colHeader <- sprintf("%2d ", seq_len(nSites) - 1)
-    colHeader <- c(
-        colHeader,
-        sprintf(" %s ", cli::symbol$ellipsis),
-        sprintf(" %d", gt$numberOfSites() - 1)
-    )
+addGtRowColIds <- function(gt, fgs, nSites = 10) {
+    maxSite <- gt$numberOfSites()
+
+    if (maxSite > nSites + 2) {
+        colHeader <- sprintf("%2d ", seq_len(nSites) - 1)
+        colHeader <- c(
+            colHeader,
+            sprintf(" %s ", cli::symbol$ellipsis),
+            sprintf(" %d", gt$numberOfSites() - 1)
+        )
+    } else {
+        colHeader <- sprintf("%2d ", seq_len(maxSite) - 1)
+    }
 
     colHeader <- pillar::style_subtle(paste(colHeader, collapse = ""))
 
@@ -169,7 +215,7 @@ formatGtStrings <- function(gt, nTaxa = 5, nSites = 10) {
         paste0(fgs, collapse = "")
     })
 
-    fGtIds  <- addGtRowColIds(gt, fGtStrings, nTaxa, nSites)
+    fGtIds  <- addGtRowColIds(gt, fGtStrings, nSites)
     fGtTaxa <- formatGtNames(gt, nTaxa, nSites)
 
     res <- Map(function(v, l) paste0(v, l), fGtTaxa, fGtIds)
