@@ -6,7 +6,7 @@ setClass(
     Class = "TasselGenotype",
     slots = c(
         dispData    = "list",
-        jGeno       = "jobjRef",
+        jRefObj     = "jobjRef",
         jMemAddress = "character",
         jClass      = "character"
     )
@@ -22,23 +22,16 @@ setClass(
 #' @export
 readGenotype <- function(x, sortPositions = FALSE, keepDepth = FALSE) {
     if (is.character(x)) {
-        xNorm <- normalizePath(x)
+        xNorm <- normalizePath(x, mustWork = FALSE)
         if (!file.exists(xNorm)) {
             rlang::abort("The input path is not a valid file")
         }
 
-        rJc         <- rJava::.jnew(TASSEL_JVM$R_METHODS)
-        javaGt      <- rJc$read(xNorm, keepDepth, sortPositions)
-        jClass      <- rJava::.jclass(javaGt)
-        jMemAddress <- gsub(".*@", "", rJava::.jstrVal(javaGt))
-
-        methods::new(
-            Class = "TasselGenotype",
-            dispData    = formatGtStrings(javaGt),
-            jGeno       = javaGt,
-            jMemAddress = jMemAddress,
-            jClass      = jClass
-        )
+        readGenotypeFromPath(x, sortPositions, keepDepth)
+    } else if (is.matrix(x)) {
+        readGenotypeFromRMatrix(x)
+    } else {
+        rlang::abort("Unsupported data type")
     }
 }
 
@@ -46,14 +39,31 @@ readGenotype <- function(x, sortPositions = FALSE, keepDepth = FALSE) {
 
 # /// Methods (show) ////////////////////////////////////////////////
 
+## ----
 #' @export
 setMethod("show", "TasselGenotype", function(object) {
     printGtDisp(
         fgs    = object@dispData,
-        nTaxa  = object@jGeno$numberOfTaxa(),
-        nSites = object@jGeno$numberOfSites(),
+        nTaxa  = object@jRefObj$numberOfTaxa(),
+        nSites = object@jRefObj$numberOfSites(),
         jMem   = object@jMemAddress
     )
 })
+
+
+
+# /// Methods (general) /////////////////////////////////////////////
+
+## ----
+#' @rdname javaRefObj
+#' @export
+setMethod(
+    f = "javaRefObj",
+    signature = signature(object = "TasselGenotype"),
+    definition = function(object) {
+        return(object@jRefObj)
+    }
+)
+
 
 
