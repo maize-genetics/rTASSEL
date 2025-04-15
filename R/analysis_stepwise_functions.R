@@ -52,6 +52,20 @@ stepwiseModelFitter <- function(
         stop("tasObj does not contain a Phenotype object")
     }
 
+    # Logic - Check if formula is "all-by-all"
+    if (formula[[2]] != "." || formula[[3]] != ".") {
+        # Subset phenotype data
+        rData        <- tableReportToDF(tasObj@jPhenotypeTable)
+        attrData     <- makeAttributeData(tasObj@jPhenotypeTable, rData)
+        traitsToKeep <- parseFormula(formula, attrData)
+        subPh        <- selectTraitsFromJavaRef(tasObj@jPhenotypeTable, unlist(traitsToKeep))
+        jSubPheno    <- javaRefObj(subPh)
+
+        # Combine sub data with genotype
+        jGtPh  <- combineTasselGenotypePhenotype(tasObj@jGenotypeTable, jSubPheno)
+        tasObj <- .tasselObjectConstructor(jGtPh)
+    }
+
     # Validate modelType
     stepPlugin <- rJava::.jnew(TASSEL_JVM$STEPWISE_PLUGIN)$modelType()
     modelType <- rlang::arg_match(modelType)

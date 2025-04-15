@@ -67,15 +67,15 @@ selectTraitsFromFormula <- function(ph, f) {
     return(subPh)
 }
 
+
 ## ----
-selectTraits <- function(ph, traits) {
-    # Check for "Taxa" id - this is needed!
+selectTraitsCommon <- function(attrData, traits, jRefObj) {
+    # Ensure "Taxa" is in the trait list
     if (!"Taxa" %in% traits) {
         traits <- c("Taxa", traits)
     }
 
     # Filter attribute data for selected traits
-    attrData <- attributeData(ph)
     attrDataSub <- attrData[attrData$trait_id %in% traits, ]
 
     # Identify missing traits (excluding "Taxa" from the check)
@@ -87,17 +87,40 @@ selectTraits <- function(ph, traits) {
         ))
     }
 
+    # Abort if no traits are found
     if (nrow(attrDataSub) == 0) {
         rlang::abort("No provided traits found in phenotype data")
     }
 
-    phenoBuilder <- rJava::.jnew(rTASSEL:::TASSEL_JVM$PHENO_BUILDER)$
-        fromPhenotype(javaRefObj(ph))$
+    # Build the phenotype using the Java builder
+    phenoBuilder <- rJava::.jnew(TASSEL_JVM$PHENO_BUILDER)$
+        fromPhenotype(jRefObj)$
         keepAttributes(rJava::.jarray(attrDataSub$attr_idx))$
         build()$
         get(0L)
 
-    return(rTASSEL:::createTasselPhenotype(phenoBuilder))
+    # Create and return the Tassel phenotype
+    return(createTasselPhenotype(phenoBuilder))
+}
+
+
+## ----
+selectTraitsFromJavaRef <- function(jRefObj, traits) {
+    # Obtain necessary attribute data from the Java reference object
+    attrData <- makeAttributeData(jRefObj, tableReportToDF(jRefObj))
+
+    # Use the common helper for further processing
+    return(selectTraitsCommon(attrData, traits, jRefObj))
+}
+
+
+## ----
+selectTraits <- function(ph, traits) {
+    # Retrieve attribute data directly
+    attrData <- attributeData(ph)
+
+    # Use the common helper for further processing
+    return(selectTraitsCommon(attrData, traits, javaRefObj(ph)))
 }
 
 
@@ -231,7 +254,7 @@ createTasselPhenotype <- function(javaPh) {
 #
 # @return An object of class `TasselPhenotype`.
 readPhenotypeFromFile <- function(path) {
-    xNorm <- normalizePath(path)
+    xNorm <- normalizePath(path, mustWork = FALSE)
     if (!file.exists(xNorm)) {
         rlang::abort("The input path is not a valid file")
     }
