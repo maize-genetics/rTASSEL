@@ -66,7 +66,7 @@ assocModelFitter <- function(
     kinship = NULL,
     fastAssociation = FALSE,
     maxP = 0.001,
-    maxThreads = NULL,
+    maxThreads = 1,
     minClassSize = 0,
     outputFile = NULL,
     biallelicOnly = FALSE,
@@ -99,13 +99,13 @@ assocModelFitter <- function(
     }
 
     # Subset phenotype data
-    rData        <- tableReportToDF(tasObj@jPhenotypeTable)
-    attrData     <- makeAttributeData(tasObj@jPhenotypeTable, rData)
-    traitsToKeep <- unlist(parseFormula(formula, attrData))
+    rData        <- rTASSEL:::tableReportToDF(tasObj@jPhenotypeTable)
+    attrData     <- rTASSEL:::makeAttributeData(tasObj@jPhenotypeTable, rData)
+    traitsToKeep <- unlist(rTASSEL:::parseFormula(formula, attrData))
 
     # Logic - Handle association analyses
     jRC <- rJava::J("net/maizegenetics/plugindef/GenerateRCode")
-    jTasFilt <- tasPhenoFilter(
+    jTasFilt <- rTASSEL:::tasPhenoFilter(
         tasObj = tasObj,
         filtObj = traitsToKeep
     )
@@ -136,6 +136,7 @@ assocModelFitter <- function(
     } else {
         saveToFile <- FALSE
         outputFile <- rJava::.jnull()
+        # outputFile <- "void"
     }
 
     # Logic - Handle association types and output
@@ -243,22 +244,37 @@ assocModelFitter <- function(
                         genotypeTable = tasObj@jGenotypeTable,
                         phenotype = blueOut
                     )
-                    assocOut <- jRC$fastAssociation(
-                        blueOut,
-                        rJava::.jnew("java/lang/Double", maxP),
-                        maxThreads,
-                        saveToFile,
-                        outputFile
+
+                    if (rJava::is.jnull(outputFile)) {
+                        outputFile <- "void"
+                        # saveToFile <- FALSE
+                    }
+                    assocOut <- rJava::.jcall(
+                        "net.maizegenetics.plugindef.GenerateRCode", # fully‑qualified class
+                        "Ljava/util/Map;",                           # JNI return type
+                        "fastAssociation",                           # static method name
+                        blueOut,                                     # GenotypePhenotype Java object
+                        as.double(maxP),                             # primitive double (maxp)
+                        maxThreads,                                  # max threads
+                        saveToFile,                                  # primitive boolean (writeToFile)
+                        outputFile                                   # java.lang.String (outputFile)
                     )
                     assocType <- "FastAssoc"
                 } else {
+                    if (rJava::is.jnull(outputFile)) {
+                        outputFile <- "void"
+                        # saveToFile <- FALSE
+                    }
                     message("Association Analysis : Fast Association")
-                    assocOut <- jRC$fastAssociation(
-                        jTasFilt$genotypePhenotype,
-                        rJava::.jnew("java/lang/Double", maxP),
-                        maxThreads,
-                        saveToFile,
-                        outputFile
+                    assocOut <- rJava::.jcall(
+                        "net.maizegenetics.plugindef.GenerateRCode", # fully‑qualified class
+                        "Ljava/util/Map;",                           # JNI return type
+                        "fastAssociation",                           # static method name
+                        jTasFilt$genotypePhenotype,                  # GenotypePhenotype Java object
+                        as.double(maxP),                             # primitive double (maxp)
+                        maxThreads,                                  # java.lang.Integer (maxThreads)
+                        saveToFile,                                  # primitive boolean (writeToFile)
+                        outputFile                                   # java.lang.String (outputFile)
                     )
                     assocType <- "FastAssoc"
                 }

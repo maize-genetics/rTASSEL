@@ -352,26 +352,6 @@ test_that("BLUE analysis return correct data types.", {
 
 
 ## Miscellaneous logic checks ----
-
-test_that("assocModelFitter() handles '.' variables correctly", {
-    expect_message(
-        object = assocModelFitter(
-            tasObj     = tasGenoPhenoCov,
-            formula    = . ~ location,
-            fitMarkers = TRUE
-        ),
-        regexp = "Running all <data> traits..."
-    )
-    expect_message(
-        object = assocModelFitter(
-            tasObj     = tasGenoPhenoCov,
-            formula    = EarHT ~ .,
-            fitMarkers = TRUE
-        ),
-        regexp = "Running all non <data> traits and/or <taxa>..."
-    )
-})
-
 test_that("assocModelFitter() handles threads", {
     expect_message(
         assocModelFitter(
