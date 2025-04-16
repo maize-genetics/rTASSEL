@@ -465,13 +465,23 @@ readGenotypeFromPath <- function(x, sortPositions, keepDepth) {
     jClass      <- rJava::.jclass(javaGt)
     jMemAddress <- gsub(".*@", "", rJava::.jstrVal(javaGt))
 
-    methods::new(
-        Class = "TasselGenotype",
-        dispData    = formatGtStrings(javaGt),
-        jRefObj     = javaGt,
-        jMemAddress = jMemAddress,
-        jClass      = jClass
-    )
+    if (javaGt$hasGenotype()) {
+        methods::new(
+            Class = "TasselGenotype",
+            dispData    = formatGtStrings(javaGt),
+            jRefObj     = javaGt,
+            jMemAddress = jMemAddress,
+            jClass      = jClass
+        )
+    } else {
+        methods::new(
+            Class = "TasselNumericGenotype",
+            dispData    = formatNumGtStrings(javaGt, nTaxa = 5, nSites = 5),
+            jRefObj     = javaGt,
+            jMemAddress = jMemAddress,
+            jClass      = jClass
+        )
+    }
 }
 
 
