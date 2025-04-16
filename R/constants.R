@@ -1,5 +1,10 @@
 ## ----
-# Commonly used JVM and PHG API classes
+# TASSEL JVM Constants
+# 
+# @description
+# Constants for TASSEL 5 Java class references used throughout the 
+# package. These constants provide mappings to the Java classes and 
+# methods used by rTASSEL.
 TASSEL_JVM <- list(
     "ARRAY_LIST"               = "java.util.ArrayList",
     "CHROMOSOME"               = "net.maizegenetics.dna.map.Chromosome",

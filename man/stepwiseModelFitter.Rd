@@ -15,29 +15,33 @@ stepwiseModelFitter(
 )
 }
 \arguments{
-\item{tasObj}{A \code{TasselGenotypePhenotype} object. The input data for model fitting.}
+\item{tasObj}{A \code{TasselGenotypePhenotype} object. The input data for model 
+fitting.}
 
 \item{formula}{A model formula, default is \code{. ~ .}.}
 
-\item{modelType}{Character. The model selection criteria used to determine which terms enter
-the model and how many. Must be one of \code{"pvalue"}, \code{"bic"},
-\code{"mbic"}, or \code{"aic"}. Default is \code{"pvalue"}.}
+\item{modelType}{Character. The model selection criteria used to determine which 
+terms enter the model and how many. Must be one of \code{"pvalue"}, 
+\code{"bic"}, \code{"mbic"}, or \code{"aic"}. Default is 
+\code{"pvalue"}.}
 
-\item{entryLimit}{Numeric. The enter limit or maximum p-value for which a term can enter the
-model. Must be in range 0.0–1.0. Default is \code{0.01}.}
+\item{entryLimit}{Numeric. The enter limit or maximum p-value for which a term can 
+enter the model. Must be in range 0.0–1.0. Default is \code{0.01}.}
 
-\item{exitLimit}{Numeric. A term exits the model on a backward step if its p-value is greater
-than this value. Must be in range 0.0–1.0. Default is \code{0.01}.}
+\item{exitLimit}{Numeric. A term exits the model on a backward step if its p-value 
+is greater than this value. Must be in range 0.0–1.0. Default is 
+\code{0.01}.}
 
-\item{maxNumberOfMarkers}{Integer. The maximum number of markers that will
-be fit, if the enter limit is not reached first. Range 0–10000. Default is
+\item{maxNumberOfMarkers}{Integer. The maximum number of markers that will be fit, if the 
+enter limit is not reached first. Range 0–10000. Default is 
 \code{20}.}
 
-\item{nPermutations}{Integer. Number of permutations for the model to
-determine an empirical alpha. Range 0–100000. Default is \code{0}.}
+\item{nPermutations}{Integer. Number of permutations for the model to determine an 
+empirical alpha. Range 0–100000. Default is \code{0}.}
 }
 \value{
-A list of association result tables including ANOVA reports and marker effect estimates, with and without confidence intervals.
+A list of association result tables including ANOVA reports and 
+marker effect estimates, with and without confidence intervals.
 }
 \description{
 Fits a model using stepwise selection criteria based on the provided
@@ -47,4 +51,5 @@ genotype-phenotype object.
 \dontrun{
 results <- stepwiseModelFitter(tasObj)
 }
+
 }

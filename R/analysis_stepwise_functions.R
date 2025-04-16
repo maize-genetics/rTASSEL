@@ -7,32 +7,40 @@
 #' genotype-phenotype object.
 #'
 #' @param tasObj
-#' A \code{TasselGenotypePhenotype} object. The input data for model fitting.
+#' A \code{TasselGenotypePhenotype} object. The input data for model 
+#' fitting.
 #' @param formula
 #' A model formula, default is \code{. ~ .}.
 #' @param modelType
-#' Character. The model selection criteria used to determine which terms enter
-#' the model and how many. Must be one of \code{"pvalue"}, \code{"bic"},
-#' \code{"mbic"}, or \code{"aic"}. Default is \code{"pvalue"}.
+#' Character. The model selection criteria used to determine which 
+#' terms enter the model and how many. Must be one of \code{"pvalue"}, 
+#' \code{"bic"}, \code{"mbic"}, or \code{"aic"}. Default is 
+#' \code{"pvalue"}.
 #' @param entryLimit
-#' Numeric. The enter limit or maximum p-value for which a term can enter the
-#' model. Must be in range 0.0–1.0. Default is \code{0.01}.
+#' Numeric. The enter limit or maximum p-value for which a term can 
+#' enter the model. Must be in range 0.0–1.0. Default is \code{0.01}.
 #' @param exitLimit
-#' Numeric. A term exits the model on a backward step if its p-value is greater
-#' than this value. Must be in range 0.0–1.0. Default is \code{0.01}.
-#' @param maxNumberOfMarkers Integer. The maximum number of markers that will
-#' be fit, if the enter limit is not reached first. Range 0–10000. Default is
+#' Numeric. A term exits the model on a backward step if its p-value 
+#' is greater than this value. Must be in range 0.0–1.0. Default is 
+#' \code{0.01}.
+#' @param maxNumberOfMarkers
+#' Integer. The maximum number of markers that will be fit, if the 
+#' enter limit is not reached first. Range 0–10000. Default is 
 #' \code{20}.
-#' @param nPermutations Integer. Number of permutations for the model to
-#' determine an empirical alpha. Range 0–100000. Default is \code{0}.
-#'
-#' @return A list of association result tables including ANOVA reports and marker effect estimates, with and without confidence intervals.
-#' @export
+#' @param nPermutations
+#' Integer. Number of permutations for the model to determine an 
+#' empirical alpha. Range 0–100000. Default is \code{0}.
 #'
 #' @examples
 #' \dontrun{
 #' results <- stepwiseModelFitter(tasObj)
 #' }
+#' 
+#' @return
+#' A list of association result tables including ANOVA reports and 
+#' marker effect estimates, with and without confidence intervals.
+#' 
+#' @export
 stepwiseModelFitter <- function(
     tasObj,
     formula = . ~ .,

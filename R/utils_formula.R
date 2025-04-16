@@ -1,4 +1,18 @@
-# Helper: recursively check whether an expression contains a dot (".")
+## ----
+# Recursively check whether an expression contains a dot (".")
+#
+# @description
+# This function recursively checks whether a given R expression 
+# contains the dot symbol (`.`). It can handle symbols, calls, and 
+# other types of expressions.
+#
+# @param expr
+# An R expression to be checked. This can be a symbol, a call, 
+# or other types of expressions.
+#
+# @return
+# A logical value: `TRUE` if the dot symbol (`.`) is present in the 
+# expression, and `FALSE` otherwise.
 hasDot <- function(expr) {
     if (is.symbol(expr)) {
         return(as.character(expr) == ".")
@@ -9,18 +23,57 @@ hasDot <- function(expr) {
     }
 }
 
-# Recursive evaluator for left-to-right “chain” evaluation.
+
+## ----
+# Evaluate an Expression in the Context of a Formula
 #
-# This version returns a list with two elements:
-#   - result: a character vector of variable names produced by evaluating the expression.
-#   - explicit: the set of variable names that were explicitly mentioned (i.e. not injected via a default dot).
+# @description
+# This function evaluates an expression within the context of a 
+# formula, supporting operations such as symbol resolution, special 
+# handling for predictors, and binary/unary operators. It is designed 
+# to process expressions in formula parsing, particularly for 
+# response and predictor sides.
 #
-# Parameters:
-#   - expr: the expression to evaluate.
-#   - defaultSet: the set to inject if a dot is encountered as the first token.
-#   - isFirst: a logical flag indicating whether the current term is first in a chain.
-#   - side: a string ("response" or "predictor"). For side == "predictor", special tokens I(cov) and I(fct) are supported.
-#   - df: if side is "predictor", the attribute data frame must be provided.
+# @details
+# - Symbols are resolved to their character representation. A dot 
+#   (`.`) is replaced with the `defaultSet` on the first occurrence, 
+#   and treated as identity (no effect) on subsequent occurrences.
+# - Special handling is provided for `I(cov)` and `I(fct)` on the 
+#   predictor side, which resolve to covariate and factor sets, 
+#   respectively.
+# - Binary operators (`+`, `-`) are supported for combining or 
+#   subtracting sets of variables. Unary minus (`-`) is interpreted 
+#   as subtracting from the `defaultSet` when it appears at the 
+#   beginning.
+# - Calls to `c(...)` are evaluated recursively, combining results 
+#   from each argument.
+# - Unsupported expression types or invalid usage will result in an 
+#   error.
+# 
+# @param expr
+# An R expression to evaluate. This can be a symbol, a call, or 
+# other supported expression types.
+# @param defaultSet
+# A character vector representing the default set of variables to 
+# use when the expression contains a dot (`.`).
+# @param isFirst
+# Logical, indicating whether this is the first occurrence of the 
+# expression in the formula. Defaults to `TRUE`.
+# @param side
+# A string indicating the side of the formula being evaluated. Can 
+# be `"response"` or `"predictor"`.
+# @param df
+# A data frame containing metadata about traits. Required when 
+# evaluating special cases like `I(cov)` or `I(fct)` on the predictor 
+# side.
+#
+# @return
+# A list with two elements:
+#   - result.....: A character vector of resolved variable names or 
+#                  sets.
+#   - explicit...: A character vector of explicitly mentioned 
+#                  variable names in the expression.
+#
 evalExpr <- function(expr, defaultSet, isFirst = TRUE, side = "response", df = NULL) {
     if (is.symbol(expr)) {
         varName <- as.character(expr)
@@ -40,11 +93,11 @@ evalExpr <- function(expr, defaultSet, isFirst = TRUE, side = "response", df = N
         # --- Special case for predictor side: I(cov) and I(fct) ---
         if (side == "predictor" && op == "I") {
             if (length(expr) != 2) {
-                stop("I() call in predictor side must have exactly one argument")
+                rlang::abort("I() call in predictor side must have exactly one argument")
             }
             arg <- expr[[2]]
             if (!is.symbol(arg)) {
-                stop("I() call in predictor side must have a symbol argument (cov or fct)")
+                rlang::abort("I() call in predictor side must have a symbol argument (cov or fct)")
             }
             token <- as.character(arg)
             if (token == "cov") {
@@ -52,7 +105,7 @@ evalExpr <- function(expr, defaultSet, isFirst = TRUE, side = "response", df = N
             } else if (token == "fct") {
                 specialSet <- df$trait_id[df$trait_type == "factor"]
             } else {
-                stop("I() call in predictor side must be either I(cov) or I(fct)")
+                rlang::abort("I() call in predictor side must be either I(cov) or I(fct)")
             }
             # The special token returns its corresponding set. Its explicit token is recorded as the token value.
             return(list(result = specialSet, explicit = token))
@@ -84,44 +137,65 @@ evalExpr <- function(expr, defaultSet, isFirst = TRUE, side = "response", df = N
                 resultVec <- setdiff(defaultSet, operandEval$result)
                 return(list(result = resultVec, explicit = operandEval$explicit))
             } else {
-                stop("Unary minus encountered in non-first position is not supported.")
+                rlang::abort("Unary minus encountered in non-first position is not supported.")
             }
         } else {
-            stop("Unknown expression type encountered during formula parsing.")
+            rlang::abort("Unknown expression type encountered during formula parsing.")
         }
     } else {
-        stop("Unsupported expression type encountered.")
+        rlang::abort("Unsupported expression type encountered.")
     }
 }
 
-# Main function: parseFormula
+
+## ----
+# Parse a Formula String and Validate Variables
 #
-# Parameters:
-#   - formulaStr: a character string specifying the formula.
-#       e.g. "c(dpoll, d3) ~ . - I(cov)" or ". ~ Q1 + I(fct)"
-#   - df: an attribute data frame with at least the following columns:
-#           * trait_id: variable identifiers,
-#           * trait_type: classification (e.g., "data", "covariate", "factor", etc.)
+# @description
+# This function parses a formula string and validates the variables 
+# used in the formula against a provided data frame of valid 
+# variables and their types. It supports the use of a dot (`.`) in 
+# the formula to represent default sets of response and predictor 
+# variables.
 #
-# Behavior:
-#   - Response (LHS):
-#       * If a dot is present then the default is all variables with trait_type "data".
-#       * Otherwise, only the explicit tokens (e.g. via c(...) or plain symbols) are used.
+# @details
+# The function performs the following steps:
+#   1. Parses the formula string into a formula object.
+#   2. Identifies the left-hand side (response) and right-hand side 
+#      (predictors) of the formula.
+#   3. Evaluates the formula, injecting default variables if a dot 
+#      (`.`) is present.
+#   4. Validates the explicit variables in the formula against the 
+#      valid variables in `df`.
+#   5. Ensures type consistency:
+#      - Response variables must be of type `"data"`.
+#      - Predictor variables cannot be of type `"data"`.
+#   6. Returns the validated response and predictor variables.
 #
-#   - Predictors (RHS):
-#       * If a dot is present then the default is all variables with trait_type in c("covariate", "factor").
-#       * Otherwise, only the explicit tokens are used.
-#       * In addition, the special tokens I(cov) and I(fct) (allowed only on the predictor side)
-#         return the sets of variables with trait_type "covariate" and "factor" respectively.
+# @param formulaStr
+# A character string representing the formula to be parsed. For 
+# example, `"response ~ predictors"`.
+# @param df
+# A data frame containing valid variable information. It must have 
+# the following columns:
+#   - `trait_id`: Character vector of variable names.
+#   - `trait_type`: Character vector indicating the type of each 
+#     variable. Expected values are:
+#       - `"data"`: Variables allowed in the response.
+#       - `"covariate"` or `"factor"`: Variables allowed in the 
+#         predictors.
 #
-# After evaluating each side, the function:
-#   1. Checks the explicit tokens against the attribute data:
-#         - If some explicit variables are missing (i.e. not found in df$trait_id) and at least one valid explicit exists
-#           or a default is present, a warning is issued and those missing names are dropped.
-#         - If all explicit tokens on a side are missing, an error is raised.
-#   2. Enforces type consistency:
-#         - The response must contain only variables with trait_type "data".
-#         - The predictors must not include any variables with trait_type "data".
+# @note
+# - If no valid response variables are selected, an error is raised.
+# - If no valid predictor variables are selected, the function does 
+#   not raise an error but returns an empty vector for predictors.
+# - Warnings are issued for any explicit variables in the formula 
+#   that are not found in `df`.
+# 
+# @return
+# A list with two elements:
+#   - `response`: A character vector of valid response variables.
+#   - `predictors`: A character vector of valid predictor variables.
 parseFormula <- function(formulaStr, df) {
     # Valid variable names from the attribute data.
     validVars <- df$trait_id
@@ -161,10 +235,10 @@ parseFormula <- function(formulaStr, df) {
         if (length(explicit) > 0 && length(missingVars) > 0) {
             # If no valid explicit variable remains and no default is injected, raise an error.
             if (!sideHasDefault && length(explicit) == length(missingVars)) {
-                stop(sprintf("Error in %s: All explicit variable(s) not found in attributes: %s",
+                rlang::abort(sprintf("Error in %s: All explicit variable(s) not found in attributes: %s",
                              sideName, paste(missingVars, collapse = ", ")))
             } else {
-                warning(sprintf("Warning in %s: The following explicit variable(s) were not found in attributes and will be ignored: %s",
+                rlang::warn(sprintf("Warning in %s: The following explicit variable(s) were not found in attributes and will be ignored: %s",
                                 sideName, paste(missingVars, collapse = ", ")))
             }
         }
@@ -179,7 +253,7 @@ parseFormula <- function(formulaStr, df) {
     predictorFinal <- intersect(predictorVars, validVars)
 
     if (length(responseFinal) == 0) {
-        stop("Error in response: No valid response variables selected.")
+        rlang::abort("Error in response: No valid response variables selected.")
     }
     # Note: The check for predictorFinal having zero length has been removed.
 
@@ -187,15 +261,16 @@ parseFormula <- function(formulaStr, df) {
     # For response, only variables with trait_type "data" are allowed.
     wrongTypeResponse <- df$trait_type[df$trait_id %in% responseFinal & df$trait_type != "data"]
     if (length(wrongTypeResponse) > 0) {
-        stop("Error in response: Only 'data' type variables are allowed in the response. Found non-'data' types.")
+        rlang::abort("Error in response: Only 'data' type variables are allowed in the response. Found non-'data' types.")
     }
 
     # For predictors, variables of type "data" are not permitted.
     wrongTypePredictor <- df$trait_type[df$trait_id %in% predictorFinal & df$trait_type == "data"]
     if (length(wrongTypePredictor) > 0) {
-        stop("Error in predictors: 'data' type variables are not allowed in predictors. Only 'covariate' and 'factor' types are permitted.")
+        rlang::abort("Error in predictors: 'data' type variables are not allowed in predictors. Only 'covariate' and 'factor' types are permitted.")
     }
 
     return(list(response = responseFinal, predictors = predictorFinal))
 }
+
 

@@ -1,13 +1,40 @@
 # /// Display functions (core) //////////////////////////////////////
 
 ## ----
+# Generate Ellipsis with Optional Spacing
+# 
+# @description
+# Creates an ellipsis symbol with optional spacing on either side.
+#
+# @param ind
+# Integer indicating the number of spaces to add on each side. If 
+# \code{NULL}, no spacing is added.
+#
+# @return
+# A character string containing a formatted ellipsis
 subEllipsis <- function(ind = NULL) {
     spacer <- ifelse(!is.null(ind), strrep(" ", ind), "")
-    sprintf(paste0(spacer, "%s", spacer), pillar::style_subtle(cli::symbol$ellipsis))
+    sprintf(
+        paste0(spacer, "%s", spacer), 
+        pillar::style_subtle(cli::symbol$ellipsis)
+    )
 }
 
 
 ## ----
+# Truncate Genotype Name
+# 
+# @description
+# Truncates a genotype identifier if it exceeds the maximum length, 
+# adding an ellipsis.
+#
+# @param id
+# Character string to be truncated
+# @param maxLength 
+# Maximum allowed length for the string
+#
+# @return
+# A character string, either truncated with ellipsis or unchanged
 truncateGtName <- function(id, maxLength = 5) {
     if (nchar(id) > maxLength) {
         paste0(substr(id, 1, maxLength - 1), cli::symbol$ellipsis)
@@ -18,6 +45,22 @@ truncateGtName <- function(id, maxLength = 5) {
 
 
 ## ----
+# Format Genotype Names for Display
+# 
+# @description
+# Formats a list of genotype taxa names for display, handling 
+# truncation and padding. If there are more taxa than the display 
+# limit, shows first n taxa, ellipsis, and last taxon.
+#
+# @param gt
+# Genotype object containing taxa names
+# @param nTaxa 
+# Number of taxa to display before truncating
+# @param maxLength 
+# Maximum length allowed for each taxa name
+#
+# @return
+# A character vector of formatted and padded taxa names
 formatGtNames <- function(gt, nTaxa = 5, maxLength = 5) {
     maxTaxa <- gt$numberOfTaxa()
 
@@ -61,6 +104,22 @@ formatGtNames <- function(gt, nTaxa = 5, maxLength = 5) {
 
 
 ## ----
+# Add Row and Column IDs to Genotype Display
+# 
+# @description
+# Adds row and column identifiers to the genotype display matrix
+#
+# @param gt
+# Genotype object
+# @param fgs 
+# Formatted genotype strings
+# @param nSites 
+# Number of sites to display before truncating
+# @param numeric 
+# Logical indicating if numeric formatting should be used
+# 
+# @return
+# A vector of formatted strings with row and column IDs
 addGtRowColIds <- function(gt, fgs, nSites = 10, numeric = FALSE) {
     maxSite <- gt$numberOfSites()
     fmt <- if (numeric) "%2d     " else "%2d "
@@ -84,6 +143,16 @@ addGtRowColIds <- function(gt, fgs, nSites = 10, numeric = FALSE) {
 # /// Display functions (numeric GTs) ///////////////////////////////
 
 ## ----
+# Format Reference Probability Values
+# 
+# @description
+# Formats reference probability values with color-coded backgrounds
+#
+# @param rpVals
+# Numeric vector of reference probability values between 0 and 1
+#
+# @return
+# Character vector of ANSI-formatted strings
 formatRefProb <- function(rpVals) {
     if (!is.numeric(rpVals)) {
         rlang::abort("Input must be numeric.")
@@ -93,7 +162,7 @@ formatRefProb <- function(rpVals) {
         rlang::abort("All values must be in the range [0–1]")
     }
 
-    # ANSI background colors: white to turquoise
+    # ANSI background colors: white to turquoise (blue/green)
     bgCodes <- c(231, 195, 159, 87, 45)
 
     vapply(rpVals, FUN.VALUE = character(1), FUN = function(val) {
@@ -108,6 +177,20 @@ formatRefProb <- function(rpVals) {
 
 
 ## ----
+# Generate Numeric Genotype Display Strings
+# 
+# @description
+# Creates formatted display strings for numeric genotype data
+#
+# @param gt
+# Genotype object
+# @param nTaxa
+# Maximum number of taxa to display
+# @param nSites
+# Maximum number of sites to display
+# 
+# @return
+# A list of formatted strings for display
 genNumGtDispStrings <- function(gt, nTaxa = 5, nSites = 10) {
     totalSites <- gt$numberOfSites()
     totalTaxa  <- gt$numberOfTaxa()
@@ -116,18 +199,29 @@ genNumGtDispStrings <- function(gt, nTaxa = 5, nSites = 10) {
         if (totalSites > siteLimit + 2) {
             row <- vapply(seq_len(siteLimit), function(site) {
                 formatRefProb(
-                    gt$referenceProbability(as.integer(taxonIndex - 1), as.integer(site - 1))
+                    gt$referenceProbability(
+                        as.integer(taxonIndex - 1), 
+                        as.integer(site - 1)
+                    )
                 )
             }, FUN.VALUE = character(1))
             row <- c(
                 row,
                 subEllipsis(1),
-                formatRefProb(gt$referenceProbability(as.integer(taxonIndex - 1), as.integer(totalSites - 1)))
+                formatRefProb(
+                    gt$referenceProbability(
+                        as.integer(taxonIndex - 1), 
+                        as.integer(totalSites - 1)
+                    )
+                )
             )
         } else {
             row <- vapply(seq_len(totalSites), function(site) {
                 formatRefProb(
-                    gt$referenceProbability(as.integer(taxonIndex - 1), as.integer(site - 1))
+                    gt$referenceProbability(
+                        as.integer(taxonIndex - 1), 
+                        as.integer(site - 1)
+                    )
                 )
             }, FUN.VALUE = character(1))
         }
@@ -166,6 +260,21 @@ genNumGtDispStrings <- function(gt, nTaxa = 5, nSites = 10) {
 
 
 ## ----
+# Format Numeric Genotype Strings
+# 
+# @description
+# Formats numeric genotype data for display, including taxa names and 
+# IDs
+#
+# @param gt
+# Genotype object
+# @param nTaxa
+# Maximum number of taxa to display
+# @param nSites
+# Maximum number of sites to display
+# 
+# @return
+# A list of formatted strings ready for display
 formatNumGtStrings <- function(gt, nTaxa = 5, nSites = 10) {
     fGtStrings  <- genNumGtDispStrings(gt, nTaxa, nSites)
 
@@ -180,6 +289,22 @@ formatNumGtStrings <- function(gt, nTaxa = 5, nSites = 10) {
 
 
 ## ----
+# Print Numeric Genotype Display
+# 
+# @description
+# Prints formatted numeric genotype data to the console
+#
+# @param fgs
+# Formatted genotype strings
+# @param nTaxa 
+# Number of taxa
+# @param nSites
+# Number of sites
+# @param jMem
+# Java memory address
+# 
+# @return
+# None (called for side effects)
 printNumGtDisp <- function(fgs, nTaxa, nSites, jMem) {
     header <- pillar::style_subtle(
         sprintf(
@@ -213,27 +338,67 @@ printNumGtDisp <- function(fgs, nTaxa, nSites, jMem) {
 # /// Display functions (allele GTs) ////////////////////////////////
 
 ## ----
-# Mini functions for CLI formatting
-# NOTE: hard-coding ANSI escapes here since calling CLI commands in a list at
-#       run-time does not evaluate the full ANSI string?
+# Format ANSI Bold Style
+# 
+# @description
+# Applies ANSI bold formatting to text
+#
+# @param allele
+# Character string to format
+# 
+# @return
+# A character string with ANSI bold formatting
 boldStyle <- function(allele) {
     sprintf("\033[1m %s \033[22m", allele)
 }
 
+## ----
+# Format Green Background with Bold Text
+# 
+# @description
+# Applies green background with white bold text ANSI formatting
+#
+# @param allele
+# Character string to format
+# 
+# @return A character string with ANSI formatting
 bgGreenBold <- function(allele) {
     sprintf("\033[42m\033[37m\033[1m %s \033[22m\033[39m\033[49m", allele)
 }
 
+
+## ----
+# Format Yellow Background with Bold Text
+# 
+# @description
+# Applies yellow background with black bold text ANSI formatting
+#
+# @param allele
+# Character string to format
+# 
+# @return A character string with ANSI formatting
 bgYellowBold <- function(allele) {
     sprintf("\033[43m\033[30m\033[1m %s \033[22m\033[39m\033[49m", allele)
 }
 
+
+## ----
+# Format Blue Background with White Bold Text
+# 
+# @description
+# Applies blue background with white bold text ANSI formatting
+#
+# @param allele
+# Character string to format
+# 
+# @return A character string with ANSI formatting
 bgBlueWhiteBold <- function(allele) {
     sprintf("\033[44m\033[37m\033[1m %s \033[22m\033[39m\033[49m", allele)
 }
 
 
 ## ----
+# Cache for allele Formatting Styles
 styleCache <- list(
     "N"    = boldStyle("N"),
     "R"    = bgGreenBold("R"),
@@ -254,26 +419,63 @@ styleCache <- list(
 
 
 ## ----
+# Format Allele with Styling
+#
+# @description 
+# This function formats a given allele based on its type and whether 
+# it matches the minimum allele. It applies specific styles from the 
+# `styleCache` object for recognized alleles and provides a default 
+# style for unrecognized ones.
+#
+# @details 
+# The function uses a `switch` statement to determine the appropriate
+# style for the given allele. Recognized alleles include "A", "C", 
+# "G", "T", "N", "R", "Y", "S", "W", "K", "M", and "…". If the 
+# allele is not recognized, it is styled as bold with a default 
+# format.
+# 
+# @param currAllele
+# A character string representing the current allele.
+# @param minAllele
+# A character string representing the minimum allele for comparison.
+#
+# @return
+# A styled character string corresponding to the formatted allele.
 formatAllele <- function(currAllele, minAllele) {
     switch(currAllele,
-           "A" = if (currAllele == minAllele) styleCache[["AMin"]] else styleCache[["AMaj"]],
-           "C" = if (currAllele == minAllele) styleCache[["CMin"]] else styleCache[["CMaj"]],
-           "G" = if (currAllele == minAllele) styleCache[["GMin"]] else styleCache[["GMaj"]],
-           "T" = if (currAllele == minAllele) styleCache[["TMin"]] else styleCache[["TMaj"]],
-           "N" = styleCache[["N"]],
-           "R" = styleCache[["R"]],
-           "Y" = styleCache[["Y"]],
-           "S" = styleCache[["S"]],
-           "W" = styleCache[["W"]],
-           "K" = styleCache[["K"]],
-           "M" = styleCache[["M"]],
-           "…" = subEllipsis(1),
-           cli::style_bold(paste0(" ", currAllele, " "))  # Default for any other allele
+        "A" = if (currAllele == minAllele) styleCache[["AMin"]] else styleCache[["AMaj"]],
+        "C" = if (currAllele == minAllele) styleCache[["CMin"]] else styleCache[["CMaj"]],
+        "G" = if (currAllele == minAllele) styleCache[["GMin"]] else styleCache[["GMaj"]],
+        "T" = if (currAllele == minAllele) styleCache[["TMin"]] else styleCache[["TMaj"]],
+        "N" = styleCache[["N"]],
+        "R" = styleCache[["R"]],
+        "Y" = styleCache[["Y"]],
+        "S" = styleCache[["S"]],
+        "W" = styleCache[["W"]],
+        "K" = styleCache[["K"]],
+        "M" = styleCache[["M"]],
+        "…" = subEllipsis(1),
+        cli::style_bold(paste0(" ", currAllele, " "))  # Default for any other allele
     )
 }
 
 
 ## ----
+# Generate Genotype Display Strings
+# 
+# @description
+# Generates formatted strings for displaying genotype data, handling 
+# truncation for large datasets
+#
+# @param gt
+# Genotype object
+# @param nTaxa
+# Maximum number of taxa to display before truncating
+# @param nSites
+# Maximum number of sites to display before truncating
+# 
+# @return
+# A list of formatted genotype strings
 genGtDispStrings <- function(gt, nTaxa = 5, nSites = 10) {
     maxTaxa <- gt$numberOfTaxa()
     maxSite <- gt$numberOfSites()
@@ -312,6 +514,17 @@ genGtDispStrings <- function(gt, nTaxa = 5, nSites = 10) {
 
 
 ## ----
+# Generate Minor Alleles List
+# 
+# @description
+# Creates a list of minor alleles for each site
+#
+# @param gt
+# Genotype object
+# @param nSites
+# Maximum number of sites to process
+# 
+# @return Vector of minor allele characters
 genMinorAlleles <- function(gt, nSites = 10) {
     maxSite <- gt$numberOfSites()
 
@@ -339,6 +552,42 @@ genMinorAlleles <- function(gt, nSites = 10) {
 
 
 ## ----
+# Format Genotype Strings
+#
+# @description
+# This function formats genotype strings for display by processing 
+# the input genotype data and applying various formatting operations. 
+# It generates display strings for genotypes, formats alleles based 
+# on minor alleles, and combines the results with row and column 
+# identifiers.
+#
+# @param gt
+# A genotype object or data structure containing genotype 
+# information.
+# @param nTaxa
+# An integer specifying the number of taxa to include in the 
+# formatted output. Default is 5.
+# @param nSites
+# An integer specifying the number of sites to include in the 
+# formatted output. Default is 10.
+#
+# @details
+# The function performs the following steps:
+#   1. Generates display strings for genotypes using 
+#      `genGtDispStrings`.
+#   2. Computes minor alleles for the given genotype data using 
+#      `genMinorAlleles`.
+#   3. Formats each allele based on the minor allele information 
+#      using `formatAllele`.
+#   4. Combines formatted genotype strings with row and column 
+#      identifiers using `addGtRowColIds`.
+#   5. Formats taxa names for display using `formatGtNames`.
+#   6. Combines formatted taxa names and genotype strings into the 
+#      final result.
+# 
+# @return
+# A list of formatted genotype strings, where each string represents
+# a combination of formatted taxa names and genotype data.
 formatGtStrings <- function(gt, nTaxa = 5, nSites = 10) {
     gtStrings  <- genGtDispStrings(gt, nTaxa, nSites)
     minAlleles <- genMinorAlleles(gt, nSites)
@@ -360,6 +609,26 @@ formatGtStrings <- function(gt, nTaxa = 5, nSites = 10) {
 
 
 ## ----
+# Print Genotype Display
+#
+# @description
+# This function prints a formatted display of genotype information, 
+# including the number of taxa, the number of sites, and a Java 
+# memory address. It also iterates through and prints the elements 
+# of the provided genotype data.
+#
+# @param fgs
+# A list containing genotype data to be displayed.
+# @param nTaxa
+# An integer representing the number of taxa.
+# @param nSites
+# An integer representing the number of sites.
+# @param jMem
+# A string representing the Java memory address.
+#
+# @return
+# This function does not return a value. It prints formatted genotype
+# information to the console.
 printGtDisp <- function(fgs, nTaxa, nSites, jMem) {
     header <- pillar::style_subtle(
         sprintf(
@@ -390,9 +659,36 @@ printGtDisp <- function(fgs, nTaxa, nSites, jMem) {
 
 
 
-# /// Core builders /////////////////////////////////////////////////
+# /// Read functions ////////////////////////////////////////////////
 
 ## ----
+# Read Genotype Data from R Matrix
+#
+# @description
+# This function constructs a `TasselNumericGenotype` object from an 
+# R matrix by interfacing with the TASSEL Java API. It creates taxa 
+# lists, position lists, reference probabilities, and a genotype 
+# table using the provided matrix data.
+#
+# @details
+# - Taxa list is created using the `TASSEL_JVM$TAXA_LIST_BUILDER` 
+#   Java class.
+# - Position list is constructed using the 
+#   `TASSEL_JVM$POSITION_LIST_BUILDER` and 
+#   `TASSEL_JVM$GENERAL_POSITION_BUILDER` Java classes.
+# - Reference probabilities are built using the 
+#   `TASSEL_JVM$REF_PROBABILITY_BUILDER` Java class.
+# - The genotype table is created using the 
+#   `TASSEL_JVM$GENOTYPE_TABLE_BUILDER` Java class.
+# 
+# @param m
+# A numeric matrix where rows represent taxa and columns represent
+# positions/sites. The matrix values are used to calculate reference
+# probabilities.
+#
+# @return
+# An object of class `TasselNumericGenotype` containing the genotype
+# data and metadata.
 readGenotypeFromRMatrix <- function(m) {
     # Make taxa list
     tb <- rJava::.jnew(TASSEL_JVM$TAXA_LIST_BUILDER)
@@ -454,6 +750,37 @@ readGenotypeFromRMatrix <- function(m) {
 
 
 ## ----
+# Format Genotype Strings
+#
+# @description
+# This function formats genotype strings for display by processing 
+# the input genotype data.
+#
+# @details
+# The function performs the following steps:
+#   - Generates genotype display strings using `genGtDispStrings`.
+#   - Computes minor alleles using `genMinorAlleles`.
+#   - Formats alleles using `formatAllele` and combines them into a 
+#     single string.
+#   - Adds row and column IDs to the formatted genotype strings using 
+#     `addGtRowColIds`.
+#   - Formats the names of the taxa using `formatGtNames`.
+#   - Combines the formatted taxa names and genotype strings into the 
+#     final result.
+# 
+# @param gt
+# A genotype object or data structure containing genotype 
+# information.
+# @param nTaxa
+# An integer specifying the number of taxa to include in the 
+# formatted output. Default is 5.
+# @param nSites 
+# An integer specifying the number of sites to include in the 
+# formatted output. Default is 10.
+#
+# @return
+# A list of formatted genotype strings, where each string represents 
+# a combination of taxa and site information.
 readGenotypeFromPath <- function(x, sortPositions, keepDepth) {
     xNorm <- normalizePath(x, mustWork = FALSE)
     if (!file.exists(xNorm)) {
@@ -483,12 +810,5 @@ readGenotypeFromPath <- function(x, sortPositions, keepDepth) {
         )
     }
 }
-
-
-
-
-
-
-
 
 
