@@ -1,32 +1,25 @@
+
 test_that("TasselGenotype class construction and methods work", {
-    # Mock a Java reference object
-    mockJObj <- structure(list(), class = "jobjRef")
-    
-    # Create a TasselGenotype object
-    gt <- new("TasselGenotype",
-              dispData = list(name = "test_genotype"),
-              jRefObj = mockJObj,
-              jMemAddress = "0x123",
-              jClass = "net.maizegenetics.dna.snp.GenotypeTable")
-    
+
+    gtTest <- readGenotype(rtFiles$gt_hmp_path)
+
+
     # Test class structure
-    expect_s4_class(gt, "TasselGenotype")
-    expect_type(gt@dispData, "list")
-    expect_s3_class(gt@jRefObj, "jobjRef")
-    expect_type(gt@jMemAddress, "character")
-    expect_type(gt@jClass, "character")
-    
-    # Test javaRefObj method
-    expect_identical(javaRefObj(gt), mockJObj)
-    
+    expect_s4_class(gtTest, "TasselGenotype")
+    expect_type(gtTest@dispData, "list")
+    expect_s4_class(gtTest@jRefObj, "jobjRef")
+    expect_type(gtTest@jMemAddress, "character")
+    expect_type(gtTest@jClass, "character")
+    expect_true(is(gtTest@jRefObj, "jobjRef"))
+
     # Test show method (capturing output)
-    expect_output(show(gt), "TasselGenotype")  # Basic check that output contains class name
+    expect_output(show(gtTest), "TasselGenotype")  # Basic check that output contains class name
 })
 
 test_that("readGenotype handles invalid inputs correctly", {
     # Test invalid file path
     expect_error(readGenotype("nonexistent/path.txt"))
-    
+
     # Test invalid input type
     expect_error(readGenotype(list()), "Unsupported data type")
 })

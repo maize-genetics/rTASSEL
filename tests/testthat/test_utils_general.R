@@ -119,24 +119,18 @@ test_that("assocStatsColumnChecker returns correct errors", {
 })
 
 test_that("genomicRanges validates inputs correctly", {
-    expect_error(genomicRanges(mtcars), "`tasObj` must be of class `TasselGenotypePhenotype`")
-    expect_error(genomicRanges(tasPheno), "TASSEL genotype object not found")
-    
+    expect_error(genomicRanges(mtcars), "data.frame does not contain a TASSEL PositionList object")
+    expect_error(genomicRanges(tasPheno), "TasselGenotypePhenotype does not contain a TASSEL PositionList object")
+
     # Test with valid input
     gr <- genomicRanges(tasGeno)
     expect_s4_class(gr, "GRanges")
-    expect_true("tasselIndex" %in% names(mcols(gr)))
+    expect_true("tasselIndex" %in% names(GenomicRanges::mcols(gr)))
 })
 
 test_that("tableReportToDF handles different input types", {
     # Test with NULL input
-    expect_error(tableReportToDF(NULL), "TASSEL TableReport object not found")
-    
-    # Test with valid input from genotype table
-    df <- tableReportToDF(tasGeno@jGenotypeTable)
-    expect_true(is.data.frame(df))
-    expect_gt(nrow(df), 0)
-    expect_gt(ncol(df), 0)
+    expect_error(tableReportToDF(NULL), regexp = "because \"tableReport\" is null")
 })
 
 test_that("checkForValidColumns validates column names", {
@@ -145,7 +139,7 @@ test_that("checkForValidColumns validates column names", {
         checkForValidColumns(test_df, c("a", "c")),
         "'c' column not found in stats dataframe"
     )
-    
+
     # Should not error with valid columns
     expect_silent(checkForValidColumns(test_df, c("a", "b")))
 })

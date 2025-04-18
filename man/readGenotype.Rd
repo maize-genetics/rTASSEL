@@ -7,21 +7,21 @@
 readGenotype(x, sortPositions = FALSE, keepDepth = FALSE)
 }
 \arguments{
-\item{x}{A character string representing the file path to the genotype data 
+\item{x}{A character string representing the file path to the genotype data
 or a matrix containing genotype data.}
 
-\item{sortPositions}{A logical value indicating whether to sort positions in the 
+\item{sortPositions}{A logical value indicating whether to sort positions in the
 genotype data. Default is \code{FALSE}.}
 
-\item{keepDepth}{A logical value indicating whether to retain depth information in 
+\item{keepDepth}{A logical value indicating whether to retain depth information in
 the genotype data. Default is \code{FALSE}.}
 }
 \value{
 A processed genotype object based on the input data.
 }
 \description{
-This function reads genotype data from a file path or an R matrix. 
-It supports optional sorting of positions and retaining depth 
+This function reads genotype data from a file path or an R matrix.
+It supports optional sorting of positions and retaining depth
 information.
 }
 \details{
@@ -29,12 +29,12 @@ information.
   \item If \code{x} is a character string:
     \itemize{
       \item The function checks if the file exists.
-      \item Reads the genotype data from the file path using 
+      \item Reads the genotype data from the file path using
       \code{readGenotypeFromPath}.
     }
   \item If \code{x} is a matrix:
     \itemize{
-      \item The function processes the genotype data using 
+      \item The function processes the genotype data using
       \code{readGenotypeFromRMatrix}.
     }
   \item If \code{x} is neither a character string nor a matrix:
