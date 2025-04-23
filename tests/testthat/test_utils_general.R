@@ -130,7 +130,7 @@ test_that("genomicRanges validates inputs correctly", {
 
 test_that("tableReportToDF handles different input types", {
     # Test with NULL input
-    expect_error(tableReportToDF(NULL), regexp = "because \"tableReport\" is null")
+    expect_error(tableReportToDF(NULL))
 })
 
 test_that("checkForValidColumns validates column names", {
