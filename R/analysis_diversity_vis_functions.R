@@ -1,17 +1,4 @@
-#--------------------------------------------------------------------
-# Script Name:   AnalysisDiversityVisFunctions.R
-# Description:   Visualization functions for diveristy analyses
-# Author:        Brandon Monier
-# Created:       2020-06-17 at 11:39:52
-# Last Modified: 2020-06-24 at 11:37:51
-#--------------------------------------------------------------------
-
-#--------------------------------------------------------------------
-# Detailed Purpose:
-#    The main purpose of this Rscript is to house functions for
-#    visualizing diversity analyses of TASSEL.
-#--------------------------------------------------------------------
-
+## ----
 #' @title Linkage desequilibrium visualization application
 #'
 #' @description Calculates linkage disequilibrium (LD) and runs an
@@ -72,6 +59,9 @@ ldJavaApp <- function(tasObj,
                       windowSize = NULL,
                       hetCalls = c("missing", "ignore", "third"),
                       verbose = TRUE) {
+    warnMsg <- paste0("The function 'ldJavaApp()' will be deprecated soon.")
+    message(warnMsg)
+
     # Logic - Check for TasselGenotypePhenotype class
     if (!is(tasObj, "TasselGenotypePhenotype")) {
         stop("tasObj is not of class \"TasselGenotypePhenotype\"")

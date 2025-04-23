@@ -1,18 +1,4 @@
-#--------------------------------------------------------------------
-# Script Name:   GenomicPrediction.R
-# Description:   General functions for running genomic prediction
-# Author:        Brandon Monier
-# Created:       2020-06-16 at 16:22:57
-# Last Modified: 2021-07-26 at 11:53:09
-#--------------------------------------------------------------------
-
-#--------------------------------------------------------------------
-# Detailed Purpose:
-#    The main purpose of this Rscript is to house all necessary
-#    general functions and wrappers for TASSEL genomic prediction
-#    capabilities.
-#--------------------------------------------------------------------
-
+## ----
 #' @title R interface for TASSEL's genomic prediction capabilities
 #'
 #' @description This function acts as a front-end for TASSEL's genomic

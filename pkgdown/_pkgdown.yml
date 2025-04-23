@@ -1,0 +1,35 @@
+url: https://rtassel.maizegenetics.net
+
+template:
+  bootstrap: 5
+  bslib:
+    base_font: {google: "Barlow"}
+    heading_font: {google: "Oswald"}
+    code_font: {google: "Roboto Mono"}
+  extra_css: pkgdown/extra.css
+
+navbar:
+  structure:
+    left:  [intro, articles, reference, news]
+    right: [search, github, phg]
+
+articles:
+- title: Articles
+  navbar: ~
+  contents:
+  - rtassel_installation
+  - genotype_filtration
+  - rtassel_benchmarks
+
+footer:
+  structure:
+    left: acknowledgment
+  components:
+    acknowledgment: <b>rTASSEL</b> is an R package developed by <a href="https://www.maizegenetics.net/">The Buckler Lab</a>
+
+home:
+  links:
+  - text: Report a bug
+    href: https://github.com/maize-genetics/rTASSEL/issues
+
+

@@ -1,3 +1,39 @@
+# rTASSEL 0.10.0
+* Updated formula parsing:
+  + Drop and keep traits by using `-` and `+`, respectively
+  + Added keywords to drop/keep all covariate or factor traits:
+    + `I(cov)`
+    + `I(fct)`
+* Added `stepwiseModelFitter()` function:
+  + Runs stepwise regression via TASSEL 5's "Stepwise" plugin
+  + Returns `AssociationResults` object
+* Added new function `readNumericGenotypeFromRMatrix()`:
+  + Converts formatted R matrix to TASSEL 5 numeric genotype
+* Added experimental function `readGenotype()`:
+  + Reads data into new `TasselGenotype` class (future update)
+  + Dynamically read genotype data based data type
+* Added experimental function `readPhenotype()`:
+  + Reads data into new `TasselPhenotype` class (future update)
+  + Dynamically read phenotype data based data type
+* Added deprecation warnings to the following methods:
+  + `getPhenotypeDF()`
+  + `getSumExpFromGenotypeTable()`
+  + `readGenotypeTableFromPath()`
+  + `readGenotypeTableFromGigwa()`
+  + `readGenotypePhenotype()`
+  + `readPhenotypeFromDataFrame()`
+  + `readPhenotypeFromPath()`
+  + `ldJavaApp()`
+  + `treeJavaApp()`
+  + **NOTE**: these will be removed in future updates
+* Updated vignettes:
+  + Visualization section updates
+  + Formula parsing
+  + `AssociationResults` and `PCAResults` object handling
+  + Memory allocation guide
+  + Numeric genotype handling
+
+
 # rTASSEL 0.9.33
 * Fixed typo in `plotPCA()` error message
 * Add new function `filterGenotypeTableBySiteName()`:

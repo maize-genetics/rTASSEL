@@ -1,30 +1,19 @@
-#--------------------------------------------------------------------
-# Script Name:   AnalysisPhylogenyFunctions.R
-# Description:   General functions for running phylogeny analysis
-# Author:        Brandon Monier
-# Created:       2021-07-22 at 15:47:44
-# Last Modified: 2021-07-22 at 16:09:29
-#--------------------------------------------------------------------
-
-#--------------------------------------------------------------------
-# Detailed Purpose:
-#    The main purpose of this Rscript is to house all necessary
-#    general functions and wrappers for TASSEL phylogeny analyses.
-#--------------------------------------------------------------------
-
+## ----
 #' @title R interface for TASSEL's tree creation methods
 #'
 #' @description This function acts as a wrapper for TASSEL's
 #'    \code{CreateTreePlugin}.
 #'
-#' @param tasObj An object of class \code{TasselGenotypePenotype}.
-#' @param clustMethod What clustering method should be used? Current options
-#'    are \code{UGMA} and \code{Neighbor_Joining}. Defaults to
-#'    \code{Neighbor_Joining}.
+#' @param tasObj
+#' An object of class \code{TasselGenotypePenotype}.
+#' @param clustMethod
+#' What clustering method should be used? Current options are \code{UGMA} and
+#' \code{Neighbor_Joining}. Defaults to \code{Neighbor_Joining}.
 #'
-#' @return Returns a \code{phylo} tree object. See the
-#'    [ape]{https://cran.r-project.org/web/packages/ape/ape.pdf} package
-#'    for further details.
+#' @return
+#' Returns a \code{phylo} tree object. See the
+#' \href{https://cran.r-project.org/web/packages/ape/ape.pdf}{ape} package
+#' for further details.
 #'
 #' @importFrom ape read.tree
 #' @importFrom rJava .jnull

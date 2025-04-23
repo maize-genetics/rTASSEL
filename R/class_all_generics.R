@@ -1,4 +1,46 @@
 ## ----
+#' @title Return GWAS association type
+#'
+#' @description
+#' Returns association type for given  \code{\linkS4class{AssociationResults}}
+#' object.
+#'
+#' @param assocRes a \code{\linkS4class{AssociationResults}} object
+#'
+#' @rdname associationType
+#' @export
+setGeneric("associationType", function(assocRes) standardGeneric("associationType"))
+
+
+## ----
+#' @title Return TASSEL attribute data
+#'
+#' @description
+#' Returns attribute data from an rTASSEL phenotype object
+#'
+#' @param object an \code{rTASSEL} object
+#' @param ... Additional arguments, for use in specific methods
+#'
+#' @rdname attributeData
+#' @export
+setGeneric("attributeData", function(object, ...) standardGeneric("attributeData"))
+
+
+## ----
+#' @title Return \code{rJava} reference object
+#'
+#' @description
+#' Returns the \code{rJava} memory reference for a given \code{rTASSEL} object
+#'
+#' @param object an \code{rTASSEL} object
+#' @param ... Additional arguments, for use in specific methods
+#'
+#' @rdname javaRefObj
+#' @export
+setGeneric("javaRefObj", function(object, ...) standardGeneric("javaRefObj"))
+
+
+## ----
 #' @title Return report names
 #'
 #' @description
@@ -9,19 +51,6 @@
 #' @rdname reportNames
 #' @export
 setGeneric("reportNames", function(object) standardGeneric("reportNames"))
-
-
-## ----
-#' @title Return trait names
-#'
-#' @description
-#' Returns a \code{character} vector of trait names
-#'
-#' @param object a \code{\linkS4class{AssociationResults}} object
-#'
-#' @rdname traitNames
-#' @export
-setGeneric("traitNames", function(object) standardGeneric("traitNames"))
 
 
 ## ----
@@ -39,16 +68,17 @@ setGeneric("tableReport", function(assocRes = missing(), reportName = missing())
 
 
 ## ----
-#' @title Return GWAS association type
+#' @title Return trait names
 #'
 #' @description
-#' Returns association type for given  \code{\linkS4class{AssociationResults}}
-#' object.
+#' Returns a \code{character} vector of trait names
 #'
-#' @param assocRes a \code{\linkS4class{AssociationResults}} object
+#' @param object a \code{\linkS4class{AssociationResults}} object
 #'
-#' @rdname associationType
+#' @rdname traitNames
 #' @export
-setGeneric("associationType", function(assocRes) standardGeneric("associationType"))
+setGeneric("traitNames", function(object) standardGeneric("traitNames"))
+
+
 
 

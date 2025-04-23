@@ -1,0 +1,5 @@
+<Numeric>
+<Marker>    m1  m2  m3
+line_a  0   0.5 0.2
+line_b  1  0   0.123
+line_c  1   0.3    0.1415

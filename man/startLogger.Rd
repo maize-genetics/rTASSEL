@@ -4,16 +4,13 @@
 \alias{startLogger}
 \title{Start TASSEL logging information}
 \usage{
-startLogger(fullPath = NULL, fileName = NULL, ...)
+startLogger(filePath = NULL, verbose = TRUE)
 }
 \arguments{
-\item{fullPath}{full working path of log file location. If \code{NULL},
-logging file will be added to current working directory.}
+\item{filePath}{File path and name of log file location. If \code{NULL}, a logging file
+(\code{rtasel_log.txt} will be added to current working directory.}
 
-\item{fileName}{name of logging file. If \code{NULL}, filename will resort
-to "rTASSEL_log".}
-
-\item{...}{additional parameters to be added}
+\item{verbose}{Display logging file creation message? Defaults to \code{TRUE}.}
 }
 \description{
 This function will create a file for storing logging output

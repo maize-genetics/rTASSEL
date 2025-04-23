@@ -9,6 +9,7 @@
 \alias{tableReport,AssociationResultsGLM-method}
 \alias{tableReport,AssociationResultsMLM-method}
 \alias{tableReport,AssociationResultsFast-method}
+\alias{tableReport,AssociationResultsStepwise-method}
 \alias{tableReport,PCAResults-method}
 \title{Return selected table report}
 \usage{
@@ -23,6 +24,8 @@ tableReport(assocRes = missing(), reportName = missing())
 \S4method{tableReport}{AssociationResultsMLM}(assocRes = missing(), reportName = missing())
 
 \S4method{tableReport}{AssociationResultsFast}(assocRes = missing(), reportName = missing())
+
+\S4method{tableReport}{AssociationResultsStepwise}(assocRes = missing(), reportName = missing())
 
 \S4method{tableReport}{PCAResults}(assocRes = missing(), reportName = missing())
 }

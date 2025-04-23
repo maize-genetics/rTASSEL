@@ -1,17 +1,4 @@
-#--------------------------------------------------------------------
-# Script Name:   AssociationFunctions.R
-# Description:   General functions for running association analysis
-# Author:        Brandon Monier
-# Created:       2019-03-29 at 13:51:02
-# Last Modified: 2021-07-26 at 11:52:59
-#--------------------------------------------------------------------
-
-#--------------------------------------------------------------------
-# Detailed Purpose:
-#    The main purpose of this Rscript is to house all necessary
-#    general functions and wrappers for TASSEL association analyses.
-#--------------------------------------------------------------------
-
+## ----
 #' @title R interface for TASSEL's association methods
 #'
 #' @description This function acts as a front-end for TASSEL's extensive
@@ -79,7 +66,7 @@ assocModelFitter <- function(
     kinship = NULL,
     fastAssociation = FALSE,
     maxP = 0.001,
-    maxThreads = NULL,
+    maxThreads = 1,
     minClassSize = 0,
     outputFile = NULL,
     biallelicOnly = FALSE,
@@ -96,35 +83,6 @@ assocModelFitter <- function(
         stop("tasObj does not contain a Phenotype object")
     }
 
-    # Extract formula response and prediction components
-    formResp <- all.vars(formula[[2]])
-    formPred <- all.vars(formula[[3]])
-
-    # Get all TASSEL object trait metadata
-    jtsPheno <- getPhenotypeTable(tasObj)
-    phenoAttDf <- extractPhenotypeAttDf(jtsPheno)
-
-    # Add "." variable for whitelisting
-    wildCard <- data.frame(
-        traitName = ".",
-        traitType = "wildcard",
-        traitAttribute = "AnyAttribute"
-    )
-    phenoAttDf <- rbind(phenoAttDf, wildCard)
-
-    # Subset TASSEL object trait types
-    tasResp <- subset(
-        x = phenoAttDf,
-        traitType == "data" |
-            traitType == "wildcard"
-    )
-    tasPred <- subset(
-        x = phenoAttDf,
-        traitType == "factor" |
-            traitType == "covariate" |
-            traitType == "wildcard"
-    )
-
     # Logic - check kinship object
     if (!is.null(kinship) && class(kinship) != "TasselDistanceMatrix") {
         stop("TASSEL kinship object is not of TasselDistanceMatrix class", call. = FALSE)
@@ -140,38 +98,16 @@ assocModelFitter <- function(
         }
     }
 
-    # Logic - Check formula entry
-    if (any(!(c(formResp, formPred) %in% phenoAttDf$traitName))) {
-        stop("Variables in formula do not match traits in TASSEL object.")
-    } else if (any(!(formResp %in% tasResp$traitName))) {
-        stop("Only <data> trait types can be implemented as response variables.")
-    } else if (any(!(formPred %in% tasPred$traitName))) {
-        stop("Only <factor> or <covariate> trait types can be implemented as predictor variables.")
-    }
-
-    # Logic - Handle "." variables
-    if (all(formResp == ".", formPred == ".")) {
-        message("Running all traits...")
-        finalResp <- as.vector(tasResp[which(tasResp$traitName != "."), ]$traitName)
-        finalPred <- as.vector(tasPred[which(tasPred$traitName != "."), ]$traitName)
-    } else if (all(formResp == ".", formPred != ".")) {
-        message("Running all <data> traits...")
-        finalResp <- as.vector(tasResp[which(tasResp$traitName != "."), ]$traitName)
-        finalPred <- formPred
-    } else if (all(formResp != ".", formPred == ".")) {
-        message("Running all non <data> traits and/or <taxa>...")
-        finalResp <- formResp
-        finalPred <- as.vector(tasPred[which(tasPred$traitName != "."), ]$traitName)
-    } else {
-        finalResp <- formResp
-        finalPred <- formPred
-    }
+    # Subset phenotype data
+    rData        <- tableReportToDF(tasObj@jPhenotypeTable)
+    attrData     <- makeAttributeData(tasObj@jPhenotypeTable, rData)
+    traitsToKeep <- unlist(parseFormula(formula, attrData))
 
     # Logic - Handle association analyses
     jRC <- rJava::J("net/maizegenetics/plugindef/GenerateRCode")
     jTasFilt <- tasPhenoFilter(
         tasObj = tasObj,
-        filtObj = c(finalResp, finalPred)
+        filtObj = traitsToKeep
     )
     tmpDF <- as.data.frame(jTasFilt$phenoDf) # check for missing values
 
@@ -200,6 +136,7 @@ assocModelFitter <- function(
     } else {
         saveToFile <- FALSE
         outputFile <- rJava::.jnull()
+        # outputFile <- "void"
     }
 
     # Logic - Handle association types and output
@@ -307,22 +244,37 @@ assocModelFitter <- function(
                         genotypeTable = tasObj@jGenotypeTable,
                         phenotype = blueOut
                     )
-                    assocOut <- jRC$fastAssociation(
-                        blueOut,
-                        rJava::.jnew("java/lang/Double", maxP),
-                        maxThreads,
-                        saveToFile,
-                        outputFile
+
+                    if (rJava::is.jnull(outputFile)) {
+                        outputFile <- "void"
+                        # saveToFile <- FALSE
+                    }
+                    assocOut <- rJava::.jcall(
+                        "net.maizegenetics.plugindef.GenerateRCode", # fully‑qualified class
+                        "Ljava/util/Map;",                           # JNI return type
+                        "fastAssociation",                           # static method name
+                        blueOut,                                     # GenotypePhenotype Java object
+                        as.double(maxP),                             # primitive double (maxp)
+                        maxThreads,                                  # max threads
+                        saveToFile,                                  # primitive boolean (writeToFile)
+                        outputFile                                   # java.lang.String (outputFile)
                     )
                     assocType <- "FastAssoc"
                 } else {
+                    if (rJava::is.jnull(outputFile)) {
+                        outputFile <- "void"
+                        # saveToFile <- FALSE
+                    }
                     message("Association Analysis : Fast Association")
-                    assocOut <- jRC$fastAssociation(
-                        jTasFilt$genotypePhenotype,
-                        rJava::.jnew("java/lang/Double", maxP),
-                        maxThreads,
-                        saveToFile,
-                        outputFile
+                    assocOut <- rJava::.jcall(
+                        "net.maizegenetics.plugindef.GenerateRCode", # fully‑qualified class
+                        "Ljava/util/Map;",                           # JNI return type
+                        "fastAssociation",                           # static method name
+                        jTasFilt$genotypePhenotype,                  # GenotypePhenotype Java object
+                        as.double(maxP),                             # primitive double (maxp)
+                        maxThreads,                                  # java.lang.Integer (maxThreads)
+                        saveToFile,                                  # primitive boolean (writeToFile)
+                        outputFile                                   # java.lang.String (outputFile)
                     )
                     assocType <- "FastAssoc"
                 }

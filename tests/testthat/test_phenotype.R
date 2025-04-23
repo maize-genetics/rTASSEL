@@ -84,6 +84,78 @@ test_that("getPhenotypeDF() throws general exceptions.", {
     )
 })
 
+# test_that("makeAttributeData validates attribute types correctly", {
+#     phenoDF <- getPhenotypeDF(tasGenoPheno)
+#     attrDF <- data.frame(
+#         col_id = c("Taxa", "invalid"),
+#         tassel_attr = c("taxa", "unknown")
+#     )
+#     expect_error(
+#         makeAttributeData(tasGenoPheno@jPhenotypeTable, phenoDF, attrDF),
+#         "Incorrect TASSEL attributes found"
+#     )
+#
+#     # Test with valid attributes
+#     validAttrDF <- data.frame(
+#         col_id = c("Taxa", "EarHT"),
+#         tassel_attr = c("taxa", "data")
+#     )
+#     result <- makeAttributeData(tasGenoPheno@jPhenotypeTable, phenoDF, validAttrDF)
+#     expect_equal(nrow(result), 2)
+#     expect_equal(ncol(result), 2)
+# })
+
+# test_that("validateAttributeDataFrame catches invalid inputs", {
+#     # Missing required columns
+#     badDF <- data.frame(col_id = "Taxa")
+#     expect_error(
+#         validateAttributeDataFrame(badDF),
+#         "Incorrect column IDs used"
+#     )
+#
+#     # Invalid data type
+#     expect_error(
+#         validateAttributeDataFrame("not a dataframe"),
+#         "'attrDf' parameter needs to be of type 'data.frame'"
+#     )
+#
+#     # Valid input should not error
+#     validDF <- data.frame(
+#         col_id = "Taxa",
+#         tassel_attr = "taxa"
+#     )
+#     expect_silent(validateAttributeDataFrame(validDF))
+# })
+
+# test_that("validateTasselAttributes handles edge cases", {
+#     # Test with missing taxa attribute
+#     attrDF <- data.frame(
+#         col_id = c("val1", "val2"),
+#         tassel_attr = c("data", "data")
+#     )
+#     expect_error(
+#         validateTasselAttributes(attrDF),
+#         "No 'taxa' attribute found"
+#     )
+#
+#     # Test with invalid attribute type
+#     attrDF <- data.frame(
+#         col_id = c("Taxa", "val1"),
+#         tassel_attr = c("taxa", "invalid")
+#     )
+#     expect_error(
+#         validateTasselAttributes(attrDF),
+#         "Incorrect TASSEL attributes found"
+#     )
+#
+#     # Valid case should work
+#     validDF <- data.frame(
+#         col_id = c("Taxa", "val1", "val2"),
+#         tassel_attr = c("taxa", "data", "covariate")
+#     )
+#     expect_silent(validateTasselAttributes(validDF))
+# })
+
 
 
 ## Return tests ----

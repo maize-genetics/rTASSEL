@@ -1,6 +1,7 @@
 # === Tests for logging methods =====================================
 
 test_that("startLogger()", {
-    expect_error(startLogger("~/test_dir"))
+    startLogger(verbose = FALSE)
+    expect_true(file.exists("rtassel_log.txt"))
 })
 

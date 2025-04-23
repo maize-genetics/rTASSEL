@@ -1,18 +1,4 @@
-#---------------------------------------------------------------------
-# Script Name:   PositionListFunctions.R
-# Description:   Support working with TASSEL PositionList and GenomicRanges
-# Author:        Brandon Monier & Ed Buckler
-# Created:       2018-11-26 at 11:14:36
-# Last Modified: 2019-04-04 at 22:50:01
-#--------------------------------------------------------------------
-
-#--------------------------------------------------------------------
-# Detailed Purpose:
-#    The main purpose of this Rscript is to house functions
-#    necessary for extracting position list data for
-#    `SummarizedExperiment` objects.
-#--------------------------------------------------------------------
-
+## ----
 ## Get Positions - not exported (house keeping)
 getPositionList <- function(jtsObject) {
     if(is(jtsObject, "TasselGenotypePhenotype")) {

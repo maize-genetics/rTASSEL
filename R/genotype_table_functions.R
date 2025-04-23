@@ -1,18 +1,4 @@
-#---------------------------------------------------------------------
-# Script Name:   GenotypeTableFunctions.R
-# Description:   Support working with TASSEL GenotypeTables
-# Author:        Brandon Monier & Ed buckler
-# Created:       2018-11-26 at 11:14:36
-# Last Modified: 2019-07-25 at 14:55:30
-#--------------------------------------------------------------------
-
-#--------------------------------------------------------------------
-# Detailed Purpose:
-#    The main purpose of this Rscript is to house functions
-#    necessary for reading in genotype datasets into R and
-#    extracting data from TASSEL genotype objects.
-#--------------------------------------------------------------------
-
+## ----
 #' @title Wrapper function of TasselGenotypePhenotype class for genotype
 #'    data
 #'
@@ -33,6 +19,12 @@
 #' @importFrom rJava %instanceof%
 #' @export
 readGenotypeTableFromPath <- function(path, keepDepth = FALSE, sortPositions = FALSE) {
+    warnMsg <- paste0(
+        "The function 'readGenotypeTableFromPath()' will be deprecated soon.\n",
+        "This will be replaced by '", cli::style_bold("readGenotype()"), "' in the next update."
+    )
+    message(warnMsg)
+
     if (!file.exists(path)) {
         stop("Cannot open file ", path, ": No such file or directory")
     }
@@ -74,7 +66,6 @@ readGenotypeTableFromPath <- function(path, keepDepth = FALSE, sortPositions = F
 getSumExpFromGenotypeTable <- function(tasObj,
                                        coerceDosageToInt = TRUE,
                                        verbose = FALSE) {
-
     if (class(tasObj) != "TasselGenotypePhenotype") {
         stop("`tasObj` must be of class `TasselGenotypePhenotype`")
     }
@@ -111,6 +102,8 @@ getSumExpFromGenotypeTable <- function(tasObj,
         colData = sampleDF
     )
     if (verbose) message("Finished.")
+    warnMsg <- paste0("The function 'getSumExpFromGenotypeTable()' will be deprecated soon.")
+    message(warnMsg, call. = FALSE)
     return(se)
 }
 
@@ -200,6 +193,12 @@ getMinMaxVarSites <- function(tasObj) {
 #'
 #' @export
 readGenotypeTableFromGigwa <- function(gigwa) {
+    warnMsg <- paste0(
+        "The function 'readGenotypeTableFromGigwa()' will be deprecated soon.\n",
+        "This will be replaced by '", cli::style_bold("readGenotype()"), "' in the next update."
+    )
+    message(warnMsg)
+
     plugin <- rJava::J("net/maizegenetics/plugindef/GenerateRCode")
 
     matrixSub <- as.matrix(gigwa[, 5:ncol(gigwa)])

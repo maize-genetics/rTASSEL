@@ -11,7 +11,7 @@ assocModelFitter(
   kinship = NULL,
   fastAssociation = FALSE,
   maxP = 0.001,
-  maxThreads = NULL,
+  maxThreads = 1,
   minClassSize = 0,
   outputFile = NULL,
   biallelicOnly = FALSE,

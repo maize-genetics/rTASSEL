@@ -10,6 +10,7 @@
 .Rproj.user
 .httr-oauth
 rTASSEL_log
+rtassel_log.txt
 vignettes/*.log
 vignettes/figure/
 

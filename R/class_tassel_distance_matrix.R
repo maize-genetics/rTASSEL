@@ -1,15 +1,4 @@
-#--------------------------------------------------------------------
-# Script Name:   ClassTasselDistanceMatrix.R
-# Description:   TasselDistanceMatrix class and methods
-# Author:        Brandon Monier
-# Created:       2021-07-12 at 15:03:58
-# Last Modified: 2021-07-12 at 15:05:38
-#--------------------------------------------------------------------
-
-#--------------------------------------------------------------------
-# TasselDistanceMatrix class, constructors, and methods
-#--------------------------------------------------------------------
-
+## ----
 #' @title TasselDistanceMatrix Class
 #'
 #' @description Class \code{TasselDistanceMatrix} defines a \code{rTASSEL}
