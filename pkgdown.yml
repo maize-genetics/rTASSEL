@@ -1,13 +1,12 @@
-pandoc: 2.19.2
-pkgdown: 2.0.7
+pandoc: 3.1.11
+pkgdown: 2.1.1
 pkgdown_sha: ~
 articles:
   genotype_filtration: genotype_filtration.html
   rtassel_benchmarks: rtassel_benchmarks.html
   rtassel_installation: rtassel_installation.html
-  rtassel_walkthrough: rtassel_walkthrough.html
-last_built: 2023-11-08T15:00Z
+  rTASSEL: rTASSEL.html
+last_built: 2025-04-23T22:38Z
 urls:
   reference: https://rtassel.maizegenetics.net/reference
   article: https://rtassel.maizegenetics.net/articles
-
