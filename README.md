@@ -2,12 +2,10 @@
 
 [![Life Cycle Status](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing) [![R-CMD-check](https://github.com/maize-genetics/rTASSEL/actions/workflows/check-standard.yaml/badge.svg)](https://github.com/maize-genetics/rTASSEL/actions/workflows/check-standard.yaml) [![codecov](https://codecov.io/gh/maize-genetics/rTASSEL/branch/master/graph/badge.svg?token=4D0JSKT0UC)](https://codecov.io/gh/maize-genetics/rTASSEL) [![DOI](https://joss.theoj.org/papers/10.21105/joss.04530/status.svg)](https://doi.org/10.21105/joss.04530) [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/btmonier/rTASSEL_sandbox/HEAD?labpath=getting_started.ipynb) 
 
-## Objective
-The goal of this package is to provide an R-based front-end for accessing key
-TASSEL 5 methods and tools. This allows users to run powerful TASSEL 5 analyses
-within a unified R workflow, without switching between environments. `rTASSEL`
-also offers performance and feature advantages over other R packages. See
-[this benchmark](https://maize-genetics.github.io/rTASSEL/articles/rtassel_benchmarks.html)
+`rTASSEL` is an R-based front-end for accessing key TASSEL 5 methods and tools.
+This allows users to run powerful TASSEL 5 analyses within a unified R workflow,
+without switching between environments. `rTASSEL` also offers performance and
+feature advantages over other R packages. See [this benchmark](https://maize-genetics.github.io/rTASSEL/articles/rtassel_benchmarks.html)
 for details.
 
 
@@ -19,7 +17,7 @@ To cite `rTASSEL`, please use the following citation:
 > https://doi.org/10.21105/joss.04530
 
 
-## Installation and usage
+## Installation
 
 ### Stable release
 ```{r}
