@@ -5,7 +5,7 @@
 `rTASSEL` is an R-based front-end for accessing key TASSEL 5 methods and tools.
 This allows users to run powerful TASSEL 5 analyses within a unified R workflow,
 without switching between environments. `rTASSEL` also offers performance and
-feature advantages over other R packages. See [this benchmark](https://maize-genetics.github.io/rTASSEL/articles/rtassel_benchmarks.html)
+feature advantages over other R packages. See [these benchmarks](https://maize-genetics.github.io/rTASSEL/articles/rtassel_benchmarks.html)
 for details.
 
 
