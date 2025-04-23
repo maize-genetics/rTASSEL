@@ -6,10 +6,15 @@
 \alias{attributeData,TasselPhenotype-method}
 \title{Return TASSEL attribute data}
 \usage{
-attributeData(object)
+attributeData(object, ...)
 
 \S4method{attributeData}{TasselPhenotype}(object)
 }
+\arguments{
+\item{object}{an \code{rTASSEL} object}
+
+\item{...}{Additional arguments, for use in specific methods}
+}
 \description{
-Return TASSEL attribute data
+Returns attribute data from an rTASSEL phenotype object
 }

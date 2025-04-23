@@ -26,13 +26,16 @@ lists, position lists, reference probabilities, and a genotype
 table using the provided matrix data.
 }
 \details{
-- Taxa list is created using the `TASSEL_JVM$TAXA_LIST_BUILDER`
-  Java class.
-- Position list is constructed using the
-  `TASSEL_JVM$POSITION_LIST_BUILDER` and
-  `TASSEL_JVM$GENERAL_POSITION_BUILDER` Java classes.
-- Reference probabilities are built using the
-  `TASSEL_JVM$REF_PROBABILITY_BUILDER` Java class.
-- The genotype table is created using the
-  `TASSEL_JVM$GENOTYPE_TABLE_BUILDER` Java class.
+The following components are constructed using respective Java builder classes:
+\itemize{
+  \item Taxa list is created using the \code{TASSEL_JVM$TAXA_LIST_BUILDER}
+        Java class.
+  \item Position list is constructed using the
+        \code{TASSEL_JVM$POSITION_LIST_BUILDER} and
+        \code{TASSEL_JVM$GENERAL_POSITION_BUILDER} Java classes.
+  \item Reference probabilities are built using the
+        \code{TASSEL_JVM$REF_PROBABILITY_BUILDER} Java class.
+  \item The genotype table is created using the
+        \code{TASSEL_JVM$GENOTYPE_TABLE_BUILDER} Java class.
+}
 }

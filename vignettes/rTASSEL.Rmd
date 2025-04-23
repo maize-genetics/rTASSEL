@@ -109,10 +109,10 @@ beneficial for debugging and tracking the progress of your analytical workflow.
 To start a logging file, use the following command:
 
 ```{r, eval=FALSE, echo=TRUE}
-rTASSEL::startLogger(fullPath = NULL, fileName = NULL)
+startLogger()
 ```
 
-If the `rTASSEL::startLogger()` parameters are set to `NULL`, the logging file
+If the `startLogger()` file path is set to `NULL`, the logging file
 will be created in your current working directory. If you are unsure of what
 your working directory is in R, use the base `getwd()` command.
 
@@ -178,12 +178,12 @@ following:
 
 ```{r, eval=TRUE, echo=TRUE}
 # Load in hapmap file
-tasGenoHMP <- rTASSEL::readGenotypeTableFromPath(
+tasGenoHMP <- readGenotypeTableFromPath(
     path = genoPathHMP
 )
 
 # Load in VCF file
-tasGenoVCF <- rTASSEL::readGenotypeTableFromPath(
+tasGenoVCF <- readGenotypeTableFromPath(
     path = genoPathVCF
 )
 ```
@@ -236,7 +236,7 @@ analyses. More information about how these files can be found at this
 under the *Numerical Data* section.
 
 Loading this type of data is very similar to how genotype data is loaded.
-here, we will use the `rTASSEL::readPhenotypeFromPath()` function:
+here, we will use the `readPhenotypeFromPath()` function:
 
 ```{r, eval=TRUE, echo=TRUE}
 # Read from phenotype path
@@ -244,7 +244,7 @@ phenoPath  <- system.file("extdata", "mdp_traits.txt", package = "rTASSEL")
 phenoPath
 
 # Load into rTASSEL `TasselGenotypePhenotype` object
-tasPheno <- rTASSEL::readPhenotypeFromPath(
+tasPheno <- readPhenotypeFromPath(
     path = phenoPath
 )
 
@@ -258,7 +258,7 @@ additions to which traits are displayed in the file.
 ### From an R data frame
 In some cases you might want to first modify your phenotype data set in R and
 then load it into the TASSEL environment. If you wish to choose this route, you
-will need to use the `rTASSEL::readPhenotypeFromDataFrame()` function along
+will need to use the `readPhenotypeFromDataFrame()` function along
 with a couple of parameters. First, we will construct an R data frame and load
 it with this function:
 
@@ -271,7 +271,7 @@ colnames(phenoDF)[1] <- "Taxon"
 head(phenoDF)
 
 # Load into rTASSEL `TasselGenotypePhenotype` object
-tasPhenoDF <- rTASSEL::readPhenotypeFromDataFrame(
+tasPhenoDF <- readPhenotypeFromDataFrame(
     phenotypeDF = phenoDF,
     taxaID = "Taxon",
     attributeTypes = NULL
@@ -297,7 +297,7 @@ be entered in the same order as they are found in the data frame.
 In association studies, we are interested in combining our genotype and
 phenotype data. To usually run this operation in TASSEL, an intersect
 combination between the two data sets is needed. To run this in `rTASSEL`, we
-can use the `rTASSEL::readGenotypePhenotype()` function. The parameter input
+can use the `readGenotypePhenotype()` function. The parameter input
 needed for this function is, of course, a genotype and phenotype object. For
 genotype input, the following can be used:
 
@@ -314,7 +314,7 @@ For example, if we wanted to read the prior `TasselGenotypePhenotype`
 genotype and phenotype objects from earlier:
 
 ```{r, eval=TRUE, echo=TRUE}
-tasGenoPheno <- rTASSEL::readGenotypePhenotype(
+tasGenoPheno <- readGenotypePhenotype(
     genoPathOrObj = tasGenoHMP,
     phenoPathDFOrObj = tasPheno
 )
@@ -324,11 +324,11 @@ tasGenoPheno
 We can also use a combination of the above parameter options (e.g. load a
 genotype path and a phenotype data frame, etc.). One caveat though, **if you
 load in a phenotype data frame object with this function, the prior parameters
-from the** `rTASSEL::readPhenotypeFromDataFrame` **will be needed** (i.e. the
+from the** `readPhenotypeFromDataFrame` **will be needed** (i.e. the
 `taxaID` and `attributeTypes` parameters):
 
 ```{r, eval=TRUE, echo=TRUE}
-tasGenoPhenoDF <- rTASSEL::readGenotypePhenotype(
+tasGenoPhenoDF <- readGenotypePhenotype(
     genoPathOrObj = genoPathHMP,
     phenoPathDFOrObj = phenoDF,
     taxaID = "Taxon",
@@ -352,59 +352,109 @@ kinshipPath <- system.file(
 )
 
 ## Read ----
-rTASSEL::readTasselDistanceMatrix(kinshipPath)
+readTasselDistanceMatrix(kinshipPath)
 ```
 
 
+## Reading numeric genotype data
+TASSEL 5 also has the ability to read in matrix-like genotype data where instead
+of reported allele states, probability values between 0 and 1 for a given 
+reference state are reported. These are classified as `NumericGenotypes` and
+can behave in similar fashion to standard allele-based genotype objects for
+analyses like association (e.g., TWAS). We can read this data in two ways:
 
-# Extracting data from rTASSEL objects
+* From a file (TASSEL 5-formatted `<Numeric>` data):
 
-## Get genotype data
-If you want to bring in genotype data into the R environment, you can use
-the `rTASSEL::getSumExpFromGenotypeTable()` function. All this function needs
-is a `TasselGenotypePhenotype` class object *containing a genotype table*:
+  ```
+  <Numeric>
+  <Marker> m1  m2   m3
+  line_a   0   0.5  0.2
+  line_b   1   0    0.123
+  line_c   1   0.3  0.1415
+  ```
+
+* From a formatted R matrix
+
+### Read numeric data from file
+Like other genotype files, we can read this in via `readGenotypeTableFromPath()`:
 
 ```{r, eval=TRUE, echo=TRUE}
-tasSumExp <- rTASSEL::getSumExpFromGenotypeTable(
-    tasObj = tasGenoPheno
-)
-tasSumExp
+numGtPath <- system.file("extdata", "numeric_genotype.txt", package = "rTASSEL")
+numGt <- readGenotypeTableFromPath(numGtPath)
+
+numGt
 ```
 
-As you can see above, the gentoype object is returned as a
-`SummarizedExperiment` class R object. More information about these objects can
-be found [here](http://www.bioconductor.org/packages/release/bioc/vignettes/SummarizedExperiment/inst/doc/SummarizedExperiment.html).
-
-From this object, we extract taxa information and their respective TASSEL
-integer locations:
+### Read numeric data from matrix
+To read from an already existing R matrix, make sure that it formatted
+properly with row and column names. In the following example, I will make
+a function that will simulate an example R matrix with values between 0 and 1.
 
 ```{r, eval=TRUE, echo=TRUE}
-SummarizedExperiment::colData(tasSumExp)
+# Simulate numeric matrices
+simNumericGt <- function(nRow, nCol) {
+    # Matrix values
+    minMax <- function(x) (x - min(x)) / (max(x) - min(x))
+    d <- rnorm(nCol * nRow) |> minMax()
+    m <- matrix(d, nrow = nRow, ncol = nCol)
+
+    # Taxa values
+    taxa <- sprintf("line_%02d", seq_len(nRow))
+
+    # Position values
+    mIds <- sprintf("marker_%02d", seq_len(nCol))
+    mPos <- seq_len(nCol)
+
+    # Add IDs to matrix
+    colnames(m) <- mIds
+    rownames(m) <- taxa
+
+    return(m)
+}
+
+# Simulate a matrix with 5 taxa and 10 sites
+simMat <- simNumericGt(5, 10)
+
+# Inspect the first 3 rows and columns
+simMat[1:3, 1:3]
 ```
 
-We can also extract the allelic marker data using
-`SummarizedExperiment::rowData()`:
+Once properly formatted, you read and evaluate this using the 
+`readNumericGenotypeFromRMatrix()` function:
 
 ```{r, eval=TRUE, echo=TRUE}
-SummarizedExperiment::rowData(tasSumExp)
+numGt <- readNumericGenotypeFromRMatrix(simMat)
+
+numGt
 ```
 
-And get marker coordinates using `SummarizedExperiment::rowRanges()`
+
+
+
+# Converting TASSEL 5 data into R objects
+
+## Convert genotype data
+To convert a TASSEL 5 genotype table into an R `matrix` object, you can use
+base R's `as.matrix()` function. This will by deafault, return a **dosage
+matrix** where dosage is the number of alternative alleles present for a
+given taxa and site element:
 
 ```{r, eval=TRUE, echo=TRUE}
-SummarizedExperiment::rowRanges(tasSumExp)
+gtMat <- as.matrix(tasGenoPheno)
+
+# Show first 10 rows and 4 columns
+gtMat[1:10, 1:4]
 ```
 
 
-## Extract phenotype data
+## Convert phenotype data
 If you want to bring in phenotype data into the R environment, you can use
-the `rTASSEL::getPhenotypeDF()` function. All this function needs
+the `getPhenotypeDF()` function. All this function needs
 is a `TasselGenotypePhenotype` class object *containing a phenotype table*:
 
 ```{r, eval=TRUE, echo=TRUE}
-tasExportPhenoDF <- rTASSEL::getPhenotypeDF(
-    tasObj = tasGenoPheno
-)
+tasExportPhenoDF <- getPhenotypeDF(tasObj = tasGenoPheno)
+
 head(tasExportPhenoDF)
 ```
 
@@ -435,15 +485,15 @@ In TASSEL, this accomplished through the Filter menu using two primary plugins:
 
 In `rTASSEL`, this can also be accomplished using the follwing functions:
 
-* `rTASSEL::filterGenotypeTableSites()`
-* `rTASSEL::filterGenotypeTableTaxa()`
+* `filterGenotypeTableSites()`
+* `filterGenotypeTableTaxa()`
 
 These objects take a `TasselGenotypePhenotype` class object. For example, in
 our genotype data set, if we want to remove monomorphic and low coverage sites,
-we could use the following parameters in `rTASSEL::filterGenotypeTableSites()`:
+we could use the following parameters in `filterGenotypeTableSites()`:
 
 ```{r, eval=TRUE, echo=TRUE}
-tasGenoPhenoFilt <- rTASSEL::filterGenotypeTableSites(
+tasGenoPhenoFilt <- filterGenotypeTableSites(
     tasObj = tasGenoPheno,
     siteMinCount = 150,
     siteMinAlleleFreq = 0.05,
@@ -474,7 +524,7 @@ parameter input is a `TasselGenotypePhenotype` class object that contains a
 genotype data set:
 
 ```{r, eval=TRUE, echo=TRUE}
-tasKin <- rTASSEL::kinshipMatrix(tasObj = tasGenoPheno)
+tasKin <- kinshipMatrix(tasObj = tasGenoPheno)
 ```
 
 This function allows for several types of algorithm to used using the `method`
@@ -487,7 +537,7 @@ Very similar to kinship matrix calculation, a distance matrix can also be
 calculated using genotype data using the function `distanceMatrix()`:
 
 ```{r, eval=TRUE, echo=TRUE}
-tasDist <- rTASSEL::distanceMatrix(tasObj = tasGenoPheno)
+tasDist <- distanceMatrix(tasObj = tasGenoPheno)
 ```
 
 
@@ -510,15 +560,13 @@ pointers to the Java/TASSEL object in memory. Despite this, we can still use
 some base R methods similar to how we handle `matrix` objects:
 
 ```{r, eval=TRUE, echo=TRUE}
-library(magrittr)
+tasKin |> colnames() |> head()
+tasKin |> rownames() |> head()
 
-tasKin %>% colnames() %>% head()
-tasKin %>% rownames() %>% head()
+tasKin |> dim()
 
-tasKin %>% dim()
-
-tasKin %>% nrow()
-tasKin %>% ncol()
+tasKin |> nrow()
+tasKin |> ncol()
 ```
 
 ### Coercion
@@ -527,9 +575,7 @@ can coerce this object to a general R data object, in this case, a `matrix`
 object using the base method `as.matrix()`:
 
 ```{r, eval=TRUE, echo=TRUE}
-library(magrittr)
-
-tasKinR <- tasKin %>% as.matrix()
+tasKinR <- tasKin |> as.matrix()
 
 ## Inspect first 5 rows and columns ----
 tasKinR[1:5, 1:5]
@@ -539,8 +585,6 @@ We can also coerce a pairwise `matrix` object to a `TasselDistanceMatrix`
 object using rTASSEL's function `asTasselDistanceMatrix()`:
 
 ```{r, eval=TRUE, echo=TRUE}
-library(magrittr)
-
 ## Create a dummy pairwise matrix object ----
 set.seed(123)
 m <- 10
@@ -551,7 +595,7 @@ diag(s) <- 2
 ## Add sample IDs ----
 colnames(s) <- rownames(s) <- paste0("s_", seq_len(m))
 
-testTasselDist <- s %>% asTasselDistanceMatrix()
+testTasselDist <- s |> asTasselDistanceMatrix()
 testTasselDist
 ```
 
@@ -585,8 +629,34 @@ function call. For example, let's take a look at the `pcaRes` object made
 previously:
 
 ```{r, eval=TRUE, echo=TRUE}
-str(pcaRes)
+pcaRes
 ```
+
+
+### `PCAResults` Table reports
+The returned object from running `pca()` is a `PCAResults` object. This is a
+collection of TASSEL 5 table report results that are generated for a given
+genotype object. We can access the default principal component data using the
+`tableReport()` function. I will use base R's piping operator (`|>`) to better 
+show the flow of methods: :
+
+```{r, eval=TRUE, echo=TRUE}
+# Return principal components
+pcaRes |> tableReport() |> head()
+```
+
+We can also obtain other reports from the object by specifying the name of the
+report. The names of the reports are listed in the object's display but we can
+also return them using `reportNames()`
+
+```{r, echo=TRUE, eval=TRUE}
+pcaRes |> reportNames()
+```
+
+```{r, echo=TRUE, eval=TRUE}
+pcaRes |> tableReport("Eigenvalues_Datum") |> head()
+```
+
 
 
 
@@ -606,7 +676,7 @@ these operate in base TASSEL can be found at following links:
 * [MLM](https://bitbucket.org/tasseladmin/tassel-5-source/wiki/UserManual/MLM/MLM)
 * [Fast Association](https://bitbucket.org/tasseladmin/tassel-5-source/wiki/UserManual/FastAssociation/FastAssociation)
 
-The `rTASSEL::assocModelFitter()` function has several primary components:
+The `assocModelFitter()` function has several primary components:
 
 * `tasObj`: a `TasselGenotypePhenotype` class R object
 * `formula`: an R-based linear model formula
@@ -614,6 +684,9 @@ The `rTASSEL::assocModelFitter()` function has several primary components:
   analyses
 * `kinship`: a TASSEL kinship object
 * `fastAssociation`: a boolean parameter for data sets that have many traits
+
+
+### Formula syntax
 
 Probably the most important concept of this function is `formula` parameter.
 If you are familar with standard R linear model functions, this concept is
@@ -630,29 +703,32 @@ and / or `factor` types:
 <data> ~ <covariate> and/or <factor>
 ```
 
-This model can be written out in several ways. With an example phenotype data,
-we can have the following variables that are represented in TASSEL in the
+This model can be written out in several ways. With the given phenotype example
+data, we can have the following variables that are represented in TASSEL in the
 following way:
 
-* `Taxon` `<taxa>`
-* `EarHT` `<data>`
-* `dpoll` `<data>`
-* `EarDia` `<data>`
-* `location` `<factor>`
-* `Q1` `<covariate>`
-* `Q2` `<covariate>`
-* `Q3` `<covariate>`
+| Trait     | Type          |
+|-----------|---------------|
+| `Taxon`   | `<taxa>`      |
+| `dpoll`   | `<data>`      |
+| `EarDia`  | `<data>`      |
+| `EarHT`   | `<data>`      |
+| `location`| `<factor>`    |
+| `Q1`      | `<covariate>` |
+| `Q2`      | `<covariate>` |
+| `Q3`      | `<covariate>` |
+
 
 Using this data, we could write out the following formula in R
 
 ```
-list(EarHT, dpoll, EarDia) ~ location + Q1 + Q2 + Q3
+c(EarHT, dpoll, EarDia) ~ location + Q1 + Q2 + Q3
 ```
 
-In the above example, we use a base `list()` function to indicate analysis
-on multiple numeric data types. For covariate and factor information, we use
-`+` operator. One problem with this implementation is that it can become
-cumbersome and prone to error if we want to analyze the entirety of a large
+In the above example, we use the base `c()` function to indicate analysis
+on multiple numeric data types. For covariate and factor information, we can use
+the addition (`+`) operator. One problem with this implementation is that it can 
+become cumbersome and prone to error if we want to analyze the entirety of a large
 data set or all data and/or factor and covariate types.
 
 A work around for this problem is to utilize a special character to indicate
@@ -674,12 +750,54 @@ covariates, we can use something like this:
 Or vice-versa:
 
 ```
-list(EarHT, dpoll) ~ .
+c(EarHT, dpoll) ~ .
 ```
 
-Take note we can be very specific with what we want to include in our trait
-model! In the above example we have deliberately left out `EarDia` from our
-model.
+In some instances, we may want to keep all data except for a few response or
+predictor types in the formula. Instead of writing out all variables that we
+want to include, we can write the exclusionary inverse by leveraging the minus
+(`-`) operator. For example, if we want to keep all data, covariate and factor 
+types from the prior data set **except** the `Q3` covariate, we can use the 
+following:
+
+```
+. ~ . - Q3
+```
+
+Another example of exclusion would be to drop all traits of one TASSEL type
+(i.e., drop all factor or covariate data from the model). If our models contain
+many of one specific type, this can also become cumbersome and error prone
+when writing out the model. To circumvent this, rTASSEL includes a special set
+of "whitelisted" keywords that we can use to drop specific trait types:
+
+* `I(cov)`: all traits of type "covariate"
+* `I(fct)`: all traits of type "factor"
+
+Using the prior example, if we want to keep all factor traits but remove all
+covariate traits (e.g., `Q1`, `Q2`, and `Q3`), we can use the following:
+
+```
+. ~ . - I(cov)
+```
+
+For more examples of how to subset phenotype data take a look the following
+table:
+
+| Formula                             | Data                        | Covariate         | Factor     |
+|-------------------------------------|-----------------------------|-------------------|------------|
+| `. ~ .`                             | `dpoll`, `EarDia`, `EarHT`  | `Q1`, `Q2`, `Q3`  | `location` |
+| `EarHT ~ . - Q2`                    | `EarHT`                     | `Q1`, `Q3`        | `location` |
+| `. - dpoll ~ . - Q1 - Q3`           | `EarHT`, `EarDia`           | `Q2`              | `location` |
+| `c(dpoll, EarHT) ~ Q1 + location`   | `dpoll`, `EarHT`            | `Q1`              | `location` |
+| `dpoll + EarHT ~ Q1 + location`     | `dpoll`, `EarHT`            | `Q1`              | `location` |
+| `dpoll ~ . - I(cov)`                | `dpoll`                     | _None_            | `location` |
+| `. - dpoll ~ Q2 - Q1 - Q3`          | `EarHT`, `EarDia`           | `Q2`              | _None_     |
+| `. - dpoll ~ -Q1 - Q3 + Q2`         | `EarHT`, `EarDia`           | `Q2`              | _None_     |
+| `dpoll ~ -I(cov) + .`               | `dpoll`                     | _None_            | `location` |
+
+
+
+### Other parameters
 
 Additionally, we can also fit marker and kinship data to our model which can
 change our analytical methods. Since these options in TASSEL are binary,
@@ -704,6 +822,8 @@ In the following examples, we will run example data and in return, obtain
 TASSEL association table reports in the form of an R `list` object containing
 `tibble`-based R data frames.
 
+
+
 ## Calculate BLUEs
 To caclulate best linear unbiased estimates (BLUEs), numeric phenotype data
 can be used along with covariate and factor data *only* if it is intended to
@@ -714,10 +834,10 @@ method, we can leave the `fitMarkers`, `kinship`, and `fastAssociation` to
 ```{r, echo=TRUE, eval=TRUE}
 # Read in phenotype data
 phenoPathCov <- system.file("extdata", "mdp_phenotype.txt", package = "rTASSEL")
-tasPhenoCov <- rTASSEL::readPhenotypeFromPath(phenoPathCov)
+tasPhenoCov <- readPhenotypeFromPath(phenoPathCov)
 
 # Calculate BLUEs
-tasBLUE <- rTASSEL::assocModelFitter(
+tasBLUE <- assocModelFitter(
     tasObj = tasPhenoCov,
     formula = . ~ .,                  # <- All data is used!
     fitMarkers = FALSE,
@@ -725,8 +845,34 @@ tasBLUE <- rTASSEL::assocModelFitter(
     fastAssociation = FALSE
 )
 
-# Return BLUE output
-str(tasBLUE)
+# Inspect results
+tasBLUE
+```
+
+### `AssociationResults` Table reports
+In the prior example, we see that `assocModelFitter()` will return a
+`AssociationResults` object. You can think of this object as an R list that
+contains TASSEL 5 table report information encoded as a `data.frame`-like
+object. To access the primary report you can apply the `tableReport()` function
+to the object. In the following examples, I will use base R's piping operator
+(`|>`) to better show the flow of methods:
+
+```{r, echo=TRUE, eval=TRUE}
+# Return BLUE values for traits
+tasBLUE |> tableReport() |> head()
+```
+
+We can also obtain other reports from the object by specifying the name of the
+report. The names of the reports are listed in the object's display but we can
+also return them using `reportNames()`
+
+```{r, echo=TRUE, eval=TRUE}
+tasBLUE |> reportNames()
+```
+
+```{r, echo=TRUE, eval=TRUE}
+# Return ANOVA results
+tasBLUE |> tableReport("BLUE_ANOVA") |> head()
 ```
 
 
@@ -737,16 +883,21 @@ combined with our phenotype data in a `TasselGenotypePhenotype` class object:
 
 ```{r, echo=TRUE, eval=TRUE}
 # Calculate GLM
-tasGLM <- rTASSEL::assocModelFitter(
-    tasObj = tasGenoPheno,             # <- our prior TASSEL object
-    formula = list(EarHT, dpoll) ~ .,  # <- only EarHT and dpoll are ran
-    fitMarkers = TRUE,                 # <- set this to TRUE for GLM
+tasGLM <- assocModelFitter(
+    tasObj = tasGenoPheno,          # <- our prior TASSEL object
+    formula = c(EarHT, dpoll) ~ .,  # <- only EarHT and dpoll are ran
+    fitMarkers = TRUE,              # <- set this to TRUE for GLM
     kinship = NULL,
     fastAssociation = FALSE
 )
 
-# Return GLM output
-str(tasGLM)
+# Inspect results
+tasGLM
+```
+
+```{r, echo=TRUE, eval=TRUE}
+# Return association statistics
+tasGLM |> tableReport() |> head()
 ```
 
 
@@ -758,7 +909,7 @@ need a TASSEL kinship object (see *Create a kinship matrix object* in the
 
 ```{r, echo=TRUE, eval=TRUE}
 # Calculate MLM
-tasMLM <- rTASSEL::assocModelFitter(
+tasMLM <- assocModelFitter(
     tasObj = tasGenoPheno,             # <- our prior TASSEL object
     formula = EarHT ~ .,               # <- run only EarHT
     fitMarkers = TRUE,                 # <- set this to TRUE for GLM
@@ -766,13 +917,13 @@ tasMLM <- rTASSEL::assocModelFitter(
     fastAssociation = FALSE
 )
 
-# Return GLM output
-str(tasMLM)
+# Inspect results
+tasMLM
 ```
 
 
 ## Calculate Fast Association
-Finally, we can run fast association analysis in our GLM model by setting
+We can run fast association analysis in our GLM model by setting
 the `fastAssociation` parameter to `TRUE`. **NOTE**: this is only really
 effective if you have many phenotype traits:
 
@@ -785,14 +936,14 @@ phenoPathFast <-system.file(
 )
 
 # Creat rTASSEL object - use prior TASSEL genotype object
-tasGenoPhenoFast <- rTASSEL::readGenotypePhenotype(
+tasGenoPhenoFast <- readGenotypePhenotype(
     genoPathOrObj = tasGenoHMP,
     phenoPathDFOrObj = phenoPathFast
 )
 
 
 # Calculate MLM
-tasFAST <- rTASSEL::assocModelFitter(
+tasFAST <- assocModelFitter(
     tasObj = tasGenoPhenoFast,         # <- our prior TASSEL object
     formula = . ~ .,                   # <- run all of the phenotype data
     fitMarkers = TRUE,                 # <- set this to TRUE for GLM
@@ -800,10 +951,25 @@ tasFAST <- rTASSEL::assocModelFitter(
     fastAssociation = TRUE             # <- set this to TRUE for fast assoc.
 )
 
-# Return GLM output
-str(tasFAST)
+# Inspect results
+tasFAST
 ```
 
+
+## Calculate Stepwise Regression
+Additionally, we can also run stepwise regression via TASSEL 5's 
+`StepwiseOLSModelFitterPlugin` using the `stepwiseModelFitter()` function with 
+similar formula syntax found in the prior sections:
+
+```{r, echo=TRUE, eval=TRUE}
+stepRes <- stepwiseModelFitter(
+    tasObj  = tasGenoPhenoFast,
+    formula = dpoll ~ .
+)
+
+# Inspect results
+stepRes
+```
 
 
 # Analysis - Phylogeny
@@ -839,23 +1005,104 @@ visualization libraries such as
 
 # Visualizations
 
+## Overview
+`rTASSEL` supports a wealth of information rich and easily generated plots via
+the `plot*` family of functions. In the following sections, we will briefly
+go over some of the capabilities.
+
 ## Manhattan plots
-`rTASSEL` supports automated visualizations for Manhattan plots and linkage 
-disequilibrium (LD) analyses. In this example, we will generate a Manhattan 
-plot for our prior MLM object:
+To generate Manhattan plots from GWAS data, we can use the `plotManhattan()`
+function. To make this as streamlined as possible, we can pass our prior
+`AssociationResults` objects to the default plotting function:
 
-```{r, echo=TRUE, eval=FALSE}
-# Generate Manhattan plot for ear height trait
-manhattanEH <- manhattanPlot(
-    assocStats = tasMLM$MLM_Stats,
-    trait      = "EarHT",
-    threshold  = 5
-)
-
-manhattanEH
+```{r, echo=TRUE, eval=TRUE}
+tasGLM |> plotManhattan()
 ```
 
-![](../man/figures/manhattan_eh.png)
+Since we mapped 2 traits, the resulting plot will have 2 facets: 1 row for
+each trait. We can also specify a singular trait or a collection of traits by
+passing a singular `character` object or a collection (i.e., `c()`) of 
+`character` objects, respectively, into the `trait` parameter:
+
+```{r, echo=TRUE, eval=TRUE, fig.height=2.5, fig.width=12}
+tasGLM |> plotManhattan(trait = "dpoll")
+```
+
+We can also set a threshold value to highlight visually "significant" markers
+of interest by passing a $-log_{10}$ value to the `threshold` parameter:
+
+```{r, echo=TRUE, eval=TRUE}
+tasGLM |> plotManhattan(threshold = 5)
+```
+
+We pass different colors for column facets by passing color values to the 
+`colors` parameter:
+
+```{r, echo=TRUE, eval=TRUE}
+tasGLM |> plotManhattan(colors = c("red", "#4890bd", "#2ad14e"))
+```
+
+
+We can also make plots interactive by setting the `interactive` parameter to
+`TRUE`:
+
+```{r, echo=TRUE, eval=TRUE}
+tasGLM |> plotManhattan(interactive = TRUE)
+```
+
+
+## QQ plots
+To generate quantile-quantile plots, we can pass our `AssociationResults`
+data to `plotQQ()`
+
+```{r, echo=TRUE, eval=TRUE}
+tasMLM |> plotQQ()
+```
+
+## PCA plots
+
+Using similar syntax to our association results, we can leverage the same
+concept PCA results by passing `PCAResults` objects to the `plotPCA()`
+function:
+
+```{r, echo=TRUE, eval=TRUE}
+pcaRes |> plotPCA()
+```
+
+By default, this will generate a scatter plot of the first two principal
+components (PCs) along with the percent variation captured by the PC. We can
+perform hierarchical clustering of the points by setting the `cluster` parameter
+to `TRUE`. This will by default, cluster the data into 2 clusters. We can
+specify more cluster by setting the `nClust` parameter. For example, if I want
+to generate 3 clusters:
+
+```{r, echo=TRUE, eval=TRUE}
+pcaRes |> plotPCA(cluster = TRUE, nClust = 3)
+```
+
+We can also generate coloring by adding metadata to the plot as a simple
+`data.frame` like object along with the specified column in the metadata using
+the `metadata` and `mCol` parameters, respectively:
+
+```{r, echo=TRUE, eval=TRUE}
+metaPath <- system.file("extdata", "mdp_taxa_metadata.csv", package = "rTASSEL")
+metaDf <- read.csv(metaPath)
+
+pcaRes |> plotPCA(metadata = metaDf, mCol = "Subpopulation")
+```
+
+
+## Scree plots
+
+In conjunction with PCA scatter plots, another common plot is a "Scree plot".
+This is used to identify how much of the variation is captured with $n$ amount
+of principal components. By default, this will generate data for 10 PCs and can 
+be overridden via the `n` parameter:
+
+```{r, echo=TRUE, eval=TRUE}
+pcaRes |> plotScree(n = 5)
+```
+
 
 
 ## LD plots
@@ -863,7 +1110,7 @@ Similarly, we can also visualize LD using automated methods. Like most
 LD plots, it is wise to filter your genotype information to a specific region 
 of interest:
 
-```{r, echo=TRUE, eval=FALSE}
+```{r, echo=TRUE, eval=TRUE}
 # Filter genotype table by position
 tasGenoPhenoFilt <- filterGenotypeTableSites(
     tasObj              = tasGenoPheno,
@@ -885,11 +1132,13 @@ myLD <- ldPlot(
 myLD
 ```
 
-![](../man/figures/ld_static.png)
 
 
 
-# Interactive Visualizations
+
+# Interactive Visualizations (deprecated)
+
+**NOTE**: These methods will soon be removed from rTASSEL
 
 ## Overview
 Since `rTASSEL` can essentially interact with all of TASSEL's API, interactive
@@ -906,9 +1155,9 @@ at this point in time for most modern machines and experimental design. This
 will create comparisons only within a given range of indexes:
 
 ```{r, echo=TRUE, eval=FALSE}
-library(magrittr)
 
-tasGenoHMP %>% ldJavaApp(windowSize = 100)
+
+tasGenoHMP |> ldJavaApp(windowSize = 100)
 ```
 
 ![](../man/figures/ld_java_viewer.png)
@@ -923,12 +1172,12 @@ function. In the following example, we will first filter 6 taxa and then pass
 the filtered genotype object to the Java visualizer:
 
 ```{r, echo=TRUE, eval=FALSE}
-library(magrittr)
 
-tasGenoHMP %>% 
+
+tasGenoHMP |> 
     filterGenotypeTableTaxa(
       taxa = c("33-16", "38-11", "4226", "4722", "A188", "A214N")
-    ) %>% 
+    ) |> 
     treeJavaApp()
 ```
 

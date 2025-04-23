@@ -1,17 +1,4 @@
-#--------------------------------------------------------------------
-# Script Name:   ExportUtils.R
-# Description:   Export utilities for rTASSEL
-# Author:        Brandon Monier
-# Created:       2020-11-09 at 11:53:02
-# Last Modified: 2021-07-26 at 11:52:37
-#--------------------------------------------------------------------
-
-#--------------------------------------------------------------------
-# Detailed Purpose:
-#    The main purpose of this Rscript is to house methods for
-#    exporting various rTASSEL data objects to flat files.
-#--------------------------------------------------------------------
-
+## ----
 #' @title Export Genotype Table to Disk
 #'
 #' @description Exports genotype tables to various flat file formats.

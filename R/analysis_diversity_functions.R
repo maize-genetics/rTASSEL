@@ -1,18 +1,4 @@
-#--------------------------------------------------------------------
-# Script Name:   AnalysisDiversityFunctions.R
-# Description:   Functions for caclulating linkage disequilibrium
-# Author:        Brandon Monier
-# Created:       2019-06-27 at 10:00:00
-# Last Modified: 2020-06-23 at 11:50:36
-#--------------------------------------------------------------------
-
-#--------------------------------------------------------------------
-# Detailed Purpose:
-#   The main purpose of this Rscript to host functions necessary for
-#   methods pertaining to calculating LD from rTASSEL genotype
-#   datasets.
-#--------------------------------------------------------------------
-
+## ----
 #' @title Calculate linkage disequilibrium from an rTASSEL genotype
 #'   dataset.
 #'

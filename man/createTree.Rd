@@ -9,14 +9,13 @@ createTree(tasObj, clustMethod = c("Neighbor_Joining", "UPGMA"))
 \arguments{
 \item{tasObj}{An object of class \code{TasselGenotypePenotype}.}
 
-\item{clustMethod}{What clustering method should be used? Current options
-are \code{UGMA} and \code{Neighbor_Joining}. Defaults to
-\code{Neighbor_Joining}.}
+\item{clustMethod}{What clustering method should be used? Current options are \code{UGMA} and
+\code{Neighbor_Joining}. Defaults to \code{Neighbor_Joining}.}
 }
 \value{
 Returns a \code{phylo} tree object. See the
-   [ape]{https://cran.r-project.org/web/packages/ape/ape.pdf} package
-   for further details.
+\href{https://cran.r-project.org/web/packages/ape/ape.pdf}{ape} package
+for further details.
 }
 \description{
 This function acts as a wrapper for TASSEL's

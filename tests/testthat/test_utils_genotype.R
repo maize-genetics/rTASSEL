@@ -2,7 +2,7 @@
 # subEllipsis tests
 
 test_that("subEllipsis returns ellipsis without spaces when ind is NULL", {
-    res <- rTASSEL:::subEllipsis(NULL)
+    res <- subEllipsis(NULL)
     # Remove ANSI codes for comparison
     expect_true(grepl(cli::symbol$ellipsis, res))
 })

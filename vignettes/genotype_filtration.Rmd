@@ -75,7 +75,7 @@ to explain each method. Prior knowledge about `rTASSEL` data structures is neede
 so please refere to the vignette *Getting Started with rTASSEL* if you are
 new to this package!
 
-*Note:* We will be using the the `magrittr` pipe operator `%>%` for the
+*Note:* We will be using the the base R pipe operator `|>` for the
 following examples. More information about this can be found [here](https://cran.r-project.org/web/packages/magrittr/vignettes/magrittr.html).
 
 
@@ -145,7 +145,7 @@ If we want to filter by minor allele frequency, we can use the following
 parameters...
 
 ```{r, eval=FALSE}
-myGT %>% 
+myGT |> 
     filterGenotypeTableSites(
         siteMinAlleleFreq = 0.3,
         siteMaxAlleleFreq = 1.0
@@ -159,7 +159,7 @@ myGT %>%
 We can also set a range using a limit with the `siteMaxAlleleFreq` parameter...
 
 ```{r, eval=FALSE}
-myGT %>% 
+myGT |> 
     filterGenotypeTableSites(
         siteMinAlleleFreq = 0.2,
         siteMaxAlleleFreq = 0.3
@@ -177,7 +177,7 @@ how we calculated frequency of minor alleles, we can apply the same logic with
 missing data with the `siteMinCount` parameter:
 
 ```{r, eval=FALSE}
-myGT %>% 
+myGT |> 
     filterGenotypeTableSites(
         siteMinCount = 5
     )
@@ -197,7 +197,7 @@ heterozygous sites using the parameters, `minHeterozygous` and
 10% heterozygous sites, we could use the following:
 
 ```{r, eval=FALSE}
-myGT %>% 
+myGT |> 
     filterGenotypeTableSites(
         minHeterozygous = 0.0,
         maxHeterozygous = 0.1
@@ -223,7 +223,7 @@ to `sites`. Next, we will be able to use the parameters, `startSite` and
 `endSite`:
 
 ```{r, eval=FALSE}
-myGT %>% 
+myGT |> 
     filterGenotypeTableSites(
         siteRangeFilterType = "sites",
         startSite = 1,
@@ -251,7 +251,7 @@ chromosome sequence. For example, if we wanted to filter just chromosome 1,
 we can specify the following parameters:
 
 ```{r, eval=FALSE}
-myGT %>% 
+myGT |> 
     filterGenotypeTableSites(
         siteRangeFilterType = "position",
         startChr = 1,
@@ -267,7 +267,7 @@ If we want to be more specific in our filtering, we can include positional
 information as well:
 
 ```{r, eval=FALSE}
-myGT %>% 
+myGT |> 
     filterGenotypeTableSites(
         siteRangeFilterType = "position",
         startChr = 1,
@@ -315,7 +315,7 @@ To implement this in our filtration method, we can pass this `GRanges` object
 into our `gRangesObj` parameters and setting `siteRangeRilterType` to `"none"`:
 
 ```{r, eval=FALSE}
-myGT %>% 
+myGT |> 
     filterGenotypeTableSites(
         siteRangeFilterType = "none",
         gRangesObj = gr
@@ -347,7 +347,7 @@ This external file can be passed to our filtration method by setting
 disk in the `bedFile` parameter:
 
 ```{r, eval=FALSE}
-myGT %>% 
+myGT |> 
     filterGenotypeTableSites(
         siteRangeFilterType = "none",
         bedFile = "my_ranges.bed"
@@ -382,7 +382,7 @@ This external file can be passed to our filtration method by setting
 disk in the `chrPosFile` parameter:
 
 ```{r, eval=FALSE}
-myGT %>% 
+myGT |> 
     filterGenotypeTableSites(
         siteRangeFilterType = "none",
         bedFile = "my_chr_pos.tsv"
@@ -430,7 +430,7 @@ alleles, we can apply the same logic with missing data with the `minNotMissing`
 parameter:
 
 ```{r, eval=FALSE}
-myGT %>% 
+myGT |> 
     filterGenotypeTableTaxa(
         minNotMissing = 1.0
     )
@@ -450,7 +450,7 @@ to filter all taxa that contain at least one heterozygous site, we could employ
 the following parameters:
 
 ```{r, eval=FALSE}
-myGT %>% 
+myGT |> 
     filterGenotypeTableTaxa(
         minHeterozygous = 0.0,
         maxHeterozygous = 0.0
@@ -478,7 +478,7 @@ myFavTaxa
 This vector can passed to the following argument:
 
 ```{r, eval=FALSE}
-myGT %>% 
+myGT |> 
     filterGenotypeTableTaxa(
         taxa = myFavTaxa
     )
@@ -502,13 +502,13 @@ allTaxa
 
 We could filter from this object using regular expressions. One common method
 is using the `str_subset` method from the `stringr` 
-[package](https://stringr.tidyverse.org/) in conjunction with the `magrittr`
-pipe operator `%>%`:
+[package](https://stringr.tidyverse.org/) in conjunction with the base R
+pipe operator `|>`:
 
 ```{r, eval=FALSE}
-myGT %>% 
+myGT |> 
     filterGenotypeTableTaxa(
-        taxa = allTaxa %>% str_subset("^B|^Ky")
+        taxa = allTaxa |> str_subset("^B|^Ky")
     )
 ```
 
@@ -528,7 +528,7 @@ dealing with a massive breeding panel of several hundred samples.
 Like with all good practices in R and programming, various `rTASSEL` methods 
 can be "piped" together in one continuous flow of steps. For example, we could
 filter simultaneously on sites *and* taxa using both methods in conjunction 
-with the `magrittr` pipe operator `%>%`. Let's use our previous toy data set:
+with the base R pipe operator `|>`. Let's use our previous toy data set:
 
 ![](../man/figures/filter_taxa_00.png)
 
@@ -536,10 +536,10 @@ Let's (1) select taxa IDs that start with the letter "B" or "K" *and* (2) select
 indexed TASSEL marker sites 1 through 3. This will filter elements shown below:
 
 ```{r, eval=FALSE}
-myGT %>%
+myGT |>
     filterGenotypeTableTaxa(
-        taxa = allTaxa %>% str_subset("^B|^Ky")
-    ) %>% 
+        taxa = allTaxa |> str_subset("^B|^Ky")
+    ) |> 
     filterGenotypeTableSites(
         siteRangeFilterType = "sites",
         startSite = 1,
@@ -556,17 +556,17 @@ example we will (1) select taxa IDs that start with the letter "B" or "K", (2) s
 indexed TASSEL marker sites 1 through 3, *and* (3) export to a VCF flat file:
 
 ```{r, eval=FALSE}
-myGT %>%
+myGT |>
     filterGenotypeTableTaxa(
-        taxa = allTaxa %>% str_subset("^B|^Ky")
-    ) %>% 
+        taxa = allTaxa |> str_subset("^B|^Ky")
+    ) |> 
     filterGenotypeTableSites(
         siteRangeFilterType = "sites",
         startSite = 1,
         endSite = 3
-    ) %>% 
+    ) |> 
     exportGenotypeTable(
-        file = "my_filtered_gt.vcf"
+        file = "my_filtered_gt.vcf",
         format = "vcf"
     )
 ```

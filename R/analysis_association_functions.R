@@ -99,13 +99,13 @@ assocModelFitter <- function(
     }
 
     # Subset phenotype data
-    rData        <- rTASSEL:::tableReportToDF(tasObj@jPhenotypeTable)
-    attrData     <- rTASSEL:::makeAttributeData(tasObj@jPhenotypeTable, rData)
-    traitsToKeep <- unlist(rTASSEL:::parseFormula(formula, attrData))
+    rData        <- tableReportToDF(tasObj@jPhenotypeTable)
+    attrData     <- makeAttributeData(tasObj@jPhenotypeTable, rData)
+    traitsToKeep <- unlist(parseFormula(formula, attrData))
 
     # Logic - Handle association analyses
     jRC <- rJava::J("net/maizegenetics/plugindef/GenerateRCode")
-    jTasFilt <- rTASSEL:::tasPhenoFilter(
+    jTasFilt <- tasPhenoFilter(
         tasObj = tasObj,
         filtObj = traitsToKeep
     )

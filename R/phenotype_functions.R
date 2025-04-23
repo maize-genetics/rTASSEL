@@ -1,18 +1,4 @@
-#---------------------------------------------------------------------
-# Script Name:   PhenotypeFunctions.R
-# Description:   Functions to create TASSEL Phenotype
-# Author:        Brandon Monier & Ed Buckler
-# Created:       2018-11-26 at 11:14:36
-# Last Modified: 2019-04-04 at 19:20:28
-#--------------------------------------------------------------------
-
-#--------------------------------------------------------------------
-# Detailed Purpose:
-#    The main purpose of this Rscript is to house functions
-#    necessary for reading in phenotype datasets into R and
-#    extracting data from TASSEL phenotype objects.
-#--------------------------------------------------------------------
-
+## ----
 #' @title Wrapper function of TasselGenotypePhenotype class for phenotype
 #'    data from a path.
 #'
@@ -33,6 +19,12 @@
 #' @importFrom rJava new
 #' @export
 readPhenotypeFromPath <- function(path) {
+    warnMsg <- paste0(
+        "The function 'readPhenotypeFromPath()' will be deprecated soon.\n",
+        "This will be replaced by '", cli::style_bold("readPhenotype()"), "' in the next update."
+    )
+    message(warnMsg)
+
     if (!file.exists(path)) {
         stop("Cannot open file ", path, ": No such file or directory")
     }
@@ -69,6 +61,12 @@ readPhenotypeFromPath <- function(path) {
 readPhenotypeFromDataFrame <- function(phenotypeDF,
                                        taxaID,
                                        attributeTypes = NULL) {
+    warnMsg <- paste0(
+        "The function 'readPhenotypeFromDataFrame()' will be deprecated soon.\n",
+        "This will be replaced by '", cli::style_bold("readPhenotype()"), "' in the next update."
+    )
+    message(warnMsg)
+
     safeAtt <- c("covariate", "data", "factor", "taxa")
     if (!is.null(attributeTypes) & !all(attributeTypes %in% safeAtt)) {
         stop(
@@ -134,6 +132,12 @@ readPhenotypeFromDataFrame <- function(phenotypeDF,
 #' @importFrom rJava is.jnull
 #' @export
 getPhenotypeDF <- function(tasObj) {
+    warnMsg <- paste0(
+        "The function 'getPhenotypeDF()' will be deprecated soon.\n",
+        "This will be replaced by '", cli::style_bold("as.data.frame()"), "' in the next update."
+    )
+    message(warnMsg)
+
     if (class(tasObj) != "TasselGenotypePhenotype") {
         stop("`tasObj` must be of class `TasselGenotypePhenotype`")
     }

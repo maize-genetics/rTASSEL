@@ -159,7 +159,7 @@ formatRefProb <- function(rpVals) {
     }
 
     if (any(rpVals < 0 | rpVals > 1, na.rm = TRUE)) {
-        rlang::abort("All values must be in the range [0–1]")
+        rlang::abort("All values must be in the range of 0 to 1")
     }
 
     # ANSI background colors: white to turquoise (blue/green)
@@ -430,7 +430,7 @@ styleCache <- list(
 # @details
 # The function uses a `switch` statement to determine the appropriate
 # style for the given allele. Recognized alleles include "A", "C",
-# "G", "T", "N", "R", "Y", "S", "W", "K", "M", and "…". If the
+# "G", "T", "N", "R", "Y", "S", "W", "K", "M", and '...'. If the
 # allele is not recognized, it is styled as bold with a default
 # format.
 #
@@ -454,7 +454,7 @@ formatAllele <- function(currAllele, minAllele) {
         "W" = styleCache[["W"]],
         "K" = styleCache[["K"]],
         "M" = styleCache[["M"]],
-        "…" = subEllipsis(1),
+        "\u2026" = subEllipsis(1),
         sprintf("\033[1m %s \033[22m", currAllele) # default if not in cache
     )
 }
@@ -671,15 +671,19 @@ printGtDisp <- function(fgs, nTaxa, nSites, jMem) {
 #' table using the provided matrix data.
 #'
 #' @details
-#' - Taxa list is created using the `TASSEL_JVM$TAXA_LIST_BUILDER`
-#'   Java class.
-#' - Position list is constructed using the
-#'   `TASSEL_JVM$POSITION_LIST_BUILDER` and
-#'   `TASSEL_JVM$GENERAL_POSITION_BUILDER` Java classes.
-#' - Reference probabilities are built using the
-#'   `TASSEL_JVM$REF_PROBABILITY_BUILDER` Java class.
-#' - The genotype table is created using the
-#'   `TASSEL_JVM$GENOTYPE_TABLE_BUILDER` Java class.
+#' The following components are constructed using respective Java builder classes:
+#' \itemize{
+#'   \item Taxa list is created using the \code{TASSEL_JVM$TAXA_LIST_BUILDER}
+#'         Java class.
+#'   \item Position list is constructed using the
+#'         \code{TASSEL_JVM$POSITION_LIST_BUILDER} and
+#'         \code{TASSEL_JVM$GENERAL_POSITION_BUILDER} Java classes.
+#'   \item Reference probabilities are built using the
+#'         \code{TASSEL_JVM$REF_PROBABILITY_BUILDER} Java class.
+#'   \item The genotype table is created using the
+#'         \code{TASSEL_JVM$GENOTYPE_TABLE_BUILDER} Java class.
+#' }
+
 #'
 #' @param m
 #' A numeric matrix where rows represent taxa and columns represent

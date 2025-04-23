@@ -1,19 +1,4 @@
-#!/usr/bin/env Rscript
-
-#--------------------------------------------------------------------
-# Script Name:   AnalysisPhylogenyVisFunctions.R
-# Description:   General functions for visualizing phylogeny
-# Author:        Brandon Monier
-# Created:       2021-07-22 at 16:50:16
-# Last Modified: 2021-07-23 at 09:59:30
-#--------------------------------------------------------------------
-
-#--------------------------------------------------------------------
-# Detailed Purpose:
-#    The main purpose of this Rscript is to house all necessary
-#    general functions and wrappers for visualizing TASSEL phylogeny
-#--------------------------------------------------------------------
-
+## ----
 #' @title R interface for Archaeopteryx interactive tree viewer
 #'
 #' @description This function acts as a wrapper for TASSEL's
@@ -32,6 +17,9 @@
 #'
 #' @export
 treeJavaApp <- function(tasObj, clustMethod = c("Neighbor_Joining", "UPGMA")) {
+    warnMsg <- paste0("The function 'ldJavaApp()' will be deprecated soon.")
+    message(warnMsg)
+
     if (!is(tasObj, "TasselGenotypePhenotype")) {
         stop("tasObj is not of class \"TasselGenotypePhenotype\"")
     }

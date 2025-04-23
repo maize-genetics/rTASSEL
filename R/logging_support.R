@@ -6,6 +6,8 @@
 #' @param filePath
 #' File path and name of log file location. If \code{NULL}, a logging file
 #' (\code{rtasel_log.txt} will be added to current working directory.
+#' @param verbose
+#' Display logging file creation message? Defaults to \code{TRUE}.
 #'
 #' @export
 startLogger <- function(filePath = NULL, verbose = TRUE) {
@@ -13,7 +15,7 @@ startLogger <- function(filePath = NULL, verbose = TRUE) {
         filePath <- "rtassel_log.txt"
     } else {
         if (!dir.exists(dirname(filePath))) {
-            rlang::stop("No such directory exists provided for logging file")
+            rlang::abort("No such directory exists provided for logging file")
         }
 
         filePath <- normalizePath(filePath, mustWork = FALSE)

@@ -1,19 +1,5 @@
-#---------------------------------------------------------------------
-# Script Name:   TaxaListFunctions.R
-# Description:   Functions to support TaxaList or Samples
-# Author:        Brandon Monier & Ed buckler
-# Created:       2018-11-26 at 11:14:36
-# Last Modified: 2020-06-16 at 17:27:42
-#--------------------------------------------------------------------
-
-#--------------------------------------------------------------------
-# Detailed Purpose:
-#   The main purpose of this Rscript is to house functions
-#   necessary for extracting TASSEL taxa lists from TASSEL objects.
-#--------------------------------------------------------------------
-
 ## ----
-## Get Taxa - not exported (house keeping)
+# Get Taxa - not exported (house keeping)
 getTaxaList <- function(jtsObject) {
     if(is(jtsObject, "TasselGenotypePhenotype")) {
         return(jtsObject@jTaxaList)

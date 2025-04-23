@@ -1,17 +1,4 @@
-#--------------------------------------------------------------------
-# Script Name:   AnalysisRelatednessFunctions.R
-# Description:   Functions for TASSEL relatedness analyses
-# Author:        Brandon Monier
-# Created:       2019-04-04 at 21:31:09
-# Last Modified: 2022-03-01 at 17:50:19
-#--------------------------------------------------------------------
-
-#--------------------------------------------------------------------
-# Detailed Purpose:
-#    The main purpose of this Rscript is to house functions necessary
-#    for relatedness-based methods in TASSEL.
-#--------------------------------------------------------------------
-
+## ----
 #' @title Create a TASSEL kinship matrix
 #'
 #' @description This function will calculate a kinship matrix using

@@ -1,21 +1,4 @@
-#---------------------------------------------------------------------
-# Script Name:   ClassTasselDataset.R
-# Description:   TasselDataSet class and methods
-# Author:        Brandon Monier & Ed Buckler
-# Created:       2018-11-26 at 11:14:36
-# Last Modified: 2022-03-01 at 17:50:08
-#--------------------------------------------------------------------
-
-#--------------------------------------------------------------------
-# Detailed Purpose:
-#    The main purpose of this Rscript is to produce wrapper classes
-#    for TASSEL class objects in Java
-#--------------------------------------------------------------------
-
-#--------------------------------------------------------------------
-# TasselGenotypePhenotype class and constructors
-#--------------------------------------------------------------------
-
+## ----
 #' @title TasselGenotypePhenotype Class
 #'
 #' @description Class \code{TasselGenotypePhenotype} defines a \code{rTASSEL}
@@ -97,9 +80,8 @@ setMethod(
 )
 
 
-#--------------------------------------------------------------------
-# Core functions for TasselGenotypePhenotype class objects
-#--------------------------------------------------------------------
+
+# /// Core functions for TasselGenotypePhenotype class objects //////
 
 ## main constructor for TasselGenotypePhenotype objects - not exported
 .tasselObjectConstructor <- function(jTasselObj) {

@@ -151,6 +151,91 @@ From here, you can go to `localhost:8787` on a web browser and enter a:
   terminal output)
 
 
+# Setting `rTASSEL`/Java memory
+
+## Local overview
+Since `rTASSEL` leverages the TASSEL 5 Java API via the `rJava` package, 
+it is important to allocate sufficient memory to the Java Virtual Machine (JVM) 
+before it starts. This is done using the `options(java.parameters = "-Xmx...")` 
+command in R, which sets JVM parameters such as the maximum heap size (e.g., 
+`-Xmx4g` for **4 GB**). The reason this must be set _before_ loading `rTASSEL` is
+because the JVM can only be configured at startup. Once initialized, its memory 
+settings cannot be changed without restarting the R session. This becomes 
+especially important when working with large datasets or computationally 
+intensive method calls, which can quickly exceed the default memory allocation 
+and lead to `OutOfMemoryError`s. By increasing the available heap space 
+proactively, we ensure that Java operations can be performed efficiently and 
+without interruption due to memory constraints.
+
+In short, if you are loading large genotype datasets and/or phenotype data, it
+is adamant that you specify the memory allocated _**before**_ loading the
+`rTASSEL` package via the `options()` function:
+
+```{r, echo=TRUE, eval=FALSE}
+# Allocate 4 GB of memory to the JVM
+options(java.parameters = "-Xmx4g")
+
+# Load rTASSEL
+library(rTASSEL)
+```
+
+
+## Running `rTASSEL` on RStudio Server
+Certain instances of RStudio Server on computing clusters can override what you 
+specify in the prior example (i.e., running the `options()` function before 
+loading `rTASSEL`) due to when the JVM is initialized and the `options()`
+function is called in the recently initialized R session. If the JVM is 
+initialized, any value provided to the `java.parameters` key in the `options()` 
+call **will be silently ignored**. To prevent this from happening, make sure to
+set up a `.Rprofile` configuration file with the aforementioned `options()` call:
+
+```
+## Example .Rprofile entry
+
+# Allocate 4 GB of memory to the JVM
+options(java.parameters = "-Xmx4g")
+```
+
+Since setting up a `.Rprofile` configuration are out of scope for this package,
+please refer to [Posit's excellent write up on the subject](https://docs.posit.co/ide/user/ide/guide/environments/r/managing-r.html#rprofile).
+
+
+## Helpful tips
+
+### Verify memory has been set
+If you are running into `OutOfMemory` exceptions, verify if you have specified
+enough memory via the prior `options()` call. This can help verify if you have 
+properly set enough memory at startup. By default, `rJava` will allocate 
+**500 MB (0.5 GB)** of memory to your session. At any time during your R session
+you can report the total memory allocated using a couple of `rJava` calls:
+
+```{r, echo=TRUE, eval=FALSE}
+# Call Java Runtime class
+runtime  <- rJava::.jcall("java/lang/Runtime", "Ljava/lang/Runtime;", "getRuntime")
+
+# Get total memory allocation (reported in gigabytes [GB])
+gbConv <- 1024^3 # e.g. ~1e9 (billion) bytes
+totMem <- round(round(rJava::.jcall(runtime, "J", "totalMemory") / gbConv, 3))
+
+# Show in console
+totMem
+```
+
+If the `java.parameters` value in `options()` was set up properly, the value 
+specified in `totMem` should be the same value you specify in `options()`.
+
+### Ensure enough memory is allocated
+In most instances, genotype data will be the main determinant of how much
+memory you should allocate to the JVM. In most cases, the amount of memory
+you should allocate for genotype data is at least:
+
+```
+(# taxa) * (# sites) * (1 byte)
+```
+
+For example, if you have genotype data consisting of **250** taxa and **3000** 
+sites, this would be **750000** bytes or **0.75** megabytes (MB).
+
 
 # Prior issues and possible resolutions
 

@@ -82,11 +82,11 @@ tbl_format_footer.java_pheno_tbl <- function(x, ...) {
 ## ----
 #' @title
 #' TasselPhenotype Class Definition
-#' 
+#'
 #' @description
-#' Defines the \code{TasselPhenotype} class, which represents 
+#' Defines the \code{TasselPhenotype} class, which represents
 #' phenotype data in the TASSEL 5 framework.
-#' 
+#'
 #' @slot attrData
 #' A \code{tbl_df} containing attribute data for the phenotype.
 #' @slot attrSummary
@@ -96,15 +96,15 @@ tbl_format_footer.java_pheno_tbl <- function(x, ...) {
 #' @slot rData
 #' A \code{tbl_df} containing the phenotype data in R format.
 #' @slot jRefObj
-#' A \code{jobjRef} representing a reference to the Java object in 
+#' A \code{jobjRef} representing a reference to the Java object in
 #' TASSEL 5.
 #' @slot jMemAddress
-#' A \code{character} string representing the memory address of the 
+#' A \code{character} string representing the memory address of the
 #' Java object.
 #' @slot jClass
-#' A \code{character} string representing the Java class name of the 
+#' A \code{character} string representing the Java class name of the
 #' object.
-#' 
+#'
 #' @name TasselPhenotype-class
 #' @rdname TasselPhenotype-class
 #' @exportClass TasselPhenotype
@@ -127,31 +127,31 @@ setClass(
 #' Read and convert phenotype data into TASSEL 5 phenotype objects
 #'
 #' @description
-#' This function reads phenotype data from either a file path or a 
+#' This function reads phenotype data from either a file path or a
 #' data frame.
 #'
 #' @details
 #' \itemize{
 #'   \item
-#'   If \code{x} is a character string, the function assumes it is 
+#'   If \code{x} is a character string, the function assumes it is
 #'   a file path and calls \code{readPhenotypeFromFile(x)}.
-#'   
+#'
 #'   \item
-#'   If \code{x} is a data frame, the function requires the 
-#'   \code{attr} parameter to provide metadata and calls 
+#'   If \code{x} is a data frame, the function requires the
+#'   \code{attr} parameter to provide metadata and calls
 #'   \code{readPhenotypeFromDf(x, attr)}.
-#'   
+#'
 #'   \item
-#'   If \code{x} is neither a character string nor a data frame, 
+#'   If \code{x} is neither a character string nor a data frame,
 #'   the function throws an error.
-#'   
+#'
 #' }
-#' 
+#'
 #' @param x
-#' A character string representing the file path to the phenotype data 
+#' A character string representing the file path to the phenotype data
 #' or a data frame containing the phenotype data.
 #' @param attr
-#' An optional attribute metadata parameter required when \code{x} is 
+#' An optional attribute metadata parameter required when \code{x} is
 #' a data frame. Defaults to \code{NULL}.
 #'
 #' @return A phenotype object created from the input data.
@@ -174,7 +174,7 @@ setClass(
 #'     "line_a",   12.3,            0.5,    2,
 #'     "line_b",   22.8,            -1.5,   3,
 #' )
-#' 
+#'
 #' phenotypeDf <- readPhenotype(df, attr = attrDf)
 #' }
 #'
@@ -199,8 +199,9 @@ readPhenotype <- function(x, attr = NULL) {
 ## ----
 #' @title
 #' Display summary information of a TasselPhenotype object
-#' 
-#' @export
+#'
+#' @param object
+#' A \code{TasselPhenotype} object
 setMethod("show", "TasselPhenotype", function(object) {
     print(object@dispData)
 })

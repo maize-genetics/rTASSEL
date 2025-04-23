@@ -6,6 +6,9 @@
 \usage{
 \S4method{show}{TasselPhenotype}(object)
 }
+\arguments{
+\item{object}{A \code{TasselPhenotype} object}
+}
 \description{
 Display summary information of a TasselPhenotype object
 }

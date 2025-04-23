@@ -9,6 +9,8 @@ startLogger(filePath = NULL, verbose = TRUE)
 \arguments{
 \item{filePath}{File path and name of log file location. If \code{NULL}, a logging file
 (\code{rtasel_log.txt} will be added to current working directory.}
+
+\item{verbose}{Display logging file creation message? Defaults to \code{TRUE}.}
 }
 \description{
 This function will create a file for storing logging output

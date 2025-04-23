@@ -5,7 +5,7 @@
 \alias{TasselPhenotype-class}
 \title{TasselPhenotype Class Definition}
 \description{
-Defines the \code{TasselPhenotype} class, which represents 
+Defines the \code{TasselPhenotype} class, which represents
 phenotype data in the TASSEL 5 framework.
 }
 \section{Slots}{
@@ -19,13 +19,13 @@ phenotype data in the TASSEL 5 framework.
 
 \item{\code{rData}}{A \code{tbl_df} containing the phenotype data in R format.}
 
-\item{\code{jRefObj}}{A \code{jobjRef} representing a reference to the Java object in 
+\item{\code{jRefObj}}{A \code{jobjRef} representing a reference to the Java object in
 TASSEL 5.}
 
-\item{\code{jMemAddress}}{A \code{character} string representing the memory address of the 
+\item{\code{jMemAddress}}{A \code{character} string representing the memory address of the
 Java object.}
 
-\item{\code{jClass}}{A \code{character} string representing the Java class name of the 
+\item{\code{jClass}}{A \code{character} string representing the Java class name of the
 object.}
 }}
 

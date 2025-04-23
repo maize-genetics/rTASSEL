@@ -18,19 +18,19 @@ df <- tibble::tribble(
 phFromDf <- readPhenotype(df, attrDf)
 
 test_that("vctr classes", {
-    x <- rTASSEL:::factVctr(c("A", "A", "B", "C"))
+    x <- factVctr(c("A", "A", "B", "C"))
     expect_s3_class(x, "fact")
     expect_equal(vctrs::vec_data(x), c("A", "A", "B", "C"))
 
-    x <- rTASSEL:::covVctr(c(1, 2, 3))
+    x <- covVctr(c(1, 2, 3))
     expect_s3_class(x, "cov")
     expect_equal(vctrs::vec_data(x), c(1, 2, 3))
 
-    x <- rTASSEL:::dataVctr(c(1, 2, 3))
+    x <- dataVctr(c(1, 2, 3))
     expect_s3_class(x, "data")
     expect_equal(vctrs::vec_data(x), c(1, 2, 3))
 
-    x <- rTASSEL:::taxaVctr(c("A", "A", "B", "C"))
+    x <- taxaVctr(c("A", "A", "B", "C"))
     expect_s3_class(x, "taxa")
     expect_equal(vctrs::vec_data(x), c("A", "A", "B", "C"))
 })

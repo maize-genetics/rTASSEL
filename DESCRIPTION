@@ -1,5 +1,5 @@
 Package: rTASSEL
-Version: 1.0.0
+Version: 0.10.0
 Date: 2025-04-01
 Title: R Front-End for TASSEL
 Authors@R: c(
@@ -37,6 +37,7 @@ Description:
 License: Apache License (>= 2) | file LICENSE
 URL:
     https://github.com/maize-genetics/rTASSEL
+    https://rtassel.maizegenetics.net/
 Depends:
     R (>= 4.1.0)
 Imports:

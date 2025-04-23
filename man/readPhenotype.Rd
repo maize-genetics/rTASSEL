@@ -7,34 +7,34 @@
 readPhenotype(x, attr = NULL)
 }
 \arguments{
-\item{x}{A character string representing the file path to the phenotype data 
+\item{x}{A character string representing the file path to the phenotype data
 or a data frame containing the phenotype data.}
 
-\item{attr}{An optional attribute metadata parameter required when \code{x} is 
+\item{attr}{An optional attribute metadata parameter required when \code{x} is
 a data frame. Defaults to \code{NULL}.}
 }
 \value{
 A phenotype object created from the input data.
 }
 \description{
-This function reads phenotype data from either a file path or a 
+This function reads phenotype data from either a file path or a
 data frame.
 }
 \details{
 \itemize{
   \item
-  If \code{x} is a character string, the function assumes it is 
+  If \code{x} is a character string, the function assumes it is
   a file path and calls \code{readPhenotypeFromFile(x)}.
-  
+
   \item
-  If \code{x} is a data frame, the function requires the 
-  \code{attr} parameter to provide metadata and calls 
+  If \code{x} is a data frame, the function requires the
+  \code{attr} parameter to provide metadata and calls
   \code{readPhenotypeFromDf(x, attr)}.
-  
+
   \item
-  If \code{x} is neither a character string nor a data frame, 
+  If \code{x} is neither a character string nor a data frame,
   the function throws an error.
-  
+
 }
 }
 \examples{

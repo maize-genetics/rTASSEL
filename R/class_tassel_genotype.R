@@ -122,8 +122,6 @@ readGenotype <- function(x, sortPositions = FALSE, keepDepth = FALSE) {
 #' An object of class `TasselGenotype`.
 #'
 #' @method show TasselGenotype
-#'
-#' @export
 setMethod("show", "TasselGenotype", function(object) {
     printGtDisp(
         fgs    = object@dispData,

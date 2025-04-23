@@ -1,17 +1,4 @@
-#--------------------------------------------------------------------
-# Script Name:   ImputationMethods.R
-# Description:   Function for TASSEL imputation
-# Author:        Brandon Monier
-# Created:       2022-03-01 at 17:49:16
-# Last Modified: 2022-03-01 at 19:03:53
-#--------------------------------------------------------------------
-
-#--------------------------------------------------------------------
-# Detailed Purpose:
-#    The main purpose of this Rscript is to house functions necessary
-#    for imputation methods in TASSEL.
-#--------------------------------------------------------------------
-
+## ----
 #' @title Imputation methods in Numerical Transformations
 #'
 #' @description This method takes an input \code{GenotypeTable} object with

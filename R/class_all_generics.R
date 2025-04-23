@@ -14,8 +14,16 @@ setGeneric("associationType", function(assocRes) standardGeneric("associationTyp
 
 ## ----
 #' @title Return TASSEL attribute data
+#'
+#' @description
+#' Returns attribute data from an rTASSEL phenotype object
+#'
+#' @param object an \code{rTASSEL} object
+#' @param ... Additional arguments, for use in specific methods
+#'
+#' @rdname attributeData
 #' @export
-setGeneric("attributeData", function(object) standardGeneric("attributeData"))
+setGeneric("attributeData", function(object, ...) standardGeneric("attributeData"))
 
 
 ## ----

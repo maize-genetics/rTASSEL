@@ -1,19 +1,4 @@
-#---------------------------------------------------------------------
-# Script Name:   GenotypePhenotypeFunctions.R
-# Description:   Support for TASSEL GenotypePhenotype Class
-# Author:        Brandon Monier & Ed buckler
-# Created:       2018-11-26 at 11:14:36
-# Last Modified: 2019-07-25 at 15:10:54
-#--------------------------------------------------------------------
-
-#--------------------------------------------------------------------
-# Detailed Purpose:
-#    The main purpose of this Rscript is to house functions
-#    necessary for reading in and combining phenotype and genotype
-#    datasets into R and extracting data from TASSEL
-#    genotype/phenotype objects.
-#--------------------------------------------------------------------
-
+## ----
 #' @title Wrapper function of TasselGenotypePhenotype class for
 #'    GenotypePhenotype combined data
 
@@ -44,6 +29,11 @@
 #' @importFrom rJava .jinstanceof
 #' @export
 readGenotypePhenotype <- function(genoPathOrObj, phenoPathDFOrObj, ...) {
+    warnMsg <- paste0(
+        "The function 'readGenotypePhenotype()' will be deprecated soon.\n",
+        "This will be replaced by '", cli::style_bold("join()"), "' in the next update."
+    )
+    message(warnMsg)
     genoObj <- getGenotypeTable(genoPathOrObj)
     if(rJava::is.jnull(genoObj)) {
         genoObj <- getGenotypeTable(
