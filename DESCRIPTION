@@ -1,6 +1,6 @@
 Package: rTASSEL
 Version: 0.10.0
-Date: 2025-04-01
+Date: 2025-04-23
 Title: R Front-End for TASSEL
 Authors@R: c(
     person(
