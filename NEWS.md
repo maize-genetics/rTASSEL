@@ -1,3 +1,6 @@
+# rTASSEL 0.11
+* Add fixes to possible issues related to `ggplot2` v4.0
+
 # rTASSEL 0.10.0
 * Updated formula parsing:
   + Drop and keep traits by using `-` and `+`, respectively
