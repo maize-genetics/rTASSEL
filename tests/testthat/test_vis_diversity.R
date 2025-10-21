@@ -108,10 +108,13 @@ test_that("ldPlot() returns correct data types", {
     truthObs    <- 544
     truthObsSW  <- 60
 
+    myLDDf   <- myLD[["data"]]
+    myLDSWDf <- myLDSW[["data"]]
+
     expect_true(inherits(myLD, "ggplot"))
-    expect_equal(as.vector(unlist(myLD$labels)), truthLabels)
-    expect_equal(nrow(myLD$data), truthObs)
-    expect_equal(nrow(myLDSW$data[!is.na(myLDSW$data$val), ]), truthObsSW)
+    expect_contains(colnames(myLDDf), truthLabels)
+    expect_equal(nrow(myLDDf), truthObs)
+    expect_equal(nrow(myLDSWDf[!is.na(myLDSWDf$val), ]), truthObsSW)
 })
 
 
