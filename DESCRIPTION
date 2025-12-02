@@ -1,5 +1,5 @@
 Package: rTASSEL
-Version: 0.10.1
+Version: 0.10.2
 Date: 2025-04-23
 Title: R Front-End for TASSEL
 Authors@R: c(
@@ -65,6 +65,6 @@ SystemRequirements: Java (>= 8.0)
 Encoding: UTF-8
 LazyData: true
 VignetteBuilder: knitr
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
 biocViews:
     GenomeWideAssociation

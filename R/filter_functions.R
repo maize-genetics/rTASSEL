@@ -157,6 +157,10 @@ filterGenotypeTableSites <- function(
                 stop("Please specify both start and end sites.")
             }
 
+            if (startSite < 0 || endSite < 0) {
+                stop("startSite and endSite must be non-negative integers.")
+            }
+
             if (endSite > jGenoTable$numberOfSites()) {
                 stop("End site parameter exceeds total number of sites in genotype table.")
             }
@@ -174,10 +178,17 @@ filterGenotypeTableSites <- function(
                 stop("Please specify both start and end chromosomes.")
             }
 
+            if (!is.null(startPos) && startPos < 0) {
+                stop("startPos must be a non-negative integer.")
+            }
+            if (!is.null(endPos) && endPos < 0) {
+                stop("endPos must be a non-negative integer.")
+            }
+
             if (!is.null(startPos)) startPos <- toString(startPos)
             if (!is.null(endPos)) endPos <- toString(endPos)
 
-            if (startChr == endChr && startPos > endPos) {
+            if (startChr == endChr && !is.null(startPos) && !is.null(endPos) && startPos > endPos) {
                 stop("Filtration paramaters outside acceptable range.")
             }
 

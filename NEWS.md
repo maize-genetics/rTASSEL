@@ -1,5 +1,10 @@
 # rTASSEL 0.11
 * Add fixes to possible issues related to `ggplot2` v4.0
+* Bug fixes for `filterGenotypeTableSites()`:
+  + Fixed error "missing value where TRUE/FALSE needed" when filtering by 
+    position with matching start/end chromosomes and NULL position values
+  + Added input validation for negative `startSite` and `endSite` values
+  + Added input validation for negative `startPos` and `endPos` values
 
 # rTASSEL 0.10.0
 * Updated formula parsing:
