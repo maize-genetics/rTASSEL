@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">rTASSEL</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.10.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.10.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -41,6 +41,11 @@
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.11" id="rtassel-011">rTASSEL 0.11<a class="anchor" aria-label="anchor" href="#rtassel-011"></a></h2>
 <ul><li>Add fixes to possible issues related to <code>ggplot2</code> v4.0</li>
+<li>Bug fixes for <code><a href="../reference/filterGenotypeTableSites.html">filterGenotypeTableSites()</a></code>:
+<ul><li>Fixed error “missing value where TRUE/FALSE needed” when filtering by position with matching start/end chromosomes and NULL position values</li>
+<li>Added input validation for negative <code>startSite</code> and <code>endSite</code> values</li>
+<li>Added input validation for negative <code>startPos</code> and <code>endPos</code> values</li>
+</ul></li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.10.0" id="rtassel-0100">rTASSEL 0.10.0<a class="anchor" aria-label="anchor" href="#rtassel-0100"></a></h2>
@@ -364,7 +369,7 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer></div>

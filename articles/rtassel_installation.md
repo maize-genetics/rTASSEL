@@ -1,0 +1,260 @@
+# Installing rTASSEL
+
+## Prerequisite - installing rJava
+
+Since TASSEL is written primarily in Java, a Java JDK will need to be
+installed on your machine. Additionally, for R to communicate with Java,
+the R package [`rJava`](https://www.rforge.net/rJava/) will need to be
+installed. In order to use `rTASSEL`, ensure that you have:
+
+- A `JDK` (Java Development Kit $\geq$`8`) installed on your system.
+- Your system environment variable `JAVA_HOME` is configured
+  appropriately and points to your `JDK` of choice. This will usually be
+  included in your PATH environment variable as well. Options and system
+  environmental variables that are available from R can be seen with
+  [`Sys.getenv()`](https://rdrr.io/r/base/Sys.getenv.html) and more
+  specifically `Sys.getenv("JAVA_HOME")`.
+
+**NOTE**: If you are using a UNIX system (e.g. Ubuntu) and are
+experiencing issues, you may need to reconfigure R with Java. To perform
+this, open a terminal and enter the command:
+
+    R CMD javareconf
+
+You may need to have root privileges when performing this so you may
+need to add `sudo` to the prior command.
+
+If you need additional steps on how to perform these actions, detailed
+information can be found using the following links, depending on your
+OS:
+
+- [Linux](https://datawookie.netlify.com/blog/2018/02/installing-rjava-on-ubuntu/)
+- [macOS](https://zhiyzuo.github.io/installation-rJava/)
+- [Windows](https://cimentadaj.github.io/blog/2018-05-25-installing-rjava-on-windows-10/installing-rjava-on-windows-10/)
+
+## Install from GitHub
+
+### Building with vignettes
+
+After you have `rJava` up and running on your machine, install `rTASSEL`
+by installing the source code from our GitHub repository using the
+`devtools` package. Here, we show how you can install the package and
+build vignettes locally:
+
+``` r
+if (!require("devtools")) install.packages("devtools")
+devtools::install_github(
+    repo = "maize-genetics/rTASSEL",
+    ref = "master",
+    build_vignettes = TRUE,
+    dependencies = TRUE
+)
+```
+
+The `dependencies = TRUE` parameter will have to be set if you do not
+have the suggested packages described in the
+[`DESCRIPTION`](https://github.com/maize-genetics/rTASSEL/blob/master/DESCRIPTION)
+file of this package.
+
+### Building without vignettes
+
+If you wish to **not** build vignettes, the prior method can be
+simplified as shown below:
+
+``` r
+if (!require("devtools")) install.packages("devtools")
+devtools::install_github("maize-genetics/rTASSEL")
+```
+
+## Loading `rTASSEL`
+
+After source code has been compiled, the package can be loaded using:
+
+``` r
+library(rTASSEL)
+```
+
+    ## Welcome to rTASSEL (version 0.10.2)
+    ## ℹ Running TASSEL version 5.2.96
+    ## ℹ Consider starting a TASSEL log file (see ?startLogger())
+
+Or, if you want to use a function without violating your environment you
+can use `rTASSEL::<function>`, where `<function>` is an `rTASSEL`
+function.
+
+## Running from Docker
+
+If you wish to run a containerized version of `rTASSEL`, we also have a
+[Docker
+image](https://hub.docker.com/repository/docker/maizegenetics/rtassel)
+available. This can be retrieved from DockerHub using the following
+command:
+
+    docker pull maizegenetics/rtassel:latest
+
+### With the terminal
+
+Once downloaded, you can run `rTASSEL` from a terminal window:
+
+    docker run --rm -ti maizegenetics/rtassel R
+
+### With RStudio Server
+
+This image also contains an RStudio Server instance. To run this, you
+will need to publish the container’s port(s) to the host (`-p`). For
+example:
+
+    docker run --rm -ti -p 8787:8787 maizegenetics/rtassel
+
+From here, you can go to `localhost:8787` on a web browser and enter a:
+
+- Username (by default, this will be `rstudio`)
+- Password (this will be a randomly generated password displayed in the
+  terminal output)
+
+## Setting `rTASSEL`/Java memory
+
+### Local overview
+
+Since `rTASSEL` leverages the TASSEL 5 Java API via the `rJava` package,
+it is important to allocate sufficient memory to the Java Virtual
+Machine (JVM) before it starts. This is done using the
+`options(java.parameters = "-Xmx...")` command in R, which sets JVM
+parameters such as the maximum heap size (e.g., `-Xmx4g` for **4 GB**).
+The reason this must be set *before* loading `rTASSEL` is because the
+JVM can only be configured at startup. Once initialized, its memory
+settings cannot be changed without restarting the R session. This
+becomes especially important when working with large datasets or
+computationally intensive method calls, which can quickly exceed the
+default memory allocation and lead to `OutOfMemoryError`s. By increasing
+the available heap space proactively, we ensure that Java operations can
+be performed efficiently and without interruption due to memory
+constraints.
+
+In short, if you are loading large genotype datasets and/or phenotype
+data, it is adamant that you specify the memory allocated ***before***
+loading the `rTASSEL` package via the
+[`options()`](https://rdrr.io/r/base/options.html) function:
+
+``` r
+# Allocate 4 GB of memory to the JVM
+options(java.parameters = "-Xmx4g")
+
+# Load rTASSEL
+library(rTASSEL)
+```
+
+### Running `rTASSEL` on RStudio Server
+
+Certain instances of RStudio Server on computing clusters can override
+what you specify in the prior example (i.e., running the
+[`options()`](https://rdrr.io/r/base/options.html) function before
+loading `rTASSEL`) due to when the JVM is initialized and the
+[`options()`](https://rdrr.io/r/base/options.html) function is called in
+the recently initialized R session. If the JVM is initialized, any value
+provided to the `java.parameters` key in the
+[`options()`](https://rdrr.io/r/base/options.html) call **will be
+silently ignored**. To prevent this from happening, make sure to set up
+a `.Rprofile` configuration file with the aforementioned
+[`options()`](https://rdrr.io/r/base/options.html) call:
+
+    ## Example .Rprofile entry
+
+    # Allocate 4 GB of memory to the JVM
+    options(java.parameters = "-Xmx4g")
+
+Since setting up a `.Rprofile` configuration are out of scope for this
+package, please refer to [Posit’s excellent write up on the
+subject](https://docs.posit.co/ide/user/ide/guide/environments/r/managing-r.html#rprofile).
+
+### Helpful tips
+
+#### Verify memory has been set
+
+If you are running into `OutOfMemory` exceptions, verify if you have
+specified enough memory via the prior
+[`options()`](https://rdrr.io/r/base/options.html) call. This can help
+verify if you have properly set enough memory at startup. By default,
+`rJava` will allocate **500 MB (0.5 GB)** of memory to your session. At
+any time during your R session you can report the total memory allocated
+using a couple of `rJava` calls:
+
+``` r
+# Call Java Runtime class
+runtime  <- rJava::.jcall("java/lang/Runtime", "Ljava/lang/Runtime;", "getRuntime")
+
+# Get total memory allocation (reported in gigabytes [GB])
+gbConv <- 1024^3 # e.g. ~1e9 (billion) bytes
+totMem <- round(round(rJava::.jcall(runtime, "J", "totalMemory") / gbConv, 3))
+
+# Show in console
+totMem
+```
+
+If the `java.parameters` value in
+[`options()`](https://rdrr.io/r/base/options.html) was set up properly,
+the value specified in `totMem` should be the same value you specify in
+[`options()`](https://rdrr.io/r/base/options.html).
+
+#### Ensure enough memory is allocated
+
+In most instances, genotype data will be the main determinant of how
+much memory you should allocate to the JVM. In most cases, the amount of
+memory you should allocate for genotype data is at least:
+
+    (# taxa) * (# sites) * (1 byte)
+
+For example, if you have genotype data consisting of **250** taxa and
+**3000** sites, this would be **750000** bytes or **0.75** megabytes
+(MB).
+
+## Prior issues and possible resolutions
+
+### Problems installing rJava on macOS with M1 CPU architecture
+
+If you are running into issues with installing `rJava` using the newer
+Mac chip architecture, Oracle JDK currently (as of writing this) does
+not work. Consider an alternative JDK source such as
+[OpenJDK](https://openjdk.org/) or [Azul
+JDK](https://www.azul.com/downloads/?version=java-8-lts&package=jdk).
+
+More detailed information about a possible workaround can be found in
+this [Stack Overflow
+post](https://stackoverflow.com/questions/67849830/how-to-install-rjava-package-in-mac-with-m1-architecture).
+
+### Problems installing if you have both 32- and 64-bit architecture installed for R
+
+If you are using a machine that has **both architectures installed for
+R**, you might run into problems pulling code using `devtools`. If this
+is the case, one solution would be to add the parameter `--no-multiarch`
+option in `INSTALL_opts`. This will force building the package for your
+currently running R version:
+
+``` r
+devtools::install_github(
+    repo = "maize-genetics/rTASSEL",
+    ref = "master",
+    build_vignettes = FALSE,
+    INSTALL_opts = "--no-multiarch"
+)
+```
+
+### Problems with `rJava` if you have upgraded Java
+
+On macOS: if you previously had `rJava` working through RStudio, then
+you upgraded your Java and it now longer works, try the following:
+
+At the command line type:
+
+    R CMD javareconf
+
+Then check for a left over symbolic link via:
+
+    ls -ltr /usr/local/lib/libjvm.dylib
+
+If the link exists, remove it, then create it fresh via these commands:
+
+    rm /usr/local/lib/libjvm.dylib
+    sudo ln -s $(/usr/libexec/java_home)/lib/server/libjvm.dylib /usr/local/lib
+
+You should now be able to enter RStudio and setup `rJava`.
