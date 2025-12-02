@@ -171,6 +171,115 @@ test_that("filterGenotypeTableSites returns error when parameters not specified"
     expect_error(filterGenotypeTableSites(tasGeno, maxHeterozygous = 2))
 })
 
+test_that("filterGenotypeTableSites rejects negative site indices", {
+
+    # Load hapmap data
+    genoPathHMP <- system.file(
+        "extdata",
+        "mdp_genotype.hmp.txt",
+        package = "rTASSEL"
+    )
+    tasGenoHMP <- readGenotypeTableFromPath(path = genoPathHMP)
+
+    # Negative startSite
+    expect_error(
+        object = filterGenotypeTableSites(
+            tasObj = tasGenoHMP,
+            siteRangeFilterType = "sites",
+            startSite = -21,
+            endSite = 300
+        ),
+        regexp = "startSite and endSite must be non-negative integers."
+    )
+
+    # Negative endSite
+    expect_error(
+        object = filterGenotypeTableSites(
+            tasObj = tasGenoHMP,
+            siteRangeFilterType = "sites",
+            startSite = 0,
+            endSite = -5
+        ),
+        regexp = "startSite and endSite must be non-negative integers."
+    )
+
+    # Both negative
+    expect_error(
+        object = filterGenotypeTableSites(
+            tasObj = tasGenoHMP,
+            siteRangeFilterType = "sites",
+            startSite = -10,
+            endSite = -5
+        ),
+        regexp = "startSite and endSite must be non-negative integers."
+    )
+})
+
+test_that("filterGenotypeTableSites rejects negative position values", {
+
+    # Load hapmap data
+    genoPathHMP <- system.file(
+        "extdata",
+        "mdp_genotype.hmp.txt",
+        package = "rTASSEL"
+    )
+    tasGenoHMP <- readGenotypeTableFromPath(path = genoPathHMP)
+
+    # Negative startPos
+    expect_error(
+        object = filterGenotypeTableSites(
+            tasObj = tasGenoHMP,
+            siteRangeFilterType = "position",
+            startChr = 1,
+            endChr = 5,
+            startPos = -100,
+            endPos = 500000
+        ),
+        regexp = "startPos must be a non-negative integer."
+    )
+
+    # Negative endPos
+    expect_error(
+        object = filterGenotypeTableSites(
+            tasObj = tasGenoHMP,
+            siteRangeFilterType = "position",
+            startChr = 1,
+            endChr = 5,
+            startPos = 100,
+            endPos = -500000
+        ),
+        regexp = "endPos must be a non-negative integer."
+    )
+})
+
+test_that("filterGenotypeTableSites handles same chromosome with NULL positions", {
+
+    # Load hapmap data
+    genoPathHMP <- system.file(
+        "extdata",
+        "mdp_genotype.hmp.txt",
+        package = "rTASSEL"
+    )
+    tasGenoHMP <- readGenotypeTableFromPath(path = genoPathHMP)
+
+    # Same startChr and endChr with NULL positions should NOT error
+    # (This was previously causing "missing value where TRUE/FALSE needed")
+    tasFiltTests <- filterGenotypeTableSites(
+        tasObj = tasGenoHMP,
+        siteRangeFilterType = "position",
+        startChr = 5,
+        endChr = 5,
+        startPos = NULL,
+        endPos = NULL
+    )
+
+    # Should return a valid TasselGenotypePhenotype object
+    expect_s4_class(tasFiltTests, "TasselGenotypePhenotype")
+
+    # Should contain sites from chromosome 5
+    expect_true(tasFiltTests@jPositionList$numberOfSites() > 0)
+})
+
 
 ## Equality tests ----
 test_that("filterGenotypeTableSites returns correct positions.", {
