@@ -145,3 +145,103 @@ test_that("checkForValidColumns validates column names", {
 })
 
 
+# === Tests for Java build result helper functions ==================
+
+test_that("safeGetFirst() returns NULL for empty or null Java lists", {
+    # Test with NULL input
+    expect_null(safeGetFirst(NULL))
+
+    # Test with Java null
+    expect_null(safeGetFirst(rJava::.jnull()))
+
+    # Test with empty Java ArrayList
+    emptyList <- rJava::.jnew("java.util.ArrayList")
+    expect_null(safeGetFirst(emptyList))
+})
+
+test_that("safeGetFirst() returns first element for non-empty Java lists", {
+    # Test with non-empty Java ArrayList
+    javaList <- rJava::.jnew("java.util.ArrayList")
+    javaList$add("first_element")
+    javaList$add("second_element")
+
+    result <- safeGetFirst(javaList)
+    expect_equal(result, "first_element")
+})
+
+test_that("formatTaxaForMessage() formats taxa correctly", {
+    # Test with empty taxa
+    expect_equal(
+        formatTaxaForMessage(character(0), "Test taxa"),
+        "Test taxa: (none found)"
+    )
+
+    # Test with single taxon
+    expect_equal(
+        formatTaxaForMessage("taxon1", "Test taxa"),
+        "Test taxa: 'taxon1'"
+    )
+
+    # Test with multiple taxa
+    taxa <- c("taxon1", "taxon2", "taxon3")
+    expect_equal(
+        formatTaxaForMessage(taxa, "Test taxa"),
+        "Test taxa: 'taxon1', 'taxon2', 'taxon3'"
+    )
+
+    # Test with more taxa than maxShow
+    manyTaxa <- c("t1", "t2", "t3", "t4", "t5", "t6", "t7")
+    result <- formatTaxaForMessage(manyTaxa, "Test taxa", maxShow = 3)
+    expect_true(grepl("\\.\\.\\.$", result))
+    expect_true(grepl("'t1', 't2', 't3'", result))
+})
+
+test_that("phenotypeHasNoTaxa() correctly identifies empty phenotypes", {
+    # Test with NULL input
+    expect_true(phenotypeHasNoTaxa(NULL))
+
+    # Test with Java null
+    expect_true(phenotypeHasNoTaxa(rJava::.jnull()))
+
+    # Test with valid phenotype (should have taxa)
+    phenoPath <- system.file("extdata", "mdp_traits_nomissing.txt", package = "rTASSEL")
+    validPheno <- readPhenotypeFromPath(phenoPath)
+    expect_false(phenotypeHasNoTaxa(validPheno@jPhenotypeTable))
+})
+
+test_that("collectTaxaSamplesFromObjects() extracts taxa from objects", {
+    # Create test phenotype objects
+    phA <- readPhenotypeFromDataFrame(
+        data.frame(taxa = c("a", "b", "c"), value = c(1, 2, 3)),
+        "taxa"
+    )
+    phB <- readPhenotypeFromDataFrame(
+        data.frame(taxa = c("x", "y"), value = c(10, 20)),
+        "taxa"
+    )
+
+    taxaSamples <- collectTaxaSamplesFromObjects(list(phA, phB))
+
+    expect_equal(length(taxaSamples), 2)
+    expect_equal(taxaSamples[[1]], c("a", "b", "c"))
+    expect_equal(taxaSamples[[2]], c("x", "y"))
+})
+
+test_that("extractTaxaSample() handles edge cases",
+{
+    # Test with NULL input
+    expect_equal(extractTaxaSample(NULL), character(0))
+
+    # Test with Java null
+    expect_equal(extractTaxaSample(rJava::.jnull()), character(0))
+})
+
+test_that("extractTaxaSample() extracts taxa from valid TaxaList", {
+    # Use existing genotype data to get a real TaxaList
+    taxa <- extractTaxaSample(tasGeno@jTaxaList, maxSamples = 3)
+
+    expect_type(taxa, "character")
+    expect_equal(length(taxa), 3)
+})
+
+

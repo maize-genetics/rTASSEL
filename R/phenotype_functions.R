@@ -33,7 +33,14 @@ readPhenotypeFromPath <- function(path) {
         rJava::J("net.maizegenetics.phenotype.PhenotypeBuilder")
     )$fromFile(path)
 
-    return(.tasselObjectConstructor(jObj$build()$get(0L)))
+    buildResult <- jObj$build()
+    result <- safeGetFirst(buildResult)
+
+    if (is.null(result)) {
+        abortPhenotypeLoadError(path)
+    }
+
+    return(.tasselObjectConstructor(result))
 }
 
 

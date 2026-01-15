@@ -523,7 +523,12 @@ readPhenotypeFromFile <- function(path) {
         rlang::abort("The input path is not a valid file")
     }
 
-    javaPh <- rJava::.jnew(TASSEL_JVM$PHENO_BUILDER)$fromFile(xNorm)$build()$get(0L)
+    buildResult <- rJava::.jnew(TASSEL_JVM$PHENO_BUILDER)$fromFile(xNorm)$build()
+    javaPh <- safeGetFirst(buildResult)
+
+    if (is.null(javaPh)) {
+        abortPhenotypeLoadError(path)
+    }
 
     createTasselPhenotype(javaPh)
 }

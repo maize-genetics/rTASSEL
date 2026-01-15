@@ -1,3 +1,137 @@
+# === Java build result helper functions ============================
+
+## Safely get first element from a Java list build result ----
+## Returns NULL if the list is empty, otherwise returns the first element
+safeGetFirst <- function(javaList) {
+    if (is.null(javaList) || rJava::is.jnull(javaList)) {
+        return(NULL)
+    }
+    if (javaList$size() == 0L) {
+        return(NULL)
+    }
+    return(javaList$get(0L))
+}
+
+
+## Check if a Java phenotype object has no taxa ----
+phenotypeHasNoTaxa <- function(javaPhenotype) {
+    if (is.null(javaPhenotype) || rJava::is.jnull(javaPhenotype)) {
+        return(TRUE)
+    }
+    taxaList <- javaPhenotype$taxa()
+    if (rJava::is.jnull(taxaList)) {
+        return(TRUE)
+    }
+    return(taxaList$numberOfTaxa() == 0L)
+}
+
+
+## Extract sample taxa names from a Java TaxaList for error messages ----
+#' @importFrom rJava is.jnull
+extractTaxaSample <- function(javaTaxaList, maxSamples = 5) {
+    if (is.null(javaTaxaList) || rJava::is.jnull(javaTaxaList)) {
+        return(character(0))
+    }
+    nTaxa <- javaTaxaList$numberOfTaxa()
+    if (nTaxa == 0) {
+        return(character(0))
+    }
+    nSamples <- min(maxSamples, nTaxa)
+    taxa <- vapply(
+        seq_len(nSamples) - 1L,
+        function(i) javaTaxaList$taxaName(as.integer(i)),
+        FUN.VALUE = character(1)
+    )
+    return(taxa)
+}
+
+
+## Format taxa list for display in error messages ----
+formatTaxaForMessage <- function(taxa, label, maxShow = 5) {
+    if (length(taxa) == 0) {
+        return(paste0(label, ": (none found)"))
+    }
+    taxaStr <- paste0("'", taxa[seq_len(min(length(taxa), maxShow))], "'", collapse = ", ")
+    if (length(taxa) > maxShow) {
+        taxaStr <- paste0(taxaStr, ", ...")
+    }
+    return(paste0(label, ": ", taxaStr))
+}
+
+
+# === Error message helper functions ================================
+
+## Abort with phenotype file load error ----
+abortPhenotypeLoadError <- function(path) {
+    rlang::abort(c(
+        paste0("Failed to load phenotype file: '", path, "'"),
+        "x" = "The phenotype builder returned an empty result.",
+        "i" = "This may indicate:",
+        " " = "- The file format is not recognized",
+        " " = "- The file is empty or contains no valid phenotype data",
+        "i" = "Please check that the file is in a valid TASSEL phenotype format."
+    ))
+}
+
+
+## Abort with no common taxa error (for genotype-phenotype intersection) ----
+abortNoCommonTaxaGenoPheno <- function(genotypeTable, phenotype) {
+    genoTaxa <- extractTaxaSample(genotypeTable$taxa())
+    phenoTaxa <- extractTaxaSample(phenotype$taxa())
+
+    genoMsg <- formatTaxaForMessage(genoTaxa, "Genotype taxa")
+    phenoMsg <- formatTaxaForMessage(phenoTaxa, "Phenotype taxa")
+
+    rlang::abort(c(
+        "No common taxa found between genotype and phenotype data.",
+        "x" = "The intersection of taxa IDs produced an empty result.",
+        "i" = "This usually means the taxa/sample names in your genotype file do not match those in your phenotype file.",
+        " " = "",
+        "i" = "Sample taxa names from each dataset:",
+        " " = genoMsg,
+        " " = phenoMsg,
+        " " = "",
+        "i" = "Please ensure taxa names match exactly between files (case-sensitive)."
+    ))
+}
+
+
+## Abort with no common taxa error (for phenotype intersection join) ----
+abortNoCommonTaxaPhenoJoin <- function(taxaSamplesList) {
+    taxaMsgs <- vapply(seq_along(taxaSamplesList), function(i) {
+        formatTaxaForMessage(taxaSamplesList[[i]], paste0("Input ", i, " taxa"))
+    }, FUN.VALUE = character(1))
+
+    errMsgs <- c(
+        "Intersect join produced no results.",
+        "x" = "No common taxa were found across all input phenotype tables.",
+        "i" = "The intersection requires taxa names to match exactly (case-sensitive).",
+        " " = "",
+        "i" = "Sample taxa names from each input:"
+    )
+    for (msg in taxaMsgs) {
+        errMsgs <- c(errMsgs, " " = msg)
+    }
+    errMsgs <- c(errMsgs, " " = "", "i" = "Please ensure taxa names are consistent across all inputs.")
+
+    rlang::abort(errMsgs)
+}
+
+
+## Collect taxa samples from a list of rTASSEL objects ----
+collectTaxaSamplesFromObjects <- function(objList) {
+    lapply(objList, function(obj) {
+        if (inherits(obj, "TasselGenotypePhenotype") && !rJava::is.jnull(obj@jPhenotypeTable)) {
+            extractTaxaSample(obj@jPhenotypeTable$taxa())
+        } else if (inherits(obj, "PCAResults") && !rJava::is.jnull(obj@jObj)) {
+            extractTaxaSample(obj@jObj$taxa())
+        } else {
+            character(0)
+        }
+    })
+}
+
+
 # === Table report functions ========================================
 
 ## Table reports to S4Vectors::DataFrame objects ----

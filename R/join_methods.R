@@ -17,31 +17,28 @@ intersectJoin <- function(x) {
 
     if (all(classes == "TasselGenotypePhenotype")) {
         capture <- lapply(x, function(i) phenotypes$add(i@jPhenotypeTable))
-
-        intersectPhenotype <- .tasselObjectConstructor(
-            phenoBuilder$
-                fromPhenotypeList(phenotypes)$
-                intersectJoin()$
-                build()$
-                get(0L)
-        )
     } else {
         gp <- x[classes == "TasselGenotypePhenotype"]
         capture <- lapply(gp, function(i) phenotypes$add(i@jPhenotypeTable))
 
         lpca <- x[classes == "PCAResults"]
         capture <- lapply(lpca, function(i) phenotypes$add(i@jObj))
-
-        intersectPhenotype <- .tasselObjectConstructor(
-            phenoBuilder$
-                fromPhenotypeList(phenotypes)$
-                intersectJoin()$
-                build()$
-                get(0L)
-        )
     }
 
+    buildResult <- phenoBuilder$
+        fromPhenotypeList(phenotypes)$
+        intersectJoin()$
+        build()
 
+    result <- safeGetFirst(buildResult)
+
+    # Check if result is NULL/empty OR if the resulting phenotype has no taxa
+    if (is.null(result) || phenotypeHasNoTaxa(result)) {
+        taxaSamples <- collectTaxaSamplesFromObjects(x)
+        abortNoCommonTaxaPhenoJoin(taxaSamples)
+    }
+
+    intersectPhenotype <- .tasselObjectConstructor(result)
     return(intersectPhenotype)
 }
 
@@ -65,30 +62,30 @@ unionJoin <- function(x) {
 
     if (all(classes == "TasselGenotypePhenotype")) {
         capture <- lapply(x, function(i) phenotypes$add(i@jPhenotypeTable))
-
-        unionPhenotype <- .tasselObjectConstructor(
-            phenoBuilder$
-                fromPhenotypeList(phenotypes)$
-                unionJoin()$
-                build()$
-                get(0L)
-        )
     } else {
         gp <- x[classes == "TasselGenotypePhenotype"]
         capture <- lapply(gp, function(i) phenotypes$add(i@jPhenotypeTable))
 
         lpca <- x[classes == "PCAResults"]
         capture <- lapply(lpca, function(i) phenotypes$add(i@jObj))
-
-        unionPhenotype <- .tasselObjectConstructor(
-            phenoBuilder$
-                fromPhenotypeList(phenotypes)$
-                unionJoin()$
-                build()$
-                get(0L)
-        )
     }
 
+    buildResult <- phenoBuilder$
+        fromPhenotypeList(phenotypes)$
+        unionJoin()$
+        build()
+
+    result <- safeGetFirst(buildResult)
+
+    if (is.null(result)) {
+        rlang::abort(c(
+            "Union join produced no results.",
+            "x" = "The phenotype builder returned an empty result.",
+            "i" = "Please check that the input phenotype tables contain valid data."
+        ))
+    }
+
+    unionPhenotype <- .tasselObjectConstructor(result)
     return(unionPhenotype)
 }
 
@@ -110,14 +107,22 @@ concatenate <- function(x) {
 
     capture <- lapply(x, function(i) phenotypes$add(i@jPhenotypeTable))
 
-    concatPhenotype <- .tasselObjectConstructor(
-        phenoBuilder$
-            fromPhenotypeList(phenotypes)$
-            concatenate()$
-            build()$
-            get(0L)
-    )
+    buildResult <- phenoBuilder$
+        fromPhenotypeList(phenotypes)$
+        concatenate()$
+        build()
 
+    result <- safeGetFirst(buildResult)
+
+    if (is.null(result)) {
+        rlang::abort(c(
+            "Concatenation produced no results.",
+            "x" = "The phenotype builder returned an empty result.",
+            "i" = "Please check that the input phenotype tables contain valid data and have compatible columns for concatenation."
+        ))
+    }
+
+    concatPhenotype <- .tasselObjectConstructor(result)
     return(concatPhenotype)
 }
 

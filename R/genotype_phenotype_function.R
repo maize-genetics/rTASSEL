@@ -46,9 +46,15 @@ readGenotypePhenotype <- function(genoPathOrObj, phenoPathDFOrObj, ...) {
             readPhenotypeFromDataFrame(phenoPathDFOrObj, ...)
         )
     } else if(rJava::is.jnull(phenoObj) & !is.data.frame(phenoPathDFOrObj)) {
-        phenoObj <- rJava::new(
+        phenoBuildResult <- rJava::new(
             rJava::J("net/maizegenetics/phenotype/PhenotypeBuilder")
-        )$fromFile(phenoPathDFOrObj)$build()$get(0L)
+        )$fromFile(phenoPathDFOrObj)$build()
+
+        phenoObj <- safeGetFirst(phenoBuildResult)
+
+        if (is.null(phenoObj)) {
+            abortPhenotypeLoadError(phenoPathDFOrObj)
+        }
     }
 
     t <- .tasselObjectConstructor(
@@ -65,8 +71,29 @@ readGenotypePhenotype <- function(genoPathOrObj, phenoPathDFOrObj, ...) {
 combineTasselGenotypePhenotype <- function(genotypeTable, phenotype) {
     genotypeTable <- getGenotypeTable(genotypeTable)
     phenotype <- getPhenotypeTable(phenotype)
-    new(J("net.maizegenetics.phenotype.GenotypePhenotypeBuilder"))$
-        genotype(genotypeTable)$phenotype(phenotype)$intersect()$build()
+
+    # Attempt to build the GenotypePhenotype object
+    # This can fail with IndexOutOfBoundsException if no taxa match
+    result <- tryCatch(
+        {
+            rJava::.jnew("net.maizegenetics.phenotype.GenotypePhenotypeBuilder")$
+                genotype(genotypeTable)$phenotype(phenotype)$intersect()$build()
+        },
+        error = function(e) {
+            # Check if this is the "no matching taxa" error
+            if (grepl("IndexOutOfBoundsException|Index 0 out of bounds for length 0", e$message)) {
+                return(NULL)
+            }
+            # Re-throw other errors
+            stop(e)
+        }
+    )
+
+    if (is.null(result) || rJava::is.jnull(result)) {
+        abortNoCommonTaxaGenoPheno(genotypeTable, phenotype)
+    }
+
+    return(result)
 }
 
 
