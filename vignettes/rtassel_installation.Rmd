@@ -215,7 +215,7 @@ runtime  <- rJava::.jcall("java/lang/Runtime", "Ljava/lang/Runtime;", "getRuntim
 
 # Get total memory allocation (reported in gigabytes [GB])
 gbConv <- 1024^3 # e.g. ~1e9 (billion) bytes
-totMem <- round(round(rJava::.jcall(runtime, "J", "totalMemory") / gbConv, 3))
+totMem <- round(round(rJava::.jcall(runtime, "J", "maxMemory") / gbConv, 3))
 
 # Show in console
 totMem
