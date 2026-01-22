@@ -317,9 +317,13 @@ pca <- function(
 #' @title Run MDS on \code{TasselDistanceMatrix} objects
 #'
 #' @description Perform multidimensional scaling (MDS) on
-#'    \code{TasselDistanceMatrix} objects.
+#'    \code{TasselDistanceMatrix} objects, including distance matrices
+#'    created by \code{distanceMatrix()} and kinship matrices created
+#'    by \code{kinshipMatrix()}.
 #'
-#' @param distMat A \code{TasselDistanceMatrix} object.
+#' @param distMat A \code{TasselDistanceMatrix} object. This can be created
+#'    using \code{distanceMatrix()}, \code{kinshipMatrix()},
+#'    \code{readTasselDistanceMatrix()}, or \code{asTasselDistanceMatrix()}.
 #' @param nAxes The number of axes or dimensions and associated eigenvalues to
 #'    be returned by the analysis. Defaults to \code{5}.
 #' @param removeNaN Remove \code{NaNs} from matrix before performing MDS.
@@ -330,6 +334,8 @@ pca <- function(
 #' @importFrom rJava new
 #' @importFrom rJava J
 #' @importFrom rJava .jnull
+#' @importFrom rJava is.jnull
+#' @importFrom rlang abort
 #'
 #' @export
 mds <- function(
@@ -337,8 +343,31 @@ mds <- function(
     nAxes = 5,
     removeNaN = TRUE
 ) {
-    if (class(distMat) != "TasselDistanceMatrix") {
-        stop("`distMat` must be of class `TasselDistanceMatrix`")
+    if (!inherits(distMat, "TasselDistanceMatrix")) {
+        rlang::abort("`distMat` must be of class `TasselDistanceMatrix`")
+    }
+
+    # Check if input is a kinship matrix and convert to distance if needed
+    # Kinship matrices have similarity values; MDS requires distance values
+    jDistMatrix <- distMat@jDistMatrix
+
+    # Try to detect kinship matrix type
+    isKinship <- tryCatch({
+        matrixType <- jDistMatrix$getDistanceType()$toString()
+        grepl("Kinship", matrixType, ignore.case = TRUE)
+    }, error = function(e) {
+        FALSE
+    })
+
+    if (isKinship) {
+        # Convert kinship (similarity) to distance: d = 1 - k
+        # This ensures MDS operates on dissimilarity values
+        kinMat <- as.matrix(distMat)
+        kinMat <- apply(kinMat, 2, as.numeric)
+        distMat_converted <- 1 - kinMat
+        rownames(distMat_converted) <- colnames(distMat_converted) <- distMat@taxa
+        distMat <- asTasselDistanceMatrix(distMat_converted)
+        jDistMatrix <- distMat@jDistMatrix
     }
 
     # Create MDS plugin
@@ -352,11 +381,21 @@ mds <- function(
     plugin$setParameter("axes", as.character(nAxes))
     plugin$setParameter("removeNaN", tolower(as.character(removeNaN)))
 
-    # Run PCA plugin
+    # Run MDS
     dataSet <- rJava::J("net.maizegenetics.plugindef.DataSet")
-    mdsRes <- plugin$performFunction(dataSet$getDataSet(distMat@jDistMatrix))
+    mdsRes <- plugin$performFunction(dataSet$getDataSet(jDistMatrix))
 
-    return(tableReportToDF(mdsRes$getData(0L)$getData()))
+    # Validate result
+    if (rJava::is.jnull(mdsRes) || mdsRes$getSize() == 0L) {
+        rlang::abort("MDS analysis returned no results")
+    }
+
+    mdsData <- mdsRes$getData(0L)
+    if (rJava::is.jnull(mdsData)) {
+        rlang::abort("MDS analysis returned invalid data")
+    }
+
+    return(tableReportToDF(mdsData$getData()))
 }
 
 

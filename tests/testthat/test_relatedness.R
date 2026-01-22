@@ -53,16 +53,17 @@ test_that("asTasselDistanceMatrix() returns correct data and exceptions", {
 test_that("mds() returns correct data and exceptions", {
     expect_error(mds(tasGeno))
 
-    # set.seed(123)
-    # m <- 10
-    # s <- matrix(rnorm(100), m)
-    # s[lower.tri(s)] <- t(s)[lower.tri(s)]
-    # diag(s) <- 2
-    # colnames(s) <- rownames(s) <- paste0("s_", seq_len(m))
-    #
-    # sT <- distanceMatrix(tasGeno)
-    #
-    # expect_true(inherits(mds(sT, "list")))
+    # Test mds() with distance matrix
+    tasDist <- distanceMatrix(tasGeno)
+    mdsDistResult <- mds(tasDist)
+    expect_true(inherits(mdsDistResult, "data.frame"))
+    expect_true("Taxa" %in% colnames(mdsDistResult))
+
+    # Test mds() with kinship matrix
+    tasKin <- kinshipMatrix(tasGeno)
+    mdsKinResult <- mds(tasKin)
+    expect_true(inherits(mdsKinResult, "data.frame"))
+    expect_true("Taxa" %in% colnames(mdsKinResult))
 })
 
 
