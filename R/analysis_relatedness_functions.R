@@ -351,20 +351,23 @@ mds <- function(
     # Kinship matrices have similarity values; MDS requires distance values
     jDistMatrix <- distMat@jDistMatrix
 
-    # Try to detect kinship matrix type
-    isKinship <- tryCatch({
-        matrixType <- jDistMatrix$getDistanceType()$toString()
-        grepl("Kinship", matrixType, ignore.case = TRUE)
-    }, error = function(e) {
-        FALSE
-    })
+    # Detect kinship matrix by checking matrix characteristics:
+    # - Kinship matrices typically have diagonal values close to 1
+    # - Kinship matrices can have negative values (for unrelated individuals)
+    # - Distance matrices have diagonal values of 0 and non-negative values
+    matValues <- as.matrix(distMat)
+    matValues <- apply(matValues, 2, as.numeric)
+    diagValues <- diag(matValues)
+    hasNegativeValues <- any(matValues < 0, na.rm = TRUE)
+    diagNearOne <- all(abs(diagValues - 1) < 0.5, na.rm = TRUE)
+    diagNearZero <- all(abs(diagValues) < 0.5, na.rm = TRUE)
+
+    isKinship <- hasNegativeValues || (diagNearOne && !diagNearZero)
 
     if (isKinship) {
         # Convert kinship (similarity) to distance: d = 1 - k
         # This ensures MDS operates on dissimilarity values
-        kinMat <- as.matrix(distMat)
-        kinMat <- apply(kinMat, 2, as.numeric)
-        distMat_converted <- 1 - kinMat
+        distMat_converted <- 1 - matValues
         rownames(distMat_converted) <- colnames(distMat_converted) <- distMat@taxa
         distMat <- asTasselDistanceMatrix(distMat_converted)
         jDistMatrix <- distMat@jDistMatrix
