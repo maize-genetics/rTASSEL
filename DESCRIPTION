@@ -57,6 +57,7 @@ Imports:
     vctrs
 Suggests:
     BiocStyle,
+    digest,
     knitr,
     magrittr,
     rmarkdown,
