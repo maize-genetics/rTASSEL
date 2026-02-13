@@ -21,18 +21,22 @@
     pkgVersion <- utils::packageVersion("rTASSEL")
     resolved   <- resolveJarPath(pkgname, libname)
 
-    cli::cli_div(theme = list(h2 = list("margin-top" = 0, "margin-bottom" = 0)))
-    cli::cli_h2("Welcome to rTASSEL (version {.val {pkgVersion}})")
+    msg <- cli::cli_fmt({
+        cli::cli_div(theme = list(h2 = list("margin-top" = 0, "margin-bottom" = 0)))
+        cli::cli_h2("Welcome to rTASSEL (version {.val {pkgVersion}})")
 
-    if (is.null(resolved$path)) {
-        cli::cli_bullets(c(
-            "i" = "TASSEL JARs not found",
-            "i" = "Run {.run rTASSEL::setupTASSEL()} to download from Maven Central"
-        ))
-    } else {
-        cli::cli_bullets(c(
-            "i" = "Running TASSEL version {.val {TASSEL_MAVEN$VERSION}} ({.field {resolved$source}})",
-            "i" = "Consider starting a TASSEL log file (see {.help [startLogger()](rTASSEL::startLogger)})"
-        ))
-    }
+        if (is.null(resolved$path)) {
+            cli::cli_bullets(c(
+                "i" = "TASSEL JARs not found",
+                "i" = "Run {.run rTASSEL::setupTASSEL()} to download from Maven Central"
+            ))
+        } else {
+            cli::cli_bullets(c(
+                "i" = "Running TASSEL version {.val {TASSEL_MAVEN$VERSION}} ({.field {resolved$source}})",
+                "i" = "Consider starting a TASSEL log file (see {.help [startLogger()](rTASSEL::startLogger)})"
+            ))
+        }
+    })
+
+    packageStartupMessage(paste(msg, collapse = "\n"))
 }
