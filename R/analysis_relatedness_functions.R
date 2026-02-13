@@ -28,7 +28,7 @@ kinshipMatrix <- function(tasObj,
                           method = "Centered_IBS",
                           maxAlleles = 6,
                           algorithmVariation = "Observed_Allele_Freq") {
-    if (class(tasObj) != "TasselGenotypePhenotype") {
+    if (!inherits(tasObj, "TasselGenotypePhenotype")) {
         stop("`tasObj` must be of class `TasselGenotypePhenotype`")
     }
 
@@ -82,7 +82,7 @@ kinshipMatrix <- function(tasObj,
 #' @importFrom rJava .jnull
 #' @export
 distanceMatrix <- function(tasObj) {
-    if (class(tasObj) != "TasselGenotypePhenotype") {
+    if (!inherits(tasObj, "TasselGenotypePhenotype")) {
         stop("`tasObj` must be of class `TasselGenotypePhenotype`")
     }
 
@@ -249,7 +249,7 @@ pca <- function(
     reportEigenvectors = TRUE
 ) {
 
-    if (class(tasObj) != "TasselGenotypePhenotype") {
+    if (!inherits(tasObj, "TasselGenotypePhenotype")) {
         stop("`tasObj` must be of class `TasselGenotypePhenotype`")
     }
 
@@ -337,7 +337,7 @@ mds <- function(
     nAxes = 5,
     removeNaN = TRUE
 ) {
-    if (class(distMat) != "TasselDistanceMatrix") {
+    if (!inherits(distMat, "TasselDistanceMatrix")) {
         stop("`distMat` must be of class `TasselDistanceMatrix`")
     }
 

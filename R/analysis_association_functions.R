@@ -84,10 +84,10 @@ assocModelFitter <- function(
     }
 
     # Logic - check kinship object
-    if (!is.null(kinship) && class(kinship) != "TasselDistanceMatrix") {
+    if (!is.null(kinship) && !inherits(kinship, "TasselDistanceMatrix")) {
         stop("TASSEL kinship object is not of TasselDistanceMatrix class", call. = FALSE)
     }
-    if (!is.null(kinship) && class(kinship) == "TasselDistanceMatrix") {
+    if (!is.null(kinship) && inherits(kinship, "TasselDistanceMatrix")) {
         kinTaxa <- colnames(kinship)
         genoTaxa <- getTaxaIDs(tasObj)
 

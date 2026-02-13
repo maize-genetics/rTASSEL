@@ -86,7 +86,7 @@ filterGenotypeTableSites <- function(
     bedFile = NULL
 ) {
 
-    if (class(tasObj) != "TasselGenotypePhenotype") {
+    if (!inherits(tasObj, "TasselGenotypePhenotype")) {
         stop("`tasObj` must be of class `TasselGenotypePhenotype`")
     }
 
@@ -215,7 +215,7 @@ filterGenotypeTableSites <- function(
 
     # Filter by GRanges object if present
     if (!is.null(gRangesObj)) {
-        if (class(gRangesObj) != "GRanges") {
+        if (!inherits(gRangesObj, "GRanges")) {
             stop("gRangesObj must be of class `GRanges`")
         }
         jRC <- rJava::J("net/maizegenetics/plugindef/GenerateRCode")
@@ -238,7 +238,7 @@ filterGenotypeTableSites <- function(
     )
 
     # Check if input had phenotype table. If yes, combine genotype with phenotype
-    if (class(out) != "jobjRef") {
+    if (!inherits(out, "jobjRef")) {
         message("No data returned.")
         return(NA)
     } else {
@@ -276,7 +276,7 @@ filterGenotypeTableSites <- function(
 filterGenotypeTableBySiteName <- function(tasObj, siteNames) {
 
     # Rudimentary type check
-    if (class(tasObj) != "TasselGenotypePhenotype") {
+    if (!inherits(tasObj, "TasselGenotypePhenotype")) {
         stop("`tasObj` must be of class `TasselGenotypePhenotype`")
     }
 
@@ -352,7 +352,7 @@ filterGenotypeTableTaxa <- function(
     taxa = NULL
 ) {
 
-    if (class(tasObj) != "TasselGenotypePhenotype") {
+    if (!inherits(tasObj, "TasselGenotypePhenotype")) {
         stop("`tasObj` must be of class `TasselGenotypePhenotype`")
     }
 

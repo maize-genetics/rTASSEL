@@ -29,7 +29,7 @@ getTaxaList <- function(jtsObject) {
 #'
 #' @export
 taxaList <- function(tasObj) {
-    if (class(tasObj) != "TasselGenotypePhenotype") {
+    if (!inherits(tasObj, "TasselGenotypePhenotype")) {
         stop("`tasObj` must be of class `TasselGenotypePhenotype`")
     }
 
@@ -41,7 +41,7 @@ taxaList <- function(tasObj) {
 ## Methods for pulling Taxa or Samples - not exported (house keeping)
 #' @importFrom rJava J
 getTaxaIDs <- function(tasObj) {
-    if (class(tasObj) != "TasselGenotypePhenotype") {
+    if (!inherits(tasObj, "TasselGenotypePhenotype")) {
         stop("`tasObj` must be of class `TasselGenotypePhenotype`")
     }
 
