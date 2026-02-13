@@ -11,4 +11,5 @@
 ^paper$
 ^\.github$
 ^rTASSEL_log$
+^rtassel_log\.txt$
 ^LICENSE\.md$
