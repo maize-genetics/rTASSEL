@@ -388,7 +388,7 @@ tasPhenoFilter <- function(tasObj, filtObj) {
 
     # Filter data frame columns based on association formula
     phenoDF <- phenoDF[, filtObjRight]
-    phenoAttDf <- subset(phenoAttDf, subset = traitName %in% filtObjRight)
+    phenoAttDf <- phenoAttDf[phenoAttDf$traitName %in% filtObjRight, , drop = FALSE]
 
     # Get vector of non-taxa column names
     phenoColNames <- colnames(phenoDF)
