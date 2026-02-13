@@ -42,6 +42,7 @@ Depends:
     R (>= 4.1.0)
 Imports:
     ape,
+    BiocGenerics,
     cli,
     GenomicRanges,
     ggplot2,
