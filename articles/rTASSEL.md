@@ -59,6 +59,23 @@ To cite `rTASSEL`, please use the following citation:
 
 ## Preliminary steps
 
+### Setting up TASSEL JARs
+
+Before using `rTASSEL` for the first time, you must download the TASSEL
+Java libraries. This is a **one-time** setup step that caches the
+required JAR files on your machine:
+
+``` r
+setupTASSEL()
+```
+
+Once the JARs are cached, subsequent calls to
+[`library(rTASSEL)`](https://github.com/maize-genetics/rTASSEL) will
+automatically detect and use them. For more details on the caching
+system, custom JAR paths, and troubleshooting, see the [Installing
+rTASSEL](https://rtassel.maizegenetics.net/articles/rtassel_installation.md)
+vignette.
+
 ### Setting Memory
 
 Since genome-wide association analyses can use up a lot of computational
@@ -237,7 +254,7 @@ something that looks like this:
 tasGenoHMP@jGenotypeTable
 ```
 
-    ## [1] "Java-Object{net.maizegenetics.dna.snp.CoreGenotypeTable@264f218}"
+    ## [1] "Java-Object{net.maizegenetics.dna.snp.CoreGenotypeTable@387a8303}"
 
 This entity is a `rJava` internal identifier. It isn’t until we call
 downstream `rTASSEL` functions where we will bring the TASSEL data into
@@ -1448,7 +1465,7 @@ function. To make this as streamlined as possible, we can pass our prior
 tasGLM |> plotManhattan()
 ```
 
-![](figure/graphics-unnamed-chunk-43-1.png)
+![](figure/graphics-unnamed-chunk-44-1.png)
 
 Since we mapped 2 traits, the resulting plot will have 2 facets: 1 row
 for each trait. We can also specify a singular trait or a collection of
@@ -1460,7 +1477,7 @@ respectively, into the `trait` parameter:
 tasGLM |> plotManhattan(trait = "dpoll")
 ```
 
-![](figure/graphics-unnamed-chunk-44-1.png)
+![](figure/graphics-unnamed-chunk-45-1.png)
 
 We can also set a threshold value to highlight visually “significant”
 markers of interest by passing a $- log_{10}$ value to the `threshold`
@@ -1470,7 +1487,7 @@ parameter:
 tasGLM |> plotManhattan(threshold = 5)
 ```
 
-![](figure/graphics-unnamed-chunk-45-1.png)
+![](figure/graphics-unnamed-chunk-46-1.png)
 
 We pass different colors for column facets by passing color values to
 the `colors` parameter:
@@ -1479,7 +1496,7 @@ the `colors` parameter:
 tasGLM |> plotManhattan(colors = c("red", "#4890bd", "#2ad14e"))
 ```
 
-![](figure/graphics-unnamed-chunk-46-1.png)
+![](figure/graphics-unnamed-chunk-47-1.png)
 
 We can also make plots interactive by setting the `interactive`
 parameter to `TRUE`:
@@ -1498,7 +1515,7 @@ To generate quantile-quantile plots, we can pass our
 tasMLM |> plotQQ()
 ```
 
-![](figure/graphics-unnamed-chunk-48-1.png)
+![](figure/graphics-unnamed-chunk-49-1.png)
 
 ### PCA plots
 
@@ -1511,7 +1528,7 @@ function:
 pcaRes |> plotPCA()
 ```
 
-![](figure/graphics-unnamed-chunk-49-1.png)
+![](figure/graphics-unnamed-chunk-50-1.png)
 
 By default, this will generate a scatter plot of the first two principal
 components (PCs) along with the percent variation captured by the PC. We
@@ -1524,7 +1541,7 @@ parameter. For example, if I want to generate 3 clusters:
 pcaRes |> plotPCA(cluster = TRUE, nClust = 3)
 ```
 
-![](figure/graphics-unnamed-chunk-50-1.png)
+![](figure/graphics-unnamed-chunk-51-1.png)
 
 We can also generate coloring by adding metadata to the plot as a simple
 `data.frame` like object along with the specified column in the metadata
@@ -1537,7 +1554,7 @@ metaDf <- read.csv(metaPath)
 pcaRes |> plotPCA(metadata = metaDf, mCol = "Subpopulation")
 ```
 
-![](figure/graphics-unnamed-chunk-51-1.png)
+![](figure/graphics-unnamed-chunk-52-1.png)
 
 ### Scree plots
 
@@ -1550,7 +1567,7 @@ data for 10 PCs and can be overridden via the `n` parameter:
 pcaRes |> plotScree(n = 5)
 ```
 
-![](figure/graphics-unnamed-chunk-52-1.png)
+![](figure/graphics-unnamed-chunk-53-1.png)
 
 ### LD plots
 
@@ -1580,7 +1597,7 @@ myLD <- ldPlot(
 myLD
 ```
 
-![](figure/graphics-unnamed-chunk-53-1.png)
+![](figure/graphics-unnamed-chunk-54-1.png)
 
 ## Interactive Visualizations (deprecated)
 

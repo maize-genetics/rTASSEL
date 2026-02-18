@@ -200,6 +200,9 @@
 - [`seqDiversity()`](https://rtassel.maizegenetics.net/reference/seqDiversity.md)
   : Calculate sequence diversity
 
+- [`setupTASSEL()`](https://rtassel.maizegenetics.net/reference/setupTASSEL.md)
+  : Download and configure TASSEL JAR files from Maven Central
+
 - [`show(`*`<TasselGenotype>`*`)`](https://rtassel.maizegenetics.net/reference/show-TasselGenotype-method.md)
   : Display TasselGenotype Object
 

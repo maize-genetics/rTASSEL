@@ -29,7 +29,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">rTASSEL</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.10.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.11.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -71,7 +71,7 @@
                         <h4 data-toc-skip class="author">Brandon
 Monier</h4>
             
-            <h4 data-toc-skip class="date">2025-12-02</h4>
+            <h4 data-toc-skip class="date">2026-02-18</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/maize-genetics/rTASSEL/blob/master/vignettes/rtassel_installation.Rmd" class="external-link"><code>vignettes/rtassel_installation.Rmd</code></a></small>
       <div class="d-none name"><code>rtassel_installation.Rmd</code></div>
@@ -145,15 +145,102 @@ can be simplified as shown below:</p>
 </div>
 </div>
 <div class="section level2">
+<h2 id="setting-up-tassel-jars">Setting up TASSEL JARs<a class="anchor" aria-label="anchor" href="#setting-up-tassel-jars"></a>
+</h2>
+<div class="section level3">
+<h3 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
+</h3>
+<p>Starting with this version of <code>rTASSEL</code>, the TASSEL Java
+libraries are no longer bundled with the R package. Instead, they are
+downloaded from <a href="https://mvnrepository.com/artifact/net.maizegenetics/tassel" class="external-link">Maven
+Central</a> and cached locally on your machine. This approach greatly
+reduces the package size and makes it easier to update TASSEL
+independently of the R package.</p>
+</div>
+<div class="section level3">
+<h3 id="one-time-setup">One-time setup<a class="anchor" aria-label="anchor" href="#one-time-setup"></a>
+</h3>
+<p>After installing <code>rTASSEL</code>, you must run
+<code><a href="../reference/setupTASSEL.html">setupTASSEL()</a></code> <strong>once</strong> to download and cache
+the required JAR files:</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/setupTASSEL.html">setupTASSEL</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p>This will:</p>
+<ol style="list-style-type: decimal">
+<li>Download the TASSEL fat JAR (~70 MB) from Maven Central</li>
+<li>Verify the file integrity via a SHA-1 checksum</li>
+<li>Cache it under the standard R user cache directory:
+<ul>
+<li>
+<strong>Linux</strong>:
+<code>~/.cache/R/rTASSEL/java/&lt;version&gt;/</code>
+</li>
+<li>
+<strong>macOS</strong>:
+<code>~/Library/Caches/org.R-project.R/R/rTASSEL/java/&lt;version&gt;/</code>
+</li>
+<li>
+<strong>Windows</strong>:
+<code>%LOCALAPPDATA%/R/cache/R/rTASSEL/java/&lt;version&gt;/</code>
+</li>
+</ul>
+</li>
+</ol>
+<p>Subsequent calls to <code><a href="https://github.com/maize-genetics/rTASSEL" class="external-link">library(rTASSEL)</a></code> will automatically
+detect and use the cached JARs - no re-download is needed.</p>
+</div>
+<div class="section level3">
+<h3 id="re-downloading-or-updating">Re-downloading or updating<a class="anchor" aria-label="anchor" href="#re-downloading-or-updating"></a>
+</h3>
+<p>If you need to re-download the JARs (e.g. a corrupted cache), use the
+<code>force</code> parameter:</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/setupTASSEL.html">setupTASSEL</a></span><span class="op">(</span>force <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="custom-jar-path">Custom JAR path<a class="anchor" aria-label="anchor" href="#custom-jar-path"></a>
+</h3>
+<p>Advanced users who maintain their own TASSEL builds can bypass the
+Maven cache entirely by setting an R option <strong>before</strong>
+loading <code>rTASSEL</code>:</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>rTASSEL.java.path <span class="op">=</span> <span class="st">"/path/to/my/tassel/jars"</span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/maize-genetics/rTASSEL" class="external-link">rTASSEL</a></span><span class="op">)</span></span></code></pre></div>
+<p>When this option is set, <code>rTASSEL</code> will load JARs from the
+specified directory instead of the Maven cache or bundled location.</p>
+</div>
+<div class="section level3">
+<h3 id="jar-resolution-order">JAR resolution order<a class="anchor" aria-label="anchor" href="#jar-resolution-order"></a>
+</h3>
+<p>When <code>rTASSEL</code> is loaded, the TASSEL JARs are resolved in
+the following priority order:</p>
+<ol style="list-style-type: decimal">
+<li>
+<strong>User-defined path</strong> via
+<code>options(rTASSEL.java.path = ...)</code>
+</li>
+<li>
+<strong>Maven cache</strong> (from <code><a href="../reference/setupTASSEL.html">setupTASSEL()</a></code>)</li>
+<li>
+<strong>Bundled <code>inst/java/</code></strong> (legacy fallback
+for older installations)</li>
+</ol>
+<p>If no JARs are found from any source, <code>rTASSEL</code> will load
+without initializing the JVM and display a message prompting you to run
+<code><a href="../reference/setupTASSEL.html">setupTASSEL()</a></code>.</p>
+</div>
+</div>
+<div class="section level2">
 <h2 id="loading-rtassel">Loading <code>rTASSEL</code><a class="anchor" aria-label="anchor" href="#loading-rtassel"></a>
 </h2>
-<p>After source code has been compiled, the package can be loaded
-using:</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<p>After installation and the one-time <code><a href="../reference/setupTASSEL.html">setupTASSEL()</a></code> step,
+the package can be loaded using:</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/maize-genetics/rTASSEL" class="external-link">rTASSEL</a></span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## Welcome to rTASSEL (version <span style="font-weight: bold;">0.10.2</span>)</span></span>
-<span><span class="co">## ℹ Running TASSEL version <span style="font-weight: bold;">5.2.96</span></span></span>
-<span><span class="co">## ℹ Consider starting a TASSEL log file (see ?startLogger())</span></span></code></pre>
+<pre><code><span><span class="co">## ── <span style="font-weight: bold;">Welcome to rTASSEL (version </span><span style="color: #0000BB; font-weight: bold;">0.11.0</span><span style="font-weight: bold;">)</span> ──</span></span>
+<span><span class="co">## <span style="color: #00BBBB;">ℹ</span> Running TASSEL version <span style="color: #0000BB;">"5.2.96"</span> (<span style="color: #00BB00;">maven cache</span>)</span></span>
+<span><span class="co">## <span style="color: #00BBBB;">ℹ</span> Consider starting a TASSEL log file (see startLogger()</span></span>
+<span><span class="co">##   (`?rTASSEL::startLogger()`))</span></span></code></pre>
 <p>Or, if you want to use a function without violating your environment
 you can use <code>rTASSEL::&lt;function&gt;</code>, where
 <code>&lt;function&gt;</code> is an <code>rTASSEL</code> function.</p>
@@ -214,7 +301,7 @@ constraints.</p>
 data, it is adamant that you specify the memory allocated
 <em><strong>before</strong></em> loading the <code>rTASSEL</code>
 package via the <code><a href="https://rdrr.io/r/base/options.html" class="external-link">options()</a></code> function:</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Allocate 4 GB of memory to the JVM</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>java.parameters <span class="op">=</span> <span class="st">"-Xmx4g"</span><span class="op">)</span></span>
 <span></span>
@@ -255,7 +342,7 @@ startup. By default, <code>rJava</code> will allocate <strong>500 MB
 (0.5 GB)</strong> of memory to your session. At any time during your R
 session you can report the total memory allocated using a couple of
 <code>rJava</code> calls:</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Call Java Runtime class</span></span>
 <span><span class="va">runtime</span>  <span class="op">&lt;-</span> <span class="fu">rJava</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/rJava/man/jcall.html" class="external-link">.jcall</a></span><span class="op">(</span><span class="st">"java/lang/Runtime"</span>, <span class="st">"Ljava/lang/Runtime;"</span>, <span class="st">"getRuntime"</span><span class="op">)</span></span>
 <span></span>
@@ -308,7 +395,7 @@ installed for R</strong>, you might run into problems pulling code using
 the parameter <code>--no-multiarch</code> option in
 <code>INSTALL_opts</code>. This will force building the package for your
 currently running R version:</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span></span>
 <span>    repo <span class="op">=</span> <span class="st">"maize-genetics/rTASSEL"</span>,</span>
 <span>    ref <span class="op">=</span> <span class="st">"master"</span>,</span>

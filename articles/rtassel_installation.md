@@ -66,17 +66,92 @@ if (!require("devtools")) install.packages("devtools")
 devtools::install_github("maize-genetics/rTASSEL")
 ```
 
+## Setting up TASSEL JARs
+
+### Overview
+
+Starting with this version of `rTASSEL`, the TASSEL Java libraries are
+no longer bundled with the R package. Instead, they are downloaded from
+[Maven
+Central](https://mvnrepository.com/artifact/net.maizegenetics/tassel)
+and cached locally on your machine. This approach greatly reduces the
+package size and makes it easier to update TASSEL independently of the R
+package.
+
+### One-time setup
+
+After installing `rTASSEL`, you must run
+[`setupTASSEL()`](https://rtassel.maizegenetics.net/reference/setupTASSEL.md)
+**once** to download and cache the required JAR files:
+
+``` r
+setupTASSEL()
+```
+
+This will:
+
+1.  Download the TASSEL fat JAR (~70 MB) from Maven Central
+2.  Verify the file integrity via a SHA-1 checksum
+3.  Cache it under the standard R user cache directory:
+    - **Linux**: `~/.cache/R/rTASSEL/java/<version>/`
+    - **macOS**:
+      `~/Library/Caches/org.R-project.R/R/rTASSEL/java/<version>/`
+    - **Windows**: `%LOCALAPPDATA%/R/cache/R/rTASSEL/java/<version>/`
+
+Subsequent calls to
+[`library(rTASSEL)`](https://github.com/maize-genetics/rTASSEL) will
+automatically detect and use the cached JARs - no re-download is needed.
+
+### Re-downloading or updating
+
+If you need to re-download the JARs (e.g. a corrupted cache), use the
+`force` parameter:
+
+``` r
+setupTASSEL(force = TRUE)
+```
+
+### Custom JAR path
+
+Advanced users who maintain their own TASSEL builds can bypass the Maven
+cache entirely by setting an R option **before** loading `rTASSEL`:
+
+``` r
+options(rTASSEL.java.path = "/path/to/my/tassel/jars")
+library(rTASSEL)
+```
+
+When this option is set, `rTASSEL` will load JARs from the specified
+directory instead of the Maven cache or bundled location.
+
+### JAR resolution order
+
+When `rTASSEL` is loaded, the TASSEL JARs are resolved in the following
+priority order:
+
+1.  **User-defined path** via `options(rTASSEL.java.path = ...)`
+2.  **Maven cache** (from
+    [`setupTASSEL()`](https://rtassel.maizegenetics.net/reference/setupTASSEL.md))
+3.  **Bundled `inst/java/`** (legacy fallback for older installations)
+
+If no JARs are found from any source, `rTASSEL` will load without
+initializing the JVM and display a message prompting you to run
+[`setupTASSEL()`](https://rtassel.maizegenetics.net/reference/setupTASSEL.md).
+
 ## Loading `rTASSEL`
 
-After source code has been compiled, the package can be loaded using:
+After installation and the one-time
+[`setupTASSEL()`](https://rtassel.maizegenetics.net/reference/setupTASSEL.md)
+step, the package can be loaded using:
 
 ``` r
 library(rTASSEL)
 ```
 
-    ## Welcome to rTASSEL (version 0.10.2)
-    ## ℹ Running TASSEL version 5.2.96
-    ## ℹ Consider starting a TASSEL log file (see ?startLogger())
+    ## ── Welcome to rTASSEL (version 0.11.0) ──
+    ## ℹ Running TASSEL version "5.2.96" (maven cache)
+    ## ℹ Consider starting a TASSEL log file (see startLogger()
+    ##   (`?rTASSEL::startLogger()`))
 
 Or, if you want to use a function without violating your environment you
 can use `rTASSEL::<function>`, where `<function>` is an `rTASSEL`

@@ -44,6 +44,9 @@
 <url><loc>https://rtassel.maizegenetics.net/reference/genomicPrediction.html</loc></url>
 <url><loc>https://rtassel.maizegenetics.net/reference/getPhenotypeDF.html</loc></url>
 <url><loc>https://rtassel.maizegenetics.net/reference/getSumExpFromGenotypeTable.html</loc></url>
+<url><loc>https://rtassel.maizegenetics.net/reference/getTASSELCacheDir.html</loc></url>
+<url><loc>https://rtassel.maizegenetics.net/reference/getTASSELJarName.html</loc></url>
+<url><loc>https://rtassel.maizegenetics.net/reference/getTASSELJarPath.html</loc></url>
 <url><loc>https://rtassel.maizegenetics.net/reference/imputeLDKNNi.html</loc></url>
 <url><loc>https://rtassel.maizegenetics.net/reference/imputeNumeric.html</loc></url>
 <url><loc>https://rtassel.maizegenetics.net/reference/index.html</loc></url>
@@ -74,8 +77,10 @@
 <url><loc>https://rtassel.maizegenetics.net/reference/readPhenotypeFromPath.html</loc></url>
 <url><loc>https://rtassel.maizegenetics.net/reference/readTasselDistanceMatrix.html</loc></url>
 <url><loc>https://rtassel.maizegenetics.net/reference/reportNames.html</loc></url>
+<url><loc>https://rtassel.maizegenetics.net/reference/resolveJarPath.html</loc></url>
 <url><loc>https://rtassel.maizegenetics.net/reference/rownames-TasselDistanceMatrix-method.html</loc></url>
 <url><loc>https://rtassel.maizegenetics.net/reference/seqDiversity.html</loc></url>
+<url><loc>https://rtassel.maizegenetics.net/reference/setupTASSEL.html</loc></url>
 <url><loc>https://rtassel.maizegenetics.net/reference/show-TasselGenotype-method.html</loc></url>
 <url><loc>https://rtassel.maizegenetics.net/reference/show-TasselPhenotype-method.html</loc></url>
 <url><loc>https://rtassel.maizegenetics.net/reference/siteSummary.html</loc></url>

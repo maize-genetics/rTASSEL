@@ -1,6 +1,6 @@
 # Changelog
 
-## rTASSEL 0.11
+## rTASSEL 0.11.0
 
 - Add fixes to possible issues related to `ggplot2` v4.0
 - Bug fixes for
@@ -10,6 +10,22 @@
     values
   - Added input validation for negative `startSite` and `endSite` values
   - Added input validation for negative `startPos` and `endPos` values
+- Removed bundled JAR files from `inst/java/` to reduce package size
+- Added
+  [`setupTASSEL()`](https://rtassel.maizegenetics.net/reference/setupTASSEL.md)
+  function to download TASSEL JARs from Maven Central and cache them
+  locally
+- Added JAR resolution system with priority: user option, Maven cache,
+  then bundled (legacy fallback)
+- Replaced all `class() ==` checks with
+  [`inherits()`](https://rdrr.io/r/base/class.html) for proper S4 class
+  handling
+- Fixed implicit S4 generic imports from `BiocGenerics` (`colnames`,
+  `rownames`, `ncol`, `nrow`)
+- Improved package startup messages using `cli` formatting
+- Consolidated GitHub Actions workflows into a single `ci.yaml`
+- Added unit tests for setup, constants, and package loading
+- Added `BiocGenerics` to Imports; `digest` and `withr` to Suggests
 
 ## rTASSEL 0.10.0
 

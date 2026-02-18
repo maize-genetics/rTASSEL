@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">rTASSEL</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.10.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.11.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -39,13 +39,23 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="0.11" id="rtassel-011">rTASSEL 0.11<a class="anchor" aria-label="anchor" href="#rtassel-011"></a></h2>
+<h2 class="pkg-version" data-toc-text="0.11.0" id="rtassel-0110">rTASSEL 0.11.0<a class="anchor" aria-label="anchor" href="#rtassel-0110"></a></h2>
 <ul><li>Add fixes to possible issues related to <code>ggplot2</code> v4.0</li>
 <li>Bug fixes for <code><a href="../reference/filterGenotypeTableSites.html">filterGenotypeTableSites()</a></code>:
 <ul><li>Fixed error “missing value where TRUE/FALSE needed” when filtering by position with matching start/end chromosomes and NULL position values</li>
 <li>Added input validation for negative <code>startSite</code> and <code>endSite</code> values</li>
 <li>Added input validation for negative <code>startPos</code> and <code>endPos</code> values</li>
 </ul></li>
+<li>Removed bundled JAR files from <code>inst/java/</code> to reduce package size</li>
+<li>Added <code><a href="../reference/setupTASSEL.html">setupTASSEL()</a></code> function to download TASSEL JARs from Maven Central and cache them locally</li>
+<li>Added JAR resolution system with priority: user option, Maven cache, then bundled (legacy fallback)</li>
+<li>Replaced all <code>class() ==</code> checks with <code><a href="https://rdrr.io/r/base/class.html" class="external-link">inherits()</a></code> for proper S4 class handling</li>
+<li>Fixed implicit S4 generic imports from <code>BiocGenerics</code> (<code>colnames</code>, <code>rownames</code>, <code>ncol</code>, <code>nrow</code>)</li>
+<li>Improved package startup messages using <code>cli</code> formatting</li>
+<li>Consolidated GitHub Actions workflows into a single <code>ci.yaml</code>
+</li>
+<li>Added unit tests for setup, constants, and package loading</li>
+<li>Added <code>BiocGenerics</code> to Imports; <code>digest</code> and <code>withr</code> to Suggests</li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.10.0" id="rtassel-0100">rTASSEL 0.10.0<a class="anchor" aria-label="anchor" href="#rtassel-0100"></a></h2>
