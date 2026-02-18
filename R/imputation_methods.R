@@ -25,7 +25,7 @@ imputeNumeric <- function(
     nearestNeighbors = 5,
     distance = c("Euclidean", "Manhattan", "Cosine")
 ) {
-    if (class(tasObj) != "TasselGenotypePhenotype") {
+    if (!inherits(tasObj, "TasselGenotypePhenotype")) {
         stop("`tasObj` must be of class `TasselGenotypePhenotype`")
     }
 
@@ -96,7 +96,7 @@ imputeLDKNNi <- function(
     knnTaxa = 10,
     maxDistance = 10e6
 ) {
-    if (class(tasObj) != "TasselGenotypePhenotype") {
+    if (!inherits(tasObj, "TasselGenotypePhenotype")) {
         stop("`tasObj` must be of class `TasselGenotypePhenotype`")
     }
 

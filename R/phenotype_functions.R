@@ -82,7 +82,7 @@ readPhenotypeFromDataFrame <- function(phenotypeDF,
     }
 
     # TODO Remove tibble check
-    if (any(class(phenotypeDF) == "tbl_df")) {
+    if (inherits(phenotypeDF, "tbl_df")) {
         phenotypeDF <- as.data.frame(phenotypeDF)
     }
 
@@ -138,7 +138,7 @@ getPhenotypeDF <- function(tasObj) {
     )
     message(warnMsg)
 
-    if (class(tasObj) != "TasselGenotypePhenotype") {
+    if (!inherits(tasObj, "TasselGenotypePhenotype")) {
         stop("`tasObj` must be of class `TasselGenotypePhenotype`")
     }
 

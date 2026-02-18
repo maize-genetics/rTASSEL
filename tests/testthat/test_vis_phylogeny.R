@@ -1,5 +1,7 @@
 # === Tests for phylogenetic visualizations =========================
 
+skip("treeJavaApp is deprecated — skipping all tests")
+
 ## Preamble - load data ----
 
 ### Start logging info

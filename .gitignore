@@ -27,3 +27,12 @@ tests/testthat/*.rds
 
 ## JOSS ----
 *.jats
+
+
+## JAR files (downloaded via setupTASSEL() from Maven Central) ----
+inst/java/*.jar
+inst/java/*.dylib
+inst/java/*.dll
+inst/java/*.so
+
+

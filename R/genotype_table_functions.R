@@ -66,7 +66,7 @@ readGenotypeTableFromPath <- function(path, keepDepth = FALSE, sortPositions = F
 getSumExpFromGenotypeTable <- function(tasObj,
                                        coerceDosageToInt = TRUE,
                                        verbose = FALSE) {
-    if (class(tasObj) != "TasselGenotypePhenotype") {
+    if (!inherits(tasObj, "TasselGenotypePhenotype")) {
         stop("`tasObj` must be of class `TasselGenotypePhenotype`")
     }
 
@@ -130,7 +130,7 @@ getGenotypeTable <- function(jtsObject) {
 #' @importFrom rJava .jevalArray
 #' @importFrom rJava is.jnull
 getMinMaxPhysPositions <- function(tasObj) {
-    if (class(tasObj) != "TasselGenotypePhenotype") {
+    if (!inherits(tasObj, "TasselGenotypePhenotype")) {
         stop("`tasObj` must be of class `TasselGenotypePhenotype`")
     }
 
@@ -160,7 +160,7 @@ getMinMaxPhysPositions <- function(tasObj) {
 #' @importFrom rJava .jevalArray
 #' @importFrom rJava is.jnull
 getMinMaxVarSites <- function(tasObj) {
-    if (class(tasObj) != "TasselGenotypePhenotype") {
+    if (!inherits(tasObj, "TasselGenotypePhenotype")) {
         stop("`tasObj` must be of class `TasselGenotypePhenotype`")
     }
 
@@ -232,7 +232,7 @@ readGenotypeTableFromGigwa <- function(gigwa) {
 as.matrix.TasselGenotypePhenotype <- function(x, ...) {
     plugin <- rJava::J("net/maizegenetics/plugindef/GenerateRCode")
 
-    if (class(x) != "TasselGenotypePhenotype") {
+    if (!inherits(x, "TasselGenotypePhenotype")) {
         stop("`x` must be of class `TasselGenotypePhenotype`")
     }
 
@@ -264,7 +264,7 @@ as.matrix.TasselGenotypePhenotype <- function(x, ...) {
 #'
 #' @export
 siteSummary <- function(tasObj) {
-    if (class(tasObj) != "TasselGenotypePhenotype") {
+    if (!inherits(tasObj, "TasselGenotypePhenotype")) {
         stop("`tasObj` must be of class `TasselGenotypePhenotype`")
     }
 
@@ -303,7 +303,7 @@ siteSummary <- function(tasObj) {
 #'
 #' @export
 taxaSummary <- function(tasObj) {
-    if (class(tasObj) != "TasselGenotypePhenotype") {
+    if (!inherits(tasObj, "TasselGenotypePhenotype")) {
         stop("`tasObj` must be of class `TasselGenotypePhenotype`")
     }
 

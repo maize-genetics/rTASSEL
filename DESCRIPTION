@@ -1,5 +1,5 @@
 Package: rTASSEL
-Version: 0.10.2
+Version: 0.11.0
 Date: 2025-04-23
 Title: R Front-End for TASSEL
 Authors@R: c(
@@ -42,6 +42,7 @@ Depends:
     R (>= 4.1.0)
 Imports:
     ape,
+    BiocGenerics,
     cli,
     GenomicRanges,
     ggplot2,
@@ -57,10 +58,12 @@ Imports:
     vctrs
 Suggests:
     BiocStyle,
+    digest,
     knitr,
     magrittr,
     rmarkdown,
-    testthat
+    testthat,
+    withr
 SystemRequirements: Java (>= 8.0)
 Encoding: UTF-8
 LazyData: true

@@ -54,6 +54,7 @@
 #' @importFrom rJava .jnew
 #'
 #' @export
+# nocov start
 ldJavaApp <- function(tasObj,
                       ldType = c("SlidingWindow", "All"),
                       windowSize = NULL,
@@ -113,6 +114,7 @@ ldJavaApp <- function(tasObj,
     )
     ldDialog$show()
 }
+# nocov end
 
 
 

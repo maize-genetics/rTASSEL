@@ -50,7 +50,7 @@ genomicRanges <- function(genoTable) {
 #'
 #' @export
 positionList <- function(tasObj) {
-    if (class(tasObj) != "TasselGenotypePhenotype") {
+    if (!inherits(tasObj, "TasselGenotypePhenotype")) {
         stop("`tasObj` must be of class `TasselGenotypePhenotype`")
     }
 

@@ -83,6 +83,21 @@ To cite `rTASSEL`, please use the following citation:
 
 # Preliminary steps
 
+## Setting up TASSEL JARs
+Before using `rTASSEL` for the first time, you must download the TASSEL Java 
+libraries. This is a **one-time** setup step that caches the required JAR 
+files on your machine:
+
+```{r, eval=FALSE, echo=TRUE}
+setupTASSEL()
+```
+
+Once the JARs are cached, subsequent calls to `library(rTASSEL)` will 
+automatically detect and use them. For more details on the caching system, 
+custom JAR paths, and troubleshooting, see the 
+[Installing rTASSEL](rtassel_installation.html) vignette.
+
+
 ## Setting Memory
 Since genome-wide association analyses can use up a lot of computational
 resources, memory allocation to `rTASSEL` can be modified. To change the amount

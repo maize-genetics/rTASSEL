@@ -34,7 +34,7 @@ exportGenotypeTable <- function(tasObj,
                                 keepDepth = TRUE,
                                 taxaAnnotations = TRUE,
                                 branchLengths = TRUE) {
-    if (class(tasObj) != "TasselGenotypePhenotype") {
+    if (!inherits(tasObj, "TasselGenotypePhenotype")) {
         stop("`tasObj` must be of class `TasselGenotypePhenotype`")
     }
 

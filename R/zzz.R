@@ -1,7 +1,14 @@
 .onLoad <- function(libname, pkgname) {
-    # Initialize Jar
+    resolved <- resolveJarPath(pkgname, libname)
+
+    if (is.null(resolved$path)) {
+        return(invisible())
+    }
+
+    # Initialize JVM and add JARs to classpath
     rJava::.jpackage(pkgname, lib.loc = libname)
-    rJava::.jaddClassPath(dir(file.path(getwd(), "inst/java"), full.names = TRUE))
+    jars <- list.files(resolved$path, pattern = "\\.jar$", full.names = TRUE)
+    rJava::.jaddClassPath(jars)
 
     # Start up a temp logging file regardless of user input
     # NOTE: users can define a logging file whenever they want - this is to
@@ -11,21 +18,25 @@
 }
 
 .onAttach <- function(libname, pkgname){
-    tasselVersion <- "5.2.96"
-    info          <- intToUtf8(0x2139)       # ℹ
-    bold_on       <- "\033[1m"           # Start bold
-    bold_off      <- "\033[22m"         # End bold
+    pkgVersion <- utils::packageVersion("rTASSEL")
+    resolved   <- resolveJarPath(pkgname, libname)
 
-    msg <- sprintf(
-        paste0(
-            "Welcome to rTASSEL (version ", bold_on, "%s", bold_off, ")\n",
-            "%s Running TASSEL version ", bold_on, "%s", bold_off, "\n",
-            "%s Consider starting a TASSEL log file (see ?startLogger())\n"
-        ),
-        utils::packageVersion("rTASSEL"),
-        info,
-        tasselVersion,
-        info
-    )
-    packageStartupMessage(msg)
+    msg <- cli::cli_fmt({
+        cli::cli_div(theme = list(h2 = list("margin-top" = 0, "margin-bottom" = 0)))
+        cli::cli_h2("Welcome to rTASSEL (version {.val {pkgVersion}})")
+
+        if (is.null(resolved$path)) {
+            cli::cli_bullets(c(
+                "i" = "TASSEL JARs not found",
+                "i" = "Run {.run rTASSEL::setupTASSEL()} to download from Maven Central"
+            ))
+        } else {
+            cli::cli_bullets(c(
+                "i" = "Running TASSEL version {.val {TASSEL_MAVEN$VERSION}} ({.field {resolved$source}})",
+                "i" = "Consider starting a TASSEL log file (see {.help [startLogger()](rTASSEL::startLogger)})"
+            ))
+        }
+    })
+
+    packageStartupMessage(paste(msg, collapse = "\n"))
 }

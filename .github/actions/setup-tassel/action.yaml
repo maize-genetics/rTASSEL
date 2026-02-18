@@ -1,0 +1,51 @@
+name: 'Setup TASSEL'
+description: 'Set up Java and download TASSEL JAR from Maven Central'
+
+runs:
+  using: 'composite'
+  steps:
+    - uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: '17'
+
+    - name: Configure Java for R
+      if: runner.os != 'Windows'
+      run: sudo R CMD javareconf
+      shell: bash
+
+    - name: Get TASSEL cache directory
+      id: tassel-cache
+      run: |
+        echo "dir=$(Rscript -e 'cat(tools::R_user_dir("rTASSEL", "cache"))')" >> $GITHUB_OUTPUT
+      shell: bash
+
+    - name: Cache TASSEL JAR
+      uses: actions/cache@v4
+      with:
+        path: ${{ steps.tassel-cache.outputs.dir }}
+        key: tassel-jar-${{ runner.os }}-${{ hashFiles('R/constants.R') }}
+
+    - name: Download TASSEL JAR
+      run: |
+        source("R/constants.R")
+        jar_dir <- file.path(
+          tools::R_user_dir("rTASSEL", "cache"), "java", TASSEL_MAVEN$VERSION
+        )
+        jar_name <- sprintf(
+          "%s-%s-%s.jar",
+          TASSEL_MAVEN$ARTIFACT_ID, TASSEL_MAVEN$VERSION, TASSEL_MAVEN$CLASSIFIER
+        )
+        jar_file <- file.path(jar_dir, jar_name)
+        if (!file.exists(jar_file)) {
+          jar_url <- sprintf(
+            "%s/%s/%s/%s/%s",
+            TASSEL_MAVEN$BASE_URL, TASSEL_MAVEN$GROUP_PATH,
+            TASSEL_MAVEN$ARTIFACT_ID, TASSEL_MAVEN$VERSION, jar_name
+          )
+          dir.create(jar_dir, recursive = TRUE, showWarnings = FALSE)
+          download.file(jar_url, jar_file, mode = "wb")
+        }
+        message("TASSEL JAR: ", jar_file)
+        message("Exists: ", file.exists(jar_file))
+      shell: Rscript {0}

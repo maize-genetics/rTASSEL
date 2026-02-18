@@ -136,7 +136,7 @@ seqDiversity <- function(
     stepSize = 100,
     windowSize = 500
 ) {
-    if (class(tasObj) != "TasselGenotypePhenotype") {
+    if (!inherits(tasObj, "TasselGenotypePhenotype")) {
         stop("`tasObj` must be of class `TasselGenotypePhenotype`")
     }
 

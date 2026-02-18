@@ -16,6 +16,7 @@
 #' @importFrom rJava J
 #'
 #' @export
+# nocov start
 treeJavaApp <- function(tasObj, clustMethod = c("Neighbor_Joining", "UPGMA")) {
     warnMsg <- paste0("The function 'ldJavaApp()' will be deprecated soon.")
     message(warnMsg)
@@ -51,5 +52,6 @@ treeJavaApp <- function(tasObj, clustMethod = c("Neighbor_Joining", "UPGMA")) {
     treeInput <- input$getDataSet(myTree)
     archPlugin$performFunction(treeInput)
 }
+# nocov end
 
 

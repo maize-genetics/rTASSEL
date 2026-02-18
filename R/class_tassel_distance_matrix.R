@@ -7,6 +7,7 @@
 #' @name TasselDistanceMatrix-class
 #' @rdname TasselDistanceMatrix-class
 #' @exportClass TasselDistanceMatrix
+#' @importFrom BiocGenerics colnames rownames ncol nrow
 setClass(
     Class = "TasselDistanceMatrix",
     representation = representation(

@@ -84,10 +84,10 @@ assocModelFitter <- function(
     }
 
     # Logic - check kinship object
-    if (!is.null(kinship) && class(kinship) != "TasselDistanceMatrix") {
+    if (!is.null(kinship) && !inherits(kinship, "TasselDistanceMatrix")) {
         stop("TASSEL kinship object is not of TasselDistanceMatrix class", call. = FALSE)
     }
-    if (!is.null(kinship) && class(kinship) == "TasselDistanceMatrix") {
+    if (!is.null(kinship) && inherits(kinship, "TasselDistanceMatrix")) {
         kinTaxa <- colnames(kinship)
         genoTaxa <- getTaxaIDs(tasObj)
 
@@ -388,7 +388,7 @@ tasPhenoFilter <- function(tasObj, filtObj) {
 
     # Filter data frame columns based on association formula
     phenoDF <- phenoDF[, filtObjRight]
-    phenoAttDf <- subset(phenoAttDf, subset = traitName %in% filtObjRight)
+    phenoAttDf <- phenoAttDf[phenoAttDf$traitName %in% filtObjRight, , drop = FALSE]
 
     # Get vector of non-taxa column names
     phenoColNames <- colnames(phenoDF)
