@@ -15,7 +15,7 @@
 ## Citation
 
 Source:
-[`inst/CITATION`](https://github.com/maize-genetics/rTASSEL/blob/fix-coverage-ci/inst/CITATION)
+[`inst/CITATION`](https://github.com/maize-genetics/rTASSEL/blob/master/inst/CITATION)
 
 Monier et al., (2022). rTASSEL: An R interface to TASSEL for analyzing
 genomic diversity. Journal of Open Source Software, 7(76), 4530,

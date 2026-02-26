@@ -2,7 +2,7 @@
 
 [![Life Cycle
 Status](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
-[![R-CMD-check](https://github.com/maize-genetics/rTASSEL/actions/workflows/check-standard.yaml/badge.svg)](https://github.com/maize-genetics/rTASSEL/actions/workflows/check-standard.yaml)
+[![CI](https://github.com/maize-genetics/rTASSEL/actions/workflows/ci.yaml/badge.svg)](https://github.com/maize-genetics/rTASSEL/actions/workflows/ci.yaml)
 [![codecov](https://codecov.io/gh/maize-genetics/rTASSEL/branch/master/graph/badge.svg?token=4D0JSKT0UC)](https://codecov.io/gh/maize-genetics/rTASSEL)
 [![DOI](https://joss.theoj.org/papers/10.21105/joss.04530/status.svg)](https://doi.org/10.21105/joss.04530)
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/btmonier/rTASSEL_sandbox/HEAD?labpath=getting_started.ipynb)
