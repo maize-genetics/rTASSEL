@@ -1,5 +1,10 @@
 # Changelog
 
+## rTASSEL 0.12.0
+
+- Fixed Codecov upload in CI by replacing `covr::codecov()` with the
+  official `codecov/codecov-action` GitHub Action uploader
+
 ## rTASSEL 0.11.0
 
 - Add fixes to possible issues related to `ggplot2` v4.0

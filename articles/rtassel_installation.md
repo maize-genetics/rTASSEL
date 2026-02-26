@@ -148,7 +148,7 @@ step, the package can be loaded using:
 library(rTASSEL)
 ```
 
-    ## ── Welcome to rTASSEL (version 0.11.0) ──
+    ## ── Welcome to rTASSEL (version 0.11.1) ──
     ## ℹ Running TASSEL version "5.2.96" (maven cache)
     ## ℹ Consider starting a TASSEL log file (see startLogger()
     ##   (`?rTASSEL::startLogger()`))
