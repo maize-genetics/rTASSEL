@@ -29,6 +29,12 @@
 #'     \item \code{DPrime}: \eqn{D'}
 #'     \item \code{pDiseq}: \emph{p}-value
 #'   }
+#' @param ldBlocks An optional \code{GRanges} object specifying genomic
+#'   regions to highlight as LD blocks on the plot. Each range defines a
+#'   chromosome and start/end positions; sites falling within each range
+#'   are outlined with a triangular border. An optional \code{label}
+#'   metadata column (in \code{mcols}) adds text annotations to each
+#'   block. Defaults to \code{NULL}.
 #' @param verbose Display messages? Defaults to \code{TRUE}.
 #'
 #' @details Linkage disequilibrium between any set of polymorphisms can be
@@ -55,6 +61,7 @@
 #'
 #' @return Returns a \code{ggplot2} object.
 #'
+#' @importFrom GenomicRanges seqnames start end
 #' @importFrom rlang .data
 #'
 #' @export
@@ -63,6 +70,7 @@ plotLD <- function(tasObj,
                    windowSize = NULL,
                    hetCalls = c("missing", "ignore", "third"),
                    plotVal = c("r2", "DPrime", "pDiseq"),
+                   ldBlocks = NULL,
                    verbose = TRUE) {
     angle     <- 135
     label_gap <- 0.2
@@ -81,12 +89,39 @@ plotLD <- function(tasObj,
     if (plotVal == "r2") plotVal <- "R^2"
     ldDF$coord1 <- paste0(ldDF$Locus1, "_", ldDF$Position1)
     ldDF$coord2 <- paste0(ldDF$Locus2, "_", ldDF$Position2)
-    ldSub        <- ldDF[, c("coord1", "coord2", plotVal)]
-    ldSub        <- as.data.frame(ldSub)
 
+    # Sort sites by chromosome then position numerically
+    sites <- unique(data.frame(
+        coord = c(ldDF$coord1, ldDF$coord2),
+        locus = c(ldDF$Locus1, ldDF$Locus2),
+        pos   = as.numeric(c(ldDF$Position1, ldDF$Position2)),
+        stringsAsFactors = FALSE
+    ))
+    locus_as_num <- suppressWarnings(as.numeric(sites$locus))
+    if (all(!is.na(locus_as_num))) {
+        sites <- sites[order(locus_as_num, sites$pos), ]
+    } else {
+        sites <- sites[order(sites$locus, sites$pos), ]
+    }
+    rownames(sites) <- NULL
+    ids <- sites$coord
+
+    # Reorder rows to match lower-triangle traversal in genomic order
+    site_rank <- setNames(seq_len(nrow(sites)), sites$coord)
+    r1 <- site_rank[ldDF$coord1]
+    r2 <- site_rank[ldDF$coord2]
+    swap <- r1 < r2
+    if (any(swap)) {
+        tmp <- ldDF$coord1[swap]
+        ldDF$coord1[swap] <- ldDF$coord2[swap]
+        ldDF$coord2[swap] <- tmp
+    }
+    ldDF <- ldDF[order(pmax(r1, r2), pmin(r1, r2)), ]
+
+    ldSub    <- ldDF[, c("coord1", "coord2", plotVal)]
+    ldSub    <- as.data.frame(ldSub)
     ldSubRot <- ldCellRotater(ldSub, angle)
 
-    ids <- sort(unique(c(ldSub$coord1, ldSub$coord2)))
     n_sites <- length(ids)
     id_coord <- list(
         "x" = seq(1.5, 1.5 + n_sites - 1, 1),
@@ -99,7 +134,7 @@ plotLD <- function(tasObj,
 
     max_nchar <- max(nchar(ids))
     upper_margin_padding <- max(id_coord$y) + label_gap +
-        max_nchar * text_size * 0.1
+        max_nchar * text_size * 0.2
 
     legend_lab <- switch(
         EXPR = plotVal,
@@ -131,5 +166,80 @@ plotLD <- function(tasObj,
         ggplot2::theme(
             legend.position = "bottom"
         )
+    if (!is.null(ldBlocks)) {
+        if (!inherits(ldBlocks, "GRanges")) {
+            stop("'ldBlocks' must be a 'GRanges' object")
+        }
+
+        block_mcols <- S4Vectors::mcols(ldBlocks)
+        has_labels  <- "label" %in% colnames(block_mcols)
+        block_lw    <- max(0.5, border_lw * 2)
+
+        for (b in seq_len(length(ldBlocks))) {
+            block_chr   <- as.character(GenomicRanges::seqnames(ldBlocks)[b])
+            block_start <- GenomicRanges::start(ldBlocks)[b]
+            block_end   <- GenomicRanges::end(ldBlocks)[b]
+
+            in_block <- sites$locus == block_chr &
+                sites$pos >= block_start &
+                sites$pos <= block_end
+
+            if (!any(in_block)) {
+                warning("Block ", b, " contains no sites, skipping")
+                next
+            }
+
+            block_idx <- which(in_block)
+            s <- min(block_idx)
+            e <- max(block_idx)
+
+            block_corners <- rotate(
+                x = c(s, e + 1, s),
+                y = c(s, e + 1, e + 1),
+                angle = angle
+            )
+
+            rect_xmin <- min(block_corners$x[1], block_corners$x[2])
+            rect_xmax <- max(block_corners$x[1], block_corners$x[2])
+            rect_ymin <- max(block_corners$y)
+            rect_ymax <- upper_margin_padding
+
+            cell_plot <- cell_plot +
+                ggplot2::annotate(
+                    geom = "polygon",
+                    x = block_corners$x,
+                    y = block_corners$y,
+                    fill = NA,
+                    color = "black",
+                    linewidth = block_lw
+                ) +
+                ggplot2::annotate(
+                    geom = "rect",
+                    xmin = rect_xmin,
+                    xmax = rect_xmax,
+                    ymin = rect_ymin,
+                    ymax = rect_ymax,
+                    fill = NA,
+                    color = "black",
+                    linewidth = block_lw
+                )
+
+            if (has_labels && !is.na(block_mcols$label[b])) {
+                label_x <- (block_corners$x[1] + block_corners$x[2]) / 2
+                label_y <- max(block_corners$y) - 0.15
+
+                cell_plot <- cell_plot +
+                    ggplot2::annotate(
+                        geom = "text",
+                        x = label_x,
+                        y = label_y,
+                        label = block_mcols$label[b],
+                        size = text_size + 0.5,
+                        fontface = "bold"
+                    )
+            }
+        }
+    }
+
     return(cell_plot)
 }

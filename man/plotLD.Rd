@@ -10,6 +10,7 @@ plotLD(
   windowSize = NULL,
   hetCalls = c("missing", "ignore", "third"),
   plotVal = c("r2", "DPrime", "pDiseq"),
+  ldBlocks = NULL,
   verbose = TRUE
 )
 }
@@ -40,6 +41,13 @@ are \code{"ignore"} (ignore altogether), \code{"missing"}
   \item \code{DPrime}: \eqn{D'}
   \item \code{pDiseq}: \emph{p}-value
 }}
+
+\item{ldBlocks}{An optional \code{GRanges} object specifying genomic
+regions to highlight as LD blocks on the plot. Each range defines a
+chromosome and start/end positions; sites falling within each range
+are outlined with a triangular border. An optional \code{label}
+metadata column (in \code{mcols}) adds text annotations to each
+block. Defaults to \code{NULL}.}
 
 \item{verbose}{Display messages? Defaults to \code{TRUE}.}
 }
