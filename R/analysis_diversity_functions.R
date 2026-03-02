@@ -45,7 +45,7 @@
 #'   taxa must be present to calculate LD and there must be 2 or more minor
 #'   alleles.
 #'
-#' @seealso \code{\link{linkageDiseq}}, \code{\link{ldPlot}}
+#' @seealso \code{\link{linkageDiseq}}, \code{\link{plotLD}}
 #'
 #' @return Returns a \code{DataFrame}-based data frame.
 #'

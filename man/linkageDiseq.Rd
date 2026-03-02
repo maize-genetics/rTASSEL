@@ -64,5 +64,5 @@ Linkage disequilibrium between any set of polymorphisms can be
   alleles.
 }
 \seealso{
-\code{\link{linkageDiseq}}, \code{\link{ldPlot}}
+\code{\link{linkageDiseq}}, \code{\link{plotLD}}
 }

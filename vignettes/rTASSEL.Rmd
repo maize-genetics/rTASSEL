@@ -1137,7 +1137,7 @@ tasGenoPhenoFilt <- filterGenotypeTableSites(
 )
 
 # Generate and visualize LD
-myLD <- ldPlot(
+myLD <- plotLD(
     tasObj  = tasGenoPhenoFilt,
     ldType  = "All",
     plotVal = "r2",
@@ -1154,29 +1154,6 @@ myLD
 # Interactive Visualizations (deprecated)
 
 **NOTE**: These methods will soon be removed from rTASSEL
-
-## Overview
-Since `rTASSEL` can essentially interact with all of TASSEL's API, interactive
-"legacy" Java-based visualizers can be accessed. Currently, `rTASSEL` has
-capabilities to use the LD viewer and Archaeopteryx.
-
-
-## LD Viewer
-TASSEL's linkage disequilibrium (LD) viewer can be used via the `ldJavaApp()`
-function. This method will take a `TasselGenotypePhenotype` object containing
-genotype information. A common parameter to set is the window size 
-(`windowSize`) since creating a full genotype matrix is rather impractical
-at this point in time for most modern machines and experimental design. This
-will create comparisons only within a given range of indexes:
-
-```{r, echo=TRUE, eval=FALSE}
-
-
-tasGenoHMP |> ldJavaApp(windowSize = 100)
-```
-
-![](../man/figures/ld_java_viewer.png)
-
 
 ## Tree Viewer - Archaeopteryx
 Since TASSEL allows for phylogenetic tree creation, one common Java-based

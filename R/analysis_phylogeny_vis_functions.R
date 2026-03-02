@@ -18,7 +18,7 @@
 #' @export
 # nocov start
 treeJavaApp <- function(tasObj, clustMethod = c("Neighbor_Joining", "UPGMA")) {
-    warnMsg <- paste0("The function 'ldJavaApp()' will be deprecated soon.")
+    warnMsg <- paste0("The function 'treeJavaApp()' will be deprecated soon.")
     message(warnMsg)
 
     if (!is(tasObj, "TasselGenotypePhenotype")) {

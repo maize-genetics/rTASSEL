@@ -37,51 +37,17 @@ tasGenoPhenoFast <- readGenotypePhenotype(
 
 
 ## Tests ----
-# TODO - make these not fail on servers...
-# test_that("ldJavaApp() throws the right exceptions", {
-#     expect_error(
-#         object = ldJavaApp(
-#             tasObj = mtcars
-#         ),
-#         regexp = "tasObj is not of class \"TasselGenotypePhenotype\""
-#     )
-#
-#     expect_error(
-#         object = ldJavaApp(
-#             tasObj = tasPheno
-#         ),
-#         regexp = "tasObj does contain a Genotype object"
-#     )
-#
-#     expect_message(
-#         object = ldJavaApp(
-#             tasObj = tasGeno,
-#             ldType = "SlidingWindow"
-#         ),
-#         regexp = "`windowSize` is not set - setting to `1`"
-#     )
-#
-#     expect_message(
-#         object = ldJavaApp(
-#             tasObj = tasGeno,
-#             ldType = "All"
-#         ),
-#         regexp = "This *might* produce a massive matrix. You have been warned."
-#     )
-#
-# })
 
-
-test_that("ldPlot() throws the right exceptions", {
+test_that("plotLD() throws the right exceptions", {
     expect_error(
-        object = ldPlot(
+        object = plotLD(
             tasObj = mtcars
         )
     )
 })
 
 
-test_that("ldPlot() returns correct data types", {
+test_that("plotLD() returns correct data types", {
     tasGenoPhenoFilt <- filterGenotypeTableSites(
         tasObj              = tasGeno,
         siteRangeFilterType = "position",
@@ -91,13 +57,13 @@ test_that("ldPlot() returns correct data types", {
         endChr              = 2
     )
 
-    myLD <- ldPlot(
+    myLD <- plotLD(
         tasObj  = tasGenoPhenoFilt,
         ldType  = "All",
         plotVal = "r2",
         verbose = FALSE
     )
-    myLDSW <- ldPlot(
+    myLDSW <- plotLD(
         tasObj  = tasGenoPhenoFilt,
         ldType  = "SlidingWindow",
         plotVal = "r2",

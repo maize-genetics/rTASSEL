@@ -110,49 +110,27 @@ rotate <- function(x, y, angle = 135) {
 }
 
 
-## Polygon coordinate, group, and value "class" ----
-cell <- function(i, j, group, val, w = 1) {
-    data.frame(
-        ##        bl, tl,    tr,    br
-        x     = c(j , j    , j + w, j + w),
-        y     = c(i , i + w, i + w, i    ),
-        group = group,
-        val   = val
-    )
-}
-
-
 ## Rotated polygon coordinate, group, value "class" ----
 ldCellRotater <- function(ldDF, angle) {
-    rows <- cols <- length(unique(ldDF$coord1))
-    grid_data <- matrix(data = data.frame(), nrow = rows, ncol = cols)
+    n <- length(unique(ldDF$coord1))
 
-    # Generate path aesthetics - only half of matrix
-    it <- 1
-    for (i in seq_len(rows)) {
-        for (j in seq_len(cols)) {
-            if (i >= j) {
-                sub <- ldDF[it, ]
-                grid_data[[i, j]] <- cell(i, j, paste0(i, ":", j), sub[, 3])
-                it <- it + 1
-            }
-        }
-    }
+    pairs <- which(lower.tri(matrix(0L, n, n), diag = TRUE), arr.ind = TRUE)
+    pairs <- pairs[order(pairs[, 1], pairs[, 2]), , drop = FALSE]
 
-    # Convert to data frame
-    grid_data <- sapply(
-        grid_data,
-        "[",
-        simplify = FALSE
-    )
-    grid_data <- do.call("rbind", grid_data)
+    i_idx   <- pairs[, 1]
+    j_idx   <- pairs[, 2]
+    n_cells <- length(i_idx)
+    vals    <- ldDF[[3]]
 
-    # Rotate and update coordinates
-    rot <- rotate(grid_data$x, grid_data$y, angle)
-    grid_data$x <- rot$x
-    grid_data$y <- rot$y
+    # 4 vertices per cell (bl, tl, tr, br) in a single vectorized pass
+    x     <- c(j_idx, j_idx, j_idx + 1, j_idx + 1)
+    y     <- c(i_idx, i_idx + 1, i_idx + 1, i_idx)
+    group <- rep.int(seq_len(n_cells), 4L)
+    val   <- rep.int(vals, 4L)
 
-    return(grid_data)
+    rot <- rotate(x, y, angle)
+
+    data.frame(x = rot$x, y = rot$y, val = val, group = group)
 }
 
 
