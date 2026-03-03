@@ -65,15 +65,17 @@
 #' @importFrom rlang .data
 #'
 #' @export
-plotLD <- function(tasObj,
-                   ldType = c("All", "SlidingWindow"),
-                   windowSize = NULL,
-                   hetCalls = c("missing", "ignore", "third"),
-                   plotVal = c("r2", "DPrime", "pDiseq"),
-                   ldBlocks = NULL,
-                   verbose = TRUE) {
+plotLD <- function(
+    tasObj,
+    ldType     = c("All", "SlidingWindow"),
+    windowSize = NULL,
+    hetCalls   = c("missing", "ignore", "third"),
+    plotVal    = c("r2", "DPrime", "pDiseq"),
+    ldBlocks   = NULL,
+    verbose    = TRUE
+) {
     angle     <- 135
-    label_gap <- 0.2
+    labelGap <- 0.2
 
     plotVal <- match.arg(plotVal)
     ldType  <- match.arg(ldType)
@@ -97,9 +99,9 @@ plotLD <- function(tasObj,
         pos   = as.numeric(c(ldDF$Position1, ldDF$Position2)),
         stringsAsFactors = FALSE
     ))
-    locus_as_num <- suppressWarnings(as.numeric(sites$locus))
-    if (all(!is.na(locus_as_num))) {
-        sites <- sites[order(locus_as_num, sites$pos), ]
+    locusAsNum <- suppressWarnings(as.numeric(sites$locus))
+    if (all(!is.na(locusAsNum))) {
+        sites <- sites[order(locusAsNum, sites$pos), ]
     } else {
         sites <- sites[order(sites$locus, sites$pos), ]
     }
@@ -107,9 +109,9 @@ plotLD <- function(tasObj,
     ids <- sites$coord
 
     # Reorder rows to match lower-triangle traversal in genomic order
-    site_rank <- setNames(seq_len(nrow(sites)), sites$coord)
-    r1 <- site_rank[ldDF$coord1]
-    r2 <- site_rank[ldDF$coord2]
+    siteRank <- setNames(seq_len(nrow(sites)), sites$coord)
+    r1 <- siteRank[ldDF$coord1]
+    r2 <- siteRank[ldDF$coord2]
     swap <- r1 < r2
     if (any(swap)) {
         tmp <- ldDF$coord1[swap]
@@ -122,43 +124,43 @@ plotLD <- function(tasObj,
     ldSub    <- as.data.frame(ldSub)
     ldSubRot <- ldCellRotater(ldSub, angle)
 
-    n_sites <- length(ids)
-    id_coord <- list(
-        "x" = seq(1.5, 1.5 + n_sites - 1, 1),
-        "y" = seq(0.5, 0.5 + n_sites - 1, 1)
+    nSites <- length(ids)
+    idCoord <- list(
+        "x" = seq(1.5, 1.5 + nSites - 1, 1),
+        "y" = seq(0.5, 0.5 + nSites - 1, 1)
     )
-    id_coord <- rotate(id_coord$x, id_coord$y, angle)
+    idCoord <- rotate(idCoord$x, idCoord$y, angle)
 
-    border_lw <- min(1, 10 / n_sites)
-    text_size <- max(1.5, min(3.5, 40 / n_sites))
+    borderLw <- min(1, 10 / nSites)
+    textSize <- max(1.5, min(3.5, 40 / nSites))
 
-    max_nchar <- max(nchar(ids))
-    upper_margin_padding <- max(id_coord$y) + label_gap +
-        max_nchar * text_size * 0.2
+    maxNchar <- max(nchar(ids))
+    upperMarginPadding <- max(idCoord$y) + labelGap +
+        maxNchar * textSize * 0.2
 
-    legend_lab <- switch(
+    legendLab <- switch(
         EXPR = plotVal,
         "R^2" = bquote(italic(r)^2),
         "DPrime" = bquote(italic(D)*"'"),
         "pDiseq" = bquote(italic(p)*'-value')
     )
 
-    cell_plot <- ggplot2::ggplot(data = ldSubRot) +
+    cellPlot <- ggplot2::ggplot(data = ldSubRot) +
         ggplot2::aes(x = .data$x, y = .data$y, fill = .data$val, group = .data$group) +
-        ggplot2::geom_polygon(color = "white", linewidth = border_lw) +
+        ggplot2::geom_polygon(color = "white", linewidth = borderLw) +
         ggplot2::annotate(
             geom = "text",
-            x = id_coord$x,
-            y = id_coord$y + label_gap,
+            x = idCoord$x,
+            y = idCoord$y + labelGap,
             label = ids,
             angle = 90,
             hjust = 0,
-            size = text_size
+            size = textSize
         ) +
-        ggplot2::ylim(min(ldSubRot$y), upper_margin_padding) +
+        ggplot2::ylim(min(ldSubRot$y), upperMarginPadding) +
         ggplot2::scale_x_reverse() +
         ggplot2::scale_fill_continuous(
-            name = legend_lab,
+            name = legendLab,
             type = "viridis"
         ) +
         ggplot2::coord_fixed() +
@@ -171,75 +173,75 @@ plotLD <- function(tasObj,
             stop("'ldBlocks' must be a 'GRanges' object")
         }
 
-        block_mcols <- S4Vectors::mcols(ldBlocks)
-        has_labels  <- "label" %in% colnames(block_mcols)
-        block_lw    <- max(0.5, border_lw * 2)
+        blockMcols <- S4Vectors::mcols(ldBlocks)
+        hasLabels  <- "label" %in% colnames(blockMcols)
+        blockLw    <- max(0.5, borderLw * 2)
 
         for (b in seq_len(length(ldBlocks))) {
-            block_chr   <- as.character(GenomicRanges::seqnames(ldBlocks)[b])
-            block_start <- GenomicRanges::start(ldBlocks)[b]
-            block_end   <- GenomicRanges::end(ldBlocks)[b]
+            blockChr   <- as.character(GenomicRanges::seqnames(ldBlocks)[b])
+            blockStart <- GenomicRanges::start(ldBlocks)[b]
+            blockEnd   <- GenomicRanges::end(ldBlocks)[b]
 
-            in_block <- sites$locus == block_chr &
-                sites$pos >= block_start &
-                sites$pos <= block_end
+            inBlock <- sites$locus == blockChr &
+                sites$pos >= blockStart &
+                sites$pos <= blockEnd
 
-            if (!any(in_block)) {
+            if (!any(inBlock)) {
                 warning("Block ", b, " contains no sites, skipping")
                 next
             }
 
-            block_idx <- which(in_block)
-            s <- min(block_idx)
-            e <- max(block_idx)
+            blockIdx <- which(inBlock)
+            s <- min(blockIdx)
+            e <- max(blockIdx)
 
-            block_corners <- rotate(
-                x = c(s, e + 1, s),
-                y = c(s, e + 1, e + 1),
+            blockCorners <- rotate(
+                x = c(s, e, s),
+                y = c(s, e, e),
                 angle = angle
             )
 
-            rect_xmin <- min(block_corners$x[1], block_corners$x[2])
-            rect_xmax <- max(block_corners$x[1], block_corners$x[2])
-            rect_ymin <- max(block_corners$y)
-            rect_ymax <- upper_margin_padding
+            rectXmin <- min(blockCorners$x[1], blockCorners$x[2])
+            rectXmax <- max(blockCorners$x[1], blockCorners$x[2])
+            rectYmin <- max(blockCorners$y)
+            rectYmax <- upperMarginPadding
 
-            cell_plot <- cell_plot +
+            cellPlot <- cellPlot +
                 ggplot2::annotate(
                     geom = "polygon",
-                    x = block_corners$x,
-                    y = block_corners$y,
+                    x = blockCorners$x,
+                    y = blockCorners$y,
                     fill = NA,
                     color = "black",
-                    linewidth = block_lw
+                    linewidth = blockLw
                 ) +
                 ggplot2::annotate(
                     geom = "rect",
-                    xmin = rect_xmin,
-                    xmax = rect_xmax,
-                    ymin = rect_ymin,
-                    ymax = rect_ymax,
+                    xmin = rectXmin,
+                    xmax = rectXmax,
+                    ymin = rectYmin,
+                    ymax = rectYmax,
                     fill = NA,
                     color = "black",
-                    linewidth = block_lw
+                    linewidth = blockLw
                 )
 
-            if (has_labels && !is.na(block_mcols$label[b])) {
-                label_x <- (block_corners$x[1] + block_corners$x[2]) / 2
-                label_y <- max(block_corners$y) - 0.15
+            if (hasLabels && !is.na(blockMcols$label[b])) {
+                labelX <- (blockCorners$x[1] + blockCorners$x[2]) / 2
+                labelY <- max(blockCorners$y) - 0.15
 
-                cell_plot <- cell_plot +
+                cellPlot <- cellPlot +
                     ggplot2::annotate(
                         geom = "text",
-                        x = label_x,
-                        y = label_y,
-                        label = block_mcols$label[b],
-                        size = text_size + 0.5,
+                        x = labelX,
+                        y = labelY,
+                        label = blockMcols$label[b],
+                        size = textSize + 0.5,
                         fontface = "bold"
                     )
             }
         }
     }
 
-    return(cell_plot)
+    return(cellPlot)
 }

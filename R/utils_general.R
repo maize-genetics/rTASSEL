@@ -117,15 +117,15 @@ ldCellRotater <- function(ldDF, angle) {
     pairs <- which(lower.tri(matrix(0L, n, n), diag = TRUE), arr.ind = TRUE)
     pairs <- pairs[order(pairs[, 1], pairs[, 2]), , drop = FALSE]
 
-    i_idx   <- pairs[, 1]
-    j_idx   <- pairs[, 2]
-    n_cells <- length(i_idx)
+    iIdx   <- pairs[, 1]
+    jIdx   <- pairs[, 2]
+    nCells <- length(iIdx)
     vals    <- ldDF[[3]]
 
     # 4 vertices per cell (bl, tl, tr, br) in a single vectorized pass
-    x     <- c(j_idx, j_idx, j_idx + 1, j_idx + 1)
-    y     <- c(i_idx, i_idx + 1, i_idx + 1, i_idx)
-    group <- rep.int(seq_len(n_cells), 4L)
+    x     <- c(jIdx, jIdx, jIdx + 1, jIdx + 1)
+    y     <- c(iIdx, iIdx + 1, iIdx + 1, iIdx)
+    group <- rep.int(seq_len(nCells), 4L)
     val   <- rep.int(vals, 4L)
 
     rot <- rotate(x, y, angle)
