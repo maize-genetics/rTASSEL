@@ -10,7 +10,10 @@ plotLD(
   windowSize = NULL,
   hetCalls = c("missing", "ignore", "third"),
   plotVal = c("r2", "DPrime", "pDiseq"),
+  colorScheme = c("viridis", "magma", "inferno", "plasma", "cividis", "rocket", "mako",
+    "turbo", "haploview"),
   ldBlocks = NULL,
+  genomicTrack = FALSE,
   verbose = TRUE
 )
 }
@@ -42,12 +45,31 @@ are \code{"ignore"} (ignore altogether), \code{"missing"}
   \item \code{pDiseq}: \emph{p}-value
 }}
 
+\item{colorScheme}{Color palette for the heatmap cells. \code{"haploview"}
+uses the classic Haploview scheme where cell color is determined by
+both LOD score and \eqn{D'}: LOD < 2 and \eqn{D'} < 1 gives white,
+LOD < 2 and \eqn{D'} = 1 gives blue, LOD \eqn{\ge} 2 and
+\eqn{D'} < 1 gives shades of pink/red scaled by \eqn{D'}, and
+LOD \eqn{\ge} 2 and \eqn{D'} = 1 gives bright red. All other
+options use continuous viridis-family palettes: \code{"viridis"}
+(default), \code{"magma"}, \code{"inferno"}, \code{"plasma"},
+\code{"cividis"}, \code{"rocket"}, \code{"mako"}, and
+\code{"turbo"}.}
+
 \item{ldBlocks}{An optional \code{GRanges} object specifying genomic
 regions to highlight as LD blocks on the plot. Each range defines a
 chromosome and start/end positions; sites falling within each range
 are outlined with a triangular border. An optional \code{label}
 metadata column (in \code{mcols}) adds text annotations to each
 block. Defaults to \code{NULL}.}
+
+\item{genomicTrack}{Logical. If \code{TRUE}, a horizontal genomic track
+is drawn above the LD plot showing the approximate physical positions
+of each site along the chromosome. Site IDs are placed at their
+physical positions on the track, and line segments connect each
+physical position to the corresponding evenly-spaced position above
+the LD triangle. When data span multiple chromosomes, positions are
+displayed cumulatively. Defaults to \code{FALSE}.}
 
 \item{verbose}{Display messages? Defaults to \code{TRUE}.}
 }

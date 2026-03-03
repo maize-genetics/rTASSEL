@@ -1,4 +1,23 @@
 ## ----
+haploviewColors <- function(dprime, lod) {
+    colors <- rep("#FFFFFF", length(dprime))
+    validD  <- !is.na(dprime)
+    validL  <- !is.na(lod)
+    dOne    <- validD & dprime >= (1 - 1e-6)
+    lodHigh <- validL & lod >= 2
+
+    colors[dOne & !lodHigh] <- "#bebfeb"
+    colors[dOne & lodHigh]  <- "#db0003"
+
+    pinkMask <- lodHigh & !dOne & validD
+    d <- pmin(1, pmax(0, dprime[pinkMask]))
+    colors[pinkMask] <- grDevices::rgb(1, 1 - d, 1 - d)
+
+    colors
+}
+
+
+## ----
 #' @title Linkage disequilibrium plot
 #'
 #' @description Calculates linkage disequilibrium (LD) and generates
@@ -29,12 +48,29 @@
 #'     \item \code{DPrime}: \eqn{D'}
 #'     \item \code{pDiseq}: \emph{p}-value
 #'   }
+#' @param colorScheme Color palette for the heatmap cells. \code{"haploview"}
+#'   uses the classic Haploview scheme where cell color is determined by
+#'   both LOD score and \eqn{D'}: LOD < 2 and \eqn{D'} < 1 gives white,
+#'   LOD < 2 and \eqn{D'} = 1 gives blue, LOD \eqn{\ge} 2 and
+#'   \eqn{D'} < 1 gives shades of pink/red scaled by \eqn{D'}, and
+#'   LOD \eqn{\ge} 2 and \eqn{D'} = 1 gives bright red. All other
+#'   options use continuous viridis-family palettes: \code{"viridis"}
+#'   (default), \code{"magma"}, \code{"inferno"}, \code{"plasma"},
+#'   \code{"cividis"}, \code{"rocket"}, \code{"mako"}, and
+#'   \code{"turbo"}.
 #' @param ldBlocks An optional \code{GRanges} object specifying genomic
 #'   regions to highlight as LD blocks on the plot. Each range defines a
 #'   chromosome and start/end positions; sites falling within each range
 #'   are outlined with a triangular border. An optional \code{label}
 #'   metadata column (in \code{mcols}) adds text annotations to each
 #'   block. Defaults to \code{NULL}.
+#' @param genomicTrack Logical. If \code{TRUE}, a horizontal genomic track
+#'   is drawn above the LD plot showing the approximate physical positions
+#'   of each site along the chromosome. Site IDs are placed at their
+#'   physical positions on the track, and line segments connect each
+#'   physical position to the corresponding evenly-spaced position above
+#'   the LD triangle. When data span multiple chromosomes, positions are
+#'   displayed cumulatively. Defaults to \code{FALSE}.
 #' @param verbose Display messages? Defaults to \code{TRUE}.
 #'
 #' @details Linkage disequilibrium between any set of polymorphisms can be
@@ -62,23 +98,28 @@
 #' @return Returns a \code{ggplot2} object.
 #'
 #' @importFrom GenomicRanges seqnames start end
+#' @importFrom grDevices rgb
 #' @importFrom rlang .data
 #'
 #' @export
 plotLD <- function(
     tasObj,
-    ldType     = c("All", "SlidingWindow"),
-    windowSize = NULL,
-    hetCalls   = c("missing", "ignore", "third"),
-    plotVal    = c("r2", "DPrime", "pDiseq"),
-    ldBlocks   = NULL,
-    verbose    = TRUE
+    ldType      = c("All", "SlidingWindow"),
+    windowSize  = NULL,
+    hetCalls    = c("missing", "ignore", "third"),
+    plotVal     = c("r2", "DPrime", "pDiseq"),
+    colorScheme = c("viridis", "magma", "inferno", "plasma",
+                    "cividis", "rocket", "mako", "turbo", "haploview"),
+    ldBlocks     = NULL,
+    genomicTrack = FALSE,
+    verbose      = TRUE
 ) {
-    angle     <- 135
-    labelGap <- 0.2
+    angle <- 135
 
-    plotVal <- match.arg(plotVal)
-    ldType  <- match.arg(ldType)
+    plotVal     <- match.arg(plotVal)
+    ldType      <- match.arg(ldType)
+    colorScheme <- match.arg(colorScheme)
+    useHaploview <- colorScheme == "haploview"
 
     ldDF <- linkageDiseq(
         tasObj     = tasObj,
@@ -120,54 +161,169 @@ plotLD <- function(
     }
     ldDF <- ldDF[order(pmax(r1, r2), pmin(r1, r2)), ]
 
-    ldSub    <- ldDF[, c("coord1", "coord2", plotVal)]
+    if (useHaploview) {
+        lod <- ldDF$N * ldDF[["R^2"]] / (2 * log(10))
+        cellColors <- haploviewColors(ldDF$DPrime, lod)
+        ldSub <- data.frame(
+            coord1 = ldDF$coord1,
+            coord2 = ldDF$coord2,
+            val    = cellColors,
+            stringsAsFactors = FALSE
+        )
+    } else {
+        ldSub <- ldDF[, c("coord1", "coord2", plotVal)]
+    }
     ldSub    <- as.data.frame(ldSub)
     ldSubRot <- ldCellRotater(ldSub, angle)
 
     nSites <- length(ids)
+    idxLabels <- seq_len(nSites)
+
     idCoord <- list(
         "x" = seq(1.5, 1.5 + nSites - 1, 1),
         "y" = seq(0.5, 0.5 + nSites - 1, 1)
     )
     idCoord <- rotate(idCoord$x, idCoord$y, angle)
 
-    borderLw <- min(1, 10 / nSites)
-    textSize <- max(1.5, min(3.5, 40 / nSites))
+    scaleFactor   <- sqrt(nSites / 15)
+    labelGap      <- 0.15 * scaleFactor
+    borderLw      <- min(1, 10 / nSites)
+    idxTextSize   <- max(2, min(5, 55 / nSites))
+    snpTextSize   <- max(2, min(4, 60 / nSites))
+    blockTextSize <- max(2.5, min(6, 65 / nSites))
 
-    maxNchar <- max(nchar(ids))
-    upperMarginPadding <- max(idCoord$y) + labelGap +
-        maxNchar * textSize * 0.2
+    idxLabelHeight <- idxTextSize * 0.2 * scaleFactor
+    idxLabelTop    <- max(idCoord$y) + labelGap + idxLabelHeight
 
-    legendLab <- switch(
-        EXPR = plotVal,
-        "R^2" = bquote(italic(r)^2),
-        "DPrime" = bquote(italic(D)*"'"),
-        "pDiseq" = bquote(italic(p)*'-value')
-    )
+    # Keep SNP-ID-to-track spacing stable across genomic windows.
+    # Using observed max label length here causes padding to inflate as
+    # coordinates get more digits in larger view spaces.
+    refSnpNchar <- 10
+    snpIdHeight <- refSnpNchar * snpTextSize * 0.15 * scaleFactor
+
+    if (!is.null(ldBlocks)) {
+        blockLabelSpace <- 0.3 * scaleFactor
+        blockTop <- idxLabelTop + blockLabelSpace
+        snpIdY <- blockTop + labelGap
+    } else {
+        snpIdY <- idxLabelTop + labelGap
+    }
+
+    upperMarginPadding <- snpIdY + snpIdHeight
+
+    if (genomicTrack) {
+        xRange <- range(idCoord$x)
+        chroms <- unique(sites$locus)
+
+        if (length(chroms) == 1) {
+            posVals <- sites$pos
+        } else {
+            if (verbose) {
+                message(
+                    "Note: genomic track spans ", length(chroms),
+                    " chromosomes; positions shown cumulatively."
+                )
+            }
+            posVals   <- numeric(nrow(sites))
+            cumOffset <- 0
+            for (ch in chroms) {
+                mask  <- sites$locus == ch
+                chPos <- sites$pos[mask]
+                posVals[mask] <- chPos - min(chPos) + cumOffset
+                cumOffset <- max(posVals[mask]) + diff(range(chPos)) * 0.1 + 1
+            }
+        }
+
+        posRange <- range(posVals)
+        if (diff(posRange) > 0) {
+            frac <- (posVals - posRange[1]) / diff(posRange)
+        } else {
+            frac <- rep(0.5, length(posVals))
+        }
+        physX <- xRange[2] - frac * diff(xRange)
+
+        dataHeight         <- snpIdY - min(ldSubRot$y)
+        snpIdTop           <- snpIdY + snpIdHeight * 0.55
+        trackLineY         <- snpIdTop + dataHeight * 0.08
+        trackTickSize      <- 0.1 * scaleFactor
+        upperMarginPadding <- trackLineY + dataHeight * 0.02
+    }
+
+    if (!useHaploview) {
+        legendLab <- switch(
+            EXPR = plotVal,
+            "R^2" = bquote(italic(r)^2),
+            "DPrime" = bquote(italic(D)*"'"),
+            "pDiseq" = bquote(italic(p)*'-value')
+        )
+    }
 
     cellPlot <- ggplot2::ggplot(data = ldSubRot) +
         ggplot2::aes(x = .data$x, y = .data$y, fill = .data$val, group = .data$group) +
-        ggplot2::geom_polygon(color = "white", linewidth = borderLw) +
+        ggplot2::geom_polygon(color = "#D9D9D9", linewidth = borderLw) +
         ggplot2::annotate(
             geom = "text",
             x = idCoord$x,
             y = idCoord$y + labelGap,
+            label = idxLabels,
+            angle = 0,
+            vjust = 0,
+            size = idxTextSize
+        )
+
+    cellPlot <- cellPlot +
+        ggplot2::annotate(
+            geom = "text",
+            x = idCoord$x,
+            y = snpIdY,
             label = ids,
             angle = 90,
             hjust = 0,
-            size = textSize
-        ) +
+            size = snpTextSize
+        )
+
+    if (genomicTrack) {
+        cellPlot <- cellPlot +
+            ggplot2::annotate(
+                geom = "segment",
+                x = idCoord$x, xend = physX,
+                y = snpIdTop, yend = trackLineY,
+                linewidth = 0.3, color = "gray50"
+            ) +
+            ggplot2::annotate(
+                geom = "segment",
+                x = min(idCoord$x) - 0.3, xend = max(idCoord$x) + 0.3,
+                y = trackLineY, yend = trackLineY,
+                linewidth = 0.6, color = "gray30"
+            ) +
+            ggplot2::annotate(
+                geom = "segment",
+                x = physX, xend = physX,
+                y = trackLineY - trackTickSize,
+                yend = trackLineY + trackTickSize,
+                linewidth = 0.5, color = "gray30"
+            )
+    }
+
+    cellPlot <- cellPlot +
         ggplot2::ylim(min(ldSubRot$y), upperMarginPadding) +
         ggplot2::scale_x_reverse() +
-        ggplot2::scale_fill_continuous(
-            name = legendLab,
-            type = "viridis"
-        ) +
         ggplot2::coord_fixed() +
         ggplot2::theme_void() +
         ggplot2::theme(
             legend.position = "bottom"
         )
+
+    if (useHaploview) {
+        cellPlot <- cellPlot + ggplot2::scale_fill_identity(na.value = "white")
+    } else {
+        cellPlot <- cellPlot +
+            ggplot2::scale_fill_viridis_c(
+                name     = legendLab,
+                option   = colorScheme,
+                na.value = "white"
+            )
+    }
     if (!is.null(ldBlocks)) {
         if (!inherits(ldBlocks, "GRanges")) {
             stop("'ldBlocks' must be a 'GRanges' object")
@@ -196,50 +352,74 @@ plotLD <- function(
             e <- max(blockIdx)
 
             blockCorners <- rotate(
-                x = c(s, e, s),
-                y = c(s, e, e),
+                x = c(s, e + 1, s),
+                y = c(s - 1, e, e),
                 angle = angle
             )
 
             rectXmin <- min(blockCorners$x[1], blockCorners$x[2])
             rectXmax <- max(blockCorners$x[1], blockCorners$x[2])
             rectYmin <- max(blockCorners$y)
-            rectYmax <- upperMarginPadding
+
+            combX <- c(rectXmin, rectXmin, blockCorners$x[3], rectXmax, rectXmax)
+            combY <- c(blockTop, rectYmin, blockCorners$y[3], rectYmin, blockTop)
 
             cellPlot <- cellPlot +
                 ggplot2::annotate(
                     geom = "polygon",
-                    x = blockCorners$x,
-                    y = blockCorners$y,
-                    fill = NA,
-                    color = "black",
-                    linewidth = blockLw
-                ) +
-                ggplot2::annotate(
-                    geom = "rect",
-                    xmin = rectXmin,
-                    xmax = rectXmax,
-                    ymin = rectYmin,
-                    ymax = rectYmax,
+                    x = combX,
+                    y = combY,
                     fill = NA,
                     color = "black",
                     linewidth = blockLw
                 )
 
             if (hasLabels && !is.na(blockMcols$label[b])) {
-                labelX <- (blockCorners$x[1] + blockCorners$x[2]) / 2
-                labelY <- max(blockCorners$y) - 0.15
+                blockSizeBp <- blockEnd - blockStart
+                if (blockSizeBp >= 1e6) {
+                    sizeTag <- paste0("(", round(blockSizeBp / 1e6, 2), " Mbp)")
+                } else {
+                    sizeTag <- paste0("(", round(blockSizeBp / 1e3, 2), " kbp)")
+                }
+                blockLabel <- paste(blockMcols$label[b], sizeTag)
+
+                labelX <- rectXmax - 0.1 * scaleFactor
+                labelY <- idxLabelTop + blockLabelSpace / 3
 
                 cellPlot <- cellPlot +
                     ggplot2::annotate(
                         geom = "text",
                         x = labelX,
                         y = labelY,
-                        label = blockMcols$label[b],
-                        size = textSize + 0.5,
+                        label = blockLabel,
+                        hjust = 0,
+                        size = blockTextSize,
                         fontface = "bold"
                     )
             }
+
+            cellPlot <- cellPlot +
+                ggplot2::annotate(
+                    geom = "text",
+                    x = idCoord$x[blockIdx],
+                    y = snpIdY,
+                    label = ids[blockIdx],
+                    angle = 90,
+                    hjust = 0,
+                    size = snpTextSize,
+                    fontface = "bold"
+                )
+
+            if (genomicTrack) {
+                cellPlot <- cellPlot +
+                    ggplot2::annotate(
+                        geom = "segment",
+                        x = idCoord$x[blockIdx], xend = physX[blockIdx],
+                        y = snpIdTop, yend = trackLineY,
+                        linewidth = 0.6, color = "black"
+                    )
+            }
+
         }
     }
 
