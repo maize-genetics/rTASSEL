@@ -11,6 +11,7 @@ plotLD(
     "turbo", "haploview"),
   ldBlocks = NULL,
   genomicTrack = FALSE,
+  showIndex = TRUE,
   verbose = TRUE
 )
 }
@@ -59,6 +60,10 @@ physical positions on the track, and line segments connect each
 physical position to the corresponding evenly-spaced position above
 the LD triangle. When data span multiple chromosomes, positions are
 displayed cumulatively. Defaults to \code{FALSE}.}
+
+\item{showIndex}{Logical. If \code{TRUE} (default), numeric index labels
+(1, 2, 3, \ldots) are drawn along the diagonal of the LD triangle.
+Set to \code{FALSE} to hide them.}
 
 \item{verbose}{Display messages? Defaults to \code{TRUE}.}
 }
