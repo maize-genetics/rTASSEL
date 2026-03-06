@@ -311,7 +311,8 @@ plotLD <- function(
         p <- p + ggplot2::scale_fill_viridis_c(
             name     = legendLab,
             option   = colorScheme,
-            na.value = "white"
+            na.value = "white",
+            guide    = ggplot2::guide_colorbar(barheight = ggplot2::unit(0.3, "cm"))
         )
     } else {
         p <- p + ggplot2::scale_fill_identity(na.value = "white")
