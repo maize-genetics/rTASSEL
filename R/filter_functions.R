@@ -185,12 +185,12 @@ filterGenotypeTableSites <- function(
                 stop("endPos must be a non-negative integer.")
             }
 
-            if (!is.null(startPos)) startPos <- toString(startPos)
-            if (!is.null(endPos)) endPos <- toString(endPos)
-
             if (startChr == endChr && !is.null(startPos) && !is.null(endPos) && startPos > endPos) {
-                stop("Filtration paramaters outside acceptable range.")
+                stop("Filtration parameters outside acceptable range.")
             }
+
+            if (!is.null(startPos)) startPos <- as.character(startPos)
+            if (!is.null(endPos)) endPos <- as.character(endPos)
 
             plugin$setParameter("startChr", toString(startChr))
             plugin$setParameter("startPos", startPos)
