@@ -155,6 +155,9 @@ resolveBlocks <- function(ldBlocks, sites) {
 #'   physical position to the corresponding evenly-spaced position above
 #'   the LD triangle. When data span multiple chromosomes, positions are
 #'   displayed cumulatively. Defaults to \code{FALSE}.
+#' @param showIndex Logical. If \code{TRUE} (default), numeric index labels
+#'   (1, 2, 3, \ldots) are drawn along the diagonal of the LD triangle.
+#'   Set to \code{FALSE} to hide them.
 #' @param verbose Display messages? Defaults to \code{TRUE}.
 #'
 #' @details This function visualises a pre-computed LD result set.
@@ -178,6 +181,7 @@ plotLD <- function(
                     "cividis", "rocket", "mako", "turbo", "haploview"),
     ldBlocks     = NULL,
     genomicTrack = FALSE,
+    showIndex    = TRUE,
     verbose      = TRUE
 ) {
     if (!methods::is(ldObj, "LDResults")) {
@@ -273,8 +277,10 @@ plotLD <- function(
             x = .data$x, y = .data$y,
             fill = .data$val, group = .data$group
         ) +
-        ggplot2::geom_polygon(color = "#D9D9D9", linewidth = borderLw) +
-        ggplot2::annotate(
+        ggplot2::geom_polygon(color = "#D9D9D9", linewidth = borderLw)
+
+    if (showIndex) {
+        p <- p + ggplot2::annotate(
             geom  = "text",
             x     = idCoord$x,
             y     = idCoord$y + labelGap,
@@ -283,8 +289,9 @@ plotLD <- function(
             vjust = 0,
             size  = idxTextSize
         )
+    }
 
-    idxLabelHeight <- idxTextSize * 0.2 * scaleFactor
+    idxLabelHeight <- if (showIndex) idxTextSize * 0.2 * scaleFactor else 0
     idxLabelTop    <- max(idCoord$y) + labelGap + idxLabelHeight
 
     hasBlocks <- !is.null(ldBlocks)
