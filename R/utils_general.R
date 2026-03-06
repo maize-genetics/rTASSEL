@@ -112,21 +112,38 @@ rotate <- function(x, y, angle = 135) {
 
 ## Rotated polygon coordinate, group, value "class" ----
 ldCellRotater <- function(ldDF, angle) {
-    n <- length(unique(ldDF$coord1))
+    # Reconstruct site rank order: coord2 first captures rank-1 site,
+    # then coord1 adds the highest-ranked site not in coord2
+    siteOrder <- unique(c(ldDF$coord2, ldDF$coord1))
+    siteRank  <- setNames(seq_along(siteOrder), siteOrder)
+
+    n <- length(siteOrder) - 1L
 
     pairs <- which(lower.tri(matrix(0L, n, n), diag = TRUE), arr.ind = TRUE)
     pairs <- pairs[order(pairs[, 1], pairs[, 2]), , drop = FALSE]
 
     iIdx   <- pairs[, 1]
     jIdx   <- pairs[, 2]
-    nCells <- length(iIdx)
-    vals    <- ldDF[[3]]
+    nCells <- nrow(pairs)
+    nObs   <- nrow(ldDF)
+
+    if (nObs == nCells) {
+        fullVals <- ldDF[[3]]
+    } else {
+        # rank k (>= 2) → grid row k-1; rank j (>= 1) → grid col j
+        obsRow <- siteRank[ldDF$coord1] - 1L
+        obsCol <- siteRank[ldDF$coord2]
+        obsPos <- obsRow * (obsRow - 1L) / 2L + obsCol
+
+        fullVals <- rep(NA, nCells)
+        fullVals[obsPos] <- ldDF[[3]]
+    }
 
     # 4 vertices per cell (bl, tl, tr, br) in a single vectorized pass
     x     <- c(jIdx, jIdx, jIdx + 1, jIdx + 1)
     y     <- c(iIdx, iIdx + 1, iIdx + 1, iIdx)
     group <- rep.int(seq_len(nCells), 4L)
-    val   <- rep.int(vals, 4L)
+    val   <- rep.int(fullVals, 4L)
 
     rot <- rotate(x, y, angle)
 

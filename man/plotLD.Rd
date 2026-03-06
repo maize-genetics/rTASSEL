@@ -5,10 +5,7 @@
 \title{Linkage disequilibrium plot}
 \usage{
 plotLD(
-  tasObj,
-  ldType = c("All", "SlidingWindow"),
-  windowSize = NULL,
-  hetCalls = c("missing", "ignore", "third"),
+  ldObj,
   plotVal = c("r2", "DPrime", "pDiseq"),
   colorScheme = c("viridis", "magma", "inferno", "plasma", "cividis", "rocket", "mako",
     "turbo", "haploview"),
@@ -18,25 +15,8 @@ plotLD(
 )
 }
 \arguments{
-\item{tasObj}{An object of class \code{TasselGenotypePenotype}. That
-contains a genotype table.}
-
-\item{ldType}{How do you want LD calculated? Currently, the available
-options are \code{"All"} and \code{"SlidingWindow"}. If
-\code{All} is selected, LD will be calculated for every
-combination of sites in the alignment (NOTE: this may produce a
-massive series of combinations; use only on heavily filtered
-genotype tables). If \code{SlidingWindow} is selected, LD will
-be calculated for sites within a window of sites surrounding the
-current site. Defaults to \code{"All"}.}
-
-\item{windowSize}{What size do you want your LD analysis window? If you
-have chosen \code{SlidingWindow} for the \code{ldType} parameter, you
-will need to specify window size.}
-
-\item{hetCalls}{How should heterozygous calls be handled? Current options
-are \code{"ignore"} (ignore altogether), \code{"missing"}
-(set to missing), and \code{"third"} (treat as third state).}
+\item{ldObj}{An object of class \code{\linkS4class{LDResults}} as
+returned by \code{\link{linkageDiseq}}.}
 
 \item{plotVal}{What LD value do you want to plot? Options are:
 \itemize{
@@ -56,12 +36,21 @@ options use continuous viridis-family palettes: \code{"viridis"}
 \code{"cividis"}, \code{"rocket"}, \code{"mako"}, and
 \code{"turbo"}.}
 
-\item{ldBlocks}{An optional \code{GRanges} object specifying genomic
-regions to highlight as LD blocks on the plot. Each range defines a
-chromosome and start/end positions; sites falling within each range
-are outlined with a triangular border. An optional \code{label}
-metadata column (in \code{mcols}) adds text annotations to each
-block. Defaults to \code{NULL}.}
+\item{ldBlocks}{Optional specification of genomic regions to highlight
+as LD blocks on the plot. Accepted formats:
+\itemize{
+  \item A \code{\linkS4class{LDRegion}} object (single block) or a
+    \code{list} of \code{LDRegion} objects (multiple blocks). Each
+    region carries \code{start}, \code{end}, an optional \code{label},
+    and an outline \code{color}. The chromosome is inferred from the
+    data (single-chromosome only).
+  \item A \code{GRanges} object where each range defines a chromosome
+    and start/end positions. An optional \code{label} metadata column
+    (in \code{mcols}) adds text annotations. Block outlines default
+    to black.
+}
+Sites falling within each region are outlined with a triangular
+border. Defaults to \code{NULL}.}
 
 \item{genomicTrack}{Logical. If \code{TRUE}, a horizontal genomic track
 is drawn above the LD plot showing the approximate physical positions
@@ -74,33 +63,17 @@ displayed cumulatively. Defaults to \code{FALSE}.}
 \item{verbose}{Display messages? Defaults to \code{TRUE}.}
 }
 \value{
-Returns a \code{ggplot2} object.
+A \code{ggplot} object.
 }
 \description{
-Calculates linkage disequilibrium (LD) and generates
-  a static plot using \code{ggplot2} graphics.
+Generates a static LD heatmap from a pre-computed
+  \code{\linkS4class{LDResults}} object using \code{ggplot2} graphics.
 }
 \details{
-Linkage disequilibrium between any set of polymorphisms can be
-  estimated by initially filtering a genotype dataset and then using
-  this function. At this time, \eqn{D'}, \eqn{r^{2}} and P-values will be estimated. The
-  current version calculates LD between haplotypes with known phase only
-  (unphased diploid genotypes are not supported; see PowerMarker or
-  Arlequin for genotype support).
-  \itemize{
-    \item \eqn{D'} is the standardized disequilibrium coefficient, a useful
-    statistic for determining whether recombination or homoplasy has
-    occurred between a pair of alleles.
-    \item \eqn{r^{2}} represents the correlation between alleles at two loci, which
-    is informative for evaluating the resolution of association approaches.
-  }
-  \eqn{D'} and \eqn{r^{2}} can be calculated when only two alleles are present. If more
-  than two alleles, only the two most frequent alleles are used. P-values
-  are determined by a two-sided Fisher's Exact test is calculated. Since LD
-  is meaningless when scored with very small sample sizes, a minimum of 20
-  taxa must be present to calculate LD and there must be 2 or more minor
-  alleles.
+This function visualises a pre-computed LD result set.
+  Use \code{\link{linkageDiseq}} to calculate LD first, then pass the
+  resulting \code{\linkS4class{LDResults}} object here.
 }
 \seealso{
-\code{\link{linkageDiseq}}
+\code{\link{linkageDiseq}}, \code{\linkS4class{LDResults}}
 }
