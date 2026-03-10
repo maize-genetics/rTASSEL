@@ -229,7 +229,7 @@ plotLD <- function(
     rownames(sites) <- NULL
     ids <- sites$coord
 
-    siteRank <- setNames(seq_len(nrow(sites)), sites$coord)
+    siteRank <- stats::setNames(seq_len(nrow(sites)), sites$coord)
     r1 <- siteRank[ldDF$coord1]
     r2 <- siteRank[ldDF$coord2]
     swap <- r1 < r2

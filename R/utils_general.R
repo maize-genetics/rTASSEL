@@ -115,7 +115,7 @@ ldCellRotater <- function(ldDF, angle) {
     # Reconstruct site rank order: coord2 first captures rank-1 site,
     # then coord1 adds the highest-ranked site not in coord2
     siteOrder <- unique(c(ldDF$coord2, ldDF$coord1))
-    siteRank  <- setNames(seq_along(siteOrder), siteOrder)
+    siteRank  <- stats::setNames(seq_along(siteOrder), siteOrder)
 
     n <- length(siteOrder) - 1L
 
