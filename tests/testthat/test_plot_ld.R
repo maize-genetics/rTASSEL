@@ -164,6 +164,51 @@ test_that("plotLD with ldBlocks and genomicTrack", {
     expect_s3_class(p, "ggplot")
 })
 
+test_that("plotLD returns correct data types for All and SlidingWindow LD", {
+    tasGenoFilt <- filterGenotypeTableSites(
+        tasObj              = tasGeno,
+        siteRangeFilterType = "position",
+        startPos            = 228e6,
+        endPos              = 300e6,
+        startChr            = 2,
+        endChr              = 2
+    )
+
+    ldAll <- linkageDiseq(
+        tasObj  = tasGenoFilt,
+        ldType  = "All",
+        verbose = FALSE
+    )
+    ldSW <- linkageDiseq(
+        tasObj  = tasGenoFilt,
+        ldType  = "SlidingWindow",
+        verbose = FALSE
+    )
+
+    myLD <- plotLD(
+        ldObj   = ldAll,
+        plotVal = "r2",
+        verbose = FALSE
+    )
+    myLDSW <- plotLD(
+        ldObj   = ldSW,
+        plotVal = "r2",
+        verbose = FALSE
+    )
+
+    truthLabels <- c("x", "y", "val", "group")
+    truthObs    <- 544
+    truthObsSW  <- 60
+
+    myLDDf   <- myLD[["data"]]
+    myLDSWDf <- myLDSW[["data"]]
+
+    expect_true(inherits(myLD, "ggplot"))
+    expect_contains(colnames(myLDDf), truthLabels)
+    expect_equal(nrow(myLDDf), truthObs)
+    expect_equal(nrow(myLDSWDf[!is.na(myLDSWDf$val), ]), truthObsSW)
+})
+
 test_that("plotLD errors on non-LDResults input", {
     expect_error(
         plotLD(
