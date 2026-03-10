@@ -135,7 +135,7 @@ test_that("filterGenotypeTableSites returns error when parameters not specified"
             startPos = 150,
             endPos = 140
         ),
-        regexp = "Filtration paramaters outside acceptable range."
+        regexp = "Filtration parameters outside acceptable range."
     )
 
     expect_error(
