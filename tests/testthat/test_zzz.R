@@ -67,3 +67,70 @@ test_that(".onAttach handles missing JARs gracefully", {
 })
 
 
+# --- .onAttach message content ------------------------------------
+
+test_that(".onAttach mentions setupTASSEL when JARs are missing", {
+    local_mocked_bindings(
+        resolveJarPath = function(...) list(path = NULL, source = NULL)
+    )
+
+    msgs <- tryCatch(
+        {
+            .onAttach(
+                libname = tempdir(),
+                pkgname = "rTASSEL"
+            )
+        },
+        message = function(m) conditionMessage(m)
+    )
+
+    expect_match(msgs, "setupTASSEL", fixed = TRUE)
+    expect_match(msgs, "not found", fixed = TRUE)
+})
+
+test_that(".onAttach mentions TASSEL version when JARs are present", {
+    msgs <- tryCatch(
+        {
+            .onAttach(
+                libname = system.file(package = "rTASSEL"),
+                pkgname = "rTASSEL"
+            )
+        },
+        message = function(m) conditionMessage(m)
+    )
+
+    expect_match(msgs, TASSEL_MAVEN$VERSION, fixed = TRUE)
+    expect_match(msgs, "startLogger", fixed = TRUE)
+})
+
+test_that(".onAttach message includes Welcome header", {
+    msgs <- tryCatch(
+        {
+            .onAttach(
+                libname = system.file(package = "rTASSEL"),
+                pkgname = "rTASSEL"
+            )
+        },
+        message = function(m) conditionMessage(m)
+    )
+
+    expect_match(msgs, "Welcome", fixed = TRUE)
+    expect_match(msgs, "rTASSEL", fixed = TRUE)
+})
+
+
+# --- .onLoad side effects -----------------------------------------
+
+test_that(".onLoad adds JARs to classpath when package is available", {
+    cpBefore <- rJava::.jclassPath()
+
+    .onLoad(
+        pkgname = "rTASSEL",
+        libname = system.file(package = "rTASSEL")
+    )
+
+    cpAfter <- rJava::.jclassPath()
+    expect_true(length(cpAfter) >= length(cpBefore))
+})
+
+
