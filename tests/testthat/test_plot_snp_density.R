@@ -135,3 +135,55 @@ test_that("plotSnpDensityCore converts zero counts to NA for grey fill", {
 })
 
 
+## logNorm parameter ----
+test_that("plotSnpDensity rejects invalid logNorm values", {
+    expect_error(
+        plotSnpDensity(rtObjs$gt_hmp, logNorm = "yes"),
+        "logNorm"
+    )
+    expect_error(
+        plotSnpDensity(rtObjs$gt_hmp, logNorm = c(TRUE, FALSE)),
+        "logNorm"
+    )
+})
+
+test_that("plotSnpDensity with logNorm = TRUE produces valid plot", {
+    p <- plotSnpDensity(rtObjs$gt_hmp, logNorm = TRUE)
+    expect_s3_class(p, "gg")
+    expect_s3_class(p$layers[[1]]$geom, "GeomTile")
+})
+
+test_that("logNorm applies log10 transform to fill values", {
+    pRaw <- plotSnpDensity(rtObjs$gt_hmp, windowSize = 1e5)
+    pLog <- plotSnpDensity(rtObjs$gt_hmp, windowSize = 1e5, logNorm = TRUE)
+
+    bldRaw <- ggplot2::ggplot_build(pRaw)
+    bldLog <- ggplot2::ggplot_build(pLog)
+
+    rawFills <- bldRaw$data[[1]]$fill
+    logFills <- bldLog$data[[1]]$fill
+
+    expect_false(identical(rawFills, logFills))
+})
+
+test_that("logNorm updates the legend label", {
+    pRaw <- plotSnpDensity(rtObjs$gt_hmp)
+    pLog <- plotSnpDensity(rtObjs$gt_hmp, logNorm = TRUE)
+
+    rawScales <- pRaw$scales$scales
+    logScales <- pLog$scales$scales
+
+    rawFillScale <- Filter(function(s) "fill" %in% s$aesthetics, rawScales)[[1]]
+    logFillScale <- Filter(function(s) "fill" %in% s$aesthetics, logScales)[[1]]
+
+    expect_equal(rawFillScale$name, "SNP Count")
+    expect_true(is.expression(logFillScale$name))
+    expect_equal(as.character(logFillScale$name), "log[10](SNP ~ Count)")
+})
+
+test_that("logNorm works with interactive mode", {
+    p <- plotSnpDensity(rtObjs$gt_hmp, logNorm = TRUE, interactive = TRUE)
+    expect_s3_class(p, "plotly")
+})
+
+

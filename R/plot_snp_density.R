@@ -15,6 +15,9 @@
 #'    \code{"viridis"} (default), \code{"magma"}, \code{"inferno"},
 #'    \code{"plasma"}, \code{"cividis"}, \code{"rocket"}, \code{"mako"},
 #'    and \code{"turbo"}.
+#' @param logNorm Should SNP counts be log\eqn{_{10}}{10}-transformed before
+#'    mapping to fill color? Useful when a few windows have very high counts
+#'    that compress the color scale. Defaults to \code{FALSE}.
 #' @param interactive Do you want to produce an interactive visualization?
 #'    Defaults to \code{FALSE}.
 #'
@@ -30,6 +33,7 @@ plotSnpDensity <- function(
     tasObj,
     windowSize = 1e6,
     colorOption = c("viridis", "magma", "inferno", "plasma", "cividis", "rocket", "mako", "turbo"),
+    logNorm = FALSE,
     interactive = FALSE
 ) {
     isTGP <- is(tasObj, "TasselGenotypePhenotype")
@@ -49,10 +53,15 @@ plotSnpDensity <- function(
 
     colorOption <- rlang::arg_match(colorOption)
 
+    if (!is.logical(logNorm) || length(logNorm) != 1) {
+        rlang::abort("`logNorm` must be a single logical value")
+    }
+
     pSnpDensityParams <- list(
         "tasObj"      = tasObj,
         "windowSize"  = windowSize,
-        "colorOption" = colorOption
+        "colorOption" = colorOption,
+        "logNorm"     = logNorm
     )
 
     if (!interactive) {
@@ -116,6 +125,7 @@ plotSnpDensityCore <- function(params) {
     densityDf   <- primeSnpDensityData(params)
     windowSize  <- params$windowSize
     colorOption <- params$colorOption
+    logNorm     <- params$logNorm
 
     maxPos <- max(densityDf$windowMid)
     if (maxPos >= 1e6) {
@@ -140,6 +150,12 @@ plotSnpDensityCore <- function(params) {
 
     densityDf$snpCount[densityDf$snpCount == 0] <- NA
 
+    if (logNorm) {
+        densityDf$snpCount <- log10(densityDf$snpCount)
+    }
+
+    fillLabel <- if (logNorm) expression(log[10](SNP~Count)) else "SNP Count"
+
     p <- ggplot2::ggplot(data = densityDf) +
         ggplot2::aes(
             x    = .data$windowMid / posScale,
@@ -151,7 +167,7 @@ plotSnpDensityCore <- function(params) {
             height = 0.8
         ) +
         ggplot2::scale_fill_viridis_c(
-            name     = "SNP Count",
+            name     = fillLabel,
             option   = colorOption,
             na.value = "grey95"
         ) +

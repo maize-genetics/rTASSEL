@@ -9,6 +9,7 @@ plotSnpDensity(
   windowSize = 1e+06,
   colorOption = c("viridis", "magma", "inferno", "plasma", "cividis", "rocket", "mako",
     "turbo"),
+  logNorm = FALSE,
   interactive = FALSE
 )
 }
@@ -23,6 +24,10 @@ bin SNPs for density calculation. Defaults to \code{1e6} (1 Mb).}
 \code{"viridis"} (default), \code{"magma"}, \code{"inferno"},
 \code{"plasma"}, \code{"cividis"}, \code{"rocket"}, \code{"mako"},
 and \code{"turbo"}.}
+
+\item{logNorm}{Should SNP counts be log\eqn{_{10}}{10}-transformed before
+mapping to fill color? Useful when a few windows have very high counts
+that compress the color scale. Defaults to \code{FALSE}.}
 
 \item{interactive}{Do you want to produce an interactive visualization?
 Defaults to \code{FALSE}.}
