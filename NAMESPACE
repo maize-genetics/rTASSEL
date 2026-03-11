@@ -36,7 +36,6 @@ export(pca)
 export(plotLD)
 export(plotManhattan)
 export(plotManhattanQC)
-export(plotPCA)
 export(plotQQ)
 export(plotScree)
 export(plotSnpDensity)
@@ -81,6 +80,7 @@ exportMethods(colnames)
 exportMethods(javaRefObj)
 exportMethods(ncol)
 exportMethods(nrow)
+exportMethods(plotPCA)
 exportMethods(reportNames)
 exportMethods(rownames)
 exportMethods(tableReport)
@@ -89,6 +89,7 @@ importFrom(BiocGenerics,
   colnames,
   ncol,
   nrow,
+  plotPCA,
   rownames
 )
 importFrom(GenomicRanges,
