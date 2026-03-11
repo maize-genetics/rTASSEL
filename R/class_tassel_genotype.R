@@ -2,8 +2,6 @@
 #' @title TasselGenotype Class
 #' @description An S4 class to represent a Tassel Genotype object.
 #'
-#' @slot dispData
-#' A list containing the display data for the genotype.
 #' @slot jRefObj
 #' A reference to a Java object (`jobjRef`) associated with the genotype.
 #' @slot jMemAddress
@@ -22,7 +20,6 @@
 setClass(
     Class = "TasselGenotype",
     slots = c(
-        dispData    = "list",
         jRefObj     = "jobjRef",
         jMemAddress = "character",
         jClass      = "character"
@@ -89,7 +86,7 @@ readGenotype <- function(x, sortPositions = FALSE, keepDepth = FALSE) {
             rlang::abort("The input path is not a valid file")
         }
 
-        readGenotypeFromPath(x, sortPositions, keepDepth)
+        readGenotypeFromPath(xNorm, sortPositions, keepDepth)
     } else if (is.matrix(x)) {
         readNumericGenotypeFromRMatrix(x, asTGP = FALSE)
     } else {
@@ -111,20 +108,14 @@ readGenotype <- function(x, sortPositions = FALSE, keepDepth = FALSE) {
 #' number of taxa, number of sites, and memory address of the Java
 #' object.
 #'
-#' @details
-#' The method utilizes the `printGtDisp` function to format and
-#' display the genotype data. It extracts the necessary information
-#' from the `TasselGenotype` object, including the display data
-#' (`dispData`), the number of taxa and sites from the Java reference
-#' object (`jRefObj`), and the memory address (`jMemAddress`).
-#'
 #' @param object
 #' An object of class `TasselGenotype`.
 #'
 #' @method show TasselGenotype
 setMethod("show", "TasselGenotype", function(object) {
+    fgs <- formatGtStrings(object@jRefObj)
     printGtDisp(
-        fgs    = object@dispData,
+        fgs    = fgs,
         nTaxa  = object@jRefObj$numberOfTaxa(),
         nSites = object@jRefObj$numberOfSites(),
         jMem   = object@jMemAddress

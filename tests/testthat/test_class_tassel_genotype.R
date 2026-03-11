@@ -6,7 +6,6 @@ test_that("TasselGenotype class construction and methods work", {
 
     # Test class structure
     expect_s4_class(gtTest, "TasselGenotype")
-    expect_type(gtTest@dispData, "list")
     expect_s4_class(gtTest@jRefObj, "jobjRef")
     expect_type(gtTest@jMemAddress, "character")
     expect_type(gtTest@jClass, "character")

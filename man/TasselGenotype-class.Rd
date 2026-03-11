@@ -15,8 +15,6 @@ interact with Java objects used in TASSEL 5.
 \section{Slots}{
 
 \describe{
-\item{\code{dispData}}{A list containing the display data for the genotype.}
-
 \item{\code{jRefObj}}{A reference to a Java object (`jobjRef`) associated with the genotype.}
 
 \item{\code{jMemAddress}}{A character string representing the memory address of the Java object.}

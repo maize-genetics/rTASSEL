@@ -10,7 +10,6 @@ test_that("basic properties", {
     expect_true(is(gtLg, "TasselNumericGenotype"))
 
     expect_s4_class(gtSm, "TasselGenotype")
-    expect_type(gtSm@dispData, "list")
     expect_s4_class(gtSm@jRefObj, "jobjRef")
     expect_type(gtSm@jMemAddress, "character")
     expect_type(gtSm@jClass, "character")
