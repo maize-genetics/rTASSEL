@@ -21,18 +21,6 @@ TASSEL_JVM <- list(
 )
 
 
-## ----
-# ANSI Formatting Constants
-#
-# @description
-# ANSI escape codes and Unicode symbols used for console output
-# formatting throughout the package.
-ANSI <- list(
-    "BOLD_ON"  = "\033[1m",
-    "BOLD_OFF" = "\033[22m",
-    "INFO"     = intToUtf8(0x2139)
-)
-
 
 ## ----
 # TASSEL Maven Jar Constants

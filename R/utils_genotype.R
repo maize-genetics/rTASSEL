@@ -152,7 +152,7 @@ addGtRowColIds <- function(gt, fgs, nSites = 10, numeric = FALSE) {
 # Numeric vector of reference probability values between 0 and 1
 #
 # @return
-# Character vector of ANSI-formatted strings
+# Character vector of cli-styled strings
 formatRefProb <- function(rpVals) {
     if (!is.numeric(rpVals)) {
         rlang::abort("Input must be numeric.")
@@ -162,16 +162,21 @@ formatRefProb <- function(rpVals) {
         rlang::abort("All values must be in the range of 0 to 1")
     }
 
-    # ANSI background colors: white to turquoise (blue/green)
-    bgCodes <- c(231, 195, 159, 87, 45)
+    bgColors <- c("#FFFFFF", "#D7FFFF", "#AFFFFF", "#5FFFFF", "#00D7FF")
+    bgStyles <- lapply(bgColors, function(hex) {
+        cli::combine_ansi_styles(
+            cli::make_ansi_style(hex, bg = TRUE),
+            cli::col_black
+        )
+    })
 
     vapply(rpVals, FUN.VALUE = character(1), FUN = function(val) {
         if (is.na(val)) return(" NA ")
 
         idx <- ceiling(val / 0.2)
-        idx <- max(1L, min(5L, idx)) # ensure 0 vals are 1 for indexing
+        idx <- max(1L, min(5L, idx))
 
-        sprintf("\033[30;48;5;%dm %.3f \033[0m", bgCodes[idx], val)
+        bgStyles[[idx]](sprintf(" %.3f ", val))
     })
 }
 
@@ -288,151 +293,43 @@ formatNumGtStrings <- function(gt, nTaxa = 5, nSites = 10) {
 }
 
 
-## ----
-# Print Numeric Genotype Display
-#
-# @description
-# Prints formatted numeric genotype data to the console
-#
-# @param fgs
-# Formatted genotype strings
-# @param nTaxa
-# Number of taxa
-# @param nSites
-# Number of sites
-# @param jMem
-# Java memory address
-#
-# @return
-# None (called for side effects)
-printNumGtDisp <- function(fgs, nTaxa, nSites, jMem) {
-    header <- pillar::style_subtle(
-        sprintf(
-            "# A %s object: %s taxa %s %s sites\n",
-            cli::style_bold("TasselNumericGenotype"),
-            nTaxa,
-            cli::symbol$times,
-            nSites
-        )
-    )
-
-    footer <- pillar::style_subtle(
-        sprintf(
-            "# %s Java memory address: 0x%s",
-            cli::symbol$info,
-            cli::style_bold(jMem)
-        )
-    )
-
-    cat(header, "\n")
-    for (i in seq_len(length(fgs))) {
-        cat(fgs[[i]])
-        cat("\n")
-    }
-    cat("\n")
-    cat(footer, "\n")
-}
 
 
 
 # /// Display functions (allele GTs) ////////////////////////////////
 
 ## ----
-# Format ANSI Bold Style
+# Allele styling helpers using cli
 #
-# @description
-# Applies ANSI bold formatting to text
-#
-# @param allele
-# Character string to format
-#
-# @return
-# A character string with ANSI bold formatting
-boldStyle <- function(allele) {
-    sprintf("\033[1m %s \033[22m", allele)
+# These are called at display time (not cached at load time) so that
+# cli can correctly detect terminal color capabilities.
+styleBold <- function(allele) {
+    cli::style_bold(sprintf(" %s ", allele))
 }
 
-## ----
-# Format Green Background with Bold Text
-#
-# @description
-# Applies green background with white bold text ANSI formatting
-#
-# @param allele
-# Character string to format
-#
-# @return A character string with ANSI formatting
-bgGreenBold <- function(allele) {
-    sprintf("\033[42m\033[37m\033[1m %s \033[22m\033[39m\033[49m", allele)
+styleHetero <- function(allele) {
+    style <- cli::combine_ansi_styles(cli::bg_green, cli::col_white, cli::style_bold)
+    style(sprintf(" %s ", allele))
 }
 
-
-## ----
-# Format Yellow Background with Bold Text
-#
-# @description
-# Applies yellow background with black bold text ANSI formatting
-#
-# @param allele
-# Character string to format
-#
-# @return A character string with ANSI formatting
-bgYellowBold <- function(allele) {
-    sprintf("\033[43m\033[30m\033[1m %s \033[22m\033[39m\033[49m", allele)
+styleMajor <- function(allele) {
+    style <- cli::combine_ansi_styles(cli::bg_yellow, cli::col_black, cli::style_bold)
+    style(sprintf(" %s ", allele))
 }
 
-
-## ----
-# Format Blue Background with White Bold Text
-#
-# @description
-# Applies blue background with white bold text ANSI formatting
-#
-# @param allele
-# Character string to format
-#
-# @return A character string with ANSI formatting
-bgBlueWhiteBold <- function(allele) {
-    sprintf("\033[44m\033[37m\033[1m %s \033[22m\033[39m\033[49m", allele)
+styleMinor <- function(allele) {
+    style <- cli::combine_ansi_styles(cli::bg_blue, cli::col_white, cli::style_bold)
+    style(sprintf(" %s ", allele))
 }
-
-
-## ----
-# Cache for allele Formatting Styles
-styleCache <- list(
-    "N"    = boldStyle("N"),
-    "R"    = bgGreenBold("R"),
-    "Y"    = bgGreenBold("Y"),
-    "S"    = bgGreenBold("S"),
-    "W"    = bgGreenBold("W"),
-    "K"    = bgGreenBold("K"),
-    "M"    = bgGreenBold("M"),
-    "AMaj" = bgYellowBold("A"),
-    "CMaj" = bgYellowBold("C"),
-    "GMaj" = bgYellowBold("G"),
-    "TMaj" = bgYellowBold("T"),
-    "AMin" = bgBlueWhiteBold("A"),
-    "CMin" = bgBlueWhiteBold("C"),
-    "GMin" = bgBlueWhiteBold("G"),
-    "TMin" = bgBlueWhiteBold("T")
-)
 
 
 ## ----
 # Format Allele with Styling
 #
 # @description
-# This function formats a given allele based on its type and whether
-# it matches the minimum allele. It applies specific styles from the
-# `styleCache` object for recognized alleles and provides a default
-# style for unrecognized ones.
-#
-# @details
-# The function uses a `switch` statement to determine the appropriate
-# style for the given allele. Recognized alleles include "A", "C",
-# "G", "T", "N", "R", "Y", "S", "W", "K", "M", and '...'. If the
-# allele is not recognized, it is styled as bold with a default
-# format.
+# Formats a given allele based on its type and whether it matches the
+# minor allele. Styling is computed at call time so cli can detect
+# terminal capabilities correctly.
 #
 # @param currAllele
 # A character string representing the current allele.
@@ -443,19 +340,19 @@ styleCache <- list(
 # A styled character string corresponding to the formatted allele.
 formatAllele <- function(currAllele, minAllele) {
     switch(currAllele,
-        "A" = if (currAllele == minAllele) styleCache[["AMin"]] else styleCache[["AMaj"]],
-        "C" = if (currAllele == minAllele) styleCache[["CMin"]] else styleCache[["CMaj"]],
-        "G" = if (currAllele == minAllele) styleCache[["GMin"]] else styleCache[["GMaj"]],
-        "T" = if (currAllele == minAllele) styleCache[["TMin"]] else styleCache[["TMaj"]],
-        "N" = styleCache[["N"]],
-        "R" = styleCache[["R"]],
-        "Y" = styleCache[["Y"]],
-        "S" = styleCache[["S"]],
-        "W" = styleCache[["W"]],
-        "K" = styleCache[["K"]],
-        "M" = styleCache[["M"]],
+        "A" = if (currAllele == minAllele) styleMinor("A") else styleMajor("A"),
+        "C" = if (currAllele == minAllele) styleMinor("C") else styleMajor("C"),
+        "G" = if (currAllele == minAllele) styleMinor("G") else styleMajor("G"),
+        "T" = if (currAllele == minAllele) styleMinor("T") else styleMajor("T"),
+        "N" = styleBold("N"),
+        "R" = styleHetero("R"),
+        "Y" = styleHetero("Y"),
+        "S" = styleHetero("S"),
+        "W" = styleHetero("W"),
+        "K" = styleHetero("K"),
+        "M" = styleHetero("M"),
         "\u2026" = subEllipsis(1),
-        sprintf("\033[1m %s \033[22m", currAllele) # default if not in cache
+        styleBold(currAllele)
     )
 }
 
@@ -493,17 +390,15 @@ genGtDispStrings <- function(gt, nTaxa = 5, nSites = 10) {
 
     if (maxTaxa > nTaxa + 2) {
         seqData <- c(
-            seqData <- c(
-                lapply(seq_len(nTaxa), getGt),
-                list(
-                    if (maxSite > nSites + 2) {
-                        strrep(cli::symbol$ellipsis, nSites + 2)
-                    } else {
-                        strrep(cli::symbol$ellipsis, maxSite)
-                    }
-                ),
-                list(getGt(maxTaxa))
-            )
+            lapply(seq_len(nTaxa), getGt),
+            list(
+                if (maxSite > nSites + 2) {
+                    strrep(cli::symbol$ellipsis, nSites + 2)
+                } else {
+                    strrep(cli::symbol$ellipsis, maxSite)
+                }
+            ),
+            list(getGt(maxTaxa))
         )
     } else {
         seqData <- lapply(seq_len(maxTaxa), getGt)
@@ -611,50 +506,36 @@ formatGtStrings <- function(gt, nTaxa = 5, nSites = 10) {
 ## ----
 # Print Genotype Display
 #
-# @description
-# This function prints a formatted display of genotype information,
-# including the number of taxa, the number of sites, and a Java
-# memory address. It also iterates through and prints the elements
-# of the provided genotype data.
-#
 # @param fgs
-# A list containing genotype data to be displayed.
+# A list containing formatted genotype data to be displayed.
 # @param nTaxa
 # An integer representing the number of taxa.
 # @param nSites
 # An integer representing the number of sites.
 # @param jMem
 # A string representing the Java memory address.
+# @param className
+# Class name to display in the header.
 #
 # @return
 # This function does not return a value. It prints formatted genotype
 # information to the console.
-printGtDisp <- function(fgs, nTaxa, nSites, jMem) {
-    header <- pillar::style_subtle(
-        sprintf(
-            "# A %s object: %s taxa %s %s sites\n",
-            cli::style_bold("TasselGenotype"),
-            nTaxa,
-            cli::symbol$times,
-            nSites
-        )
-    )
+printGtDisp <- function(fgs, nTaxa, nSites, jMem, className = "TasselGenotype") {
+    header <- pillar::style_subtle(paste0(
+        "# A ", cli::style_bold(className),
+        " object: ", nTaxa, " taxa ", cli::symbol$times, " ", nSites, " sites"
+    ))
+    footer <- pillar::style_subtle(paste0(
+        "# ", cli::symbol$info, " Java memory address: 0x", cli::style_bold(jMem)
+    ))
 
-    footer <- pillar::style_subtle(
-        sprintf(
-            "# %s Java memory address: 0x%s",
-            cli::symbol$info,
-            cli::style_bold(jMem)
-        )
-    )
-
-    cat(header, "\n")
-    for (i in seq_len(length(fgs))) {
-        cat(fgs[[i]])
-        cat("\n")
+    cli::cat_line(header)
+    cli::cat_line()
+    for (row in fgs) {
+        cli::cat_line(row)
     }
-    cat("\n")
-    cat(footer, "\n")
+    cli::cat_line()
+    cli::cat_line(footer)
 }
 
 
@@ -771,7 +652,6 @@ readNumericGenotypeFromRMatrix <- function(m, asTGP = TRUE) {
     } else {
         gt <- methods::new(
             Class = "TasselNumericGenotype",
-            dispData    = formatNumGtStrings(javaGt, nTaxa = 5, nSites = 5),
             jRefObj     = javaGt,
             jMemAddress = jMemAddress,
             jClass      = jClass
@@ -783,52 +663,31 @@ readNumericGenotypeFromRMatrix <- function(m, asTGP = TRUE) {
 
 
 ## ----
-# Format Genotype Strings
+# Read Genotype Data from File Path
 #
 # @description
-# This function formats genotype strings for display by processing
-# the input genotype data.
+# Reads genotype data from a file path using the TASSEL Java API and
+# returns either a TasselGenotype or TasselNumericGenotype object
+# depending on whether the data contains discrete genotype calls.
 #
-# @details
-# The function performs the following steps:
-#   - Generates genotype display strings using `genGtDispStrings`.
-#   - Computes minor alleles using `genMinorAlleles`.
-#   - Formats alleles using `formatAllele` and combines them into a
-#     single string.
-#   - Adds row and column IDs to the formatted genotype strings using
-#     `addGtRowColIds`.
-#   - Formats the names of the taxa using `formatGtNames`.
-#   - Combines the formatted taxa names and genotype strings into the
-#     final result.
-#
-# @param gt
-# A genotype object or data structure containing genotype
-# information.
-# @param nTaxa
-# An integer specifying the number of taxa to include in the
-# formatted output. Default is 5.
-# @param nSites
-# An integer specifying the number of sites to include in the
-# formatted output. Default is 10.
+# @param x
+# A normalized file path to the genotype data file.
+# @param sortPositions
+# Logical indicating whether to sort positions.
+# @param keepDepth
+# Logical indicating whether to retain depth information.
 #
 # @return
-# A list of formatted genotype strings, where each string represents
-# a combination of taxa and site information.
+# A TasselGenotype or TasselNumericGenotype object.
 readGenotypeFromPath <- function(x, sortPositions, keepDepth) {
-    xNorm <- normalizePath(x, mustWork = FALSE)
-    if (!file.exists(xNorm)) {
-        rlang::abort("The input path is not a valid file")
-    }
-
     rJc         <- rJava::.jnew(TASSEL_JVM$R_METHODS)
-    javaGt      <- rJc$read(xNorm, keepDepth, sortPositions)
+    javaGt      <- rJc$read(x, keepDepth, sortPositions)
     jClass      <- rJava::.jclass(javaGt)
     jMemAddress <- gsub(".*@", "", rJava::.jstrVal(javaGt))
 
     if (javaGt$hasGenotype()) {
         methods::new(
             Class = "TasselGenotype",
-            dispData    = formatGtStrings(javaGt),
             jRefObj     = javaGt,
             jMemAddress = jMemAddress,
             jClass      = jClass
@@ -836,7 +695,6 @@ readGenotypeFromPath <- function(x, sortPositions, keepDepth) {
     } else {
         methods::new(
             Class = "TasselNumericGenotype",
-            dispData    = formatNumGtStrings(javaGt, nTaxa = 5, nSites = 5),
             jRefObj     = javaGt,
             jMemAddress = jMemAddress,
             jClass      = jClass

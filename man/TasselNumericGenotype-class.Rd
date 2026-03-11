@@ -21,9 +21,3 @@ This method is used to display information about a
 genotype data, including the number of taxa, number of sites, and
 memory address of the Java object.
 }
-\details{
-The function \code{printNumGtDisp} is called internally to format
-and display the genotype data. The number of taxa and sites are
-retrieved from the Java reference object associated with the
-\code{TasselNumericGenotype} instance.
-}
