@@ -16,7 +16,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: main
+          ref: master
           fetch-depth: 0
 
       - name: Extract tag version
@@ -39,7 +39,7 @@ jobs:
             echo "README already up to date"
           else
             git commit -m "Update stable release version to ${TAG}"
-            git push origin main
+            git push origin master
           fi
 
       - name: Extract release notes from NEWS.md
@@ -59,4 +59,4 @@ jobs:
           gh release create "$TAG" \
             --title "$TAG" \
             --notes-file release_notes.md \
-            --target main
+            --target master
