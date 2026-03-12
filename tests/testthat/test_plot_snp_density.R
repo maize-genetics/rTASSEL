@@ -121,7 +121,7 @@ test_that("primeSnpDensityData produces different bins for different window size
 ## X axis scale adapts to genomic range ----
 test_that("plotSnpDensityCore adapts axis label to genomic range", {
     pLarge <- plotSnpDensity(rtObjs$gt_hmp, windowSize = 1e6)
-    expect_true(grepl("Mb", pLarge$labels$x))
+    expect_true(grepl("Mbp", pLarge$labels$x))
 })
 
 

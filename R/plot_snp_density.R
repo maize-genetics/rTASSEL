@@ -10,7 +10,7 @@
 #' @param tasObj An object of class \code{TasselGenotypePhenotype} or
 #'    \code{TasselGenotype} that contains a genotype table.
 #' @param windowSize Size of the genomic window (in base pairs) used to
-#'    bin SNPs for density calculation. Defaults to \code{1e6} (1 Mb).
+#'    bin SNPs for density calculation. Defaults to \code{1e6} (1 Mbp).
 #' @param colorOption Which viridis color palette to use? Options are:
 #'    \code{"viridis"} (default), \code{"magma"}, \code{"inferno"},
 #'    \code{"plasma"}, \code{"cividis"}, \code{"rocket"}, \code{"mako"},
@@ -130,10 +130,10 @@ plotSnpDensityCore <- function(params) {
     maxPos <- max(densityDf$windowMid)
     if (maxPos >= 1e6) {
         posScale  <- 1e6
-        posUnit   <- "Mb"
+        posUnit   <- "Mbp"
     } else if (maxPos >= 1e3) {
         posScale  <- 1e3
-        posUnit   <- "Kb"
+        posUnit   <- "kbp"
     } else {
         posScale  <- 1
         posUnit   <- "bp"
@@ -141,9 +141,9 @@ plotSnpDensityCore <- function(params) {
 
     tileWidth   <- windowSize / posScale
     windowLabel <- if (windowSize >= 1e6) {
-        paste0("Window size: ", windowSize / 1e6, " Mb")
+        paste0("Window size: ", windowSize / 1e6, " Mbp")
     } else if (windowSize >= 1e3) {
-        paste0("Window size: ", windowSize / 1e3, " Kb")
+        paste0("Window size: ", windowSize / 1e3, " kbp")
     } else {
         paste0("Window size: ", windowSize, " bp")
     }

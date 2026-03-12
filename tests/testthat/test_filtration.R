@@ -312,11 +312,6 @@ test_that("filterGenotypeTableSites returns correct positions.", {
         object = c(test_taxa, test_site),
         expected = c(obs_taxa, obs_site)
     )
-
-    # expect_equal(
-    #     object = length(taxaList(filterGenotypeTableSites(tasGenoPhenoFast))),
-    #     expected = length(taxaList(tasGenoPhenoFast))
-    # )
 })
 
 test_that("filterGenotypeTableSites returns correct positions.", {

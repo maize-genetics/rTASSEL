@@ -194,10 +194,13 @@ setMethod(
         pointerSymbol <- cli::col_green(cli::symbol$pointer)
 
         spanBp <- object@end - object@start
+
         spanStr <- if (spanBp >= 1e6) {
             paste0(round(spanBp / 1e6, 2), " Mbp")
-        } else {
+        } else if (spanBp >= 1e3) {
             paste0(round(spanBp / 1e3, 2), " kbp")
+        } else {
+            paste0(spanBp, " bp")
         }
 
         labelStr <- if (!is.na(object@label)) {
