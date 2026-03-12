@@ -110,49 +110,44 @@ rotate <- function(x, y, angle = 135) {
 }
 
 
-## Polygon coordinate, group, and value "class" ----
-cell <- function(i, j, group, val, w = 1) {
-    data.frame(
-        ##        bl, tl,    tr,    br
-        x     = c(j , j    , j + w, j + w),
-        y     = c(i , i + w, i + w, i    ),
-        group = group,
-        val   = val
-    )
-}
-
-
 ## Rotated polygon coordinate, group, value "class" ----
 ldCellRotater <- function(ldDF, angle) {
-    rows <- cols <- length(unique(ldDF$coord1))
-    grid_data <- matrix(data = data.frame(), nrow = rows, ncol = cols)
+    # Reconstruct site rank order: coord2 first captures rank-1 site,
+    # then coord1 adds the highest-ranked site not in coord2
+    siteOrder <- unique(c(ldDF$coord2, ldDF$coord1))
+    siteRank  <- stats::setNames(seq_along(siteOrder), siteOrder)
 
-    # Generate path aesthetics - only half of matrix
-    it <- 1
-    for (i in seq_len(rows)) {
-        for (j in seq_len(cols)) {
-            if (i >= j) {
-                sub <- ldDF[it, ]
-                grid_data[[i, j]] <- cell(i, j, paste0(i, ":", j), sub[, 3])
-                it <- it + 1
-            }
-        }
+    n <- length(siteOrder) - 1L
+
+    pairs <- which(lower.tri(matrix(0L, n, n), diag = TRUE), arr.ind = TRUE)
+    pairs <- pairs[order(pairs[, 1], pairs[, 2]), , drop = FALSE]
+
+    iIdx   <- pairs[, 1]
+    jIdx   <- pairs[, 2]
+    nCells <- nrow(pairs)
+    nObs   <- nrow(ldDF)
+
+    if (nObs == nCells) {
+        fullVals <- ldDF[[3]]
+    } else {
+        # rank k (>= 2) → grid row k-1; rank j (>= 1) → grid col j
+        obsRow <- siteRank[ldDF$coord1] - 1L
+        obsCol <- siteRank[ldDF$coord2]
+        obsPos <- obsRow * (obsRow - 1L) / 2L + obsCol
+
+        fullVals <- rep(NA, nCells)
+        fullVals[obsPos] <- ldDF[[3]]
     }
 
-    # Convert to data frame
-    grid_data <- sapply(
-        grid_data,
-        "[",
-        simplify = FALSE
-    )
-    grid_data <- do.call("rbind", grid_data)
+    # 4 vertices per cell (bl, tl, tr, br) in a single vectorized pass
+    x     <- c(jIdx, jIdx, jIdx + 1, jIdx + 1)
+    y     <- c(iIdx, iIdx + 1, iIdx + 1, iIdx)
+    group <- rep.int(seq_len(nCells), 4L)
+    val   <- rep.int(fullVals, 4L)
 
-    # Rotate and update coordinates
-    rot <- rotate(grid_data$x, grid_data$y, angle)
-    grid_data$x <- rot$x
-    grid_data$y <- rot$y
+    rot <- rotate(x, y, angle)
 
-    return(grid_data)
+    data.frame(x = rot$x, y = rot$y, val = val, group = group)
 }
 
 

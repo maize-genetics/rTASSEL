@@ -1,6 +1,21 @@
 # rTASSEL 0.12.0
-* Fixed Codecov upload in CI by replacing `covr::codecov()` with the official
-  `codecov/codecov-action` GitHub Action uploader
+* Added new `LDResults` class:
+  + Stores pairwise LD statistics and analysis parameters from
+    `linkageDiseq()`
+* Added new `LDRegion` class:
+  + Defines genomic regions for highlighting LD blocks on `plotLD()` plots
+* Added new function `plotLD()`:
+  + Replaces deprecated `ldPlot()` with a redesigned LD heatmap
+  + Supports Haploview and viridis-family color schemes
+  + LD block highlighting via `LDRegion` objects
+  + Optional genomic position track above the heatmap
+  + Toggleable site index labels along the diagonal
+* Added new function `plotSnpDensity()`:
+  + Generates heatmap-style SNP density plots across chromosomes
+  + Configurable window size, viridis color palettes, and log-scaled counts
+* Removed deprecated `ldPlot()` and `ldJavaApp()` functions
+* Removed deprecated interactive Java visualizations section from vignette
+* Updated vignette with new LD and SNP density visualization sections
 
 # rTASSEL 0.11.0
 * Add fixes to possible issues related to `ggplot2` v4.0

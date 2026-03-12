@@ -1,0 +1,62 @@
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+name: Release
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    name: Update README and create release
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Extract tag version
+        run: |
+          TAG="${GITHUB_REF_NAME}"
+          VERSION="${TAG#v}"
+          echo "TAG=$TAG" >> "$GITHUB_ENV"
+          echo "VERSION=$VERSION" >> "$GITHUB_ENV"
+
+      - name: Update README.md stable release version
+        run: |
+          sed -i "s|pak::pak(\"maize-genetics/rTASSEL@v[^\"]*\")|pak::pak(\"maize-genetics/rTASSEL@${TAG}\")|" README.md
+
+      - name: Commit and push README change
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add README.md
+          if git diff --cached --quiet; then
+            echo "README already up to date"
+          else
+            git commit -m "Update stable release version to ${TAG}"
+            git push origin main
+          fi
+
+      - name: Extract release notes from NEWS.md
+        run: |
+          awk -v ver="$VERSION" '
+            /^# rTASSEL / {
+              if (found) exit
+              if ($3 == ver) { found=1; next }
+            }
+            found { print }
+          ' NEWS.md > release_notes.md
+
+      - name: Create GitHub release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "$TAG" \
+            --title "$TAG" \
+            --notes-file release_notes.md \
+            --target main

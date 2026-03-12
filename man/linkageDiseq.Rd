@@ -37,7 +37,7 @@ are \code{"ignore"} (ignore altogether), \code{"missing"}
 \item{verbose}{Display messages? Defaults to \code{TRUE}.}
 }
 \value{
-Returns a \code{DataFrame}-based data frame.
+An object of class \code{\linkS4class{LDResults}}.
 }
 \description{
 Generates a linkage disequilibrium (LD) data set from SNP data.
@@ -64,5 +64,5 @@ Linkage disequilibrium between any set of polymorphisms can be
   alleles.
 }
 \seealso{
-\code{\link{linkageDiseq}}, \code{\link{ldPlot}}
+\code{\link{linkageDiseq}}, \code{\link{plotLD}}
 }

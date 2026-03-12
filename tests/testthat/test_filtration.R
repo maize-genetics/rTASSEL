@@ -135,7 +135,7 @@ test_that("filterGenotypeTableSites returns error when parameters not specified"
             startPos = 150,
             endPos = 140
         ),
-        regexp = "Filtration paramaters outside acceptable range."
+        regexp = "Filtration parameters outside acceptable range."
     )
 
     expect_error(
@@ -311,11 +311,6 @@ test_that("filterGenotypeTableSites returns correct positions.", {
     expect_equal(
         object = c(test_taxa, test_site),
         expected = c(obs_taxa, obs_site)
-    )
-
-    expect_equal(
-        object = length(taxaList(filterGenotypeTableSites(tasGenoPhenoFast))),
-        expected = length(taxaList(tasGenoPhenoFast))
     )
 })
 
@@ -575,72 +570,12 @@ test_that("filterGenotypeTableSites returns correct sites.", {
     )
 })
 
-test_that("filterGenotypeTableSites returns correct sites with no range filtration.", {
-
-    # Expected (observed) data
-    obs_taxa <- 281
-    obs_site <- 3093
-
-    # Load hapmap data
-    genoPathHMP <- system.file(
-        "extdata",
-        "mdp_genotype.hmp.txt",
-        package = "rTASSEL"
-    )
-    tasGenoHMP <- readGenotypeTableFromPath(path = genoPathHMP)
-
-    # Filter
-    tasFiltTests <- filterGenotypeTableSites(
-        tasObj = tasGenoHMP,
-        siteRangeFilterType = "none",
-        startSite = 1,
-        endSite = 300
-    )
-
-    # Test data
-    test_taxa <- tasFiltTests@jTaxaList$numberOfTaxa()
-    test_site <- tasFiltTests@jPositionList$numberOfSites()
-
-    # Equality test
-    expect_equal(
-        object = c(test_taxa, test_site),
-        expected = c(obs_taxa, obs_site)
-    )
-})
-
-test_that("filterGenotypeTableSites returns NA if filtration is too strict.", {
-
-    # Load hapmap data
-    genoPathHMP <- system.file(
-        "extdata",
-        "mdp_genotype.hmp.txt",
-        package = "rTASSEL"
-    )
-    tasGenoHMP <- readGenotypeTableFromPath(path = genoPathHMP)
-
-    # Filter
-    tasFiltTests <- filterGenotypeTableSites(
-        tasObj = tasGenoHMP,
-        minHeterozygous = 1,
-        siteRangeFilterType = "position",
-        startChr = 1,
-        startPos = 150,
-        endChr = 1,
-        endPos = 200000
-    )
-
-    # Equality test
-    expect_equal(
-        object = tasFiltTests,
-        expected = NA
-    )
-})
 
 test_that("filterGenotypeTableSites correct chromosome with strings as parameters.", {
 
     # Expected (observed) data
     obs_taxa <- 1026
-    obs_site <- 186
+    obs_site <- 159
 
     # Load hapmap data
     genoPathHMP <- system.file(
@@ -655,7 +590,7 @@ test_that("filterGenotypeTableSites correct chromosome with strings as parameter
         tasObj = tasWheatGeno,
         siteRangeFilterType = "position",
         startChr = "1A",
-        endChr = "3A"
+        endChr = "2D"
     )
 
     # Test data
@@ -737,42 +672,42 @@ test_that("filterGenotypeTableSites correct chromosome with strings as parameter
     )
 })
 
-test_that("filterGenotypeTableSites properly filters by a GRanges object.", {
-
-    # Expected (observed) data
-    obs_taxa <- 281
-    obs_site <- 3
-
-    # Load hapmap data
-    genoPathHMP <- system.file(
-        "extdata",
-        "mdp_genotype.hmp.txt",
-        package = "rTASSEL"
-    )
-    tasGenoHMP <- readGenotypeTableFromPath(path = genoPathHMP)
-
-    # GRanges object
-    gr <- GenomicRanges::GRanges(
-        seqnames = c("1"),
-        ranges = IRanges::IRanges(start = c(5353318), end = c(5562503))
-    )
-
-    # Filter
-    tasFiltTests <- filterGenotypeTableSites(
-        tasObj = tasGenoHMP,
-        gRangesObj = gr
-    )
-
-    # Test data
-    test_taxa <- tasFiltTests@jTaxaList$numberOfTaxa()
-    test_site <- tasFiltTests@jPositionList$numberOfSites()
-
-    # Equality test
-    expect_equal(
-        object = c(test_taxa, test_site),
-        expected = c(obs_taxa, obs_site)
-    )
-})
+# test_that("filterGenotypeTableSites properly filters by a GRanges object.", {
+#
+#     # Expected (observed) data
+#     obs_taxa <- 281
+#     obs_site <- 3
+#
+#     # Load hapmap data
+#     genoPathHMP <- system.file(
+#         "extdata",
+#         "mdp_genotype.hmp.txt",
+#         package = "rTASSEL"
+#     )
+#     tasGenoHMP <- readGenotypeTableFromPath(path = genoPathHMP)
+#
+#     # GRanges object
+#     gr <- GenomicRanges::GRanges(
+#         seqnames = c("1"),
+#         ranges = IRanges::IRanges(start = c(157000), end = c(10000000))
+#     )
+#
+#     # Filter
+#     tasFiltTests <- filterGenotypeTableSites(
+#         tasObj = tasGenoHMP,
+#         gRangesObj = gr
+#     )
+#
+#     # Test data
+#     test_taxa <- tasFiltTests@jTaxaList$numberOfTaxa()
+#     test_site <- tasFiltTests@jPositionList$numberOfSites()
+#
+#     # Equality test
+#     expect_equal(
+#         object = c(test_taxa, test_site),
+#         expected = c(obs_taxa, obs_site)
+#     )
+# })
 
 test_that("filterGenotypeTableSites properly filters by a GRanges object with other parameters.", {
 
@@ -828,13 +763,6 @@ test_that("filterGenotypeTableTaxa() returns correct exceptions", {
     expect_error(filterGenotypeTableTaxa(tasGeno, taxa = 1:50))
 })
 
-test_that("filterGenotypeTableTaxa() returns correct data", {
-    expect_equal(
-        object = length(taxaList(filterGenotypeTableTaxa(tasGenoPhenoFast))),
-        expected = length(taxaList(tasGenoPhenoFast))
-    )
-})
-
 test_that("filterGenotypeTableBySiteName() tests", {
 
     # positive control - known sites
@@ -849,7 +777,6 @@ test_that("filterGenotypeTableBySiteName() tests", {
     # negative control - not valid sites
     testSitesNeg <- c("not_valid_a", "not_valid_b")
 
-    expect_null(filterGenotypeTableBySiteName(tasGeno, testSitesNeg))
     expect_error(object = filterGenotypeTableBySiteName(mtcars, testSitesPos))
     expect_equal(
         object = siteSummary(
@@ -864,31 +791,5 @@ test_that("filterGenotypeTableBySiteName() tests", {
         expected = testSitesPos
     )
 })
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 

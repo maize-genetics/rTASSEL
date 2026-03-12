@@ -83,14 +83,20 @@ test_that("linkageDiseq() throws general exceptions.", {
 
 
 ## Return tests ----
-test_that("linkageDiseq() returns correct data structure.", {
-    ldDF <- linkageDiseq(
+test_that("linkageDiseq() returns LDResults with correct structure.", {
+    ldRes <- linkageDiseq(
         tasObj     = tasGeno,
         ldType     = "SlidingWindow",
         windowSize = 10,
         hetCalls   = "missing"
     )
 
+    expect_s4_class(ldRes, "LDResults")
+    expect_equal(ldRes@ldType, "SlidingWindow")
+    expect_equal(ldRes@windowSize, 10)
+    expect_equal(ldRes@hetCalls, "missing")
+
+    ldDF <- ldRes@results
     expect_equal(dim(ldDF), c(30875, 17))
 
     expect_equal(
@@ -101,6 +107,19 @@ test_that("linkageDiseq() returns correct data structure.", {
             "States2", "Frequency2", "Dist_bp", "R^2", "DPrime", "pDiseq", "N"
         )
     )
+})
+
+test_that("linkageDiseq() tableReport returns tibble.", {
+    ldRes <- linkageDiseq(
+        tasObj     = tasGeno,
+        ldType     = "SlidingWindow",
+        windowSize = 10,
+        hetCalls   = "missing"
+    )
+
+    tbl <- tableReport(ldRes)
+    expect_s3_class(tbl, "tbl_df")
+    expect_equal(nrow(tbl), 30875)
 })
 
 
