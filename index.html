@@ -32,7 +32,7 @@
 
     <a class="navbar-brand me-2" href="index.html">rTASSEL</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.11.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.12.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -86,16 +86,21 @@
 <div class="section level3">
 <h3 id="stable-release">Stable release<a class="anchor" aria-label="anchor" href="#stable-release"></a>
 </h3>
-<p><code>{r} # install.packages("pak") pak::pak("maize-genetics/rTASSEL@v0.11.0")</code></p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># install.packages("pak")</span></span>
+<span><span class="fu">pak</span><span class="fu">::</span><span class="fu"><a href="https://pak.r-lib.org/reference/pak.html" class="external-link">pak</a></span><span class="op">(</span><span class="st">"maize-genetics/rTASSEL@v0.12.0"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="developmental-version">Developmental version<a class="anchor" aria-label="anchor" href="#developmental-version"></a>
 </h3>
-<p><code>{r} # install.packages("pak") pak::pak("maize-genetics/rTASSEL")</code></p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># install.packages("pak")</span></span>
+<span><span class="fu">pak</span><span class="fu">::</span><span class="fu"><a href="https://pak.r-lib.org/reference/pak.html" class="external-link">pak</a></span><span class="op">(</span><span class="st">"maize-genetics/rTASSEL"</span><span class="op">)</span></span></code></pre></div>
 <blockquote>
-<p>[!NOTE]<br>
-Since <code>rTASSEL</code> uses <code>rJava</code>, you will need a working version of Java (<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>≥</mo><annotation encoding="application/x-tex">\geq</annotation></semantics></math> 8).</p>
+<p><strong>Note</strong></p>
+<p>Since <code>rTASSEL</code> uses <code>rJava</code>, you will need a working version of Java (≥ 8).</p>
 <p><strong>Mac/Linux users</strong>: you may need to run <code>R CMD javareconf</code> if you run into issues with installing <code>rJava</code> via <code>pak</code>. More installation tips can be found <a href="https://rtassel.maizegenetics.net/articles/rtassel_installation.html">here</a>.</p>
+<p><strong>I also recommend checking out Egor Kotov’s <a href="https://www.ekotov.pro/rJavaEnv/" class="external-link">rJavaEnv</a> package to further automate your R to Java setup!</strong></p>
 </blockquote>
 </div>
 </div>

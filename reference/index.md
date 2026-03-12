@@ -23,6 +23,21 @@
 - [`AssociationResultsStepwise-class`](https://rtassel.maizegenetics.net/reference/AssociationResultsStepwise-class.md)
   : AssociationResultsStepwise Class
 
+- [`show(`*`<LDRegion>`*`)`](https://rtassel.maizegenetics.net/reference/LDRegion-class.md)
+  : LDRegion Class
+
+- [`LDRegion-validity`](https://rtassel.maizegenetics.net/reference/LDRegion-validity.md)
+  : LDRegion validation
+
+- [`LDRegion()`](https://rtassel.maizegenetics.net/reference/LDRegion.md)
+  : Create an LDRegion object
+
+- [`show(`*`<LDResults>`*`)`](https://rtassel.maizegenetics.net/reference/LDResults-class.md)
+  : LDResults Class
+
+- [`LDResults-validity`](https://rtassel.maizegenetics.net/reference/LDResults-validity.md)
+  : LDResults validation
+
 - [`show(`*`<PCAResults>`*`)`](https://rtassel.maizegenetics.net/reference/PCAResults-class.md)
   : PCAResults Class
 
@@ -117,12 +132,6 @@
 - [`kinshipMatrix()`](https://rtassel.maizegenetics.net/reference/kinshipMatrix.md)
   : Create a TASSEL kinship matrix
 
-- [`ldJavaApp()`](https://rtassel.maizegenetics.net/reference/ldJavaApp.md)
-  : Linkage desequilibrium visualization application
-
-- [`ldPlot()`](https://rtassel.maizegenetics.net/reference/ldPlot.md) :
-  Linkage disequilibrium plot
-
 - [`linkageDiseq()`](https://rtassel.maizegenetics.net/reference/linkageDiseq.md)
   : Calculate linkage disequilibrium from an rTASSEL genotype dataset.
 
@@ -142,6 +151,9 @@
 - [`pca()`](https://rtassel.maizegenetics.net/reference/pca.md) : Run
   PCA on Genotype Table
 
+- [`plotLD()`](https://rtassel.maizegenetics.net/reference/plotLD.md) :
+  Linkage disequilibrium plot
+
 - [`plotManhattan()`](https://rtassel.maizegenetics.net/reference/plotManhattan.md)
   : Create a Manhattan plot from rTASSEL association output
 
@@ -156,6 +168,9 @@
 
 - [`plotScree()`](https://rtassel.maizegenetics.net/reference/plotScree.md)
   : Generate scree plots
+
+- [`plotSnpDensity()`](https://rtassel.maizegenetics.net/reference/plotSnpDensity.md)
+  : Plot SNP density across chromosomes
 
 - [`positionList()`](https://rtassel.maizegenetics.net/reference/positionList.md)
   : Get position list metadata from genotype table

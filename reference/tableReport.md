@@ -25,6 +25,9 @@ tableReport(assocRes = missing(), reportName = missing())
 # S4 method for class 'AssociationResultsStepwise'
 tableReport(assocRes = missing(), reportName = missing())
 
+# S4 method for class 'LDResults'
+tableReport(assocRes = missing(), reportName = missing())
+
 # S4 method for class 'PCAResults'
 tableReport(assocRes = missing(), reportName = missing())
 ```

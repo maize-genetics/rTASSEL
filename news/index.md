@@ -2,8 +2,29 @@
 
 ## rTASSEL 0.12.0
 
-- Fixed Codecov upload in CI by replacing `covr::codecov()` with the
-  official `codecov/codecov-action` GitHub Action uploader
+- Added new `LDResults` class:
+  - Stores pairwise LD statistics and analysis parameters from
+    [`linkageDiseq()`](https://rtassel.maizegenetics.net/reference/linkageDiseq.md)
+- Added new `LDRegion` class:
+  - Defines genomic regions for highlighting LD blocks on
+    [`plotLD()`](https://rtassel.maizegenetics.net/reference/plotLD.md)
+    plots
+- Added new function
+  [`plotLD()`](https://rtassel.maizegenetics.net/reference/plotLD.md):
+  - Replaces deprecated `ldPlot()` with a redesigned LD heatmap
+  - Supports Haploview and viridis-family color schemes
+  - LD block highlighting via `LDRegion` objects
+  - Optional genomic position track above the heatmap
+  - Toggleable site index labels along the diagonal
+- Added new function
+  [`plotSnpDensity()`](https://rtassel.maizegenetics.net/reference/plotSnpDensity.md):
+  - Generates heatmap-style SNP density plots across chromosomes
+  - Configurable window size, viridis color palettes, and log-scaled
+    counts
+- Removed deprecated `ldPlot()` and `ldJavaApp()` functions
+- Removed deprecated interactive Java visualizations section from
+  vignette
+- Updated vignette with new LD and SNP density visualization sections
 
 ## rTASSEL 0.11.0
 
@@ -63,7 +84,7 @@
   - [`readGenotypePhenotype()`](https://rtassel.maizegenetics.net/reference/readGenotypePhenotype.md)
   - [`readPhenotypeFromDataFrame()`](https://rtassel.maizegenetics.net/reference/readPhenotypeFromDataFrame.md)
   - [`readPhenotypeFromPath()`](https://rtassel.maizegenetics.net/reference/readPhenotypeFromPath.md)
-  - [`ldJavaApp()`](https://rtassel.maizegenetics.net/reference/ldJavaApp.md)
+  - `ldJavaApp()`
   - [`treeJavaApp()`](https://rtassel.maizegenetics.net/reference/treeJavaApp.md)
   - **NOTE**: these will be removed in future updates
 - Updated vignettes:
@@ -176,8 +197,7 @@
 ## rTASSEL 0.9.26
 
 - Bug fixes:
-  - Fixed `r2` parameter bug in
-    [`ldPlot()`](https://rtassel.maizegenetics.net/reference/ldPlot.md)
+  - Fixed `r2` parameter bug in `ldPlot()`
   - Fixed space bugs in certain column names of data frame objects. `_`
     values now replace spaces.
   - Fixed `show()` method for `TasselDistanceMatrix` objects.
@@ -302,10 +322,8 @@
 - Proposed LD functions:
   - [`linkageDiseq()`](https://rtassel.maizegenetics.net/reference/linkageDiseq.md) -
     Returns TASSEL LD table report as data frame
-  - [`ldPlot()`](https://rtassel.maizegenetics.net/reference/ldPlot.md) -
-    Returns static `ggplot2` plot
-  - [`ldJavaApp()`](https://rtassel.maizegenetics.net/reference/ldJavaApp.md) -
-    Initiates TASSEL’s interactive LD viewer
+  - `ldPlot()` - Returns static `ggplot2` plot
+  - `ldJavaApp()` - Initiates TASSEL’s interactive LD viewer
 
 ## rTASSEL 0.9.17
 

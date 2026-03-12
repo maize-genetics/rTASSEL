@@ -27,20 +27,31 @@ To cite `rTASSEL`, please use the following citation:
 
 ### Stable release
 
-`{r} # install.packages("pak") pak::pak("maize-genetics/rTASSEL@v0.11.0")`
+``` r
+# install.packages("pak")
+pak::pak("maize-genetics/rTASSEL@v0.12.0")
+```
 
 ### Developmental version
 
-`{r} # install.packages("pak") pak::pak("maize-genetics/rTASSEL")`
+``` r
+# install.packages("pak")
+pak::pak("maize-genetics/rTASSEL")
+```
 
-> \[!NOTE\]  
+> **Note**
+>
 > Since `rTASSEL` uses `rJava`, you will need a working version of Java
-> ($\geq$ 8).
+> (≥ 8).
 >
 > **Mac/Linux users**: you may need to run `R CMD javareconf` if you run
 > into issues with installing `rJava` via `pak`. More installation tips
 > can be found
 > [here](https://rtassel.maizegenetics.net/articles/rtassel_installation.html).
+>
+> **I also recommend checking out Egor Kotov’s
+> [rJavaEnv](https://www.ekotov.pro/rJavaEnv/) package to further
+> automate your R to Java setup!**
 
 ## Demo
 

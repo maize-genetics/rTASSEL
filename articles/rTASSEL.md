@@ -1450,9 +1450,11 @@ visualization libraries such as
 
 ### Overview
 
-`rTASSEL` supports a wealth of information rich and easily generated
-plots via the `plot*` family of functions. In the following sections, we
-will briefly go over some of the capabilities.
+`rTASSEL` supports a wealth of information-rich and easily generated
+plots via the `plot*` family of functions. These include Manhattan
+plots, QQ plots, PCA and scree plots, SNP density plots, and LD heatmaps
+with block highlighting and genomic position tracks. In the following
+sections, we will briefly go over some of these capabilities.
 
 ### Manhattan plots
 
@@ -1569,11 +1571,61 @@ pcaRes |> plotScree(n = 5)
 
 ![](figure/graphics-unnamed-chunk-53-1.png)
 
+### SNP density plots
+
+To visualize the distribution of SNPs across chromosomes in your
+genotype data, use the
+[`plotSnpDensity()`](https://rtassel.maizegenetics.net/reference/plotSnpDensity.md)
+function. This generates a heatmap-style plot showing how many SNPs fall
+within fixed-size genomic windows across all chromosomes:
+
+``` r
+plotSnpDensity(tasObj = tasGenoHMP)
+```
+
+![](figure/graphics-unnamed-chunk-54-1.png)
+
+You can adjust the window size (in base pairs) using the `windowSize`
+parameter and select different color palettes via `colorOption`:
+
+``` r
+plotSnpDensity(
+    tasObj      = tasGenoHMP,
+    windowSize  = 5e5,
+    colorOption = "magma"
+)
+```
+
+![](figure/graphics-unnamed-chunk-55-1.png)
+
+Like other `rTASSEL` visualizations, an interactive version can be
+produced by setting `interactive = TRUE`:
+
+``` r
+plotSnpDensity(tasObj = tasGenoHMP, interactive = TRUE)
+```
+
 ### LD plots
 
-Similarly, we can also visualize LD using automated methods. Like most
-LD plots, it is wise to filter your genotype information to a specific
-region of interest:
+#### Overview
+
+Linkage disequilibrium (LD) analysis in `rTASSEL` follows a two-step
+workflow:
+
+1.  **Compute LD** with
+    [`linkageDiseq()`](https://rtassel.maizegenetics.net/reference/linkageDiseq.md),
+    which returns an `LDResults` object.
+2.  **Visualize** with
+    [`plotLD()`](https://rtassel.maizegenetics.net/reference/plotLD.md),
+    which accepts the `LDResults` object and produces a `ggplot2`-based
+    LD heatmap.
+
+Like most LD plots, it is wise to filter your genotype information to a
+specific region of interest before computing LD.
+
+#### Computing LD
+
+First, filter to a chromosomal region and compute pairwise LD:
 
 ``` r
 # Filter genotype table by position
@@ -1586,65 +1638,136 @@ tasGenoPhenoFilt <- filterGenotypeTableSites(
     endChr              = 2
 )
 
-# Generate and visualize LD
-myLD <- ldPlot(
-    tasObj  = tasGenoPhenoFilt,
-    ldType  = "All",
-    plotVal = "r2",
-    verbose = FALSE
+# Calculate LD
+myLDResults <- linkageDiseq(
+    tasObj   = tasGenoPhenoFilt,
+    ldType   = "All",
+    verbose  = FALSE
 )
 
-myLD
+myLDResults
 ```
 
-![](figure/graphics-unnamed-chunk-54-1.png)
+    ## An LDResults object
+    ##  ❯ Dimensions.: 136 pairs x 17 columns
+    ##  ❯ Chromosomes: 1
+    ## ---
+    ##  ❯ LD type....: All
+    ##  ❯ Window size: NA (all pairs)
+    ##  ❯ Het. calls.: missing
 
-## Interactive Visualizations (deprecated)
-
-**NOTE**: These methods will soon be removed from rTASSEL
-
-### Overview
-
-Since `rTASSEL` can essentially interact with all of TASSEL’s API,
-interactive “legacy” Java-based visualizers can be accessed. Currently,
-`rTASSEL` has capabilities to use the LD viewer and Archaeopteryx.
-
-### LD Viewer
-
-TASSEL’s linkage disequilibrium (LD) viewer can be used via the
-[`ldJavaApp()`](https://rtassel.maizegenetics.net/reference/ldJavaApp.md)
-function. This method will take a `TasselGenotypePhenotype` object
-containing genotype information. A common parameter to set is the window
-size (`windowSize`) since creating a full genotype matrix is rather
-impractical at this point in time for most modern machines and
-experimental design. This will create comparisons only within a given
-range of indexes:
+The returned `LDResults` object stores the full pairwise LD table along
+with the parameters used to generate it. You can access the underlying
+data frame using
+[`tableReport()`](https://rtassel.maizegenetics.net/reference/tableReport.md):
 
 ``` r
-tasGenoHMP |> ldJavaApp(windowSize = 100)
+myLDResults |> tableReport() |> head()
 ```
 
-![](../reference/figures/ld_java_viewer.png)
+    ## # A tibble: 6 × 17
+    ##   Locus1 Position1 Site1 NumberOfStates1 States1 Frequency1     Locus2 Position2
+    ##   <chr>      <int> <int>           <int> <chr>   <chr>          <chr>      <int>
+    ## 1 2      228972835     1               2 C:T     NotImplemented 2      228972770
+    ## 2 2      228991006     2               2 A:G     NotImplemented 2      228972770
+    ## 3 2      228991006     2               2 A:G     NotImplemented 2      228972835
+    ## 4 2      233128511     3               2 C:A     NotImplemented 2      228972770
+    ## 5 2      233128511     3               2 C:A     NotImplemented 2      228972835
+    ## 6 2      233128511     3               2 C:A     NotImplemented 2      228991006
+    ## # ℹ 9 more variables: Site2 <int>, NumberOfStates2 <int>, States2 <chr>,
+    ## #   Frequency2 <chr>, Dist_bp <int>, `R^2` <dbl>, DPrime <dbl>, pDiseq <dbl>,
+    ## #   N <int>
 
-### Tree Viewer - Archaeopteryx
+#### Basic LD plot
 
-Since TASSEL allows for phylogenetic tree creation, one common
-Java-based visualizer to use is the
-[Archaeopteryx](https://www.phylosoft.org/archaeopteryx/) tree viewer
-which is implemented in the source code. To view this, we can use the
-[`treeJavaApp()`](https://rtassel.maizegenetics.net/reference/treeJavaApp.md)
-function. In the following example, we will first filter 6 taxa and then
-pass the filtered genotype object to the Java visualizer:
+Pass the `LDResults` object to
+[`plotLD()`](https://rtassel.maizegenetics.net/reference/plotLD.md) to
+generate the LD heatmap:
 
 ``` r
-tasGenoHMP |> 
-    filterGenotypeTableTaxa(
-      taxa = c("33-16", "38-11", "4226", "4722", "A188", "A214N")
-    ) |> 
-    treeJavaApp()
+plotLD(ldObj = myLDResults)
 ```
 
-![](../reference/figures/archaeopteryx_view.png)
+![](figure/graphics-unnamed-chunk-59-1.png)
+
+By default,
+[`plotLD()`](https://rtassel.maizegenetics.net/reference/plotLD.md)
+displays $r^{2}$ values. You can change the displayed statistic using
+the `plotVal` parameter:
+
+``` r
+plotLD(ldObj = myLDResults, plotVal = "DPrime")
+```
+
+![](figure/graphics-unnamed-chunk-60-1.png)
+
+#### Color schemes
+
+Several viridis-family palettes are available via `colorScheme`. You can
+also use the classic Haploview color scheme:
+
+``` r
+plotLD(ldObj = myLDResults, colorScheme = "haploview")
+```
+
+![](figure/graphics-unnamed-chunk-61-1.png)
+
+#### LD block highlighting
+
+You can highlight regions of interest on the LD plot using the
+`ldBlocks` parameter. Regions are defined with `LDRegion` objects, which
+specify a start and end position (in bp) along with optional labels,
+colors, and line widths:
+
+``` r
+plotLD(
+    ldObj    = myLDResults,
+    ldBlocks = list(
+        LDRegion(
+            start = 228e6,
+            end   = 243e6,
+            label = "Block A",
+            color = "red"
+        ),
+        LDRegion(
+            start = 270e6,
+            end   = 295e6,
+            label = "Block B",
+            color = "blue"
+        )
+    )
+)
+```
+
+![](figure/graphics-unnamed-chunk-62-1.png)
+
+Each `LDRegion` object supports additional parameters:
+
+- `linewidth` – outline thickness (mm); defaults to an auto-calculated
+  value
+- `showSpan` – if `TRUE` (default), the genomic span (e.g., “15 Mbp”) is
+  appended to the label annotation
+
+#### Genomic track
+
+Setting `genomicTrack = TRUE` draws a horizontal genomic position track
+above the LD heatmap. This shows the approximate physical spacing of
+each site and connects positions to the evenly-spaced LD triangle below:
+
+``` r
+plotLD(ldObj = myLDResults, genomicTrack = TRUE)
+```
+
+![](figure/graphics-unnamed-chunk-63-1.png)
+
+The `showIndex` parameter controls whether numeric index labels appear
+along the diagonal of the LD triangle (defaults to `TRUE`):
+
+``` r
+plotLD(ldObj = myLDResults, showIndex = FALSE)
+```
+
+![](figure/graphics-unnamed-chunk-64-1.png)
 
 ## Genomic Prediction
 

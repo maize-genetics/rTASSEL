@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">rTASSEL</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.11.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.12.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -40,7 +40,27 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.12.0" id="rtassel-0120">rTASSEL 0.12.0<a class="anchor" aria-label="anchor" href="#rtassel-0120"></a></h2>
-<ul><li>Fixed Codecov upload in CI by replacing <code>covr::codecov()</code> with the official <code>codecov/codecov-action</code> GitHub Action uploader</li>
+<ul><li>Added new <code>LDResults</code> class:
+<ul><li>Stores pairwise LD statistics and analysis parameters from <code><a href="../reference/linkageDiseq.html">linkageDiseq()</a></code>
+</li>
+</ul></li>
+<li>Added new <code>LDRegion</code> class:
+<ul><li>Defines genomic regions for highlighting LD blocks on <code><a href="../reference/plotLD.html">plotLD()</a></code> plots</li>
+</ul></li>
+<li>Added new function <code><a href="../reference/plotLD.html">plotLD()</a></code>:
+<ul><li>Replaces deprecated <code>ldPlot()</code> with a redesigned LD heatmap</li>
+<li>Supports Haploview and viridis-family color schemes</li>
+<li>LD block highlighting via <code>LDRegion</code> objects</li>
+<li>Optional genomic position track above the heatmap</li>
+<li>Toggleable site index labels along the diagonal</li>
+</ul></li>
+<li>Added new function <code><a href="../reference/plotSnpDensity.html">plotSnpDensity()</a></code>:
+<ul><li>Generates heatmap-style SNP density plots across chromosomes</li>
+<li>Configurable window size, viridis color palettes, and log-scaled counts</li>
+</ul></li>
+<li>Removed deprecated <code>ldPlot()</code> and <code>ldJavaApp()</code> functions</li>
+<li>Removed deprecated interactive Java visualizations section from vignette</li>
+<li>Updated vignette with new LD and SNP density visualization sections</li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.11.0" id="rtassel-0110">rTASSEL 0.11.0<a class="anchor" aria-label="anchor" href="#rtassel-0110"></a></h2>
@@ -93,7 +113,7 @@
 <li><code><a href="../reference/readGenotypePhenotype.html">readGenotypePhenotype()</a></code></li>
 <li><code><a href="../reference/readPhenotypeFromDataFrame.html">readPhenotypeFromDataFrame()</a></code></li>
 <li><code><a href="../reference/readPhenotypeFromPath.html">readPhenotypeFromPath()</a></code></li>
-<li><code><a href="../reference/ldJavaApp.html">ldJavaApp()</a></code></li>
+<li><code>ldJavaApp()</code></li>
 <li><code><a href="../reference/treeJavaApp.html">treeJavaApp()</a></code></li>
 <li>
 <strong>NOTE</strong>: these will be removed in future updates</li>
@@ -201,7 +221,7 @@
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.9.26" id="rtassel-0926">rTASSEL 0.9.26<a class="anchor" aria-label="anchor" href="#rtassel-0926"></a></h2>
 <ul><li>Bug fixes:
-<ul><li>Fixed <code>r2</code> parameter bug in <code><a href="../reference/ldPlot.html">ldPlot()</a></code>
+<ul><li>Fixed <code>r2</code> parameter bug in <code>ldPlot()</code>
 </li>
 <li>Fixed space bugs in certain column names of data frame objects. <code>_</code> values now replace spaces.</li>
 <li>Fixed <code>show()</code> method for <code>TasselDistanceMatrix</code> objects.</li>
@@ -327,9 +347,9 @@
 <ul><li>
 <code><a href="../reference/linkageDiseq.html">linkageDiseq()</a></code> - Returns TASSEL LD table report as data frame</li>
 <li>
-<code><a href="../reference/ldPlot.html">ldPlot()</a></code> - Returns static <code>ggplot2</code> plot</li>
+<code>ldPlot()</code> - Returns static <code>ggplot2</code> plot</li>
 <li>
-<code><a href="../reference/ldJavaApp.html">ldJavaApp()</a></code> - Initiates TASSEL’s interactive LD viewer</li>
+<code>ldJavaApp()</code> - Initiates TASSEL’s interactive LD viewer</li>
 </ul></li>
 </ul></div>
     <div class="section level2">

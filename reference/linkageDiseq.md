@@ -49,7 +49,8 @@ linkageDiseq(
 
 ## Value
 
-Returns a `DataFrame`-based data frame.
+An object of class
+[`LDResults`](https://rtassel.maizegenetics.net/reference/LDResults-class.md).
 
 ## Details
 
@@ -78,4 +79,4 @@ must be 2 or more minor alleles.
 ## See also
 
 `linkageDiseq`,
-[`ldPlot`](https://rtassel.maizegenetics.net/reference/ldPlot.md)
+[`plotLD`](https://rtassel.maizegenetics.net/reference/plotLD.md)
