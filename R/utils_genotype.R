@@ -377,14 +377,23 @@ genGtDispStrings <- function(gt, nTaxa = 5, nSites = 10) {
     maxTaxa <- gt$numberOfTaxa()
     maxSite <- gt$numberOfSites()
 
+    siteGt <- function(i0, siteIdx) {
+        gt$genotypeAsString(i0, as.integer(siteIdx))
+    }
+
     getGt <- function(i) {
         i0 <- as.integer(i - 1)
         if (maxSite > nSites + 2) {
-            head <- gt$genotypeAsStringRange(i0, 0L, as.integer(nSites))
-            tail <- gt$genotypeAsString(i0, as.integer(maxSite - 1))
-            paste0(head, cli::symbol$ellipsis, tail)
+            headChars <- vapply(seq_len(nSites) - 1L, function(s) {
+                siteGt(i0, s)
+            }, FUN.VALUE = character(1))
+            tailChar <- siteGt(i0, maxSite - 1L)
+            paste0(c(headChars, cli::symbol$ellipsis, tailChar), collapse = "")
         } else {
-            gt$genotypeAsStringRange(i0, 0L, as.integer(maxSite))
+            chars <- vapply(seq_len(maxSite) - 1L, function(s) {
+                siteGt(i0, s)
+            }, FUN.VALUE = character(1))
+            paste0(chars, collapse = "")
         }
     }
 
