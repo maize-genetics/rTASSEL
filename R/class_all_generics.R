@@ -1,4 +1,40 @@
 ## ----
+#' @title Get taxa IDs from genotype data
+#'
+#' @description
+#' Returns a character vector of taxa (sample) IDs from a
+#' \code{\linkS4class{TasselGenotypePhenotype}} or
+#' \code{\linkS4class{TasselGenotype}} object.
+#'
+#' @param tasObj A \code{TasselGenotypePhenotype} or \code{TasselGenotype}
+#'   object containing genotype data.
+#'
+#' @return A character vector of taxa IDs.
+#'
+#' @rdname taxaList
+#' @export
+setGeneric("taxaList", function(tasObj) standardGeneric("taxaList"))
+
+
+## ----
+#' @title Get position list metadata from genotype data
+#'
+#' @description
+#' Returns positional metadata (chromosome, position, etc.) from a
+#' \code{\linkS4class{TasselGenotypePhenotype}} or
+#' \code{\linkS4class{TasselGenotype}} object.
+#'
+#' @param tasObj A \code{TasselGenotypePhenotype} or \code{TasselGenotype}
+#'   object containing genotype data.
+#'
+#' @return A \code{tibble} of positional metadata.
+#'
+#' @rdname positionList
+#' @export
+setGeneric("positionList", function(tasObj) standardGeneric("positionList"))
+
+
+## ----
 #' @title Get site summary of genotype table
 #'
 #' @description
