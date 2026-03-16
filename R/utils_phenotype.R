@@ -450,7 +450,7 @@ makeAttributeData <- function(javaPh, rData) {
 
     # Get trait index from Java side
     attrList <- rJava::.jevalArray(javaPh$attributeListCopy()$toArray())
-    attrIdxXRef <- data.frame(
+    attrIdxXRef <- tibble::tibble(
         attr_idx = as.integer(seq_along(attrList) - 1),
         trait_id = vapply(attrList, function(it) it$toString(), character(1))
     )
@@ -476,7 +476,7 @@ makeAttributeData <- function(javaPh, rData) {
 # @return
 # An S4 object of class `TasselPhenotype`.
 createTasselPhenotype <- function(javaPh) {
-    rData       <- tibble::as_tibble(tableReportToDF(javaPh))
+    rData       <- tableReportToDF(javaPh)
     jClass      <- rJava::.jclass(javaPh)
     jMemAddress <- gsub(".*@", "", rJava::.jstrVal(javaPh))
 

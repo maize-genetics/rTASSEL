@@ -32,11 +32,10 @@ buildSiteMetadata <- function(jGt, needed = NULL) {
     jRc <- rJava::J("net/maizegenetics/plugindef/GenerateRCode")
     plArrays <- jRc$genotypeTableToPositionListOfArrays(positions)
 
-    meta <- data.frame(
+    meta <- tibble::tibble(
         siteIndex = idx,
         chrom     = plArrays$chromosomes,
-        pos       = as.numeric(plArrays$startPos),
-        stringsAsFactors = FALSE
+        pos       = as.numeric(plArrays$startPos)
     )
 
     want <- function(col) is.null(needed) || col %in% needed

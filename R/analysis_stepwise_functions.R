@@ -122,10 +122,10 @@ stepwiseModelFitter <- function(
     markerEstimatesCi <- modelFitter$getMarkerEffectReportWithCI()
 
     trl <- list(
-        "ANOVA_report"        = tibble::as_tibble(tableReportToDF(stepAnovaReport)),
-        "ANOVA_report_ci"     = tibble::as_tibble(tableReportToDF(stepAnovaReportCi)),
-        "marker_estimates"    = tibble::as_tibble(tableReportToDF(markerEstimates)),
-        "marker_estimates_ci" = tibble::as_tibble(tableReportToDF(markerEstimatesCi))
+        "ANOVA_report"        = tableReportToDF(stepAnovaReport),
+        "ANOVA_report_ci"     = tableReportToDF(stepAnovaReportCi),
+        "marker_estimates"    = tableReportToDF(markerEstimates),
+        "marker_estimates_ci" = tableReportToDF(markerEstimatesCi)
     )
 
     return(
