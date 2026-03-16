@@ -200,5 +200,5 @@ extractPhenotypeAttDf <- function(phenotype) {
             strsplit(tc$getClass()$toString(),"\\.")[[1]][4]
         })
     )
-    return(data.frame(traitName, traitType, traitAttribute))
+    return(tibble::tibble(traitName, traitType, traitAttribute))
 }

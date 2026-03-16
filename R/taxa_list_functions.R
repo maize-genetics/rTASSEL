@@ -55,7 +55,7 @@ getTaxaIDs <- function(tasObj) {
 sampleDataFrame <- function(tasObj) {
     taxaArray <- getTaxaIDs(tasObj)
 
-    S4Vectors::DataFrame(
+    tibble::tibble(
         Sample = taxaArray,
         TasselIndex = 0:(length(taxaArray) - 1L)
     )

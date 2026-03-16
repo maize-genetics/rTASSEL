@@ -98,12 +98,11 @@ primeSnpDensityData <- function(params) {
         bins    <- floor(posByChr[[chr]] / windowSize)
         allBins <- seq(0, max(bins))
         snpCount <- tabulate(match(bins, allBins), nbins = length(allBins))
-        data.frame(
+        tibble::tibble(
             snpCount    = snpCount,
             windowStart = allBins * windowSize,
             windowMid   = allBins * windowSize + (windowSize / 2),
-            Chr         = chr,
-            stringsAsFactors = FALSE
+            Chr         = chr
         )
     })
 

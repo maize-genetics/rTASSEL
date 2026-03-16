@@ -288,19 +288,19 @@ grToAesMappingDf <- function(params) {
 
     idType <- checkForClassicId(classicNames, grDf)
 
-    aesDf <- data.frame(
+    aesDf <- tibble::tibble(
         xmin     = grDf$start / scale,
         xmax     = grDf$end / scale,
         ymin     = -Inf,
         ymax     = Inf,
-        range_id = grDf[, idType]
+        range_id = grDf[[idType]]
     )
 
-    aesVLineDf <- data.frame(
+    aesVLineDf <- tibble::tibble(
         x_pos         = ((grDf$start / scale) + (grDf$end / scale)) * 0.5,
         x_start_bound = (grDf$start / scale) - (window / scale),
         x_end_bound   = (grDf$end / scale) + (window / scale),
-        range_id      = grDf[, idType]
+        range_id      = grDf[[idType]]
     )
 
     return(

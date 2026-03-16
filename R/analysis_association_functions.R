@@ -109,7 +109,7 @@ assocModelFitter <- function(
         tasObj = tasObj,
         filtObj = traitsToKeep
     )
-    tmpDF <- as.data.frame(jTasFilt$phenoDf) # check for missing values
+    tmpDF <- jTasFilt$phenoDf # check for missing values
 
     # Logic - Check for out of range p-values
     if (maxP > 1 || maxP < 0) {
@@ -368,7 +368,7 @@ tasPhenoFilter <- function(tasObj, filtObj) {
     phenoAttDf <- extractPhenotypeAttDf(tasObj@jPhenotypeTable)
 
     # Get phenotype data frame
-    phenoDF <- as.data.frame(tableReportToDF(tasObj@jPhenotypeTable))
+    phenoDF <- tableReportToDF(tasObj@jPhenotypeTable)
 
     # Convert <data> and <covariates> to doubles (correct pass to TASSEL)
     doubCols <- as.character(

@@ -1,6 +1,6 @@
 # === Table report functions ========================================
 
-## Table reports to S4Vectors::DataFrame objects ----
+## Table reports to tibble objects ----
 #' @importFrom rJava .jevalArray
 #' @importFrom rJava J
 #' @importFrom S4Vectors DataFrame
@@ -13,8 +13,7 @@ tableReportToDF <- function(x) {
     tabRepCols <- do.call("data.frame", c(tabRepCols, stringsAsFactors = FALSE))
     colnames(tabRepCols) <- tabRep$columnNames
     colnames(tabRepCols) <- gsub(" ", "_", colnames(tabRepCols))
-    # return(S4Vectors::DataFrame(tabRepCols, check.names = FALSE))
-    return(tabRepCols)
+    return(tibble::as_tibble(tabRepCols))
 }
 
 
@@ -147,7 +146,7 @@ ldCellRotater <- function(ldDF, angle) {
 
     rot <- rotate(x, y, angle)
 
-    data.frame(x = rot$x, y = rot$y, val = val, group = group)
+    tibble::tibble(x = rot$x, y = rot$y, val = val, group = group)
 }
 
 
