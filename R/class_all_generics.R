@@ -1,4 +1,42 @@
 ## ----
+#' @title Get site summary of genotype table
+#'
+#' @description
+#' Returns per-site summary statistics (allele frequencies, heterozygosity,
+#' missingness, etc.) from genotype data stored in a
+#' \code{\linkS4class{TasselGenotypePhenotype}} or
+#' \code{\linkS4class{TasselGenotype}} object.
+#'
+#' @param tasObj A \code{TasselGenotypePhenotype} or \code{TasselGenotype}
+#'   object containing genotype data.
+#'
+#' @return A \code{data.frame} of per-site summary statistics.
+#'
+#' @rdname siteSummary
+#' @export
+setGeneric("siteSummary", function(tasObj) standardGeneric("siteSummary"))
+
+
+## ----
+#' @title Get taxa summary of genotype table
+#'
+#' @description
+#' Returns per-taxon summary statistics (missingness, heterozygosity, etc.)
+#' from genotype data stored in a
+#' \code{\linkS4class{TasselGenotypePhenotype}} or
+#' \code{\linkS4class{TasselGenotype}} object.
+#'
+#' @param tasObj A \code{TasselGenotypePhenotype} or \code{TasselGenotype}
+#'   object containing genotype data.
+#'
+#' @return A \code{data.frame} of per-taxon summary statistics.
+#'
+#' @rdname taxaSummary
+#' @export
+setGeneric("taxaSummary", function(tasObj) standardGeneric("taxaSummary"))
+
+
+## ----
 #' @title Return GWAS association type
 #'
 #' @description

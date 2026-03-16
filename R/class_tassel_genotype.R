@@ -139,6 +139,27 @@ setMethod(
 
 
 
+# /// Methods (summary) /////////////////////////////////////////////
+
+## ----
+#' @rdname siteSummary
+#' @aliases siteSummary,TasselGenotype-method
+#' @export
+setMethod("siteSummary", "TasselGenotype", function(tasObj) {
+    .runGenotypeSummary(tasObj@jRefObj, doSite = TRUE)
+})
+
+
+## ----
+#' @rdname taxaSummary
+#' @aliases taxaSummary,TasselGenotype-method
+#' @export
+setMethod("taxaSummary", "TasselGenotype", function(tasObj) {
+    .runGenotypeSummary(tasObj@jRefObj, doTaxa = TRUE)
+})
+
+
+
 # /// Bracket Method /////////////////////////////////////////////////
 
 ## ----

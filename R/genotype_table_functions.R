@@ -255,80 +255,46 @@ as.matrix.TasselGenotypePhenotype <- function(x, ...) {
 
 
 ## ----
-#' @title Get site summary of genotype table
-#'
-#' @description Returns positional data from a \code{TasselGenotypePhenotype}
-#'    object
-#'
-#' @param tasObj A \code{TasselGenotypePhenotype} object
-#'
-#' @export
-siteSummary <- function(tasObj) {
-    if (!inherits(tasObj, "TasselGenotypePhenotype")) {
-        stop("`tasObj` must be of class `TasselGenotypePhenotype`")
-    }
-
-    if (rJava::is.jnull(tasObj@jGenotypeTable)) {
-        stop("`tasObj` must contain genotype data")
-    }
-
+## Helper: run GenotypeSummaryPlugin on a Java GenotypeTable reference
+.runGenotypeSummary <- function(jGenoTable, doSite = FALSE, doTaxa = FALSE) {
     plugin <- rJava::new(
         rJava::J("net.maizegenetics.analysis.data.GenotypeSummaryPlugin"),
         rJava::.jnull(),
         FALSE
     )
 
-    plugin$setParameter("overview", tolower(as.character(FALSE)))
-    plugin$setParameter("siteSummary", tolower(as.character(TRUE)))
-    plugin$setParameter("taxaSummary", tolower(as.character(FALSE)))
+    plugin$setParameter("overview",    "false")
+    plugin$setParameter("siteSummary", tolower(as.character(doSite)))
+    plugin$setParameter("taxaSummary", tolower(as.character(doTaxa)))
 
     dataSet <- rJava::J("net.maizegenetics.plugindef.DataSet")
-    summaryResults <- plugin$processData(dataSet$getDataSet(tasObj@jGenotypeTable))
+    summaryResults <- plugin$processData(dataSet$getDataSet(jGenoTable))
 
-    return(
-        tableReportToDF(
-            summaryResults$getData(0L)$getData()
-        )
-    )
+    tableReportToDF(summaryResults$getData(0L)$getData())
 }
 
 
 ## ----
-#' @title Get taxa summary of genotype table
-#'
-#' @description Returns taxa data from a \code{TasselGenotypePhenotype}
-#'    object
-#'
-#' @param tasObj A \code{TasselGenotypePhenotype} object
-#'
+#' @rdname siteSummary
+#' @aliases siteSummary,TasselGenotypePhenotype-method
 #' @export
-taxaSummary <- function(tasObj) {
-    if (!inherits(tasObj, "TasselGenotypePhenotype")) {
-        stop("`tasObj` must be of class `TasselGenotypePhenotype`")
-    }
-
+setMethod("siteSummary", "TasselGenotypePhenotype", function(tasObj) {
     if (rJava::is.jnull(tasObj@jGenotypeTable)) {
         stop("`tasObj` must contain genotype data")
     }
+    .runGenotypeSummary(tasObj@jGenotypeTable, doSite = TRUE)
+})
 
-    plugin <- rJava::new(
-        rJava::J("net.maizegenetics.analysis.data.GenotypeSummaryPlugin"),
-        rJava::.jnull(),
-        FALSE
-    )
 
-    plugin$setParameter("overview", tolower(as.character(FALSE)))
-    plugin$setParameter("siteSummary", tolower(as.character(FALSE)))
-    plugin$setParameter("taxaSummary", tolower(as.character(TRUE)))
-
-    dataSet <- rJava::J("net.maizegenetics.plugindef.DataSet")
-    summaryResults <- plugin$processData(dataSet$getDataSet(tasObj@jGenotypeTable))
-
-    return(
-        tableReportToDF(
-            summaryResults$getData(0L)$getData()
-        )
-    )
-}
+## ----
+#' @rdname taxaSummary
+#' @aliases taxaSummary,TasselGenotypePhenotype-method
+#' @export
+setMethod("taxaSummary", "TasselGenotypePhenotype", function(tasObj) {
+    if (rJava::is.jnull(tasObj@jGenotypeTable)) {
+        stop("`tasObj` must contain genotype data")
+    }
+    .runGenotypeSummary(tasObj@jGenotypeTable, doTaxa = TRUE)
+})
 
 
