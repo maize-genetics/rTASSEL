@@ -37,25 +37,17 @@ genomicRanges <- function(genoTable) {
 
 
 ## ----
-#' @title Get position list metadata from genotype table
-#'
-#' @description Returns positional data from a \code{TasselGenotypePhenotype}
-#'    object
-#'
-#' @param tasObj A \code{TasselGenotypePhenotype} object
+#' @rdname positionList
+#' @aliases positionList,TasselGenotypePhenotype-method
 #'
 #' @importFrom rJava is.jnull
 #' @importFrom rJava J
 #' @importFrom rJava new
 #'
 #' @export
-positionList <- function(tasObj) {
-    if (!inherits(tasObj, "TasselGenotypePhenotype")) {
-        stop("`tasObj` must be of class `TasselGenotypePhenotype`")
-    }
-
+setMethod("positionList", "TasselGenotypePhenotype", function(tasObj) {
     if (rJava::is.jnull(tasObj@jGenotypeTable)) {
-        stop("`tasObj` must contain genotype data")
+        rlang::abort("`tasObj` must contain genotype data")
     }
 
     sites <- rJava::new(
@@ -64,6 +56,6 @@ positionList <- function(tasObj) {
     )
 
     return(tableReportToDF(sites))
-}
+})
 
 

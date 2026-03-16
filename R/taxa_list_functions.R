@@ -20,21 +20,12 @@ getTaxaList <- function(jtsObject) {
 
 
 ## ----
-#' @title Get list of taxa from TASSEL data
-#'
-#' @description Returns a list of taxa from a \code{TasselGenotypePhenotype}
-#'    object
-#'
-#' @param tasObj A \code{TasselGenotypePhenotype} object
-#'
+#' @rdname taxaList
+#' @aliases taxaList,TasselGenotypePhenotype-method
 #' @export
-taxaList <- function(tasObj) {
-    if (!inherits(tasObj, "TasselGenotypePhenotype")) {
-        stop("`tasObj` must be of class `TasselGenotypePhenotype`")
-    }
-
+setMethod("taxaList", "TasselGenotypePhenotype", function(tasObj) {
     return(getTaxaIDs(tasObj))
-}
+})
 
 
 

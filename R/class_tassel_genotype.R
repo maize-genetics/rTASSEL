@@ -139,6 +139,32 @@ setMethod(
 
 
 
+# /// Methods (taxa + positions) ////////////////////////////////////
+
+## ----
+#' @rdname taxaList
+#' @aliases taxaList,TasselGenotype-method
+#' @export
+setMethod("taxaList", "TasselGenotype", function(tasObj) {
+    rJava::J("net/maizegenetics/plugindef/GenerateRCode")$
+        genotypeTableToSampleNameArray(tasObj@jRefObj$taxa())
+})
+
+
+## ----
+#' @rdname positionList
+#' @aliases positionList,TasselGenotype-method
+#' @export
+setMethod("positionList", "TasselGenotype", function(tasObj) {
+    sites <- rJava::new(
+        rJava::J("net.maizegenetics.dna.map.PositionListTableReport"),
+        tasObj@jRefObj$positions()
+    )
+    tableReportToDF(sites)
+})
+
+
+
 # /// Methods (summary) /////////////////////////////////////////////
 
 ## ----
