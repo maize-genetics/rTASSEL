@@ -164,6 +164,27 @@ setMethod("positionList", "TasselGenotype", function(tasObj) {
 })
 
 
+## ----
+#' @title Chromosome (sequence) IDs from TasselGenotype
+#'
+#' @description
+#' Returns the chromosome (sequence) IDs present in the genotype table,
+#' in the order returned by TASSEL.
+#'
+#' @param x A \code{TasselGenotype} object.
+#'
+#' @return A character vector of chromosome IDs.
+#'
+#' @rdname seqnames
+#' @aliases seqnames,TasselGenotype-method
+#' @export
+setMethod("seqnames", "TasselGenotype", function(x) {
+    jRef <- javaRefObj(x)
+    chroms <- jRef$chromosomes()
+    unlist(lapply(chroms, function(ch) rJava::.jstrVal(ch)))
+})
+
+
 
 # /// Methods (summary) /////////////////////////////////////////////
 
