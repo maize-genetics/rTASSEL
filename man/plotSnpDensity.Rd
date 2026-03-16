@@ -18,7 +18,7 @@ plotSnpDensity(
 \code{TasselGenotype} that contains a genotype table.}
 
 \item{windowSize}{Size of the genomic window (in base pairs) used to
-bin SNPs for density calculation. Defaults to \code{1e6} (1 Mb).}
+bin SNPs for density calculation. Defaults to \code{1e6} (1 Mbp).}
 
 \item{colorOption}{Which viridis color palette to use? Options are:
 \code{"viridis"} (default), \code{"magma"}, \code{"inferno"},
