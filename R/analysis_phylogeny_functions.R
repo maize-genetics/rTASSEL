@@ -2,7 +2,9 @@
 #' @title R interface for TASSEL's tree creation methods
 #'
 #' @description This function acts as a wrapper for TASSEL's
-#'    \code{CreateTreePlugin}.
+#'    \code{CreateTreePlugin}. Requires the
+#'    \href{https://cran.r-project.org/web/packages/ape/index.html}{ape}
+#'    package to be installed.
 #'
 #' @param tasObj
 #' An object of class \code{TasselGenotypePenotype}.
@@ -15,15 +17,22 @@
 #' \href{https://cran.r-project.org/web/packages/ape/ape.pdf}{ape} package
 #' for further details.
 #'
-#' @importFrom ape read.tree
 #' @importFrom rJava .jnull
 #' @importFrom rJava new
 #' @importFrom rJava J
 #'
 #' @export
 createTree <- function(tasObj, clustMethod = c("Neighbor_Joining", "UPGMA")) {
+    if (!requireNamespace("ape", quietly = TRUE)) {
+        rlang::abort(
+            "Package 'ape' is required for createTree(). ",
+            "Install it with: install.packages('ape')",
+            call. = FALSE
+        )
+    }
+
     if (!is(tasObj, "TasselGenotypePhenotype")) {
-        stop("tasObj is not of class \"TasselGenotypePhenotype\"")
+        rlang::abort("tasObj is not of class \"TasselGenotypePhenotype\"")
     }
 
     clustMethod <- match.arg(clustMethod)

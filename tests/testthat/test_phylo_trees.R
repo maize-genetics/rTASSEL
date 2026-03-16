@@ -1,5 +1,7 @@
 # === Tests for phylogenetic analyses ===============================
 
+skip_if_not_installed("ape")
+
 ## Preamble - load data ----
 
 ### Start logging info

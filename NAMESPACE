@@ -113,7 +113,6 @@ importFrom(GenomicRanges,
 )
 importFrom(S4Vectors,DataFrame)
 importFrom(SummarizedExperiment,SummarizedExperiment)
-importFrom(ape,read.tree)
 importFrom(grDevices,
   col2rgb,
   rgb

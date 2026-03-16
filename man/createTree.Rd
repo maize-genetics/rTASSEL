@@ -19,5 +19,7 @@ for further details.
 }
 \description{
 This function acts as a wrapper for TASSEL's
-   \code{CreateTreePlugin}.
+   \code{CreateTreePlugin}. Requires the
+   \href{https://cran.r-project.org/web/packages/ape/index.html}{ape}
+   package to be installed.
 }
