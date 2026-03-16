@@ -45,13 +45,13 @@
 #'   taxa must be present to calculate LD and there must be 2 or more minor
 #'   alleles.
 #'
-#' @seealso \code{\link{linkageDiseq}}, \code{\link{ldPlot}}
+#' @seealso \code{\link{linkageDiseq}}, \code{\link{plotLD}}
 #'
-#' @return Returns a \code{DataFrame}-based data frame.
+#' @return An object of class \code{\linkS4class{LDResults}}.
 #'
+#' @importFrom methods new
 #' @importFrom rJava is.jnull
 #' @importFrom rJava J
-#' @importFrom S4Vectors DataFrame
 #'
 #' @export
 linkageDiseq <- function(tasObj,
@@ -98,7 +98,13 @@ linkageDiseq <- function(tasObj,
         hetCalls                # heterozygous calls
     )
 
-    tableReportToDF(ldObj)
+    methods::new(
+        "LDResults",
+        results    = tableReportToDF(ldObj),
+        ldType     = ldType,
+        windowSize = as.numeric(windowSize),
+        hetCalls   = hetCalls
+    )
 }
 
 
