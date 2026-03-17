@@ -1,4 +1,7 @@
+# /// Helper functions ///////////////////////////////////////////////
+
 ## ----
+# Generate HaploView analog colors
 haploviewColors <- function(dprime, lod) {
     colors <- rep("#FFFFFF", length(dprime))
     validD  <- !is.na(dprime)
@@ -18,6 +21,7 @@ haploviewColors <- function(dprime, lod) {
 
 
 ## ----
+# Global plot size elements
 computeSizingParams <- function(nSites) {
     scaleFactor <- sqrt(nSites / 15)
     snpTextSize <- max(2, min(4, 60 / nSites))
@@ -34,6 +38,7 @@ computeSizingParams <- function(nSites) {
 
 
 ## ----
+# Generate polygon positions in plot space
 computePhysicalPositions <- function(sites, verbose) {
     chroms <- unique(sites$locus)
 
@@ -59,6 +64,7 @@ computePhysicalPositions <- function(sites, verbose) {
 
 
 ## ----
+# Highlighter resolution - takes either 'GRanges' or 'LDRegion" types
 resolveBlocks <- function(ldBlocks, sites) {
     if (inherits(ldBlocks, "GRanges")) {
         blockMcols <- S4Vectors::mcols(ldBlocks)
@@ -103,6 +109,9 @@ resolveBlocks <- function(ldBlocks, sites) {
     }
 }
 
+
+
+# /// Primary function ///////////////////////////////////////////////
 
 ## ----
 #' @title Linkage disequilibrium plot
