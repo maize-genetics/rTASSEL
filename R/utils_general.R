@@ -1,6 +1,7 @@
-# === Table report functions ========================================
+# /// Table report functions /////////////////////////////////////////
 
-## Table reports to tibble objects ----
+## ----
+#' @title Table reports to tibble objects ----
 #' @importFrom rJava .jevalArray
 #' @importFrom rJava J
 #' @importFrom S4Vectors DataFrame
@@ -17,7 +18,8 @@ tableReportToDF <- function(x) {
 }
 
 
-## Get table reports based on HashMap ----
+## ----
+#' @title Get table reports based on HashMap ----
 #' @importFrom rJava .jrcall
 #' @importFrom rJava .jstrVal
 tableReportList <- function(x) {
@@ -33,7 +35,8 @@ tableReportList <- function(x) {
 }
 
 
-## Convert list to AssociationResults object ----
+## ----
+# Convert list to AssociationResults object ----
 # @param trl A tableReportList object
 # @param aType Association type
 tableReportListToAssociationResults <- function(trl, aType) {
@@ -92,9 +95,10 @@ tableReportListToAssociationResults <- function(trl, aType) {
 
 
 
-# === LD plot functions =============================================
+# /// LD plot functions //////////////////////////////////////////////
 
-## Rotate vector coordinates by a given angle ----
+## ----
+# Rotate vector coordinates by a given angle
 rotate <- function(x, y, angle = 135) {
     rad <- angle * (pi / 180)
     new_x <- x * cos(rad) - y * sin(rad)
@@ -109,7 +113,8 @@ rotate <- function(x, y, angle = 135) {
 }
 
 
-## Rotated polygon coordinate, group, value "class" ----
+## ----
+# Rotated polygon coordinate, group, value "class"
 ldCellRotater <- function(ldDF, angle) {
     # Reconstruct site rank order: coord2 first captures rank-1 site,
     # then coord1 adds the highest-ranked site not in coord2
@@ -151,9 +156,10 @@ ldCellRotater <- function(ldDF, angle) {
 
 
 
-# === TasselDistanceMatrix functions ================================
+# /// TasselDistanceMatrix functions /////////////////////////////////
 
-## Truncate taxa IDs if too long ----
+## ----
+# Truncate taxa IDs if too long
 truncate <- function(t, max = 10, etc = "...") {
     if (nchar(t) > max) {
         return(paste0(c(unlist(strsplit(t, ""))[1:(max - 3)], etc), collapse = ""))
@@ -163,7 +169,8 @@ truncate <- function(t, max = 10, etc = "...") {
 }
 
 
-## Clean up taxa IDs and format spacing ----
+## ----
+# Clean up taxa IDs and format spacing
 cleanUpTaxa <- function(v, width = 10, regex = "^\"|\"$") {
     t <- gsub(regex, "", v)
     if (!is.null(width)) {
@@ -174,7 +181,8 @@ cleanUpTaxa <- function(v, width = 10, regex = "^\"|\"$") {
 }
 
 
-## Clean up summary matrix with formatting ----
+## ----
+# Clean up summary matrix with formatting
 cleanUpMatrix <- function(t, d, space = "...", size = 5, width = 10, nTaxa) {
     if (nTaxa <= size) {
         m2 <- rbind(t, d)
@@ -202,12 +210,15 @@ cleanUpMatrix <- function(t, d, space = "...", size = 5, width = 10, nTaxa) {
 }
 
 
-## "Pretty" print distance matrices ----
-summaryDistance <- function(kinJ,
-                            width = 10,
-                            etc = "...",
-                            size = 5,
-                            regex = "^\"|\"$") {
+## ----
+# "Pretty" print distance matrices
+summaryDistance <- function(
+    kinJ,
+    width = 10,
+    etc = "...",
+    size = 5,
+    regex = "^\"|\"$"
+) {
 
     if (kinJ$numberOfTaxa() <= size) {
         taxaCleaned <- cleanUpTaxa(
@@ -261,7 +272,7 @@ summaryDistance <- function(kinJ,
 
 
 
-# === Data frame functions ==========================================
+# /// Data frame functions ///////////////////////////////////////////
 
 ## ----
 # @title Check for valid columns in a data frame object
@@ -281,7 +292,7 @@ checkForValidColumns <- function(assocStats, neededCols) {
 
 
 
-# === Class helper functions (TEMP) =================================
+# /// Class helper functions (TEMP) /////////////////////////////////
 
 ## ----
 # @title Get report elements
@@ -309,5 +320,6 @@ returnReportElements <- function(
             stop("Report ID not found in object")
         }
 }
+
 
 

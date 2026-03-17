@@ -1,4 +1,4 @@
-# === BLUE Reports ==================================================
+# /// BLUE Reports ///////////////////////////////////////////////////
 
 ## ----
 #' @title AssociationResultsBLUE Class
@@ -37,7 +37,7 @@ setMethod(
 
 
 
-# === GLM Reports ===================================================
+# /// GLM Reports ////////////////////////////////////////////////////
 
 ## ----
 #' @title AssociationResultsGLM Class
@@ -76,7 +76,7 @@ setMethod(
 
 
 
-# === MLM Reports ===================================================
+# /// MLM Reports /////////////////////////////////////////////////////
 
 ## ----
 #' @title AssociationResultsMLM Class
@@ -115,7 +115,7 @@ setMethod(
 
 
 
-# === Fast Association (Shabalin) Reports ===========================
+# /// Fast Association (Shabalin) Reports ////////////////////////////
 
 ## ----
 #' @title AssociationResultsFast Class
@@ -154,7 +154,7 @@ setMethod(
 
 
 
-# === Stepwise results ==============================================
+# /// Stepwise results ///////////////////////////////////////////////
 
 ## ----
 #' @title AssociationResultsStepwise Class
@@ -190,5 +190,6 @@ setMethod(
         )
     }
 )
+
 
 
