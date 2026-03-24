@@ -81,9 +81,14 @@ a unit test, if needed).
 
 ## Docker Hub image (`rtassel_docker`)
 
-The official [`maizegenetics/rtassel_docker`](https://hub.docker.com/r/maizegenetics/rtassel_docker) image is built from [`docker/Dockerfile`](https://github.com/maize-genetics/rTASSEL/blob/master/docker/Dockerfile) in this repository. The [rtassel_docker](https://github.com/maize-genetics/rtassel_docker) repo hosts the workflow that builds and pushes to Docker Hub.
+The official [`maizegenetics/rtassel_docker`](https://hub.docker.com/r/maizegenetics/rtassel_docker) image is built from [`docker/Dockerfile`](https://github.com/maize-genetics/rTASSEL/blob/master/docker/Dockerfile) in this repository. The **Publish Docker image** workflow ([`.github/workflows/docker-publish.yaml`](workflows/docker-publish.yaml)) runs on every **`v*.*.*` tag push** and pushes `maizegenetics/rtassel_docker:<tag>` and `:latest` to Docker Hub.
 
-**After a new rTASSEL release tag is published:** if the repository secret `RTASSEL_DOCKER_DISPATCH_TOKEN` is configured (a PAT that can call the GitHub API for `maize-genetics/rtassel_docker`, e.g. classic `repo` scope or fine-grained access to that repository), the release workflow triggers that build automatically. Otherwise, a maintainer must run **Actions → Build and publish Docker image → Run workflow** in `rtassel_docker` and enter the rTASSEL tag (e.g. `v0.12.0`). The tag must point to a commit that includes `docker/Dockerfile` (present on rTASSEL `master` after that addition).
+Configure these **repository secrets** under Settings → Secrets and variables → Actions:
+
+* `DOCKERHUB_USERNAME` — Docker Hub account that owns `maizegenetics/rtassel_docker`
+* `DOCKERHUB_TOKEN` — Docker Hub access token (not your login password)
+
+To rebuild an existing tag without pushing a new one, use **Actions → Publish Docker image → Run workflow** and enter the tag (e.g. `v0.12.0`). The tag must point to a commit that includes `docker/Dockerfile`.
 
 The legacy **`maizegenetics/rtassel`** image on Docker Hub is deprecated; use **`maizegenetics/rtassel_docker`** instead.
 
