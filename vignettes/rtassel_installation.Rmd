@@ -186,6 +186,13 @@ If you wish to run a containerized version of `rTASSEL`, use the
 [`maizegenetics/rtassel_docker`](https://hub.docker.com/r/maizegenetics/rtassel_docker)
 image on Docker Hub.
 
+> **Deprecated:** The Docker Hub image
+> [`maizegenetics/rtassel`](https://hub.docker.com/r/maizegenetics/rtassel) is
+> **deprecated**. Do not use `docker pull maizegenetics/rtassel` or
+> `docker run ... maizegenetics/rtassel`; switch any scripts or notes to
+> [`maizegenetics/rtassel_docker`](https://hub.docker.com/r/maizegenetics/rtassel_docker)
+> (see below).
+
 For reproducibility, pull a **version tag** that matches your rTASSEL release
 (for example `v0.12.0`). The `latest` tag tracks the most recently published
 release build.
