@@ -1,5 +1,5 @@
-# Pull from rocker project
-FROM rocker/verse:4.4
+# Build from rocker's tidyverse stack (v4.5)
+FROM rocker/tidyverse:4.5
 
 # rTASSEL Git tag (e.g. v0.12.0); passed by CI at image build time
 ARG RTASSEL_TAG=v0.12.0
@@ -14,8 +14,9 @@ RUN apt-get update && \
       libxml2-dev && \
     rm -rf /var/lib/apt/lists/*
 
-# Ensure JAVA_HOME is set for rJava
+# Ensure JAVA_HOME is set for rJava; align R's Java config with CI (setup-tassel action)
 ENV JAVA_HOME=/usr/lib/jvm/default-java
+RUN R CMD javareconf
 
 # Install pak
 RUN R -e "install.packages('pak')"
