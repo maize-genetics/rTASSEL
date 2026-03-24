@@ -182,20 +182,29 @@ function.
 
 # Running from Docker
 
-If you wish to run a containerized version of `rTASSEL`, we also have a 
-[Docker image](https://hub.docker.com/repository/docker/maizegenetics/rtassel)
-available. This can be retrieved from DockerHub using the following command:
+If you wish to run a containerized version of `rTASSEL`, use the
+[`maizegenetics/rtassel_docker`](https://hub.docker.com/r/maizegenetics/rtassel_docker)
+image on Docker Hub.
+
+For reproducibility, pull a **version tag** that matches your rTASSEL release
+(for example `v0.12.0`). The `latest` tag tracks the most recently published
+release build.
 
 ```
-docker pull maizegenetics/rtassel:latest
+docker pull maizegenetics/rtassel_docker:v0.12.0
 ```
+
+The [`docker/Dockerfile`](https://github.com/maize-genetics/rTASSEL/blob/master/docker/Dockerfile)
+in the rTASSEL repository defines this image; you can build locally with
+`docker build --build-arg RTASSEL_TAG=v0.12.0 -f docker/Dockerfile .` from a
+clone checked out at that tag.
 
 ## With the terminal
 
 Once downloaded, you can run `rTASSEL` from a terminal window:
 
 ```
-docker run --rm -ti maizegenetics/rtassel R
+docker run --rm -ti maizegenetics/rtassel_docker:v0.12.0 R
 ```
 
 
@@ -205,7 +214,7 @@ This image also contains an RStudio Server instance. To run this, you will
 need to publish the container's port(s) to the host (`-p`). For example:
 
 ```
-docker run --rm -ti -p 8787:8787 maizegenetics/rtassel
+docker run --rm -ti -p 8787:8787 maizegenetics/rtassel_docker:v0.12.0
 ```
 
 From here, you can go to `localhost:8787` on a web browser and enter a:

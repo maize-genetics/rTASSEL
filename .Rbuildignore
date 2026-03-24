@@ -13,3 +13,4 @@
 ^rTASSEL_log$
 ^rtassel_log\.txt$
 ^LICENSE\.md$
+^docker/

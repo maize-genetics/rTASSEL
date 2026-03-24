@@ -79,6 +79,15 @@ a unit test, if needed).
   and will have higher priority for integration.
 
 
+## Docker Hub image (`rtassel_docker`)
+
+The official [`maizegenetics/rtassel_docker`](https://hub.docker.com/r/maizegenetics/rtassel_docker) image is built from [`docker/Dockerfile`](https://github.com/maize-genetics/rTASSEL/blob/master/docker/Dockerfile) in this repository. The [rtassel_docker](https://github.com/maize-genetics/rtassel_docker) repo hosts the workflow that builds and pushes to Docker Hub.
+
+**After a new rTASSEL release tag is published:** if the repository secret `RTASSEL_DOCKER_DISPATCH_TOKEN` is configured (a PAT that can call the GitHub API for `maize-genetics/rtassel_docker`, e.g. classic `repo` scope or fine-grained access to that repository), the release workflow triggers that build automatically. Otherwise, a maintainer must run **Actions → Build and publish Docker image → Run workflow** in `rtassel_docker` and enter the rTASSEL tag (e.g. `v0.12.0`). The tag must point to a commit that includes `docker/Dockerfile` (present on rTASSEL `master` after that addition).
+
+The legacy **`maizegenetics/rtassel`** image on Docker Hub is deprecated; use **`maizegenetics/rtassel_docker`** instead.
+
+
 ## Code of Conduct
 
 Please note that the rTASSEL project is released with a

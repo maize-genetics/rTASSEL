@@ -43,6 +43,13 @@ pak::pak("maize-genetics/rTASSEL")
 > **I also recommend checking out Egor Kotov's [rJavaEnv](https://www.ekotov.pro/rJavaEnv/)
 > package to further automate your R to Java setup!**
 
+### Docker
+
+To avoid configuring Java and R locally, you can use the
+[`maizegenetics/rtassel_docker`](https://hub.docker.com/r/maizegenetics/rtassel_docker)
+image. See the [installation article](https://rtassel.maizegenetics.net/articles/rtassel_installation.html#running-from-docker) 
+for `docker run` examples and details.
+
 
 ## Demo
 If you want to test out what this package does but do not want to install it 
