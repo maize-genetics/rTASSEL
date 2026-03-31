@@ -1,7 +1,7 @@
 # Build from rocker's tidyverse stack (v4.5)
 FROM rocker/tidyverse:4.5
 
-# rTASSEL Git tag (e.g. v0.12.0); passed by CI at image build time
+# rTASSEL Git tag (e.g. v0.12.0); pass with docker build --build-arg RTASSEL_TAG=...
 ARG RTASSEL_TAG=v0.12.0
 
 # Install system libraries for Java, rJava, Git, and XML/SSL support
@@ -14,7 +14,7 @@ RUN apt-get update && \
       libxml2-dev && \
     rm -rf /var/lib/apt/lists/*
 
-# Ensure JAVA_HOME is set for rJava; align R's Java config with CI (setup-tassel action)
+# Ensure JAVA_HOME is set for rJava; align R's Java config with the bundled JDK
 ENV JAVA_HOME=/usr/lib/jvm/default-java
 RUN R CMD javareconf
 
