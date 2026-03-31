@@ -45,10 +45,10 @@ pak::pak("maize-genetics/rTASSEL")
 
 ### Docker
 
-To avoid configuring Java and R locally, you can use the
-[`maizegenetics/rtassel_docker`](https://hub.docker.com/r/maizegenetics/rtassel_docker)
-image. See the [installation article](https://rtassel.maizegenetics.net/articles/rtassel_installation.html#running-from-docker) 
-for `docker run` examples and details.
+To avoid configuring Java and R locally, you can build a container from the
+[`docker/Dockerfile`](https://github.com/maize-genetics/rTASSEL/blob/master/docker/Dockerfile)
+in this repository. See the [installation article](https://rtassel.maizegenetics.net/articles/rtassel_installation.html#running-from-docker)
+for build instructions, `docker run` examples, and RStudio Server usage.
 
 
 ## Demo
