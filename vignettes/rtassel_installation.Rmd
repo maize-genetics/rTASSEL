@@ -182,36 +182,38 @@ function.
 
 # Running from Docker
 
-If you wish to run a containerized version of `rTASSEL`, use the
-[`maizegenetics/rtassel_docker`](https://hub.docker.com/r/maizegenetics/rtassel_docker)
-image on Docker Hub.
+If you wish to run a containerized version of `rTASSEL`, build an image from the
+[`docker/Dockerfile`](https://github.com/maize-genetics/rTASSEL/blob/master/docker/Dockerfile)
+in the rTASSEL repository. There is no pre-built image published from this
+project; you build the image on your machine (or in your own registry workflow).
 
-> **Deprecated:** The Docker Hub image
-> [`maizegenetics/rtassel`](https://hub.docker.com/r/maizegenetics/rtassel) is
-> **deprecated**. Do not use `docker pull maizegenetics/rtassel` or
-> `docker run ... maizegenetics/rtassel`; switch any scripts or notes to
-> [`maizegenetics/rtassel_docker`](https://hub.docker.com/r/maizegenetics/rtassel_docker)
-> (see below).
+**1. Choose an rTASSEL Git tag** (for example `v0.12.0`) for both the build
+context and `RTASSEL_TAG`. The URL fragment `#v0.12.0` tells Docker to fetch
+that ref from GitHub; keep `--build-arg RTASSEL_TAG` aligned with the same tag
+so the container installs the matching release.
 
-For reproducibility, pull a **version tag** that matches your rTASSEL release
-(for example `v0.12.0`). The `latest` tag tracks the most recently published
-release build.
+**2. Build the image** from the GitHub URL (no local clone required). Tag the
+image so you can use it in `docker run`:
 
 ```
-docker pull maizegenetics/rtassel_docker:v0.12.0
+docker build \
+  --build-arg RTASSEL_TAG=v0.12.0 \
+  -t rtassel:v0.12.0 \
+  -f docker/Dockerfile \
+  https://github.com/maize-genetics/rTASSEL.git#v0.12.0
 ```
 
-The [`docker/Dockerfile`](https://github.com/maize-genetics/rTASSEL/blob/master/docker/Dockerfile)
-in the rTASSEL repository defines this image; you can build locally with
-`docker build --build-arg RTASSEL_TAG=v0.12.0 -f docker/Dockerfile .` from a
-clone checked out at that tag.
+You may use any image name and tag you prefer (e.g. `-t my-rtassel:local`); the
+examples below assume `rtassel:v0.12.0`. If you already have a clone of the
+repository, you can run the same command with `.` as the final argument instead
+of the GitHub URL.
 
 ## With the terminal
 
-Once downloaded, you can run `rTASSEL` from a terminal window:
+After the build finishes, start R inside the container:
 
 ```
-docker run --rm -ti maizegenetics/rtassel_docker:v0.12.0 R
+docker run --rm -ti rtassel:v0.12.0 R
 ```
 
 
@@ -221,7 +223,7 @@ This image also contains an RStudio Server instance. To run this, you will
 need to publish the container's port(s) to the host (`-p`). For example:
 
 ```
-docker run --rm -ti -p 8787:8787 maizegenetics/rtassel_docker:v0.12.0
+docker run --rm -ti -p 8787:8787 rtassel:v0.12.0
 ```
 
 From here, you can go to `localhost:8787` on a web browser and enter a:
