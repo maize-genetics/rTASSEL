@@ -11,7 +11,7 @@ permissions:
 jobs:
   release:
     runs-on: ubuntu-latest
-    name: Update README and create release
+    name: Bump version refs, push master, create release
 
     steps:
       - uses: actions/checkout@v4
@@ -26,17 +26,20 @@ jobs:
           echo "TAG=$TAG" >> "$GITHUB_ENV"
           echo "VERSION=$VERSION" >> "$GITHUB_ENV"
 
-      - name: Update README.md stable release version
+      - name: Update README.md, docker/Dockerfile, and installation vignette
         run: |
           sed -i "s|pak::pak(\"maize-genetics/rTASSEL@v[^\"]*\")|pak::pak(\"maize-genetics/rTASSEL@${TAG}\")|" README.md
+          sed -i "s|^ARG RTASSEL_TAG=.*|ARG RTASSEL_TAG=${TAG}|" docker/Dockerfile
+          # Docker examples in the vignette use vX.Y.Z tags; bump all to the release tag
+          sed -i -E "s/v[0-9]+\.[0-9]+\.[0-9]+/${TAG}/g" vignettes/rtassel_installation.Rmd
 
-      - name: Commit and push README change
+      - name: Commit and push version bump
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add README.md
+          git add README.md docker/Dockerfile vignettes/rtassel_installation.Rmd
           if git diff --cached --quiet; then
-            echo "README already up to date"
+            echo "README, Dockerfile, and vignette already up to date"
           else
             git commit -m "Update stable release version to ${TAG}"
             git push origin master
