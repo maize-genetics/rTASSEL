@@ -80,6 +80,12 @@
 </ul></div>
 </div>
 <div class="section level2">
+<h2 id="docker-dockerdockerfile">Docker (<code>docker/Dockerfile</code>)<a class="anchor" aria-label="anchor" href="#docker-dockerdockerfile"></a></h2>
+<p>A <a href="https://github.com/maize-genetics/rTASSEL/blob/master/docker/Dockerfile" class="external-link"><code>docker/Dockerfile</code></a> is maintained in this repository for local builds; it is not built or published by CI. To try it locally, from a clone of the repository root:</p>
+<pre><code>docker build --build-arg RTASSEL_TAG=v0.12.0 -t rtassel:local -f docker/Dockerfile .</code></pre>
+<p>See the <a href="https://rtassel.maizegenetics.net/articles/rtassel_installation.html#running-from-docker">installation vignette</a> for full <code>docker run</code> examples.</p>
+</div>
+<div class="section level2">
 <h2 id="code-of-conduct">Code of Conduct<a class="anchor" aria-label="anchor" href="#code-of-conduct"></a></h2>
 <p>Please note that the rTASSEL project is released with a <a href="CODE_OF_CONDUCT.html">Contributor Code of Conduct</a>. By contributing to this project you agree to abide by its terms.</p>
 </div>

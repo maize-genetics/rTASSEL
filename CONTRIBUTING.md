@@ -81,6 +81,19 @@ you write a unit test, if needed).
   tests. Contributions with test cases included are easier to accept and
   will have higher priority for integration.
 
+## Docker (`docker/Dockerfile`)
+
+A
+[`docker/Dockerfile`](https://github.com/maize-genetics/rTASSEL/blob/master/docker/Dockerfile)
+is maintained in this repository for local builds; it is not built or
+published by CI. To try it locally, from a clone of the repository root:
+
+    docker build --build-arg RTASSEL_TAG=v0.12.0 -t rtassel:local -f docker/Dockerfile .
+
+See the [installation
+vignette](https://rtassel.maizegenetics.net/articles/rtassel_installation.html#running-from-docker)
+for full `docker run` examples.
+
 ## Code of Conduct
 
 Please note that the rTASSEL project is released with a [Contributor

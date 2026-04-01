@@ -71,7 +71,7 @@
                         <h4 data-toc-skip class="author">Brandon
 Monier</h4>
             
-            <h4 data-toc-skip class="date">2026-03-12</h4>
+            <h4 data-toc-skip class="date">2026-04-01</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/maize-genetics/rTASSEL/blob/master/vignettes/rtassel_installation.Rmd" class="external-link"><code>vignettes/rtassel_installation.Rmd</code></a></small>
       <div class="d-none name"><code>rtassel_installation.Rmd</code></div>
@@ -249,16 +249,34 @@ you can use <code>rTASSEL::&lt;function&gt;</code>, where
 <h2 id="running-from-docker">Running from Docker<a class="anchor" aria-label="anchor" href="#running-from-docker"></a>
 </h2>
 <p>If you wish to run a containerized version of <code>rTASSEL</code>,
-we also have a <a href="https://hub.docker.com/repository/docker/maizegenetics/rtassel" class="external-link">Docker
-image</a> available. This can be retrieved from DockerHub using the
-following command:</p>
-<pre><code>docker pull maizegenetics/rtassel:latest</code></pre>
+build an image from the <a href="https://github.com/maize-genetics/rTASSEL/blob/master/docker/Dockerfile" class="external-link"><code>docker/Dockerfile</code></a>
+in the rTASSEL repository. There is no pre-built image published from
+this project; you build the image on your machine (or in your own
+registry workflow).</p>
+<p><strong>1. Choose an rTASSEL Git tag</strong> (for example
+<code>v0.12.0</code>) for both the build context and
+<code>RTASSEL_TAG</code>. The URL fragment <code>#v0.12.0</code> tells
+Docker to fetch that ref from GitHub; keep
+<code>--build-arg RTASSEL_TAG</code> aligned with the same tag so the
+container installs the matching release.</p>
+<p><strong>2. Build the image</strong> from the GitHub URL (no local
+clone required). Tag the image so you can use it in
+<code>docker run</code>:</p>
+<pre><code>docker build \
+  --build-arg RTASSEL_TAG=v0.12.0 \
+  -t rtassel:v0.12.0 \
+  -f docker/Dockerfile \
+  https://github.com/maize-genetics/rTASSEL.git#v0.12.0</code></pre>
+<p>You may use any image name and tag you prefer
+(e.g. <code>-t my-rtassel:local</code>); the examples below assume
+<code>rtassel:v0.12.0</code>. If you already have a clone of the
+repository, you can run the same command with <code>.</code> as the
+final argument instead of the GitHub URL.</p>
 <div class="section level3">
 <h3 id="with-the-terminal">With the terminal<a class="anchor" aria-label="anchor" href="#with-the-terminal"></a>
 </h3>
-<p>Once downloaded, you can run <code>rTASSEL</code> from a terminal
-window:</p>
-<pre><code>docker run --rm -ti maizegenetics/rtassel R</code></pre>
+<p>After the build finishes, start R inside the container:</p>
+<pre><code>docker run --rm -ti rtassel:v0.12.0 R</code></pre>
 </div>
 <div class="section level3">
 <h3 id="with-rstudio-server">With RStudio Server<a class="anchor" aria-label="anchor" href="#with-rstudio-server"></a>
@@ -266,7 +284,7 @@ window:</p>
 <p>This image also contains an RStudio Server instance. To run this, you
 will need to publish the container’s port(s) to the host
 (<code>-p</code>). For example:</p>
-<pre><code>docker run --rm -ti -p 8787:8787 maizegenetics/rtassel</code></pre>
+<pre><code>docker run --rm -ti -p 8787:8787 rtassel:v0.12.0</code></pre>
 <p>From here, you can go to <code>localhost:8787</code> on a web browser
 and enter a:</p>
 <ul>
