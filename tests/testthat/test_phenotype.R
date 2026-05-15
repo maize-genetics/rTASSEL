@@ -41,12 +41,67 @@ tasGenoPheno <- readGenotypePhenotype(
 ## Error tests ----
 test_that("readPhenotypeFromPath() throws general exceptions.", {
     badPath <- "does/not/exist"
-    message <- paste0("Cannot open file ", badPath, ": No such file or directory")
+    expandedPath <- normalizePath(badPath, mustWork = FALSE)
+    message <- paste0("Cannot open file ", expandedPath, ": No such file or directory")
 
     expect_error(
         object = readPhenotypeFromPath(badPath),
-        regexp = message
+        regexp = message,
+        fixed = TRUE
     )
+})
+
+test_that("readPhenotypeFromPath() expands ~ in path before passing to Java", {
+    skip_on_os("windows")
+
+    # Point HOME at the directory containing the bundled test file so that
+    # "~/<basename>" resolves to a real file.
+    withr::local_envvar(c(HOME = dirname(phenoPathFast)))
+    tildePath <- file.path("~", basename(phenoPathFast))
+
+    expect_match(tildePath, "^~/")
+
+    expect_message(
+        ph <- readPhenotypeFromPath(tildePath),
+        "deprecated"
+    )
+    expect_s4_class(ph, "TasselGenotypePhenotype")
+})
+
+test_that("readPhenotypeFromPath() reports expanded path on missing ~ file", {
+    skip_on_os("windows")
+
+    withr::local_envvar(c(HOME = tempdir()))
+    badPath <- "~/__rtassel_definitely_missing__.txt"
+    expandedPath <- normalizePath(badPath, mustWork = FALSE)
+
+    expect_error(
+        readPhenotypeFromPath(badPath),
+        regexp = paste0("Cannot open file ", expandedPath, ": No such file or directory"),
+        fixed = TRUE
+    )
+})
+
+test_that("readGenotypePhenotype() expands ~ in phenotype path", {
+    skip_on_os("windows")
+
+    # Both bundled test files live in the same extdata directory, so a single
+    # HOME override lets us refer to either via "~/<basename>".
+    extDir <- dirname(genoPathHMP)
+    expect_equal(extDir, dirname(phenoPathFast))
+
+    withr::local_envvar(c(HOME = extDir))
+    phenoTilde <- file.path("~", basename(phenoPathFast))
+
+    expect_match(phenoTilde, "^~/")
+
+    # Use the absolute geno path; the phenotype path goes through the previously
+    # buggy PhenotypeBuilder$fromFile() branch that did not normalize the path.
+    obj <- readGenotypePhenotype(
+        genoPathOrObj    = genoPathHMP,
+        phenoPathDFOrObj = phenoTilde
+    )
+    expect_s4_class(obj, "TasselGenotypePhenotype")
 })
 
 test_that("readPhenotypeFromDataFrame() throws general exceptions.", {

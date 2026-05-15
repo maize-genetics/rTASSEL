@@ -25,6 +25,7 @@ readPhenotypeFromPath <- function(path) {
     )
     message(warnMsg)
 
+    path <- normalizePath(path, mustWork = FALSE)
     if (!file.exists(path)) {
         stop("Cannot open file ", path, ": No such file or directory")
     }

@@ -46,6 +46,7 @@ readGenotypePhenotype <- function(genoPathOrObj, phenoPathDFOrObj, ...) {
             readPhenotypeFromDataFrame(phenoPathDFOrObj, ...)
         )
     } else if(rJava::is.jnull(phenoObj) & !is.data.frame(phenoPathDFOrObj)) {
+        phenoPathDFOrObj <- normalizePath(phenoPathDFOrObj, mustWork = FALSE)
         phenoObj <- rJava::new(
             rJava::J("net/maizegenetics/phenotype/PhenotypeBuilder")
         )$fromFile(phenoPathDFOrObj)$build()$get(0L)

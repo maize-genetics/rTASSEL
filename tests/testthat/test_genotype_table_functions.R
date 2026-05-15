@@ -52,6 +52,44 @@ test_that("readGenotypeTableFromPath()", {
     expect_error(readGenotypeTableFromPath("i/dont/exist"))
 })
 
+test_that("readGenotypeTableFromPath() expands ~ in path before passing to Java", {
+    skip_on_os("windows")
+
+    # Point HOME at the directory containing the bundled test file so that
+    # "~/<basename>" resolves to a real file. R's path.expand() / normalizePath()
+    # read HOME at call time, so this is enough to exercise the fix.
+    withr::local_envvar(c(HOME = dirname(rtFiles$gt_hmp_path)))
+    tildePath <- file.path("~", basename(rtFiles$gt_hmp_path))
+
+    # Sanity check: the test path actually contains an unexpanded "~"
+    expect_match(tildePath, "^~/")
+
+    # The function should accept the "~" path, normalize it, and load
+    # successfully. Without the fix, the Java side fails with
+    # "(No such file or directory)" because Java does not expand "~".
+    expect_message(
+        gt <- readGenotypeTableFromPath(tildePath),
+        "deprecated"
+    )
+    expect_s4_class(gt, "TasselGenotypePhenotype")
+})
+
+test_that("readGenotypeTableFromPath() reports expanded path on missing ~ file", {
+    skip_on_os("windows")
+
+    withr::local_envvar(c(HOME = tempdir()))
+    badPath <- "~/__rtassel_definitely_missing__.hmp.txt"
+    expandedPath <- normalizePath(badPath, mustWork = FALSE)
+
+    # The "~" should have been expanded before the existence check, so the
+    # error message must contain the normalized path (not the raw "~/...").
+    expect_error(
+        readGenotypeTableFromPath(badPath),
+        regexp = paste0("Cannot open file ", expandedPath, ": No such file or directory"),
+        fixed = TRUE
+    )
+})
+
 test_that("getSumExpFromGenotypeTable()", {
     expect_message(getSumExpFromGenotypeTable(filterGenoObj, verbose = TRUE))
 })
