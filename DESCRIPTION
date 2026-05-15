@@ -68,6 +68,6 @@ SystemRequirements: Java (>= 8.0)
 Encoding: UTF-8
 LazyData: true
 VignetteBuilder: knitr
-RoxygenNote: 7.3.3
 biocViews:
     GenomeWideAssociation
+Config/roxygen2/version: 8.0.0
