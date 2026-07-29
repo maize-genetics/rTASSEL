@@ -31,10 +31,21 @@
                 "i" = "Run {.run rTASSEL::setupTASSEL()} to download from Maven Central"
             ))
         } else {
+            tasselVersion <- getLoadedTASSELVersion()
+
             cli::cli_bullets(c(
-                "i" = "Running TASSEL version {.val {TASSEL_MAVEN$VERSION}} ({.field {resolved$source}})",
+                "i" = "Running TASSEL version {.val {tasselVersion}} ({.field {resolved$source}})",
                 "i" = "Consider starting a TASSEL log file (see {.help [startLogger()](rTASSEL::startLogger)})"
             ))
+
+            update <- checkForTASSELUpdate()
+
+            if (!is.null(update) && isNewerVersion(update$latest, tasselVersion)) {
+                cli::cli_bullets(c(
+                    "!" = "TASSEL {.val {update$latest}} is available on Maven Central",
+                    "i" = "Run {.run rTASSEL::setupTASSEL(version = \"{update$latest}\")} to update"
+                ))
+            }
         }
     })
 
