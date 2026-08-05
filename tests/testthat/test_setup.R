@@ -41,6 +41,10 @@ test_that("getTASSELCacheDir() returns a character path", {
 })
 
 test_that("getTASSELCacheDir() contains version in path", {
+    # Pin the version being asked for: the default is the active version,
+    # which need not be the pinned one on a machine with several installed.
+    withr::local_options(list(rTASSEL.tassel.version = TASSEL_MAVEN$VERSION))
+
     result <- getTASSELCacheDir()
     expect_match(result, TASSEL_MAVEN$VERSION, fixed = TRUE)
 })
@@ -136,7 +140,9 @@ test_that("resolveJarPath() returns NULL path/source when nothing is found", {
 
 test_that("resolveJarPath() source is one of expected values or NULL", {
     result <- resolveJarPath()
-    validSources <- c("option", "maven cache", "bundled", NULL)
+    validSources <- c(
+        "option", "maven cache", "nightly build", "github release", "bundled", NULL
+    )
     expect_true(is.null(result$source) || result$source %in% validSources)
 })
 
@@ -191,7 +197,11 @@ test_that("setupTASSEL() has correct function signature", {
     args <- formals(setupTASSEL)
     expect_true("version" %in% names(args))
     expect_true("force" %in% names(args))
+    expect_true("source" %in% names(args))
     expect_false(eval(args$force))
+
+    # Maven stays the default so that existing calls keep their meaning
+    expect_equal(eval(args$source)[1], "maven")
 })
 
 
@@ -218,6 +228,26 @@ setup_mock <- function(name, replacement, env = environment(setupTASSEL)) {
             rm(list = name, envir = env)
         }
         if (was_locked) lockBinding(name, env)
+    }
+}
+
+# Keep setupTASSEL() off the network: report a packaging layout directly
+# and publish no checksum, so the install path can be exercised offline.
+# The cache root is redirected too, so recording the active version cannot
+# disturb a real installation on the machine running the tests.
+mock_offline_maven <- function(layout = "fat") {
+    javaDir <- file.path(tempdir(), "rtassel_mock_java")
+    dir.create(javaDir, recursive = TRUE, showWarnings = FALSE)
+
+    restoreLayout  <- setup_mock("probeArtifactLayout", function(...) layout)
+    restoreSha1    <- setup_mock("fetchArtifactSha1",   function(...) NULL)
+    restoreJavaDir <- setup_mock("getTASSELJavaDir",    function() javaDir)
+
+    function() {
+        restoreLayout()
+        restoreSha1()
+        restoreJavaDir()
+        unlink(javaDir, recursive = TRUE)
     }
 }
 
@@ -426,6 +456,8 @@ test_that("setupTASSEL() returns early when JAR already cached", {
     on.exit(restore1(), add = TRUE)
     restore2 <- setup_mock("getTASSELJarName", function(...) jarName)
     on.exit(restore2(), add = TRUE)
+    restore3 <- mock_offline_maven()
+    on.exit(restore3(), add = TRUE)
 
     result <- setupTASSEL(version = version)
     expect_equal(as.character(result), tmpDir)
@@ -447,6 +479,8 @@ test_that("setupTASSEL() downloads JAR for non-default version (skips checksum)"
         invisible(destfile)
     })
     on.exit(restore3(), add = TRUE)
+    restore4 <- mock_offline_maven()
+    on.exit(restore4(), add = TRUE)
 
     result <- setupTASSEL(version = version)
     expect_equal(as.character(result), tmpDir)
@@ -481,6 +515,8 @@ test_that("setupTASSEL() verifies SHA-1 for default version (pass)", {
     new_maven$SHA1_CHECKSUM <- expected_sha1
     restore3 <- setup_mock("TASSEL_MAVEN", new_maven)
     on.exit(restore3(), add = TRUE)
+    restore4 <- mock_offline_maven()
+    on.exit(restore4(), add = TRUE)
 
     result <- setupTASSEL(version = orig_version)
     expect_equal(as.character(result), tmpDir)
@@ -505,6 +541,8 @@ test_that("setupTASSEL() aborts on SHA-1 mismatch", {
     new_maven$SHA1_CHECKSUM <- "0000000000000000000000000000000000000000"
     restore3 <- setup_mock("TASSEL_MAVEN", new_maven)
     on.exit(restore3(), add = TRUE)
+    restore4 <- mock_offline_maven()
+    on.exit(restore4(), add = TRUE)
 
     expect_error(
         setupTASSEL(version = orig_version),
@@ -527,6 +565,8 @@ test_that("setupTASSEL() handles download failure gracefully", {
         stop("simulated network error")
     })
     on.exit(restore2(), add = TRUE)
+    restore3 <- mock_offline_maven()
+    on.exit(restore3(), add = TRUE)
 
     expect_error(
         setupTASSEL(version = version),
@@ -550,6 +590,8 @@ test_that("setupTASSEL() cleans up partial download on error", {
         stop("connection reset")
     })
     on.exit(restore3(), add = TRUE)
+    restore4 <- mock_offline_maven()
+    on.exit(restore4(), add = TRUE)
 
     expect_error(setupTASSEL(version = version))
 
@@ -575,6 +617,8 @@ test_that("setupTASSEL() re-downloads when force = TRUE", {
         invisible(destfile)
     })
     on.exit(restore3(), add = TRUE)
+    restore4 <- mock_offline_maven()
+    on.exit(restore4(), add = TRUE)
 
     result <- setupTASSEL(version = version, force = TRUE)
     expect_equal(as.character(result), tmpDir)
@@ -596,6 +640,8 @@ test_that("setupTASSEL() constructs correct Maven URL", {
         invisible(destfile)
     })
     on.exit(restore2(), add = TRUE)
+    restore3 <- mock_offline_maven()
+    on.exit(restore3(), add = TRUE)
 
     setupTASSEL(version = version)
 
@@ -604,6 +650,129 @@ test_that("setupTASSEL() constructs correct Maven URL", {
     expect_match(captured_url, TASSEL_MAVEN$GROUP_PATH, fixed = TRUE)
     expect_match(captured_url, TASSEL_MAVEN$ARTIFACT_ID, fixed = TRUE)
     expect_match(captured_url, version, fixed = TRUE)
+})
+
+test_that("setupTASSEL() installs the pinned version when none is given", {
+    tmpDir <- file.path(tempdir(), "rtassel_setup_default")
+    on.exit(unlink(tmpDir, recursive = TRUE), add = TRUE)
+
+    captured_url <- NULL
+
+    restore1 <- setup_mock("getTASSELCacheDir", function(...) tmpDir)
+    on.exit(restore1(), add = TRUE)
+    restore2 <- setup_mock("downloadWithProgress", function(url, destfile, ...) {
+        captured_url <<- url
+        writeLines("test", destfile)
+        invisible(destfile)
+    })
+    on.exit(restore2(), add = TRUE)
+    restore3 <- mock_offline_maven()
+    on.exit(restore3(), add = TRUE)
+
+    # The pinned version is the one case with a recorded checksum, which the
+    # stand-in payload cannot satisfy.
+    restore4 <- setup_mock("verifyTASSELChecksum", function(...) invisible(TRUE))
+    on.exit(restore4(), add = TRUE)
+
+    setupTASSEL()
+
+    expect_match(captured_url, TASSEL_MAVEN$VERSION, fixed = TRUE)
+})
+
+
+# --- install source tracking --------------------------------------
+
+test_that("install source survives a write and read round trip", {
+    javaDir <- withr::local_tempdir()
+
+    local_mocked_bindings(getTASSELJavaDir = function() javaDir)
+
+    recordInstallSource("5.2.98-dev.20260801", "github")
+
+    expect_equal(readInstallSource("5.2.98-dev.20260801"), "github")
+})
+
+test_that("readInstallSource treats an unmarked installation as Maven", {
+    javaDir <- withr::local_tempdir()
+
+    local_mocked_bindings(getTASSELJavaDir = function() javaDir)
+
+    expect_equal(readInstallSource("5.2.96"), "maven")
+})
+
+test_that("readInstallSource tolerates an empty marker", {
+    javaDir <- withr::local_tempdir()
+
+    local_mocked_bindings(getTASSELJavaDir = function() javaDir)
+
+    dir.create(file.path(javaDir, "5.2.96"), recursive = TRUE)
+    writeLines("", installSourceFile("5.2.96"))
+
+    expect_equal(readInstallSource("5.2.96"), "maven")
+})
+
+test_that("cacheSourceLabel names the channel an installation came from", {
+    javaDir <- withr::local_tempdir()
+
+    local_mocked_bindings(getTASSELJavaDir = function() javaDir)
+
+    recordInstallSource("5.2.96", "maven")
+    recordInstallSource("5.2.97", "github")
+    recordInstallSource("5.2.98-dev.20260801", "github")
+
+    expect_equal(cacheSourceLabel("5.2.96"), "maven cache")
+    expect_equal(cacheSourceLabel("5.2.97"), "github release")
+    expect_equal(cacheSourceLabel("5.2.98-dev.20260801"), "nightly build")
+})
+
+test_that("resolveJarPath() labels a cached nightly as a nightly build", {
+    javaDir <- withr::local_tempdir()
+    version <- "5.2.98-dev.20260801"
+
+    withr::local_options(list(
+        rTASSEL.java.path      = NULL,
+        rTASSEL.tassel.version = version
+    ))
+    local_mocked_bindings(getTASSELJavaDir = function() javaDir)
+
+    jarDir <- getTASSELCacheDir(version)
+    dir.create(jarDir, recursive = TRUE)
+    writeLines("main jar", file.path(jarDir, TASSEL_GITHUB$MAIN_JAR))
+    recordInstallSource(version, "github")
+
+    resolved <- resolveJarPath()
+
+    expect_equal(resolved$path, jarDir)
+    expect_equal(resolved$source, "nightly build")
+})
+
+
+# --- getTASSELJarPath() with a GitHub layout ----------------------
+
+test_that("getTASSELJarPath() recognises an unpacked standalone archive", {
+    javaDir <- withr::local_tempdir()
+    version <- "5.2.98-dev.20260801"
+
+    local_mocked_bindings(getTASSELJavaDir = function() javaDir)
+
+    jarDir <- getTASSELCacheDir(version)
+    dir.create(jarDir, recursive = TRUE)
+    writeLines("main jar", file.path(jarDir, TASSEL_GITHUB$MAIN_JAR))
+
+    expect_equal(getTASSELJarPath(version), jarDir)
+})
+
+test_that("getTASSELJarPath() still rejects a directory of dependencies only", {
+    javaDir <- withr::local_tempdir()
+    version <- "5.2.98-dev.20260801"
+
+    local_mocked_bindings(getTASSELJavaDir = function() javaDir)
+
+    jarDir <- getTASSELCacheDir(version)
+    dir.create(jarDir, recursive = TRUE)
+    writeLines("dependency", file.path(jarDir, "guava-22.0.jar"))
+
+    expect_null(getTASSELJarPath(version))
 })
 
 
