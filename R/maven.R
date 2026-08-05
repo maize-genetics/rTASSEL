@@ -40,16 +40,21 @@ urlExists <- function(url, timeout = TASSEL_UPDATE$TIMEOUT_SECS) {
 #
 # @param url The URL to read.
 # @param timeout Read timeout in seconds.
+# @param headers Named character vector of request headers, or \code{NULL}.
 #
 # @return A character string containing the full response body.
 #
 # @keywords internal
-fetchUrlText <- function(url, timeout = TASSEL_UPDATE$TIMEOUT_SECS) {
+fetchUrlText <- function(
+    url,
+    timeout = TASSEL_UPDATE$TIMEOUT_SECS,
+    headers = NULL
+) {
     oldTimeout <- getOption("timeout")
     options(timeout = as.integer(timeout))
     on.exit(options(timeout = oldTimeout), add = TRUE)
 
-    con <- base::url(url, open = "rb")
+    con <- base::url(url, open = "rb", headers = headers)
     on.exit(close(con), add = TRUE)
 
     paste(readLines(con, warn = FALSE), collapse = "\n")
@@ -224,22 +229,26 @@ isNewerVersion <- function(candidate, current) {
 ## ----
 # Path to the on-disk update check cache
 #
+# @param file Cache filename, which differs per release channel.
+#
 # @return A character string path to the cache file.
 #
 # @keywords internal
-updateCheckCachePath <- function() {
-    file.path(tools::R_user_dir("rTASSEL", "cache"), TASSEL_UPDATE$CACHE_FILE)
+updateCheckCachePath <- function(file = TASSEL_UPDATE$CACHE_FILE) {
+    file.path(tools::R_user_dir("rTASSEL", "cache"), file)
 }
 
 
 ## ----
 # Read the cached update check result
 #
+# @param file Cache filename, which differs per release channel.
+#
 # @return The cached list, or \code{NULL} if absent or unreadable.
 #
 # @keywords internal
-readUpdateCheckCache <- function() {
-    cacheFile <- updateCheckCachePath()
+readUpdateCheckCache <- function(file = TASSEL_UPDATE$CACHE_FILE) {
+    cacheFile <- updateCheckCachePath(file)
 
     if (!file.exists(cacheFile)) return(NULL)
 
@@ -251,12 +260,13 @@ readUpdateCheckCache <- function() {
 # Write the update check result to the on-disk cache
 #
 # @param result A list to cache.
+# @param file Cache filename, which differs per release channel.
 #
 # @return \code{result}, invisibly.
 #
 # @keywords internal
-writeUpdateCheckCache <- function(result) {
-    cacheFile <- updateCheckCachePath()
+writeUpdateCheckCache <- function(result, file = TASSEL_UPDATE$CACHE_FILE) {
+    cacheFile <- updateCheckCachePath(file)
 
     tryCatch({
         dir.create(dirname(cacheFile), recursive = TRUE, showWarnings = FALSE)
@@ -290,20 +300,27 @@ updateCheckEnabled <- function() {
 
 
 ## ----
-#' @title Check Maven Central for a newer version of TASSEL
+#' @title Check for a newer version of TASSEL
 #'
 #' @description
 #' Queries Maven Central for the newest release of TASSEL that rTASSEL is
 #' able to install, and reports it alongside the version currently in use.
 #'
+#' With \code{channel = "nightly"}, the TASSEL GitHub releases page is
+#' queried for the newest nightly build instead.
+#'
 #' This check also runs automatically when the package is attached, at
-#' most once per day. The result is cached on disk so that repeated calls
-#' to \code{library(rTASSEL)} do not repeatedly hit the network.
+#' most once per day, against whichever channel the installed version came
+#' from. The result is cached on disk so that repeated calls to
+#' \code{library(rTASSEL)} do not repeatedly hit the network.
 #'
 #' @param force
 #' If \code{TRUE}, ignore both the cached result and the settings that
-#' normally suppress automatic checks, and query Maven Central directly.
-#' Defaults to \code{FALSE}.
+#' normally suppress automatic checks, and query the release channel
+#' directly. Defaults to \code{FALSE}.
+#' @param channel
+#' Which release channel to query: \code{"maven"} for Maven Central
+#' releases (the default) or \code{"nightly"} for GitHub nightly builds.
 #'
 #' @details
 #' The automatic check is skipped in non-interactive sessions, during
@@ -319,26 +336,39 @@ updateCheckEnabled <- function() {
 #' rTASSEL needs are actually present, since a version can appear in
 #' Maven metadata without being installable.
 #'
-#' Network failures are never propagated: if Maven Central cannot be
+#' Network failures are never propagated: if the release channel cannot be
 #' reached, the last cached result is returned, or \code{NULL} if there
 #' is none.
 #'
 #' @return
-#' A list with elements \code{latest} (the newest installable version),
-#' \code{layout} (\code{"fat"} or \code{"thin"}), and \code{checkedAt}
-#' (the time of the check), or \code{NULL} if no result is available.
+#' A list with element \code{latest} (the newest installable version) and
+#' \code{checkedAt} (the time of the check), or \code{NULL} if no result is
+#' available. Maven results also carry \code{layout} (\code{"fat"} or
+#' \code{"thin"}); nightly results carry \code{tag}, \code{publishedAt},
+#' and \code{channel}.
 #'
 #' @examples
 #' \dontrun{
 #' ## Check for updates, bypassing the daily cache
 #' checkForTASSELUpdate(force = TRUE)
+#'
+#' ## Check for a newer nightly build
+#' checkForTASSELUpdate(channel = "nightly")
 #' }
 #'
 #' @export
-checkForTASSELUpdate <- function(force = FALSE) {
+checkForTASSELUpdate <- function(force = FALSE, channel = c("maven", "nightly")) {
+    channel <- match.arg(channel)
+
     if (!force && !updateCheckEnabled()) return(NULL)
 
-    cached <- readUpdateCheckCache()
+    cacheFile <- if (identical(channel, "nightly")) {
+        TASSEL_GITHUB$CACHE_FILE
+    } else {
+        TASSEL_UPDATE$CACHE_FILE
+    }
+
+    cached <- readUpdateCheckCache(cacheFile)
 
     if (!force && !is.null(cached)) {
         age <- as.numeric(
@@ -350,13 +380,17 @@ checkForTASSELUpdate <- function(force = FALSE) {
         }
     }
 
-    result <- tryCatch(latestInstallableTASSEL(), error = function(e) NULL)
+    result <- if (identical(channel, "nightly")) {
+        latestNightlyTASSEL()
+    } else {
+        tryCatch(latestInstallableTASSEL(), error = function(e) NULL)
+    }
 
     # Fall back to a stale result rather than nothing when offline
     if (is.null(result)) return(cached)
 
     result$checkedAt <- Sys.time()
-    writeUpdateCheckCache(result)
+    writeUpdateCheckCache(result, cacheFile)
 
     result
 }

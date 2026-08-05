@@ -170,6 +170,68 @@ setActiveTASSELVersion <- function(version) {
 
 
 ## ----
+#' @title Path to the file recording where a cached version came from
+#'
+#' @param version TASSEL version string.
+#'
+#' @return A character string path.
+#'
+#' @keywords internal
+installSourceFile <- function(version) {
+    file.path(getTASSELCacheDir(version), "install-source")
+}
+
+
+## ----
+#' @title Record where a cached TASSEL version was installed from
+#'
+#' @param version TASSEL version string.
+#' @param source Either \code{"maven"} or \code{"github"}.
+#'
+#' @return \code{source}, invisibly.
+#'
+#' @keywords internal
+recordInstallSource <- function(version, source) {
+    sourceFile <- installSourceFile(version)
+
+    tryCatch({
+        dir.create(dirname(sourceFile), recursive = TRUE, showWarnings = FALSE)
+        writeLines(as.character(source), sourceFile)
+    }, error = function(e) NULL)
+
+    invisible(source)
+}
+
+
+## ----
+#' @title Read where a cached TASSEL version was installed from
+#'
+#' @description
+#' Installations predating source tracking carry no marker, and only Maven
+#' installs existed then, so an absent marker means Maven.
+#'
+#' @param version TASSEL version string.
+#'
+#' @return Either \code{"maven"} or \code{"github"}.
+#'
+#' @keywords internal
+readInstallSource <- function(version) {
+    sourceFile <- installSourceFile(version)
+
+    if (!file.exists(sourceFile)) return("maven")
+
+    recorded <- tryCatch(
+        trimws(readLines(sourceFile, warn = FALSE))[1],
+        error = function(e) NA_character_
+    )
+
+    if (is.na(recorded) || !nzchar(recorded)) return("maven")
+
+    recorded
+}
+
+
+## ----
 #' @title Get path to cached TASSEL JAR files
 #'
 #' @description
@@ -177,8 +239,9 @@ setActiveTASSELVersion <- function(version) {
 #' if no cached JARs are found. JARs are cached per-version in the
 #' standard R user cache directory.
 #'
-#' Both packaging layouts are recognised: a single fat JAR, and a thin JAR
-#' accompanied by separately resolved dependency JARs.
+#' Every packaging layout is recognised: a single fat JAR, a thin JAR
+#' accompanied by separately resolved dependency JARs, and the
+#' \code{sTASSEL.jar} of an unpacked GitHub standalone archive.
 #'
 #' @param version
 #' TASSEL version string. Defaults to the currently active version.
@@ -194,12 +257,28 @@ getTASSELJarPath <- function(version = getActiveTASSELVersion()) {
 
     candidates <- c(
         getTASSELJarName(version),
-        getTASSELThinJarName(version)
+        getTASSELThinJarName(version),
+        TASSEL_GITHUB$MAIN_JAR
     )
 
     if (any(file.exists(file.path(jarDir, candidates)))) return(jarDir)
 
     NULL
+}
+
+
+## ----
+#' @title Describe a cached installation for the startup message
+#'
+#' @param version TASSEL version string.
+#'
+#' @return A character string label.
+#'
+#' @keywords internal
+cacheSourceLabel <- function(version) {
+    if (!identical(readInstallSource(version), "github")) return("maven cache")
+
+    if (isNightlyVersion(version)) "nightly build" else "github release"
 }
 
 
@@ -219,7 +298,8 @@ getTASSELJarPath <- function(version = getActiveTASSELVersion()) {
 #'
 #' @return A list with elements \code{path} (character or \code{NULL}) and
 #'   \code{source} (\code{"option"}, \code{"maven cache"},
-#'   \code{"bundled"}, or \code{NULL}).
+#'   \code{"nightly build"}, \code{"github release"}, \code{"bundled"}, or
+#'   \code{NULL}).
 #'
 #' @keywords internal
 resolveJarPath <- function(pkgname = "rTASSEL", libname = NULL) {
@@ -229,10 +309,11 @@ resolveJarPath <- function(pkgname = "rTASSEL", libname = NULL) {
         return(list(path = jarPath, source = "option"))
     }
 
-    # 2. Maven cache (from setupTASSEL())
-    jarPath <- getTASSELJarPath(getActiveTASSELVersion())
+    # 2. Local cache (from setupTASSEL())
+    version <- getActiveTASSELVersion()
+    jarPath <- getTASSELJarPath(version)
     if (!is.null(jarPath)) {
-        return(list(path = jarPath, source = "maven cache"))
+        return(list(path = jarPath, source = cacheSourceLabel(version)))
     }
 
     # 3. Bundled inst/java/ (legacy fallback)
@@ -421,79 +502,15 @@ downloadTASSELJar <- function(version, jarName, jarDir) {
 
 
 ## ----
-#' @title Download and configure TASSEL JAR files from Maven Central
-#'
-#' @description
-#' Downloads TASSEL from Maven Central and caches it locally. This only
-#' needs to be run once per TASSEL version; subsequent package loads use
-#' the cached JARs automatically.
-#'
-#' @param version
-#' TASSEL version to download. Defaults to the version pinned by this
-#' release of rTASSEL.
-#' @param force
-#' If \code{TRUE}, discard any cached copy and re-download.
-#' Defaults to \code{FALSE}.
-#'
-#' @details
-#' TASSEL is published in one of two layouts, and the appropriate one is
-#' detected automatically:
-#'
-#' \describe{
-#'   \item{Fat JAR}{Releases up to 5.2.96 ship a single
-#'     \code{jar-with-dependencies} archive containing every dependency.}
-#'   \item{Thin JAR}{Later releases ship only TASSEL's own classes, so its
-#'     dependencies are resolved from the POM and downloaded alongside it.
-#'     This pulls artifacts from Maven Central, SciJava, and JBoss, since
-#'     no single repository serves the whole graph.}
-#' }
-#'
-#' Files are cached under the standard R user cache directory
-#' (see \code{\link[tools]{R_user_dir}}) at
-#' \code{~/.cache/R/rTASSEL/java/<version>/} (Linux),
-#' \code{~/Library/Caches/org.R-project.R/R/rTASSEL/java/<version>/} (macOS),
-#' or the equivalent on Windows.
-#'
-#' Every downloaded artifact is verified against the SHA-1 checksum
-#' published next to it.
-#'
-#' On success the version is recorded as active, so the next
-#' \code{library(rTASSEL)} loads it.
-#'
-#' @return The path to the JAR cache directory (invisibly).
-#'
-#' @examples
-#' \dontrun{
-#' ## Download the default TASSEL version
-#' setupTASSEL()
-#'
-#' ## Install a specific version
-#' setupTASSEL(version = "5.2.96")
-#'
-#' ## Force re-download
-#' setupTASSEL(force = TRUE)
-#' }
-#'
-#' @export
-setupTASSEL <- function(version = TASSEL_MAVEN$VERSION, force = FALSE) {
-    version <- as.character(version)
-    jarDir  <- getTASSELCacheDir(version)
-
-    if (!is.null(getTASSELJarPath(version)) && !force) {
-        cli::cli_alert_info("TASSEL {version} JARs already cached at {.path {jarDir}}")
-        cli::cli_alert_info("Use {.code setupTASSEL(force = TRUE)} to re-download")
-        setActiveTASSELVersion(version)
-        return(invisible(jarDir))
-    }
-
-    # A forced re-install must not leave dependency JARs from a previous
-    # attempt behind, since they would stay on the classpath.
-    if (force && dir.exists(jarDir)) {
-        unlink(jarDir, recursive = TRUE)
-    }
-
-    dir.create(jarDir, recursive = TRUE, showWarnings = FALSE)
-
+# Install a TASSEL release from Maven Central
+#
+# @param version TASSEL version string.
+# @param jarDir Destination directory.
+#
+# @return \code{jarDir}, invisibly.
+#
+# @keywords internal
+installTASSELFromMaven <- function(version, jarDir) {
     layout <- probeArtifactLayout(version)
 
     if (identical(layout, "none")) {
@@ -506,7 +523,8 @@ setupTASSEL <- function(version = TASSEL_MAVEN$VERSION, force = FALSE) {
                 "Check {.url https://central.sonatype.com/artifact/net.maizegenetics/tassel} for available versions"
             } else {
                 "The newest installable version is {.val {newest$latest}}"
-            }
+            },
+            "i" = "Nightly builds can be installed with {.code setupTASSEL(source = \"github\")}"
         ))
     }
 
@@ -527,6 +545,143 @@ setupTASSEL <- function(version = TASSEL_MAVEN$VERSION, force = FALSE) {
         downloadArtifacts(deps, jarDir)
     }
 
+    invisible(jarDir)
+}
+
+
+## ----
+#' @title Download and configure TASSEL JAR files
+#'
+#' @description
+#' Downloads TASSEL and caches it locally. This only needs to be run once
+#' per TASSEL version; subsequent package loads use the cached JARs
+#' automatically.
+#'
+#' Releases come from Maven Central by default. The standalone archives on
+#' the TASSEL GitHub releases page can be used instead, which is the only
+#' way to obtain a nightly build.
+#'
+#' @param version
+#' Which TASSEL release to install. For \code{source = "maven"}, a version
+#' string, defaulting to the version pinned by this release of rTASSEL. For
+#' \code{source = "github"}, either \code{"nightly"} (the newest nightly
+#' build, the default), \code{"latest"} (the newest tagged release), a
+#' release tag such as \code{"dev-20260801"}, or a nightly version such as
+#' \code{"5.2.98-dev.20260801"}.
+#' @param force
+#' If \code{TRUE}, discard any cached copy and re-download.
+#' Defaults to \code{FALSE}.
+#' @param source
+#' Where to download from: \code{"maven"} for Maven Central (the default)
+#' or \code{"github"} for a standalone archive from the TASSEL releases
+#' page.
+#'
+#' @details
+#' Maven Central publishes TASSEL in one of two layouts, and the
+#' appropriate one is detected automatically:
+#'
+#' \describe{
+#'   \item{Fat JAR}{Releases up to 5.2.96 ship a single
+#'     \code{jar-with-dependencies} archive containing every dependency.}
+#'   \item{Thin JAR}{Later releases ship only TASSEL's own classes, so its
+#'     dependencies are resolved from the POM and downloaded alongside it.
+#'     This pulls artifacts from Maven Central, SciJava, and JBoss, since
+#'     no single repository serves the whole graph.}
+#' }
+#'
+#' GitHub standalone archives bundle \code{sTASSEL.jar} together with every
+#' dependency, so no resolution is needed. Nightly builds are cut from the
+#' \code{develop} branch and are only published there; they are unstable by
+#' construction and are best pinned to an exact version once a session
+#' depends on one.
+#'
+#' Files are cached under the standard R user cache directory
+#' (see \code{\link[tools]{R_user_dir}}) at
+#' \code{~/.cache/R/rTASSEL/java/<version>/} (Linux),
+#' \code{~/Library/Caches/org.R-project.R/R/rTASSEL/java/<version>/} (macOS),
+#' or the equivalent on Windows. Nightly builds live beside released
+#' versions under their full version, as in
+#' \code{java/5.2.98-dev.20260801/}, so both can be installed at once and
+#' switched between with \code{options(rTASSEL.tassel.version = ...)}.
+#'
+#' Every download is verified against its published checksum: SHA-1 for
+#' Maven artifacts and SHA-256 for GitHub assets.
+#'
+#' On success the version is recorded as active, so the next
+#' \code{library(rTASSEL)} loads it.
+#'
+#' @return The path to the JAR cache directory (invisibly).
+#'
+#' @examples
+#' \dontrun{
+#' ## Download the default TASSEL version
+#' setupTASSEL()
+#'
+#' ## Install a specific version
+#' setupTASSEL(version = "5.2.96")
+#'
+#' ## Force re-download
+#' setupTASSEL(force = TRUE)
+#'
+#' ## Install the newest nightly build from GitHub
+#' setupTASSEL(source = "github")
+#'
+#' ## Pin a specific nightly build
+#' setupTASSEL(version = "5.2.98-dev.20260801", source = "github")
+#' }
+#'
+#' @export
+setupTASSEL <- function(
+    version = NULL,
+    force   = FALSE,
+    source  = c("maven", "github")
+) {
+    source <- match.arg(source)
+
+    # GitHub releases are named by tag or channel, so the version a spec
+    # resolves to is only known once the release has been looked up.
+    release <- NULL
+
+    if (identical(source, "github")) {
+        release <- resolveGitHubRelease(
+            if (is.null(version)) "nightly" else as.character(version)
+        )
+        version <- release$version
+    } else {
+        version <- as.character(
+            if (is.null(version)) TASSEL_MAVEN$VERSION else version
+        )
+    }
+
+    jarDir    <- getTASSELCacheDir(version)
+    forceCall <- if (identical(source, "github")) {
+        "setupTASSEL(source = \"github\", force = TRUE)"
+    } else {
+        "setupTASSEL(force = TRUE)"
+    }
+
+    if (!is.null(getTASSELJarPath(version)) && !force) {
+        cli::cli_alert_info("TASSEL {version} JARs already cached at {.path {jarDir}}")
+        cli::cli_alert_info("Use {.code {forceCall}} to re-download")
+        setActiveTASSELVersion(version)
+        return(invisible(jarDir))
+    }
+
+    # A forced re-install must not leave dependency JARs from a previous
+    # attempt behind, since they would stay on the classpath.
+    if (force && dir.exists(jarDir)) {
+        unlink(jarDir, recursive = TRUE)
+    }
+
+    dir.create(jarDir, recursive = TRUE, showWarnings = FALSE)
+
+    if (is.null(release)) {
+        installTASSELFromMaven(version, jarDir)
+    } else {
+        installGitHubStandalone(release, jarDir)
+    }
+
+    recordInstallSource(version, source)
     setActiveTASSELVersion(version)
 
     cli::cli_alert_success("TASSEL {version} cached at {.path {jarDir}}")

@@ -31,20 +31,44 @@
                 "i" = "Run {.run rTASSEL::setupTASSEL()} to download from Maven Central"
             ))
         } else {
-            tasselVersion <- getLoadedTASSELVersion()
+            activeVersion <- getActiveTASSELVersion()
+
+            # JARs from a user-supplied path need not match anything rTASSEL
+            # recorded, so the recorded version says nothing about them.
+            onNightly <- !identical(resolved$source, "option") &&
+                isNightlyVersion(activeVersion)
+
+            # A nightly reports only its release version to the JVM, so the
+            # recorded version is the only place its build date survives.
+            tasselVersion <- if (onNightly) {
+                activeVersion
+            } else {
+                getLoadedTASSELVersion()
+            }
 
             cli::cli_bullets(c(
                 "i" = "Running TASSEL version {.val {tasselVersion}} ({.field {resolved$source}})",
                 "i" = "Consider starting a TASSEL log file (see {.help [startLogger()](rTASSEL::startLogger)})"
             ))
 
-            update <- checkForTASSELUpdate()
+            if (onNightly) {
+                update <- checkForTASSELUpdate(channel = "nightly")
 
-            if (!is.null(update) && isNewerVersion(update$latest, tasselVersion)) {
-                cli::cli_bullets(c(
-                    "!" = "TASSEL {.val {update$latest}} is available on Maven Central",
-                    "i" = "Run {.run rTASSEL::setupTASSEL(version = \"{update$latest}\")} to update"
-                ))
+                if (!is.null(update) && isNewerNightly(update$latest, tasselVersion)) {
+                    cli::cli_bullets(c(
+                        "!" = "A newer nightly build {.val {update$latest}} is available on GitHub",
+                        "i" = "Run {.run rTASSEL::setupTASSEL(source = \"github\")} to update"
+                    ))
+                }
+            } else {
+                update <- checkForTASSELUpdate()
+
+                if (!is.null(update) && isNewerVersion(update$latest, tasselVersion)) {
+                    cli::cli_bullets(c(
+                        "!" = "TASSEL {.val {update$latest}} is available on Maven Central",
+                        "i" = "Run {.run rTASSEL::setupTASSEL(version = \"{update$latest}\")} to update"
+                    ))
+                }
             }
         }
     })

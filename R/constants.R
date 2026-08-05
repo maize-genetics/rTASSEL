@@ -62,6 +62,29 @@ TASSEL_MAVEN <- list(
 
 
 ## ----
+# TASSEL GitHub Release Constants
+#
+# @description
+# Constants for installing TASSEL from the standalone archives published on
+# the TASSEL GitHub releases page. Nightly builds are only published there,
+# so this is the only route to a bleeding-edge TASSEL.
+#
+# Each archive unpacks to a flat directory holding 'sTASSEL.jar' alongside a
+# 'lib' directory of dependency JARs.
+TASSEL_GITHUB <- list(
+    "API_BASE"     = "https://api.github.com",
+    "REPO"         = "maize-genetics/tassel",
+    "ASSET_PREFIX" = "tassel-5-standalone-v",
+    "ASSET_EXT"    = ".tar.gz",
+    "MAIN_JAR"     = "sTASSEL.jar",
+    "LIB_DIR"      = "lib",
+    "PER_PAGE"     = 30L,
+    "CACHE_FILE"   = "nightly-check.rds",
+    "TIMEOUT_SECS" = 10L
+)
+
+
+## ----
 # TASSEL Update Check Constants
 #
 # @description
