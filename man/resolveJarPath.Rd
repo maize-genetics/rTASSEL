@@ -14,7 +14,8 @@ resolveJarPath(pkgname = "rTASSEL", libname = NULL)
 \value{
 A list with elements \code{path} (character or \code{NULL}) and
   \code{source} (\code{"option"}, \code{"maven cache"},
-  \code{"bundled"}, or \code{NULL}).
+  \code{"nightly build"}, \code{"github release"}, \code{"bundled"}, or
+  \code{NULL}).
 }
 \description{
 Resolves the JAR path in priority order:

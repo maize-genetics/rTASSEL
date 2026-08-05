@@ -4,11 +4,10 @@
 \alias{getTASSELJarPath}
 \title{Get path to cached TASSEL JAR files}
 \usage{
-getTASSELJarPath(version = TASSEL_MAVEN$VERSION)
+getTASSELJarPath(version = getActiveTASSELVersion())
 }
 \arguments{
-\item{version}{TASSEL version string. Defaults to the version bundled with this
-release of rTASSEL.}
+\item{version}{TASSEL version string. Defaults to the currently active version.}
 }
 \value{
 A character string path to the JAR cache directory, or
@@ -18,5 +17,9 @@ A character string path to the JAR cache directory, or
 Returns the file path to the cached TASSEL JAR directory, or \code{NULL}
 if no cached JARs are found. JARs are cached per-version in the
 standard R user cache directory.
+
+Every packaging layout is recognised: a single fat JAR, a thin JAR
+accompanied by separately resolved dependency JARs, and the
+\code{sTASSEL.jar} of an unpacked GitHub standalone archive.
 }
 \keyword{internal}
