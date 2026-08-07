@@ -291,28 +291,28 @@ test_that("updateCheckEnabled is FALSE in non-interactive sessions", {
 })
 
 test_that("updateCheckEnabled honours the opt-out option", {
-    local_mocked_bindings(interactive = function() TRUE, .package = "base")
+    rlang::local_interactive(TRUE)
     withr::local_options(rTASSEL.check.updates = FALSE)
 
     expect_false(updateCheckEnabled())
 })
 
 test_that("updateCheckEnabled honours the opt-out environment variable", {
-    local_mocked_bindings(interactive = function() TRUE, .package = "base")
+    rlang::local_interactive(TRUE)
     withr::local_envvar(RTASSEL_NO_VERSION_CHECK = "true", CI = "")
 
     expect_false(updateCheckEnabled())
 })
 
 test_that("updateCheckEnabled is FALSE on continuous integration", {
-    local_mocked_bindings(interactive = function() TRUE, .package = "base")
+    rlang::local_interactive(TRUE)
     withr::local_envvar(RTASSEL_NO_VERSION_CHECK = "", CI = "true")
 
     expect_false(updateCheckEnabled())
 })
 
 test_that("updateCheckEnabled is TRUE in an interactive session with no opt-outs", {
-    local_mocked_bindings(interactive = function() TRUE, .package = "base")
+    rlang::local_interactive(TRUE)
     withr::local_options(rTASSEL.check.updates = TRUE)
 
     # R CMD check exports its own settings as environment variables, which

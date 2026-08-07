@@ -293,7 +293,7 @@ updateCheckEnabled <- function() {
     if (nzchar(Sys.getenv("RTASSEL_NO_VERSION_CHECK")))                return(FALSE)
     if (nzchar(Sys.getenv("CI")))                                      return(FALSE)
     if (any(grepl("^_R_CHECK_", names(Sys.getenv()))))                 return(FALSE)
-    if (!interactive())                                                return(FALSE)
+    if (!rlang::is_interactive())                                      return(FALSE)
 
     TRUE
 }
