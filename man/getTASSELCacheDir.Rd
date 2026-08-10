@@ -4,7 +4,7 @@
 \alias{getTASSELCacheDir}
 \title{Get the local cache directory for TASSEL JARs}
 \usage{
-getTASSELCacheDir(version = TASSEL_MAVEN$VERSION)
+getTASSELCacheDir(version = getActiveTASSELVersion())
 }
 \arguments{
 \item{version}{TASSEL version string.}

@@ -1,6 +1,6 @@
 Package: rTASSEL
-Version: 0.12.0
-Date: 2025-04-23
+Version: 0.13.0
+Date: 2026-07-28
 Title: R Front-End for TASSEL
 Authors@R: c(
     person(
@@ -44,9 +44,11 @@ Imports:
     ape,
     BiocGenerics,
     cli,
+    digest,
     GenomicRanges,
     ggplot2,
     IRanges,
+    jsonlite,
     methods,
     pillar,
     plotly,
@@ -58,7 +60,6 @@ Imports:
     vctrs
 Suggests:
     BiocStyle,
-    digest,
     knitr,
     magrittr,
     rmarkdown,
@@ -68,6 +69,6 @@ SystemRequirements: Java (>= 8.0)
 Encoding: UTF-8
 LazyData: true
 VignetteBuilder: knitr
-RoxygenNote: 7.3.3
 biocViews:
     GenomeWideAssociation
+Config/roxygen2/version: 8.1.0

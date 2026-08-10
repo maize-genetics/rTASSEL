@@ -112,6 +112,12 @@ and cached locally on your machine. This approach greatly reduces the
 package size and makes it easier to update TASSEL independently of the R
 package.
 
+Released versions come from Maven Central by default. If you want changes
+that have not been released yet, the standalone archives on the
+[TASSEL releases page](https://github.com/maize-genetics/tassel/releases)
+can be installed instead - see
+[Installing nightly builds](#installing-nightly-builds).
+
 ## One-time setup
 After installing `rTASSEL`, you must run `setupTASSEL()` **once** to
 download and cache the required JAR files:
@@ -122,7 +128,7 @@ setupTASSEL()
 
 This will:
 
-1. Download the TASSEL fat JAR (~70 MB) from Maven Central
+1. Download TASSEL (~70 MB) from Maven Central
 2. Verify the file integrity via a SHA-1 checksum
 3. Cache it under the standard R user cache directory:
    - **Linux**: `~/.cache/R/rTASSEL/java/<version>/`
@@ -132,9 +138,106 @@ This will:
 Subsequent calls to `library(rTASSEL)` will automatically detect and use
 the cached JARs - no re-download is needed.
 
-## Re-downloading or updating
+TASSEL is published in two different layouts, and `setupTASSEL()` detects
+which one applies. Releases up to 5.2.96 ship a single "fat" JAR that
+already contains every dependency. Later releases ship only TASSEL's own
+classes, so `rTASSEL` reads the published POM, resolves the full
+dependency tree, and downloads those JARs alongside it. Because no single
+repository serves the whole tree, dependencies are fetched from Maven
+Central, [SciJava](https://maven.scijava.org), and
+[JBoss](https://repository.jboss.org) - the same three repositories used
+by TASSEL's own build.
+
+## Installing nightly builds
+TASSEL also publishes standalone archives on its
+[GitHub releases page](https://github.com/maize-genetics/tassel/releases),
+including a **nightly build** cut from the `develop` branch. These are the
+only way to get changes that have not yet been released to Maven Central.
+To install the newest one:
+
+```{r, eval=FALSE, echo=TRUE}
+setupTASSEL(source = "github")
+```
+
+Nightly builds are unstable by construction, so once your work depends on
+one it is worth pinning the exact build rather than tracking whatever is
+newest:
+
+```{r, eval=FALSE, echo=TRUE}
+setupTASSEL(version = "5.2.98-dev.20260801", source = "github")
+```
+
+The same `source` also installs the standalone archive of a tagged
+release, either by name or by tag:
+
+```{r, eval=FALSE, echo=TRUE}
+setupTASSEL(version = "latest", source = "github")
+setupTASSEL(version = "v5.2.97", source = "github")
+```
+
+These archives bundle `sTASSEL.jar` together with every dependency, so no
+dependency resolution is needed, and each download is verified against the
+SHA-256 checksum GitHub publishes for it. Nightly builds are cached beside
+released versions under their full version, as in
+`java/5.2.98-dev.20260801/`, so a nightly and a release can be installed
+at the same time and switched between with
+`options(rTASSEL.tassel.version = ...)`.
+
+If you hit a GitHub rate limit while looking up releases, set
+`GITHUB_PAT` (or `GITHUB_TOKEN`) in your environment and the lookup will
+use it.
+
+## Checking for new TASSEL versions
+When `rTASSEL` is attached in an interactive session, it checks Maven
+Central at most once per day for a newer TASSEL release and notes it in
+the startup message. A version is only reported once `rTASSEL` has
+confirmed it can actually be installed, so a partial or broken upload
+upstream will not prompt you to upgrade to something unusable.
+
+If you are running a nightly build, the daily check looks for a newer
+nightly build on GitHub instead, so a nightly install is never nagged to
+"upgrade" to an older release.
+
+You can run the check yourself at any time:
+
+```{r, eval=FALSE, echo=TRUE}
+checkForTASSELUpdate(force = TRUE)
+```
+
+Or query the nightly channel explicitly:
+
+```{r, eval=FALSE, echo=TRUE}
+checkForTASSELUpdate(channel = "nightly")
+```
+
+To turn the automatic check off, use either of:
+
+```{r, eval=FALSE, echo=TRUE}
+options(rTASSEL.check.updates = FALSE)
+Sys.setenv(RTASSEL_NO_VERSION_CHECK = "true")
+```
+
+The check never runs in non-interactive sessions, during `R CMD check`, or
+on continuous integration, and a network failure is silently ignored.
+
+## Updating or re-downloading
+To move to a newer TASSEL release, pass its version:
+
+```{r, eval=FALSE, echo=TRUE}
+setupTASSEL(version = "5.2.96")
+```
+
+The version you install last is recorded as the active one, so the next
+`library(rTASSEL)` picks it up. To pin a specific cached version instead,
+set an option before loading the package:
+
+```{r, eval=FALSE, echo=TRUE}
+options(rTASSEL.tassel.version = "5.2.96")
+library(rTASSEL)
+```
+
 If you need to re-download the JARs (e.g. a corrupted cache), use the
-`force` parameter:
+`force` parameter, which clears the cached copy first:
 
 ```{r, eval=FALSE, echo=TRUE}
 setupTASSEL(force = TRUE)
@@ -157,12 +260,19 @@ When `rTASSEL` is loaded, the TASSEL JARs are resolved in the following
 priority order:
 
 1. **User-defined path** via `options(rTASSEL.java.path = ...)`
-2. **Maven cache** (from `setupTASSEL()`)
+2. **Local cache** (from `setupTASSEL()`, whether from Maven Central or
+   GitHub)
 3. **Bundled `inst/java/`** (legacy fallback for older installations)
 
 If no JARs are found from any source, `rTASSEL` will load without
 initializing the JVM and display a message prompting you to run
 `setupTASSEL()`.
+
+Which version the cache resolves to is determined, in order, by
+`options(rTASSEL.tassel.version = ...)`, the version recorded by your most
+recent `setupTASSEL()` call, and finally the version pinned by this
+release of `rTASSEL`. The startup message names where the JARs came from,
+so a nightly install is easy to tell apart from a released one.
 
 
 # Loading `rTASSEL`

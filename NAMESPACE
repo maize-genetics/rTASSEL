@@ -13,6 +13,7 @@ export(asTasselDistanceMatrix)
 export(assocModelFitter)
 export(associationType)
 export(attributeData)
+export(checkForTASSELUpdate)
 export(concatenate)
 export(createTree)
 export(distanceMatrix)
@@ -84,37 +85,49 @@ exportMethods(reportNames)
 exportMethods(rownames)
 exportMethods(tableReport)
 exportMethods(traitNames)
-importFrom(BiocGenerics,colnames)
-importFrom(BiocGenerics,ncol)
-importFrom(BiocGenerics,nrow)
-importFrom(BiocGenerics,rownames)
-importFrom(GenomicRanges,end)
-importFrom(GenomicRanges,seqnames)
-importFrom(GenomicRanges,start)
+importFrom(BiocGenerics,
+  colnames,
+  ncol,
+  nrow,
+  rownames
+)
+importFrom(GenomicRanges,
+  end,
+  seqnames,
+  start
+)
 importFrom(S4Vectors,DataFrame)
 importFrom(SummarizedExperiment,SummarizedExperiment)
 importFrom(ape,read.tree)
-importFrom(grDevices,col2rgb)
-importFrom(grDevices,rgb)
-importFrom(methods,is)
-importFrom(methods,new)
-importFrom(methods,slot)
-importFrom(methods,validObject)
-importFrom(pillar,pillar_shaft)
-importFrom(pillar,tbl_format_footer)
-importFrom(pillar,tbl_format_header)
-importFrom(rJava,"%instanceof%")
-importFrom(rJava,.jarray)
-importFrom(rJava,.jcall)
-importFrom(rJava,.jchar)
-importFrom(rJava,.jevalArray)
-importFrom(rJava,.jinstanceof)
-importFrom(rJava,.jnew)
-importFrom(rJava,.jnull)
-importFrom(rJava,.jrcall)
-importFrom(rJava,.jstrVal)
-importFrom(rJava,J)
-importFrom(rJava,is.jnull)
-importFrom(rJava,new)
+importFrom(grDevices,
+  col2rgb,
+  rgb
+)
+importFrom(methods,
+  is,
+  new,
+  slot,
+  validObject
+)
+importFrom(pillar,
+  pillar_shaft,
+  tbl_format_footer,
+  tbl_format_header
+)
+importFrom(rJava,
+  "%instanceof%",
+  .jarray,
+  .jcall,
+  .jchar,
+  .jevalArray,
+  .jinstanceof,
+  .jnew,
+  .jnull,
+  .jrcall,
+  .jstrVal,
+  J,
+  is.jnull,
+  new
+)
 importFrom(rlang,.data)
 importFrom(utils,head)

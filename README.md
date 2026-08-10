@@ -22,7 +22,7 @@ To cite `rTASSEL`, please use the following citation:
 ### Stable release
 ```r
 # install.packages("pak")
-pak::pak("maize-genetics/rTASSEL@v0.12.0")
+pak::pak("maize-genetics/rTASSEL@v0.13.0")
 ```
 
 ### Developmental version
