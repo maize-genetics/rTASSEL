@@ -2,7 +2,7 @@
 FROM rocker/tidyverse:4.5
 
 # rTASSEL Git tag (e.g. v0.12.0); pass with docker build --build-arg RTASSEL_TAG=...
-ARG RTASSEL_TAG=v0.12.0
+ARG RTASSEL_TAG=v0.13.0
 
 # Install system libraries for Java, rJava, Git, and XML/SSL support
 RUN apt-get update && \
