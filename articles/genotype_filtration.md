@@ -6,29 +6,29 @@
 
 In this vignette, we will discuss how you can filter genotype tables in
 `rTASSEL`. As a reminder, a genotype table in TASSEL is essentially an
-$n \times p$ matrix consisting of $n$ samples or taxa with $p$ genotypic
-observations. To illustrate this, see the diagram below:
+$`n \times p`$ matrix consisting of $`n`$ samples or taxa with $`p`$
+genotypic observations. To illustrate this, see the diagram below:
 
 ![](../reference/figures/genotype_table_diagram.png)
 
 In this illustration, sequence information is processed for variant
 sites of each parental copy. Variant data is partitioned into an
-$n \times p$ matrix for each sample and relevant variant marker
+$`n \times p`$ matrix for each sample and relevant variant marker
 information (e.g. `0:2`). This includes:
 
 - The TASSEL index for each variant site (`<this value> :`)
   - *Note:* since TASSEL is coded in Java, this value will start at 0!
 - The physical position (bp) for each variant site (`: <this value>`)
 
-Genotype information (e.g. each $n \times p$ element) can be viewed in
+Genotype information (e.g. each $`n \times p`$ element) can be viewed in
 several ways. The default view (as shown above) reflects the following:
 
-| Cell Type     | Definition                                          | Color      |
-|---------------|-----------------------------------------------------|------------|
-| Major alleles | The most frequently observed allele of each column  | Yellow     |
-| Minor alleles | The least frequently observed allele of each column | Blue       |
-| Heterozygous  | Sites where parental copies differ (e.g. `C:G`)     | Green      |
-| Unknown       | Sites where no information is given (e.g. `NA`s)    | Grey/White |
+| Cell Type | Definition | Color |
+|----|----|----|
+| Major alleles | The most frequently observed allele of each column | Yellow |
+| Minor alleles | The least frequently observed allele of each column | Blue |
+| Heterozygous | Sites where parental copies differ (e.g. `C:G`) | Green |
+| Unknown | Sites where no information is given (e.g. `NA`s) | Grey/White |
 
 ### Filtering basics
 
@@ -92,6 +92,7 @@ Let’s assume we have an `rTASSEL` data object that contains a genotype
 table:
 
 ``` r
+
 myGT
 ```
 
@@ -120,6 +121,7 @@ If we want to filter by minor allele frequency, we can use the following
 parameters…
 
 ``` r
+
 myGT |> 
     filterGenotypeTableSites(
         siteMinAlleleFreq = 0.3,
@@ -135,6 +137,7 @@ We can also set a range using a limit with the `siteMaxAlleleFreq`
 parameter…
 
 ``` r
+
 myGT |> 
     filterGenotypeTableSites(
         siteMinAlleleFreq = 0.2,
@@ -153,6 +156,7 @@ Similar to how we calculated frequency of minor alleles, we can apply
 the same logic with missing data with the `siteMinCount` parameter:
 
 ``` r
+
 myGT |> 
     filterGenotypeTableSites(
         siteMinCount = 5
@@ -171,9 +175,10 @@ variant marker site:
 Similar to the prior two sections, we can filter by calculated frequency
 of heterozygous sites using the parameters, `minHeterozygous` and
 `maxHeterozygous`. For example, if we wanted to filter sites containing
-$>$ 10% heterozygous sites, we could use the following:
+$`>`$ 10% heterozygous sites, we could use the following:
 
 ``` r
+
 myGT |> 
     filterGenotypeTableSites(
         minHeterozygous = 0.0,
@@ -201,6 +206,7 @@ parameter to `sites`. Next, we will be able to use the parameters,
 `startSite` and `endSite`:
 
 ``` r
+
 myGT |> 
     filterGenotypeTableSites(
         siteRangeFilterType = "sites",
@@ -230,6 +236,7 @@ within each chromosome sequence. For example, if we wanted to filter
 just chromosome 1, we can specify the following parameters:
 
 ``` r
+
 myGT |> 
     filterGenotypeTableSites(
         siteRangeFilterType = "position",
@@ -246,6 +253,7 @@ If we want to be more specific in our filtering, we can include
 positional information as well:
 
 ``` r
+
 myGT |> 
     filterGenotypeTableSites(
         siteRangeFilterType = "position",
@@ -281,6 +289,7 @@ For our example, we will represent a `GRanges` object as the variable
 `gr`:
 
 ``` r
+
 gr
 ```
 
@@ -298,6 +307,7 @@ object into our `gRangesObj` parameters and setting
 `siteRangeRilterType` to `"none"`:
 
 ``` r
+
 myGT |> 
     filterGenotypeTableSites(
         siteRangeFilterType = "none",
@@ -331,6 +341,7 @@ This external file can be passed to our filtration method by setting
 on disk in the `bedFile` parameter:
 
 ``` r
+
 myGT |> 
     filterGenotypeTableSites(
         siteRangeFilterType = "none",
@@ -367,6 +378,7 @@ This external file can be passed to our filtration method by setting
 on disk in the `chrPosFile` parameter:
 
 ``` r
+
 myGT |> 
     filterGenotypeTableSites(
         siteRangeFilterType = "none",
@@ -383,9 +395,9 @@ This will also filter our genotype table as previously shown in
 
 ### Overview
 
-In the prior sections we have discussed how to filter $p$ observations
+In the prior sections we have discussed how to filter $`p`$ observations
 (i.e.  columns). In the following sections, we will illustrate ways to
-filter $n$ rows. In order to filter by variant sites (e.g. marker
+filter $`n`$ rows. In order to filter by variant sites (e.g. marker
 information), we can use the function
 [`filterGenotypeTableTaxa()`](https://rtassel.maizegenetics.net/reference/filterGenotypeTableTaxa.md).
 This function was modeled after TASSEL’s `FilterTaxaBuilder` plugin to
@@ -416,6 +428,7 @@ frequency of minor alleles, we can apply the same logic with missing
 data with the `minNotMissing` parameter:
 
 ``` r
+
 myGT |> 
     filterGenotypeTableTaxa(
         minNotMissing = 1.0
@@ -437,6 +450,7 @@ example, if we wanted to filter all taxa that contain at least one
 heterozygous site, we could employ the following parameters:
 
 ``` r
+
 myGT |> 
     filterGenotypeTableTaxa(
         minHeterozygous = 0.0,
@@ -455,6 +469,7 @@ Filtering select taxa IDs can be achieved by passing an atomic vector of
 select the following IDs:
 
 ``` r
+
 myFavTaxa
 ```
 
@@ -463,6 +478,7 @@ myFavTaxa
 This vector can passed to the following argument:
 
 ``` r
+
 myGT |> 
     filterGenotypeTableTaxa(
         taxa = myFavTaxa
@@ -478,6 +494,7 @@ This vector logic can applied to various types of subsetting methods in
 R. For example, if we had all of the taxa represented in one vector:
 
 ``` r
+
 allTaxa
 ```
 
@@ -489,6 +506,7 @@ method is using the `str_subset` method from the `stringr`
 pipe operator `|>`:
 
 ``` r
+
 myGT |> 
     filterGenotypeTableTaxa(
         taxa = allTaxa |> str_subset("^B|^Ky")
@@ -520,6 +538,7 @@ Let’s (1) select taxa IDs that start with the letter “B” or “K” *and*
 elements shown below:
 
 ``` r
+
 myGT |>
     filterGenotypeTableTaxa(
         taxa = allTaxa |> str_subset("^B|^Ky")
@@ -541,6 +560,7 @@ or “K”, (2) select indexed TASSEL marker sites 1 through 3, *and* (3)
 export to a VCF flat file:
 
 ``` r
+
 myGT |>
     filterGenotypeTableTaxa(
         taxa = allTaxa |> str_subset("^B|^Ky")

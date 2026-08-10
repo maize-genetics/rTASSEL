@@ -12,8 +12,8 @@
 <link rel="icon" sizes="any" href="../favicon.ico">
 <link rel="manifest" href="../site.webmanifest">
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/Barlow-0.4.10/font.css" rel="stylesheet">
+<link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/Barlow-0.4.10/font.css" rel="stylesheet">
 <link href="../deps/Roboto_Mono-0.4.10/font.css" rel="stylesheet">
 <link href="../deps/Oswald-0.4.10/font.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
@@ -29,7 +29,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">rTASSEL</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.12.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.13.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -71,7 +71,7 @@
                         <h4 data-toc-skip class="author">Brandon
 Monier</h4>
             
-            <h4 data-toc-skip class="date">2026-04-01</h4>
+            <h4 data-toc-skip class="date">2026-08-10</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/maize-genetics/rTASSEL/blob/master/vignettes/rtassel_installation.Rmd" class="external-link"><code>vignettes/rtassel_installation.Rmd</code></a></small>
       <div class="d-none name"><code>rtassel_installation.Rmd</code></div>
@@ -156,6 +156,10 @@ downloaded from <a href="https://mvnrepository.com/artifact/net.maizegenetics/ta
 Central</a> and cached locally on your machine. This approach greatly
 reduces the package size and makes it easier to update TASSEL
 independently of the R package.</p>
+<p>Released versions come from Maven Central by default. If you want
+changes that have not been released yet, the standalone archives on the
+<a href="https://github.com/maize-genetics/tassel/releases" class="external-link">TASSEL
+releases page</a> can be installed instead - see <a href="#installing-nightly-builds">Installing nightly builds</a>.</p>
 </div>
 <div class="section level3">
 <h3 id="one-time-setup">One-time setup<a class="anchor" aria-label="anchor" href="#one-time-setup"></a>
@@ -167,7 +171,7 @@ the required JAR files:</p>
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/setupTASSEL.html">setupTASSEL</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p>This will:</p>
 <ol style="list-style-type: decimal">
-<li>Download the TASSEL fat JAR (~70 MB) from Maven Central</li>
+<li>Download TASSEL (~70 MB) from Maven Central</li>
 <li>Verify the file integrity via a SHA-1 checksum</li>
 <li>Cache it under the standard R user cache directory:
 <ul>
@@ -188,13 +192,87 @@ the required JAR files:</p>
 </ol>
 <p>Subsequent calls to <code><a href="https://github.com/maize-genetics/rTASSEL" class="external-link">library(rTASSEL)</a></code> will automatically
 detect and use the cached JARs - no re-download is needed.</p>
+<p>TASSEL is published in two different layouts, and
+<code><a href="../reference/setupTASSEL.html">setupTASSEL()</a></code> detects which one applies. Releases up to
+5.2.96 ship a single “fat” JAR that already contains every dependency.
+Later releases ship only TASSEL’s own classes, so <code>rTASSEL</code>
+reads the published POM, resolves the full dependency tree, and
+downloads those JARs alongside it. Because no single repository serves
+the whole tree, dependencies are fetched from Maven Central, <a href="https://maven.scijava.org" class="external-link">SciJava</a>, and <a href="https://repository.jboss.org" class="external-link">JBoss</a> - the same three
+repositories used by TASSEL’s own build.</p>
 </div>
 <div class="section level3">
-<h3 id="re-downloading-or-updating">Re-downloading or updating<a class="anchor" aria-label="anchor" href="#re-downloading-or-updating"></a>
+<h3 id="installing-nightly-builds">Installing nightly builds<a class="anchor" aria-label="anchor" href="#installing-nightly-builds"></a>
 </h3>
-<p>If you need to re-download the JARs (e.g. a corrupted cache), use the
-<code>force</code> parameter:</p>
+<p>TASSEL also publishes standalone archives on its <a href="https://github.com/maize-genetics/tassel/releases" class="external-link">GitHub releases
+page</a>, including a <strong>nightly build</strong> cut from the
+<code>develop</code> branch. These are the only way to get changes that
+have not yet been released to Maven Central. To install the newest
+one:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/setupTASSEL.html">setupTASSEL</a></span><span class="op">(</span>source <span class="op">=</span> <span class="st">"github"</span><span class="op">)</span></span></code></pre></div>
+<p>Nightly builds are unstable by construction, so once your work
+depends on one it is worth pinning the exact build rather than tracking
+whatever is newest:</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/setupTASSEL.html">setupTASSEL</a></span><span class="op">(</span>version <span class="op">=</span> <span class="st">"5.2.98-dev.20260801"</span>, source <span class="op">=</span> <span class="st">"github"</span><span class="op">)</span></span></code></pre></div>
+<p>The same <code>source</code> also installs the standalone archive of
+a tagged release, either by name or by tag:</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/setupTASSEL.html">setupTASSEL</a></span><span class="op">(</span>version <span class="op">=</span> <span class="st">"latest"</span>, source <span class="op">=</span> <span class="st">"github"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/setupTASSEL.html">setupTASSEL</a></span><span class="op">(</span>version <span class="op">=</span> <span class="st">"v5.2.97"</span>, source <span class="op">=</span> <span class="st">"github"</span><span class="op">)</span></span></code></pre></div>
+<p>These archives bundle <code>sTASSEL.jar</code> together with every
+dependency, so no dependency resolution is needed, and each download is
+verified against the SHA-256 checksum GitHub publishes for it. Nightly
+builds are cached beside released versions under their full version, as
+in <code>java/5.2.98-dev.20260801/</code>, so a nightly and a release
+can be installed at the same time and switched between with
+<code>options(rTASSEL.tassel.version = ...)</code>.</p>
+<p>If you hit a GitHub rate limit while looking up releases, set
+<code>GITHUB_PAT</code> (or <code>GITHUB_TOKEN</code>) in your
+environment and the lookup will use it.</p>
+</div>
+<div class="section level3">
+<h3 id="checking-for-new-tassel-versions">Checking for new TASSEL versions<a class="anchor" aria-label="anchor" href="#checking-for-new-tassel-versions"></a>
+</h3>
+<p>When <code>rTASSEL</code> is attached in an interactive session, it
+checks Maven Central at most once per day for a newer TASSEL release and
+notes it in the startup message. A version is only reported once
+<code>rTASSEL</code> has confirmed it can actually be installed, so a
+partial or broken upload upstream will not prompt you to upgrade to
+something unusable.</p>
+<p>If you are running a nightly build, the daily check looks for a newer
+nightly build on GitHub instead, so a nightly install is never nagged to
+“upgrade” to an older release.</p>
+<p>You can run the check yourself at any time:</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/checkForTASSELUpdate.html">checkForTASSELUpdate</a></span><span class="op">(</span>force <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<p>Or query the nightly channel explicitly:</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/checkForTASSELUpdate.html">checkForTASSELUpdate</a></span><span class="op">(</span>channel <span class="op">=</span> <span class="st">"nightly"</span><span class="op">)</span></span></code></pre></div>
+<p>To turn the automatic check off, use either of:</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>rTASSEL.check.updates <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Sys.setenv.html" class="external-link">Sys.setenv</a></span><span class="op">(</span>RTASSEL_NO_VERSION_CHECK <span class="op">=</span> <span class="st">"true"</span><span class="op">)</span></span></code></pre></div>
+<p>The check never runs in non-interactive sessions, during
+<code>R CMD check</code>, or on continuous integration, and a network
+failure is silently ignored.</p>
+</div>
+<div class="section level3">
+<h3 id="updating-or-re-downloading">Updating or re-downloading<a class="anchor" aria-label="anchor" href="#updating-or-re-downloading"></a>
+</h3>
+<p>To move to a newer TASSEL release, pass its version:</p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/setupTASSEL.html">setupTASSEL</a></span><span class="op">(</span>version <span class="op">=</span> <span class="st">"5.2.96"</span><span class="op">)</span></span></code></pre></div>
+<p>The version you install last is recorded as the active one, so the
+next <code><a href="https://github.com/maize-genetics/rTASSEL" class="external-link">library(rTASSEL)</a></code> picks it up. To pin a specific cached
+version instead, set an option before loading the package:</p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>rTASSEL.tassel.version <span class="op">=</span> <span class="st">"5.2.96"</span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/maize-genetics/rTASSEL" class="external-link">rTASSEL</a></span><span class="op">)</span></span></code></pre></div>
+<p>If you need to re-download the JARs (e.g. a corrupted cache), use the
+<code>force</code> parameter, which clears the cached copy first:</p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/setupTASSEL.html">setupTASSEL</a></span><span class="op">(</span>force <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
@@ -203,7 +281,7 @@ detect and use the cached JARs - no re-download is needed.</p>
 <p>Advanced users who maintain their own TASSEL builds can bypass the
 Maven cache entirely by setting an R option <strong>before</strong>
 loading <code>rTASSEL</code>:</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>rTASSEL.java.path <span class="op">=</span> <span class="st">"/path/to/my/tassel/jars"</span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/maize-genetics/rTASSEL" class="external-link">rTASSEL</a></span><span class="op">)</span></span></code></pre></div>
 <p>When this option is set, <code>rTASSEL</code> will load JARs from the
@@ -220,7 +298,8 @@ the following priority order:</p>
 <code>options(rTASSEL.java.path = ...)</code>
 </li>
 <li>
-<strong>Maven cache</strong> (from <code><a href="../reference/setupTASSEL.html">setupTASSEL()</a></code>)</li>
+<strong>Local cache</strong> (from <code><a href="../reference/setupTASSEL.html">setupTASSEL()</a></code>,
+whether from Maven Central or GitHub)</li>
 <li>
 <strong>Bundled <code>inst/java/</code></strong> (legacy fallback
 for older installations)</li>
@@ -228,6 +307,12 @@ for older installations)</li>
 <p>If no JARs are found from any source, <code>rTASSEL</code> will load
 without initializing the JVM and display a message prompting you to run
 <code><a href="../reference/setupTASSEL.html">setupTASSEL()</a></code>.</p>
+<p>Which version the cache resolves to is determined, in order, by
+<code>options(rTASSEL.tassel.version = ...)</code>, the version recorded
+by your most recent <code><a href="../reference/setupTASSEL.html">setupTASSEL()</a></code> call, and finally the
+version pinned by this release of <code>rTASSEL</code>. The startup
+message names where the JARs came from, so a nightly install is easy to
+tell apart from a released one.</p>
 </div>
 </div>
 <div class="section level2">
@@ -235,9 +320,9 @@ without initializing the JVM and display a message prompting you to run
 </h2>
 <p>After installation and the one-time <code><a href="../reference/setupTASSEL.html">setupTASSEL()</a></code> step,
 the package can be loaded using:</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/maize-genetics/rTASSEL" class="external-link">rTASSEL</a></span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## ── <span style="font-weight: bold;">Welcome to rTASSEL (version </span><span style="color: #0000BB; font-weight: bold;">0.12.0</span><span style="font-weight: bold;">)</span> ──</span></span>
+<pre><code><span><span class="co">## ── <span style="font-weight: bold;">Welcome to rTASSEL (version </span><span style="color: #0000BB; font-weight: bold;">0.13.0</span><span style="font-weight: bold;">)</span> ──</span></span>
 <span><span class="co">## <span style="color: #00BBBB;">ℹ</span> Running TASSEL version <span style="color: #0000BB;">"5.2.96"</span> (<span style="color: #00BB00;">maven cache</span>)</span></span>
 <span><span class="co">## <span style="color: #00BBBB;">ℹ</span> Consider starting a TASSEL log file (see startLogger()</span></span>
 <span><span class="co">##   (`?rTASSEL::startLogger()`))</span></span></code></pre>
@@ -319,7 +404,7 @@ constraints.</p>
 data, it is adamant that you specify the memory allocated
 <em><strong>before</strong></em> loading the <code>rTASSEL</code>
 package via the <code><a href="https://rdrr.io/r/base/options.html" class="external-link">options()</a></code> function:</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Allocate 4 GB of memory to the JVM</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>java.parameters <span class="op">=</span> <span class="st">"-Xmx4g"</span><span class="op">)</span></span>
 <span></span>
@@ -360,7 +445,7 @@ startup. By default, <code>rJava</code> will allocate <strong>500 MB
 (0.5 GB)</strong> of memory to your session. At any time during your R
 session you can report the total memory allocated using a couple of
 <code>rJava</code> calls:</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Call Java Runtime class</span></span>
 <span><span class="va">runtime</span>  <span class="op">&lt;-</span> <span class="fu">rJava</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/rJava/man/jcall.html" class="external-link">.jcall</a></span><span class="op">(</span><span class="st">"java/lang/Runtime"</span>, <span class="st">"Ljava/lang/Runtime;"</span>, <span class="st">"getRuntime"</span><span class="op">)</span></span>
 <span></span>
@@ -413,7 +498,7 @@ installed for R</strong>, you might run into problems pulling code using
 the parameter <code>--no-multiarch</code> option in
 <code>INSTALL_opts</code>. This will force building the package for your
 currently running R version:</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span></span>
 <span>    repo <span class="op">=</span> <span class="st">"maize-genetics/rTASSEL"</span>,</span>
 <span>    ref <span class="op">=</span> <span class="st">"master"</span>,</span>
@@ -450,7 +535,7 @@ sudo ln -s $(/usr/libexec/java_home)/lib/server/libjvm.dylib /usr/local/lib</cod
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer>

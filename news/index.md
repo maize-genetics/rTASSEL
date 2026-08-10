@@ -1,5 +1,75 @@
 # Changelog
 
+## rTASSEL 0.13.0
+
+- Added installation of TASSEL from the standalone archives published on
+  GitHub, which is the only source of nightly builds:
+  - `setupTASSEL(source = "github")` installs the newest nightly build
+    cut from TASSEL’s `develop` branch
+  - A specific build can be pinned by version (`"5.2.98-dev.20260801"`)
+    or by release tag (`"dev-20260801"`), and tagged releases can be
+    installed the same way with `"latest"` or `"v5.2.97"`
+  - Archives bundle every dependency, so no dependency resolution is
+    needed, and each download is verified against its published SHA-256
+    checksum
+  - Nightly builds are cached beside released versions under their full
+    version, so both can be installed at once and switched between with
+    `options(rTASSEL.tassel.version = ...)`
+  - `GITHUB_PAT` or `GITHUB_TOKEN` is used for release lookups when set,
+    which avoids the anonymous GitHub rate limit
+- The startup message now names which channel the loaded JARs came from,
+  distinguishing a nightly build from a released version
+- Update checks follow the installed channel: a nightly install is
+  checked against the newest nightly build rather than Maven Central, so
+  it is never prompted to “upgrade” to an older release. The channel can
+  also be queried directly with
+  `checkForTASSELUpdate(channel = "nightly")`
+- Added automatic TASSEL update checks:
+  - [`library(rTASSEL)`](https://github.com/maize-genetics/rTASSEL) now
+    checks Maven Central for a newer TASSEL release and reports it in
+    the startup message
+  - The check runs at most once per day and caches its result on disk
+  - Only versions that rTASSEL can actually install are reported, so an
+    incomplete upload upstream will not prompt an unusable upgrade
+  - Skipped in non-interactive sessions, during `R CMD check`, and on
+    CI; network failures are ignored
+  - Disable with `options(rTASSEL.check.updates = FALSE)` or the
+    `RTASSEL_NO_VERSION_CHECK` environment variable
+- Added new function
+  [`checkForTASSELUpdate()`](https://rtassel.maizegenetics.net/reference/checkForTASSELUpdate.md)
+  to run the check on demand
+- Added Maven dependency resolution so
+  [`setupTASSEL()`](https://rtassel.maizegenetics.net/reference/setupTASSEL.md)
+  can install TASSEL releases published without a bundled dependency
+  JAR:
+  - Detects whether a release ships a fat JAR or a thin JAR plus a POM
+  - Resolves the transitive dependency tree from the POM, honoring
+    parent inheritance, dependency management, BOM imports, scopes,
+    optional dependencies, exclusions, and nearest-wins version
+    conflicts
+  - Fetches artifacts from Maven Central, SciJava, and JBoss, matching
+    the repositories used by TASSEL’s own build
+  - Drops artifacts superseded by a newer coordinate under a different
+    name, such as `google-collections` alongside `guava`, which would
+    otherwise shadow each other on the classpath
+- The startup message now reports the TASSEL version the JVM actually
+  loaded rather than the version rTASSEL expected, which differed when
+  JARs came from a user-supplied `rTASSEL.java.path`
+- Added tracking of the active TASSEL version:
+  - [`setupTASSEL()`](https://rtassel.maizegenetics.net/reference/setupTASSEL.md)
+    records the version it installs, so a newly installed version is
+    loaded on the next
+    [`library(rTASSEL)`](https://github.com/maize-genetics/rTASSEL)
+  - Override with `options(rTASSEL.tassel.version = ...)`
+  - Fixes a bug where installing any version other than the pinned
+    default left rTASSEL reporting “TASSEL JARs not found”
+- Every downloaded artifact is now verified against its published SHA-1
+  checksum, rather than only the pinned default version
+- `setupTASSEL(force = TRUE)` now clears the cached version first, so
+  stale dependency JARs cannot linger on the classpath
+- Moved `digest` from Suggests to Imports and added `jsonlite` to
+  Imports
+
 ## rTASSEL 0.12.0
 
 - Added new `LDResults` class:

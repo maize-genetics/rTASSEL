@@ -28,4 +28,5 @@ resolveJarPath(pkgname = "rTASSEL", libname = NULL)
 ## Value
 
 A list with elements `path` (character or `NULL`) and `source`
-(`"option"`, `"maven cache"`, `"bundled"`, or `NULL`).
+(`"option"`, `"maven cache"`, `"nightly build"`, `"github release"`,
+`"bundled"`, or `NULL`).

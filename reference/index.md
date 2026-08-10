@@ -77,6 +77,9 @@
 - [`attributeData()`](https://rtassel.maizegenetics.net/reference/attributeData.md)
   : Return TASSEL attribute data
 
+- [`checkForTASSELUpdate()`](https://rtassel.maizegenetics.net/reference/checkForTASSELUpdate.md)
+  : Check for a newer version of TASSEL
+
 - [`colnames(`*`<TasselDistanceMatrix>`*`)`](https://rtassel.maizegenetics.net/reference/colnames-TasselDistanceMatrix-method.md)
   : Column names
 
@@ -216,7 +219,7 @@
   : Calculate sequence diversity
 
 - [`setupTASSEL()`](https://rtassel.maizegenetics.net/reference/setupTASSEL.md)
-  : Download and configure TASSEL JAR files from Maven Central
+  : Download and configure TASSEL JAR files
 
 - [`show(`*`<TasselGenotype>`*`)`](https://rtassel.maizegenetics.net/reference/show-TasselGenotype-method.md)
   : Display TasselGenotype Object

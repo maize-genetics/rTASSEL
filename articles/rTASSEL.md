@@ -66,6 +66,7 @@ Java libraries. This is a **one-time** setup step that caches the
 required JAR files on your machine:
 
 ``` r
+
 setupTASSEL()
 ```
 
@@ -85,6 +86,7 @@ amount of memory, use the base
 the following parameter:
 
 ``` r
+
 options(java.parameters = c("-Xmx<memory>", "-Xms<memory>"))
 ```
 
@@ -109,6 +111,7 @@ progress of your analytical workflow. To start a logging file, use the
 following command:
 
 ``` r
+
 startLogger()
 ```
 
@@ -156,6 +159,7 @@ being a VCF file and the other being a hapmap file. These data sets can
 be accessed via the `rTASSEL` package itself:
 
 ``` r
+
 # Load hapmap data
 genoPathHMP <- system.file(
     "extdata",
@@ -168,6 +172,7 @@ genoPathHMP
     ## [1] "/home/runner/work/_temp/Library/rTASSEL/extdata/mdp_genotype.hmp.txt"
 
 ``` r
+
 # Load VCF data
 genoPathVCF <- system.file(
     "extdata",
@@ -184,6 +189,7 @@ and create a formal `TasselGenotypePhenotype` class object in R using
 the following:
 
 ``` r
+
 # Load in hapmap file
 tasGenoHMP <- readGenotypeTableFromPath(
     path = genoPathHMP
@@ -194,6 +200,7 @@ tasGenoHMP <- readGenotypeTableFromPath(
     ## This will be replaced by 'readGenotype()' in the next update.
 
 ``` r
+
 # Load in VCF file
 tasGenoVCF <- readGenotypeTableFromPath(
     path = genoPathVCF
@@ -207,6 +214,7 @@ When we call these objects, a summary of the data will be posted to the
 R console:
 
 ``` r
+
 tasGenoHMP
 ```
 
@@ -230,6 +238,7 @@ In general, this S4 class data object houses “slot” information relating
 to TASSEL/Java pointers of the respective data.
 
 ``` r
+
 class(tasGenoHMP)
 ```
 
@@ -238,6 +247,7 @@ class(tasGenoHMP)
     ## [1] "rTASSEL"
 
 ``` r
+
 slotNames(tasGenoHMP)
 ```
 
@@ -251,10 +261,11 @@ extract the `GenotypeTable` with the S4 `@` operator, we would get
 something that looks like this:
 
 ``` r
+
 tasGenoHMP@jGenotypeTable
 ```
 
-    ## [1] "Java-Object{net.maizegenetics.dna.snp.CoreGenotypeTable@387a8303}"
+    ## [1] "Java-Object{net.maizegenetics.dna.snp.CoreGenotypeTable@4dc27487}"
 
 This entity is a `rJava` internal identifier. It isn’t until we call
 downstream `rTASSEL` functions where we will bring the TASSEL data into
@@ -279,6 +290,7 @@ loaded. here, we will use the
 function:
 
 ``` r
+
 # Read from phenotype path
 phenoPath  <- system.file("extdata", "mdp_traits.txt", package = "rTASSEL")
 phenoPath
@@ -287,6 +299,7 @@ phenoPath
     ## [1] "/home/runner/work/_temp/Library/rTASSEL/extdata/mdp_traits.txt"
 
 ``` r
+
 # Load into rTASSEL `TasselGenotypePhenotype` object
 tasPheno <- readPhenotypeFromPath(
     path = phenoPath
@@ -297,6 +310,7 @@ tasPheno <- readPhenotypeFromPath(
     ## This will be replaced by 'readPhenotype()' in the next update.
 
 ``` r
+
 # Inspect object
 tasPheno
 ```
@@ -325,6 +339,7 @@ function along with a couple of parameters. First, we will construct an
 R data frame and load it with this function:
 
 ``` r
+
 # Create phenotype data frame
 phenoDF <- read.table(phenoPath, header = TRUE)
 colnames(phenoDF)[1] <- "Taxon"
@@ -342,6 +357,7 @@ head(phenoDF)
     ## 6  A188 27.50   62.0   31.41900
 
 ``` r
+
 # Load into rTASSEL `TasselGenotypePhenotype` object
 tasPhenoDF <- readPhenotypeFromDataFrame(
     phenotypeDF = phenoDF,
@@ -354,6 +370,7 @@ tasPhenoDF <- readPhenotypeFromDataFrame(
     ## This will be replaced by 'readPhenotype()' in the next update.
 
 ``` r
+
 # Inspect new object
 tasPhenoDF
 ```
@@ -406,6 +423,7 @@ For example, if we wanted to read the prior `TasselGenotypePhenotype`
 genotype and phenotype objects from earlier:
 
 ``` r
+
 tasGenoPheno <- readGenotypePhenotype(
     genoPathOrObj = tasGenoHMP,
     phenoPathDFOrObj = tasPheno
@@ -416,6 +434,7 @@ tasGenoPheno <- readGenotypePhenotype(
     ## This will be replaced by 'join()' in the next update.
 
 ``` r
+
 tasGenoPheno
 ```
 
@@ -437,6 +456,7 @@ prior parameters from the** `readPhenotypeFromDataFrame` **will be
 needed** (i.e. the `taxaID` and `attributeTypes` parameters):
 
 ``` r
+
 tasGenoPhenoDF <- readGenotypePhenotype(
     genoPathOrObj = genoPathHMP,
     phenoPathDFOrObj = phenoDF,
@@ -455,6 +475,7 @@ tasGenoPhenoDF <- readGenotypePhenotype(
     ## This will be replaced by 'readPhenotype()' in the next update.
 
 ``` r
+
 tasGenoPhenoDF
 ```
 
@@ -476,6 +497,7 @@ kinship objects as a `TasselDistanceMatrix` object using the function,
 [`readTasselDistanceMatrix()`](https://rtassel.maizegenetics.net/reference/readTasselDistanceMatrix.md):
 
 ``` r
+
 ## Get toy kinship data from package ----
 kinshipPath <- system.file(
   "extdata", 
@@ -522,6 +544,7 @@ Like other genotype files, we can read this in via
 [`readGenotypeTableFromPath()`](https://rtassel.maizegenetics.net/reference/readGenotypeTableFromPath.md):
 
 ``` r
+
 numGtPath <- system.file("extdata", "numeric_genotype.txt", package = "rTASSEL")
 numGt <- readGenotypeTableFromPath(numGtPath)
 ```
@@ -530,6 +553,7 @@ numGt <- readGenotypeTableFromPath(numGtPath)
     ## This will be replaced by 'readGenotype()' in the next update.
 
 ``` r
+
 numGt
 ```
 
@@ -550,6 +574,7 @@ make a function that will simulate an example R matrix with values
 between 0 and 1.
 
 ``` r
+
 # Simulate numeric matrices
 simNumericGt <- function(nRow, nCol) {
     # Matrix values
@@ -588,6 +613,7 @@ Once properly formatted, you read and evaluate this using the
 function:
 
 ``` r
+
 numGt <- readNumericGenotypeFromRMatrix(simMat)
 
 numGt
@@ -613,6 +639,7 @@ is the number of alternative alleles present for a given taxa and site
 element:
 
 ``` r
+
 gtMat <- as.matrix(tasGenoPheno)
 
 # Show first 10 rows and 4 columns
@@ -640,6 +667,7 @@ function. All this function needs is a `TasselGenotypePhenotype` class
 object *containing a phenotype table*:
 
 ``` r
+
 tasExportPhenoDF <- getPhenotypeDF(tasObj = tasGenoPheno)
 ```
 
@@ -647,6 +675,7 @@ tasExportPhenoDF <- getPhenotypeDF(tasObj = tasGenoPheno)
     ## This will be replaced by 'as.data.frame()' in the next update.
 
 ``` r
+
 head(tasExportPhenoDF)
 ```
 
@@ -694,6 +723,7 @@ low coverage sites, we could use the following parameters in
 [`filterGenotypeTableSites()`](https://rtassel.maizegenetics.net/reference/filterGenotypeTableSites.md):
 
 ``` r
+
 tasGenoPhenoFilt <- filterGenotypeTableSites(
     tasObj = tasGenoPheno,
     siteMinCount = 150,
@@ -718,6 +748,7 @@ tasGenoPhenoFilt
 We can then compare this to our original pre-filtered data set:
 
 ``` r
+
 tasGenoPheno
 ```
 
@@ -748,6 +779,7 @@ The main parameter input is a `TasselGenotypePhenotype` class object
 that contains a genotype data set:
 
 ``` r
+
 tasKin <- kinshipMatrix(tasObj = tasGenoPheno)
 ```
 
@@ -762,6 +794,7 @@ be calculated using genotype data using the function
 [`distanceMatrix()`](https://rtassel.maizegenetics.net/reference/distanceMatrix.md):
 
 ``` r
+
 tasDist <- distanceMatrix(tasObj = tasGenoPheno)
 ```
 
@@ -770,11 +803,12 @@ tasDist <- distanceMatrix(tasObj = tasGenoPheno)
 #### Overview
 
 The prior two functions will generate a pairwise matrix
-(e.g. $m \times m$ dimensions). The return object is an rTASSEL class,
+(e.g. $`m \times m`$ dimensions). The return object is an rTASSEL class,
 `TasselDistanceMatrix`. When we inspect the prior object we will see
 something like this:
 
 ``` r
+
 tasKin
 ```
 
@@ -797,30 +831,35 @@ holds pointers to the Java/TASSEL object in memory. Despite this, we can
 still use some base R methods similar to how we handle `matrix` objects:
 
 ``` r
+
 tasKin |> colnames() |> head()
 ```
 
     ## [1] "33-16" "38-11" "4226"  "4722"  "A188"  "A214N"
 
 ``` r
+
 tasKin |> rownames() |> head()
 ```
 
     ## [1] "33-16" "38-11" "4226"  "4722"  "A188"  "A214N"
 
 ``` r
+
 tasKin |> dim()
 ```
 
     ## [1] 279 279
 
 ``` r
+
 tasKin |> nrow()
 ```
 
     ## [1] 279
 
 ``` r
+
 tasKin |> ncol()
 ```
 
@@ -834,6 +873,7 @@ case, a `matrix` object using the base method
 [`as.matrix()`](https://rdrr.io/r/base/matrix.html):
 
 ``` r
+
 tasKinR <- tasKin |> as.matrix()
 
 ## Inspect first 5 rows and columns ----
@@ -852,6 +892,7 @@ We can also coerce a pairwise `matrix` object to a
 [`asTasselDistanceMatrix()`](https://rtassel.maizegenetics.net/reference/asTasselDistanceMatrix.md):
 
 ``` r
+
 ## Create a dummy pairwise matrix object ----
 set.seed(123)
 m <- 10
@@ -886,6 +927,7 @@ on a `TasselGenotypePhenotype` object that contains a TASSEL
 `GenotypeTable`
 
 ``` r
+
 tasGenoHMP
 ```
 
@@ -899,6 +941,7 @@ tasGenoHMP
     ##   Phenotype Table.... [ ]
 
 ``` r
+
 pcaRes <- pca(tasGenoHMP)
 ```
 
@@ -907,6 +950,7 @@ To run MDS, simply use the
 on a `TasselDistanceMatrix` object:
 
 ``` r
+
 tasDist
 ```
 
@@ -921,6 +965,7 @@ tasDist
     ##      YU796NS     0.2908     0.3001     0.2795     0.2759    ...     0.0000
 
 ``` r
+
 mdsRes <- mds(tasDist)
 ```
 
@@ -930,6 +975,7 @@ the function call. For example, let’s take a look at the `pcaRes` object
 made previously:
 
 ``` r
+
 pcaRes
 ```
 
@@ -951,6 +997,7 @@ function. I will use base R’s piping operator (`|>`) to better show the
 flow of methods: :
 
 ``` r
+
 # Return principal components
 pcaRes |> tableReport() |> head()
 ```
@@ -969,12 +1016,14 @@ display but we can also return them using
 [`reportNames()`](https://rtassel.maizegenetics.net/reference/reportNames.md)
 
 ``` r
+
 pcaRes |> reportNames()
 ```
 
     ## [1] "PC_Datum"           "Eigenvalues_Datum"  "Eigenvectors_Datum"
 
 ``` r
+
 pcaRes |> tableReport("Eigenvalues_Datum") |> head()
 ```
 
@@ -1101,17 +1150,17 @@ following:
 For more examples of how to subset phenotype data take a look the
 following table:
 
-| Formula                           | Data                       | Covariate        | Factor     |
-|-----------------------------------|----------------------------|------------------|------------|
-| `. ~ .`                           | `dpoll`, `EarDia`, `EarHT` | `Q1`, `Q2`, `Q3` | `location` |
-| `EarHT ~ . - Q2`                  | `EarHT`                    | `Q1`, `Q3`       | `location` |
-| `. - dpoll ~ . - Q1 - Q3`         | `EarHT`, `EarDia`          | `Q2`             | `location` |
-| `c(dpoll, EarHT) ~ Q1 + location` | `dpoll`, `EarHT`           | `Q1`             | `location` |
-| `dpoll + EarHT ~ Q1 + location`   | `dpoll`, `EarHT`           | `Q1`             | `location` |
-| `dpoll ~ . - I(cov)`              | `dpoll`                    | *None*           | `location` |
-| `. - dpoll ~ Q2 - Q1 - Q3`        | `EarHT`, `EarDia`          | `Q2`             | *None*     |
-| `. - dpoll ~ -Q1 - Q3 + Q2`       | `EarHT`, `EarDia`          | `Q2`             | *None*     |
-| `dpoll ~ -I(cov) + .`             | `dpoll`                    | *None*           | `location` |
+| Formula | Data | Covariate | Factor |
+|----|----|----|----|
+| `. ~ .` | `dpoll`, `EarDia`, `EarHT` | `Q1`, `Q2`, `Q3` | `location` |
+| `EarHT ~ . - Q2` | `EarHT` | `Q1`, `Q3` | `location` |
+| `. - dpoll ~ . - Q1 - Q3` | `EarHT`, `EarDia` | `Q2` | `location` |
+| `c(dpoll, EarHT) ~ Q1 + location` | `dpoll`, `EarHT` | `Q1` | `location` |
+| `dpoll + EarHT ~ Q1 + location` | `dpoll`, `EarHT` | `Q1` | `location` |
+| `dpoll ~ . - I(cov)` | `dpoll` | *None* | `location` |
+| `. - dpoll ~ Q2 - Q1 - Q3` | `EarHT`, `EarDia` | `Q2` | *None* |
+| `. - dpoll ~ -Q1 - Q3 + Q2` | `EarHT`, `EarDia` | `Q2` | *None* |
+| `dpoll ~ -I(cov) + .` | `dpoll` | *None* | `location` |
 
 #### Other parameters
 
@@ -1148,6 +1197,7 @@ needed for this method, we can leave the `fitMarkers`, `kinship`, and
 `fastAssociation` to `NULL` or `FALSE`:
 
 ``` r
+
 # Read in phenotype data
 phenoPathCov <- system.file("extdata", "mdp_phenotype.txt", package = "rTASSEL")
 tasPhenoCov <- readPhenotypeFromPath(phenoPathCov)
@@ -1157,6 +1207,7 @@ tasPhenoCov <- readPhenotypeFromPath(phenoPathCov)
     ## This will be replaced by 'readPhenotype()' in the next update.
 
 ``` r
+
 # Calculate BLUEs
 tasBLUE <- assocModelFitter(
     tasObj = tasPhenoCov,
@@ -1170,6 +1221,7 @@ tasBLUE <- assocModelFitter(
     ## Association Analysis : BLUEs
 
 ``` r
+
 # Inspect results
 tasBLUE
 ```
@@ -1196,6 +1248,7 @@ function to the object. In the following examples, I will use base R’s
 piping operator (`|>`) to better show the flow of methods:
 
 ``` r
+
 # Return BLUE values for traits
 tasBLUE |> tableReport() |> head()
 ```
@@ -1214,12 +1267,14 @@ display but we can also return them using
 [`reportNames()`](https://rtassel.maizegenetics.net/reference/reportNames.md)
 
 ``` r
+
 tasBLUE |> reportNames()
 ```
 
     ## [1] "BLUE"       "BLUE_ANOVA"
 
 ``` r
+
 # Return ANOVA results
 tasBLUE |> tableReport("BLUE_ANOVA") |> head()
 ```
@@ -1241,6 +1296,7 @@ combined with our phenotype data in a `TasselGenotypePhenotype` class
 object:
 
 ``` r
+
 # Calculate GLM
 tasGLM <- assocModelFitter(
     tasObj = tasGenoPheno,          # <- our prior TASSEL object
@@ -1254,6 +1310,7 @@ tasGLM <- assocModelFitter(
     ## Association Analysis : GLM
 
 ``` r
+
 # Inspect results
 tasGLM
 ```
@@ -1267,6 +1324,7 @@ tasGLM
     ##   * dpoll
 
 ``` r
+
 # Return association statistics
 tasGLM |> tableReport() |> head()
 ```
@@ -1301,6 +1359,7 @@ will also need a TASSEL kinship object (see *Create a kinship matrix
 object* in the *Analysis - Relatedness* section):
 
 ``` r
+
 # Calculate MLM
 tasMLM <- assocModelFitter(
     tasObj = tasGenoPheno,             # <- our prior TASSEL object
@@ -1314,6 +1373,7 @@ tasMLM <- assocModelFitter(
     ## Association Analysis : MLM
 
 ``` r
+
 # Inspect results
 tasMLM
 ```
@@ -1333,6 +1393,7 @@ We can run fast association analysis in our GLM model by setting the
 effective if you have many phenotype traits:
 
 ``` r
+
 # Read data - need only non missing data!
 phenoPathFast <-system.file(
     "extdata",
@@ -1351,6 +1412,7 @@ tasGenoPhenoFast <- readGenotypePhenotype(
     ## This will be replaced by 'join()' in the next update.
 
 ``` r
+
 # Calculate MLM
 tasFAST <- assocModelFitter(
     tasObj = tasGenoPhenoFast,         # <- our prior TASSEL object
@@ -1364,6 +1426,7 @@ tasFAST <- assocModelFitter(
     ## Association Analysis : Fast Association
 
 ``` r
+
 # Inspect results
 tasFAST
 ```
@@ -1384,6 +1447,7 @@ Additionally, we can also run stepwise regression via TASSEL 5’s
 function with similar formula syntax found in the prior sections:
 
 ``` r
+
 stepRes <- stepwiseModelFitter(
     tasObj  = tasGenoPhenoFast,
     formula = dpoll ~ .
@@ -1411,6 +1475,7 @@ method with a `TasselGenotypePhenotype` object containing genotype table
 information:
 
 ``` r
+
 phyloTree <- createTree(
     tasObj = tasGenoHMP,
     clustMethod = "Neighbor_Joining"
@@ -1430,6 +1495,7 @@ generated by the
 [ape](https://cran.r-project.org/web/packages/ape/ape.pdf) package:
 
 ``` r
+
 phyloTree
 ```
 
@@ -1464,6 +1530,7 @@ function. To make this as streamlined as possible, we can pass our prior
 `AssociationResults` objects to the default plotting function:
 
 ``` r
+
 tasGLM |> plotManhattan()
 ```
 
@@ -1476,16 +1543,18 @@ traits by passing a singular `character` object or a collection (i.e.,
 respectively, into the `trait` parameter:
 
 ``` r
+
 tasGLM |> plotManhattan(trait = "dpoll")
 ```
 
 ![](figure/graphics-unnamed-chunk-45-1.png)
 
 We can also set a threshold value to highlight visually “significant”
-markers of interest by passing a $- log_{10}$ value to the `threshold`
+markers of interest by passing a $`-log_{10}`$ value to the `threshold`
 parameter:
 
 ``` r
+
 tasGLM |> plotManhattan(threshold = 5)
 ```
 
@@ -1495,6 +1564,7 @@ We pass different colors for column facets by passing color values to
 the `colors` parameter:
 
 ``` r
+
 tasGLM |> plotManhattan(colors = c("red", "#4890bd", "#2ad14e"))
 ```
 
@@ -1504,6 +1574,7 @@ We can also make plots interactive by setting the `interactive`
 parameter to `TRUE`:
 
 ``` r
+
 tasGLM |> plotManhattan(interactive = TRUE)
 ```
 
@@ -1514,6 +1585,7 @@ To generate quantile-quantile plots, we can pass our
 [`plotQQ()`](https://rtassel.maizegenetics.net/reference/plotQQ.md)
 
 ``` r
+
 tasMLM |> plotQQ()
 ```
 
@@ -1527,6 +1599,7 @@ same concept PCA results by passing `PCAResults` objects to the
 function:
 
 ``` r
+
 pcaRes |> plotPCA()
 ```
 
@@ -1540,6 +1613,7 @@ into 2 clusters. We can specify more cluster by setting the `nClust`
 parameter. For example, if I want to generate 3 clusters:
 
 ``` r
+
 pcaRes |> plotPCA(cluster = TRUE, nClust = 3)
 ```
 
@@ -1550,6 +1624,7 @@ We can also generate coloring by adding metadata to the plot as a simple
 using the `metadata` and `mCol` parameters, respectively:
 
 ``` r
+
 metaPath <- system.file("extdata", "mdp_taxa_metadata.csv", package = "rTASSEL")
 metaDf <- read.csv(metaPath)
 
@@ -1562,10 +1637,11 @@ pcaRes |> plotPCA(metadata = metaDf, mCol = "Subpopulation")
 
 In conjunction with PCA scatter plots, another common plot is a “Scree
 plot”. This is used to identify how much of the variation is captured
-with $n$ amount of principal components. By default, this will generate
-data for 10 PCs and can be overridden via the `n` parameter:
+with $`n`$ amount of principal components. By default, this will
+generate data for 10 PCs and can be overridden via the `n` parameter:
 
 ``` r
+
 pcaRes |> plotScree(n = 5)
 ```
 
@@ -1580,6 +1656,7 @@ function. This generates a heatmap-style plot showing how many SNPs fall
 within fixed-size genomic windows across all chromosomes:
 
 ``` r
+
 plotSnpDensity(tasObj = tasGenoHMP)
 ```
 
@@ -1589,6 +1666,7 @@ You can adjust the window size (in base pairs) using the `windowSize`
 parameter and select different color palettes via `colorOption`:
 
 ``` r
+
 plotSnpDensity(
     tasObj      = tasGenoHMP,
     windowSize  = 5e5,
@@ -1602,6 +1680,7 @@ Like other `rTASSEL` visualizations, an interactive version can be
 produced by setting `interactive = TRUE`:
 
 ``` r
+
 plotSnpDensity(tasObj = tasGenoHMP, interactive = TRUE)
 ```
 
@@ -1628,6 +1707,7 @@ specific region of interest before computing LD.
 First, filter to a chromosomal region and compute pairwise LD:
 
 ``` r
+
 # Filter genotype table by position
 tasGenoPhenoFilt <- filterGenotypeTableSites(
     tasObj              = tasGenoPheno,
@@ -1662,6 +1742,7 @@ data frame using
 [`tableReport()`](https://rtassel.maizegenetics.net/reference/tableReport.md):
 
 ``` r
+
 myLDResults |> tableReport() |> head()
 ```
 
@@ -1685,6 +1766,7 @@ Pass the `LDResults` object to
 generate the LD heatmap:
 
 ``` r
+
 plotLD(ldObj = myLDResults)
 ```
 
@@ -1692,10 +1774,11 @@ plotLD(ldObj = myLDResults)
 
 By default,
 [`plotLD()`](https://rtassel.maizegenetics.net/reference/plotLD.md)
-displays $r^{2}$ values. You can change the displayed statistic using
+displays $`r^{2}`$ values. You can change the displayed statistic using
 the `plotVal` parameter:
 
 ``` r
+
 plotLD(ldObj = myLDResults, plotVal = "DPrime")
 ```
 
@@ -1707,6 +1790,7 @@ Several viridis-family palettes are available via `colorScheme`. You can
 also use the classic Haploview color scheme:
 
 ``` r
+
 plotLD(ldObj = myLDResults, colorScheme = "haploview")
 ```
 
@@ -1720,6 +1804,7 @@ specify a start and end position (in bp) along with optional labels,
 colors, and line widths:
 
 ``` r
+
 plotLD(
     ldObj    = myLDResults,
     ldBlocks = list(
@@ -1755,6 +1840,7 @@ above the LD heatmap. This shows the approximate physical spacing of
 each site and connects positions to the evenly-spaced LD triangle below:
 
 ``` r
+
 plotLD(ldObj = myLDResults, genomicTrack = TRUE)
 ```
 
@@ -1764,6 +1850,7 @@ The `showIndex` parameter controls whether numeric index labels appear
 along the diagonal of the LD triangle (defaults to `TRUE`):
 
 ``` r
+
 plotLD(ldObj = myLDResults, showIndex = FALSE)
 ```
 
@@ -1809,6 +1896,7 @@ of the mean for the accuracy estimates. The defaults of k = 5 and
 iterations = 20 will be adequate for most users.
 
 ``` r
+
 tasCV <- genomicPrediction(
     tasPhenoObj = tasGenoPheno,
     kinship     = tasKin,

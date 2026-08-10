@@ -7,7 +7,7 @@ installed on your machine. Additionally, for R to communicate with Java,
 the R package [`rJava`](https://www.rforge.net/rJava/) will need to be
 installed. In order to use `rTASSEL`, ensure that you have:
 
-- A `JDK` (Java Development Kit $\geq$`8`) installed on your system.
+- A `JDK` (Java Development Kit $`\geq`$`8`) installed on your system.
 - Your system environment variable `JAVA_HOME` is configured
   appropriately and points to your `JDK` of choice. This will usually be
   included in your PATH environment variable as well. Options and system
@@ -42,6 +42,7 @@ by installing the source code from our GitHub repository using the
 build vignettes locally:
 
 ``` r
+
 if (!require("devtools")) install.packages("devtools")
 devtools::install_github(
     repo = "maize-genetics/rTASSEL",
@@ -62,6 +63,7 @@ If you wish to **not** build vignettes, the prior method can be
 simplified as shown below:
 
 ``` r
+
 if (!require("devtools")) install.packages("devtools")
 devtools::install_github("maize-genetics/rTASSEL")
 ```
@@ -78,6 +80,13 @@ and cached locally on your machine. This approach greatly reduces the
 package size and makes it easier to update TASSEL independently of the R
 package.
 
+Released versions come from Maven Central by default. If you want
+changes that have not been released yet, the standalone archives on the
+[TASSEL releases
+page](https://github.com/maize-genetics/tassel/releases) can be
+installed instead - see [Installing nightly
+builds](#installing-nightly-builds).
+
 ### One-time setup
 
 After installing `rTASSEL`, you must run
@@ -85,12 +94,13 @@ After installing `rTASSEL`, you must run
 **once** to download and cache the required JAR files:
 
 ``` r
+
 setupTASSEL()
 ```
 
 This will:
 
-1.  Download the TASSEL fat JAR (~70 MB) from Maven Central
+1.  Download TASSEL (~70 MB) from Maven Central
 2.  Verify the file integrity via a SHA-1 checksum
 3.  Cache it under the standard R user cache directory:
     - **Linux**: `~/.cache/R/rTASSEL/java/<version>/`
@@ -102,12 +112,122 @@ Subsequent calls to
 [`library(rTASSEL)`](https://github.com/maize-genetics/rTASSEL) will
 automatically detect and use the cached JARs - no re-download is needed.
 
-### Re-downloading or updating
+TASSEL is published in two different layouts, and
+[`setupTASSEL()`](https://rtassel.maizegenetics.net/reference/setupTASSEL.md)
+detects which one applies. Releases up to 5.2.96 ship a single “fat” JAR
+that already contains every dependency. Later releases ship only
+TASSEL’s own classes, so `rTASSEL` reads the published POM, resolves the
+full dependency tree, and downloads those JARs alongside it. Because no
+single repository serves the whole tree, dependencies are fetched from
+Maven Central, [SciJava](https://maven.scijava.org), and
+[JBoss](https://repository.jboss.org) - the same three repositories used
+by TASSEL’s own build.
 
-If you need to re-download the JARs (e.g. a corrupted cache), use the
-`force` parameter:
+### Installing nightly builds
+
+TASSEL also publishes standalone archives on its [GitHub releases
+page](https://github.com/maize-genetics/tassel/releases), including a
+**nightly build** cut from the `develop` branch. These are the only way
+to get changes that have not yet been released to Maven Central. To
+install the newest one:
 
 ``` r
+
+setupTASSEL(source = "github")
+```
+
+Nightly builds are unstable by construction, so once your work depends
+on one it is worth pinning the exact build rather than tracking whatever
+is newest:
+
+``` r
+
+setupTASSEL(version = "5.2.98-dev.20260801", source = "github")
+```
+
+The same `source` also installs the standalone archive of a tagged
+release, either by name or by tag:
+
+``` r
+
+setupTASSEL(version = "latest", source = "github")
+setupTASSEL(version = "v5.2.97", source = "github")
+```
+
+These archives bundle `sTASSEL.jar` together with every dependency, so
+no dependency resolution is needed, and each download is verified
+against the SHA-256 checksum GitHub publishes for it. Nightly builds are
+cached beside released versions under their full version, as in
+`java/5.2.98-dev.20260801/`, so a nightly and a release can be installed
+at the same time and switched between with
+`options(rTASSEL.tassel.version = ...)`.
+
+If you hit a GitHub rate limit while looking up releases, set
+`GITHUB_PAT` (or `GITHUB_TOKEN`) in your environment and the lookup will
+use it.
+
+### Checking for new TASSEL versions
+
+When `rTASSEL` is attached in an interactive session, it checks Maven
+Central at most once per day for a newer TASSEL release and notes it in
+the startup message. A version is only reported once `rTASSEL` has
+confirmed it can actually be installed, so a partial or broken upload
+upstream will not prompt you to upgrade to something unusable.
+
+If you are running a nightly build, the daily check looks for a newer
+nightly build on GitHub instead, so a nightly install is never nagged to
+“upgrade” to an older release.
+
+You can run the check yourself at any time:
+
+``` r
+
+checkForTASSELUpdate(force = TRUE)
+```
+
+Or query the nightly channel explicitly:
+
+``` r
+
+checkForTASSELUpdate(channel = "nightly")
+```
+
+To turn the automatic check off, use either of:
+
+``` r
+
+options(rTASSEL.check.updates = FALSE)
+Sys.setenv(RTASSEL_NO_VERSION_CHECK = "true")
+```
+
+The check never runs in non-interactive sessions, during `R CMD check`,
+or on continuous integration, and a network failure is silently ignored.
+
+### Updating or re-downloading
+
+To move to a newer TASSEL release, pass its version:
+
+``` r
+
+setupTASSEL(version = "5.2.96")
+```
+
+The version you install last is recorded as the active one, so the next
+[`library(rTASSEL)`](https://github.com/maize-genetics/rTASSEL) picks it
+up. To pin a specific cached version instead, set an option before
+loading the package:
+
+``` r
+
+options(rTASSEL.tassel.version = "5.2.96")
+library(rTASSEL)
+```
+
+If you need to re-download the JARs (e.g. a corrupted cache), use the
+`force` parameter, which clears the cached copy first:
+
+``` r
+
 setupTASSEL(force = TRUE)
 ```
 
@@ -117,6 +237,7 @@ Advanced users who maintain their own TASSEL builds can bypass the Maven
 cache entirely by setting an R option **before** loading `rTASSEL`:
 
 ``` r
+
 options(rTASSEL.java.path = "/path/to/my/tassel/jars")
 library(rTASSEL)
 ```
@@ -130,13 +251,22 @@ When `rTASSEL` is loaded, the TASSEL JARs are resolved in the following
 priority order:
 
 1.  **User-defined path** via `options(rTASSEL.java.path = ...)`
-2.  **Maven cache** (from
-    [`setupTASSEL()`](https://rtassel.maizegenetics.net/reference/setupTASSEL.md))
+2.  **Local cache** (from
+    [`setupTASSEL()`](https://rtassel.maizegenetics.net/reference/setupTASSEL.md),
+    whether from Maven Central or GitHub)
 3.  **Bundled `inst/java/`** (legacy fallback for older installations)
 
 If no JARs are found from any source, `rTASSEL` will load without
 initializing the JVM and display a message prompting you to run
 [`setupTASSEL()`](https://rtassel.maizegenetics.net/reference/setupTASSEL.md).
+
+Which version the cache resolves to is determined, in order, by
+`options(rTASSEL.tassel.version = ...)`, the version recorded by your
+most recent
+[`setupTASSEL()`](https://rtassel.maizegenetics.net/reference/setupTASSEL.md)
+call, and finally the version pinned by this release of `rTASSEL`. The
+startup message names where the JARs came from, so a nightly install is
+easy to tell apart from a released one.
 
 ## Loading `rTASSEL`
 
@@ -145,10 +275,11 @@ After installation and the one-time
 step, the package can be loaded using:
 
 ``` r
+
 library(rTASSEL)
 ```
 
-    ## ── Welcome to rTASSEL (version 0.12.0) ──
+    ## ── Welcome to rTASSEL (version 0.13.0) ──
     ## ℹ Running TASSEL version "5.2.96" (maven cache)
     ## ℹ Consider starting a TASSEL log file (see startLogger()
     ##   (`?rTASSEL::startLogger()`))
@@ -232,6 +363,7 @@ loading the `rTASSEL` package via the
 [`options()`](https://rdrr.io/r/base/options.html) function:
 
 ``` r
+
 # Allocate 4 GB of memory to the JVM
 options(java.parameters = "-Xmx4g")
 
@@ -275,6 +407,7 @@ any time during your R session you can report the total memory allocated
 using a couple of `rJava` calls:
 
 ``` r
+
 # Call Java Runtime class
 runtime  <- rJava::.jcall("java/lang/Runtime", "Ljava/lang/Runtime;", "getRuntime")
 
@@ -326,6 +459,7 @@ option in `INSTALL_opts`. This will force building the package for your
 currently running R version:
 
 ``` r
+
 devtools::install_github(
     repo = "maize-genetics/rTASSEL",
     ref = "master",

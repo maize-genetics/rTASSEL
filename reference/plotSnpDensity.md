@@ -28,7 +28,7 @@ plotSnpDensity(
 - windowSize:
 
   Size of the genomic window (in base pairs) used to bin SNPs for
-  density calculation. Defaults to `1e6` (1 Mb).
+  density calculation. Defaults to `1e6` (1 Mbp).
 
 - colorOption:
 
