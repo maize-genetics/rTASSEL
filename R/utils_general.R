@@ -2,6 +2,7 @@
 
 ## ----
 #' @title Table reports to tibble objects ----
+#' @noRd
 #' @importFrom rJava .jevalArray
 #' @importFrom rJava J
 #' @importFrom S4Vectors DataFrame
@@ -20,6 +21,7 @@ tableReportToDF <- function(x) {
 
 ## ----
 #' @title Get table reports based on HashMap ----
+#' @noRd
 #' @importFrom rJava .jrcall
 #' @importFrom rJava .jstrVal
 tableReportList <- function(x) {

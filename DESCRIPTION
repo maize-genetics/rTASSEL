@@ -1,6 +1,6 @@
 Package: rTASSEL
-Version: 0.13.0
-Date: 2026-07-28
+Version: 0.14.0
+Date: 2026-09-04
 Title: R Front-End for TASSEL
 Authors@R: c(
     person(
@@ -48,6 +48,7 @@ Imports:
     ggplot2,
     IRanges,
     jsonlite,
+    lifecycle,
     methods,
     pillar,
     plotly,

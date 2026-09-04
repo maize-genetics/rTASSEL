@@ -36,3 +36,7 @@ inst/java/*.dll
 inst/java/*.so
 
 
+## LLMs ----
+.cursor/
+
+

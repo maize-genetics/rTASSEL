@@ -75,6 +75,7 @@ getGenotypePhenotype <- function(jtsObject) {
     if(is(jtsObject, "TasselGenotypePhenotype")) {
         jtsObject <- jtsObject@jTasselObj
     }
+    jtsObject <- .unwrapTasselObject(jtsObject)
     if(!is(jtsObject,"jobjRef")) return(rJava::.jnull())
     if(jtsObject %instanceof% "net.maizegenetics.phenotype.GenotypePhenotype") {
         return(jtsObject)

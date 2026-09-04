@@ -4,6 +4,7 @@ getPositionList <- function(jtsObject) {
     if(is(jtsObject, "TasselGenotypePhenotype")) {
         return(jtsObject@jPositionList)
     }
+    jtsObject <- .unwrapTasselObject(jtsObject)
     if(!is(jtsObject,"jobjRef")) return(rJava::.jnull())
     if(jtsObject %instanceof% "net.maizegenetics.dna.map.PositionList") {
         return(jtsObject)

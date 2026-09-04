@@ -117,6 +117,7 @@ importFrom(grDevices,
   col2rgb,
   rgb
 )
+importFrom(lifecycle,deprecated)
 importFrom(methods,
   is,
   new,
