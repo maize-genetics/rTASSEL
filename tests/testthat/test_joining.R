@@ -81,14 +81,14 @@ test_that("Joining returns correct values with PCA objects", {
     phenoAttrib <- extractPhenotypeAttDf(intersectPheno@jPhenotypeTable)
     expect_equal(
         phenoAttrib$traitName,
-        c("Taxa", "EarHT", "dpoll", "EarDia", "PC1", "PC2", "PC3", "PC4", "PC5")
+        c("Taxa", "PC1", "PC2", "PC3", "PC4", "PC5", "EarHT", "dpoll", "EarDia")
     )
 
     unionPheno <- unionJoin(c(pcaRes, tasPheno))
     phenoAttrib <- extractPhenotypeAttDf(unionPheno@jPhenotypeTable)
     expect_equal(
         phenoAttrib$traitName,
-        c("Taxa", "EarHT", "dpoll", "EarDia", "PC1", "PC2", "PC3", "PC4", "PC5")
+        c("Taxa", "PC1", "PC2", "PC3", "PC4", "PC5", "EarHT", "dpoll", "EarDia")
     )
 })
 

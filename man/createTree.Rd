@@ -7,7 +7,9 @@
 createTree(tasObj, clustMethod = c("Neighbor_Joining", "UPGMA"))
 }
 \arguments{
-\item{tasObj}{An object of class \code{TasselGenotypePenotype}.}
+\item{tasObj}{An object of class \code{\linkS4class{TasselGenotype}} or
+\code{\linkS4class{TasselGenomicDataset}}. Objects of the deprecated
+\code{TasselGenotypePhenotype} class are still accepted.}
 
 \item{clustMethod}{What clustering method should be used? Current options are \code{UGMA} and
 \code{Neighbor_Joining}. Defaults to \code{Neighbor_Joining}.}

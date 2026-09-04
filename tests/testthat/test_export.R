@@ -42,7 +42,7 @@ test_that("exportGenotypeTable() returns errors", {
             tasObj = mtcars,
             file = "test"
         ),
-        regexp = "`tasObj` must be of class `TasselGenotypePhenotype`"
+        regexp = "Unsupported input object"
     )
 
     expect_error(
@@ -50,7 +50,7 @@ test_that("exportGenotypeTable() returns errors", {
             tasObj = tasPheno,
             file = "test"
         ),
-        regexp = "TASSEL genotype object not found"
+        regexp = "needs genotype data"
     )
 
     expect_error(

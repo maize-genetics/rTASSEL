@@ -2,9 +2,13 @@
 #' @title Wrapper function of TasselGenotypePhenotype class for genotype
 #'    data
 #'
-#' @description This function is a wrapper for the
-#'    \code{TasselGenotypePhenotype} class. It is used for storing genotype
-#'    information into a class object.
+#' @description
+#' \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
+#'
+#' This function is a wrapper for the deprecated
+#' \code{TasselGenotypePhenotype} class. It is used for storing genotype
+#' information into a class object. Use \code{\link{readGenotype}()} instead,
+#' which returns a \code{\linkS4class{TasselGenotype}} object.
 #'
 #' @name readGenotypeTableFromPath
 #' @rdname readGenotypeTableFromPath
@@ -15,15 +19,15 @@
 #'
 #' @return Returns an object of \code{TasselGenotypePhenotype} class.
 #'
+#' @seealso \code{\link{readGenotype}}
+#'
 #' @importFrom rJava J
 #' @importFrom rJava %instanceof%
 #' @export
 readGenotypeTableFromPath <- function(path, keepDepth = FALSE, sortPositions = FALSE) {
-    warnMsg <- paste0(
-        "The function 'readGenotypeTableFromPath()' will be deprecated soon.\n",
-        "This will be replaced by '", cli::style_bold("readGenotype()"), "' in the next update."
+    lifecycle::deprecate_warn(
+        "0.14.0", "readGenotypeTableFromPath()", "readGenotype()"
     )
-    message(warnMsg)
 
     if (!file.exists(path)) {
         stop("Cannot open file ", path, ": No such file or directory")
@@ -41,14 +45,18 @@ readGenotypeTableFromPath <- function(path, keepDepth = FALSE, sortPositions = F
 ## ----
 #' @title Create Summarized Experiment from a TASSEL Genotype Table
 #'
-#' @description This function will generate an object of
-#'    \code{SummarizedExperiment} class for marker data derived from a
-#'    \code{TasselGenotypePhenotype} class object.
+#' @description
+#' \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
+#'
+#' This function will generate an object of \code{SummarizedExperiment} class
+#' for marker data derived from a genotype table.
 #'
 #' @name getSumExpFromGenotypeTable
 #' @rdname getSumExpFromGenotypeTable
 #'
-#' @param tasObj An object of class \code{TasselGenotypePenotype}.
+#' @param tasObj An object of class \code{\linkS4class{TasselGenotype}} or
+#'    \code{\linkS4class{TasselGenomicDataset}}. Objects of the deprecated
+#'    \code{TasselGenotypePhenotype} class are still accepted.
 #' @param coerceDosageToInt Should dosage array be returned as \code{integer}
 #'    values? If \code{FALSE}, dosage array will be returned as type
 #'    \code{raw} byte values. Returning \code{raw} byte values. Will greatly
@@ -66,15 +74,11 @@ readGenotypeTableFromPath <- function(path, keepDepth = FALSE, sortPositions = F
 getSumExpFromGenotypeTable <- function(tasObj,
                                        coerceDosageToInt = TRUE,
                                        verbose = FALSE) {
-    if (!inherits(tasObj, "TasselGenotypePhenotype")) {
-        stop("`tasObj` must be of class `TasselGenotypePhenotype`")
-    }
+    lifecycle::deprecate_warn("0.14.0", "getSumExpFromGenotypeTable()")
 
-    jGT <- getGenotypeTable(tasObj)
-
-    if (rJava::is.jnull(jGT)) {
-        stop("TASSEL genotype object not found")
-    }
+    jGT <- .resolveTasselInput(
+        tasObj, "genotype", "getSumExpFromGenotypeTable"
+    )$jGt
 
     # Create SumExp components (DF and ranges)
     sampleDF <- sampleDataFrame(tasObj)
@@ -102,8 +106,6 @@ getSumExpFromGenotypeTable <- function(tasObj,
         colData = sampleDF
     )
     if (verbose) message("Finished.")
-    warnMsg <- paste0("The function 'getSumExpFromGenotypeTable()' will be deprecated soon.")
-    message(warnMsg, call. = FALSE)
     return(se)
 }
 
@@ -131,16 +133,9 @@ getGenotypeTable <- function(jtsObject) {
 #' @importFrom rJava .jevalArray
 #' @importFrom rJava is.jnull
 getMinMaxPhysPositions <- function(tasObj) {
-    if (!inherits(tasObj, "TasselGenotypePhenotype")) {
-        stop("`tasObj` must be of class `TasselGenotypePhenotype`")
-    }
-
-    jGenoTable <- getGenotypeTable(tasObj)
-    if (rJava::is.jnull(jGenoTable)) {
-        stop("TASSEL genotype object not found")
-    }
-
-    javaGT <- getGenotypeTable(tasObj)
+    javaGT <- .resolveTasselInput(
+        tasObj, "genotype", "getMinMaxPhysPositions"
+    )$jGt
 
     positions <- javaGT$positions()
     chroms <- rJava::.jevalArray(javaGT$chromosomes())
@@ -161,16 +156,9 @@ getMinMaxPhysPositions <- function(tasObj) {
 #' @importFrom rJava .jevalArray
 #' @importFrom rJava is.jnull
 getMinMaxVarSites <- function(tasObj) {
-    if (!inherits(tasObj, "TasselGenotypePhenotype")) {
-        stop("`tasObj` must be of class `TasselGenotypePhenotype`")
-    }
-
-    jGenoTable <- getGenotypeTable(tasObj)
-    if (rJava::is.jnull(jGenoTable)) {
-        stop("TASSEL genotype object not found")
-    }
-
-    javaGT <- getGenotypeTable(tasObj)
+    javaGT <- .resolveTasselInput(
+        tasObj, "genotype", "getMinMaxVarSites"
+    )$jGt
 
     positions <- javaGT$positions()
     chroms <- rJava::.jevalArray(javaGT$chromosomes())

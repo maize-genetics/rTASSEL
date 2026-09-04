@@ -48,7 +48,7 @@ test_that("linkageDiseq() throws general exceptions.", {
             windowSize = NULL,
             hetCalls   = "missing"
         ),
-        regexp = "tasObj is not of class \"TasselGenotypePhenotype\""
+        regexp = "Unsupported input object"
     )
     expect_error(
         object = linkageDiseq(
@@ -57,7 +57,7 @@ test_that("linkageDiseq() throws general exceptions.", {
             windowSize = NULL,
             hetCalls   = "missing"
         ),
-        regexp = "tasObj does contain a Genotype object"
+        regexp = "needs genotype data"
     )
     expect_that(
         object = linkageDiseq(

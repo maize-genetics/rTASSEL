@@ -19,7 +19,10 @@ assocModelFitter(
 )
 }
 \arguments{
-\item{tasObj}{An object of class \code{TasselGenotypePenotype}.}
+\item{tasObj}{An object of class \code{\linkS4class{TasselPhenotype}} or
+\code{\linkS4class{TasselGenomicDataset}}. A genotype table is required
+for every analysis except BLUEs. Objects of the deprecated
+\code{TasselGenotypePhenotype} class are still accepted.}
 
 \item{formula}{An R-based linear model formula. The general layout of this
 formula uses the following TASSEL data scheme:

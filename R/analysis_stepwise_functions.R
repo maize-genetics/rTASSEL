@@ -7,8 +7,9 @@
 #' genotype-phenotype object.
 #'
 #' @param tasObj
-#' A \code{TasselGenotypePhenotype} object. The input data for model 
-#' fitting.
+#' A \code{\linkS4class{TasselGenomicDataset}} object holding the genotype
+#' and phenotype data to fit. Objects of the deprecated
+#' \code{TasselGenotypePhenotype} class are still accepted.
 #' @param formula
 #' A model formula, default is \code{. ~ .}.
 #' @param modelType
@@ -50,28 +51,20 @@ stepwiseModelFitter <- function(
     maxNumberOfMarkers = 20,
     nPermutations = 0
 ) {
-    # Logic - Check for TasselGenotypePhenotype class
-    if (!is(tasObj, "TasselGenotypePhenotype")) {
-        stop("tasObj is not of class \"TasselGenotypePhenotype\"")
-    }
-
-    # Logic - Check to see if TASSEL object has a phenotype table
-    if (rJava::is.jnull(tasObj@jPhenotypeTable)) {
-        stop("tasObj does not contain a Phenotype object")
-    }
+    tasIn <- .resolveTasselInput(tasObj, "both", "stepwiseModelFitter")
+    jGtPh <- tasIn$jGp
 
     # Logic - Check if formula is "all-by-all"
     if (formula[[2]] != "." || formula[[3]] != ".") {
         # Subset phenotype data
-        rData        <- tableReportToDF(tasObj@jPhenotypeTable)
-        attrData     <- makeAttributeData(tasObj@jPhenotypeTable, rData)
+        rData        <- tableReportToDF(tasIn$jPh)
+        attrData     <- makeAttributeData(tasIn$jPh, rData)
         traitsToKeep <- parseFormula(formula, attrData)
-        subPh        <- selectTraitsFromJavaRef(tasObj@jPhenotypeTable, unlist(traitsToKeep))
+        subPh        <- selectTraitsFromJavaRef(tasIn$jPh, unlist(traitsToKeep))
         jSubPheno    <- javaRefObj(subPh)
 
         # Combine sub data with genotype
-        jGtPh  <- combineTasselGenotypePhenotype(tasObj@jGenotypeTable, jSubPheno)
-        tasObj <- .tasselObjectConstructor(jGtPh)
+        jGtPh <- combineTasselGenotypePhenotype(tasIn$jGt, jSubPheno)
     }
 
     # Validate modelType
@@ -101,7 +94,7 @@ stepwiseModelFitter <- function(
 
     modelFitter <- rJava::.jnew(
         TASSEL_JVM$STEPWISE_FITTER,
-        tasObj@jTasselObj,
+        jGtPh,
         "rt_stepwise"
     )
 

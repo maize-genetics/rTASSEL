@@ -7,7 +7,9 @@
 imputeLDKNNi(tasObj, highLDSSites = 30, knnTaxa = 10, maxDistance = 1e+07)
 }
 \arguments{
-\item{tasObj}{an rTASSEL \code{TasselGenotypePhenotype} object.}
+\item{tasObj}{An object of class \code{\linkS4class{TasselGenotype}} or
+\code{\linkS4class{TasselGenomicDataset}}. Objects of the deprecated
+\code{TasselGenotypePhenotype} class are still accepted.}
 
 \item{highLDSSites}{Number of sites in high LD to use in imputation.
 Acceptable values are between \code{2} and \code{2000}. Defaults to
@@ -19,6 +21,10 @@ are between \code{2} and \code{200}. Defaults to \code{10}.}
 \item{maxDistance}{Maximum physical distance between sites to search for LD
 (-1 for no distance cutoff - unlinked chromosomes will be tested).
 Defaults to \code{10e6}.}
+}
+\value{
+An object of the same class as \code{tasObj} holding the imputed
+   genotype data.
 }
 \description{
 This imputation algorithm uses LD to identify good predictors

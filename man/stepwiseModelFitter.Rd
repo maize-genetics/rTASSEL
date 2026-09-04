@@ -15,8 +15,9 @@ stepwiseModelFitter(
 )
 }
 \arguments{
-\item{tasObj}{A \code{TasselGenotypePhenotype} object. The input data for model 
-fitting.}
+\item{tasObj}{A \code{\linkS4class{TasselGenomicDataset}} object holding the genotype
+and phenotype data to fit. Objects of the deprecated
+\code{TasselGenotypePhenotype} class are still accepted.}
 
 \item{formula}{A model formula, default is \code{. ~ .}.}
 

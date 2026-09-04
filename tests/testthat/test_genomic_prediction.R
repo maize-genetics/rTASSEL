@@ -45,7 +45,7 @@ test_that("genomicPrediction() throws general exceptions.", {
             kFolds      = 10,
             nIter       = 10
         ),
-        regexp = "`tasObj` must be of class `TasselGenotypePhenotype`"
+        regexp = "Unsupported input object"
     )
     expect_error(
         object = genomicPrediction(
@@ -55,7 +55,7 @@ test_that("genomicPrediction() throws general exceptions.", {
             kFolds      = 10,
             nIter       = 10
         ),
-        regexp = "TASSEL phenotype object not found"
+        regexp = "needs phenotype data"
     )
     expect_error(
         object = genomicPrediction(

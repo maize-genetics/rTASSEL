@@ -14,8 +14,9 @@ seqDiversity(
 )
 }
 \arguments{
-\item{tasObj}{An object of class \code{TasselGenotypePenotype} that
-contains a genotype table.}
+\item{tasObj}{An object of class \code{\linkS4class{TasselGenotype}} or
+\code{\linkS4class{TasselGenomicDataset}}. Objects of the deprecated
+\code{TasselGenotypePhenotype} class are still accepted.}
 
 \item{startSite}{Start site.}
 

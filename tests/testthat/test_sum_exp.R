@@ -44,7 +44,7 @@ test_that("getSumExpFromGenotypeTable() throws general exceptions.", {
             coerceDosageToInt = FALSE,
             verbose           = FALSE
         ),
-        regexp = "`tasObj` must be of class `TasselGenotypePhenotype`"
+        regexp = "Unsupported input object"
     )
     expect_error(
         object = getSumExpFromGenotypeTable(
@@ -52,7 +52,7 @@ test_that("getSumExpFromGenotypeTable() throws general exceptions.", {
             coerceDosageToInt = FALSE,
             verbose           = FALSE
         ),
-        regexp = "TASSEL genotype object not found"
+        regexp = "needs genotype data"
     )
 })
 

@@ -7,8 +7,9 @@
 #' @name linkageDiseq
 #' @rdname linkageDiseq
 #'
-#' @param tasObj An object of class \code{TasselGenotypePenotype} that
-#'   contains a genotype table.
+#' @param tasObj An object of class \code{\linkS4class{TasselGenotype}} or
+#'   \code{\linkS4class{TasselGenomicDataset}}. Objects of the deprecated
+#'   \code{TasselGenotypePhenotype} class are still accepted.
 #' @param ldType How do you want LD calculated? Currently, the available
 #'   options are \code{"All"} and \code{"SlidingWindow"}. If
 #'   \code{All} is selected, LD will be calculated for every
@@ -60,15 +61,7 @@ linkageDiseq <- function(tasObj,
                          hetCalls = c("missing", "ignore", "third"),
                          verbose = TRUE) {
 
-    # Logic - Check for TasselGenotypePhenotype class
-    if (!is(tasObj, "TasselGenotypePhenotype")) {
-        stop("tasObj is not of class \"TasselGenotypePhenotype\"")
-    }
-
-    # Logic - Check to see if TASSEL object has a genotype table
-    if (rJava::is.jnull(tasObj@jGenotypeTable)) {
-        stop("tasObj does contain a Genotype object")
-    }
+    jGenoTable <- .resolveTasselInput(tasObj, "genotype", "linkageDiseq")$jGt
 
     # Logic - Check for available parameters
     hetCalls <- match.arg(hetCalls)
@@ -92,7 +85,7 @@ linkageDiseq <- function(tasObj,
     # Run LD
     if (verbose) message("Calculating LD...")
     ldObj <- jRC$linkageDiseq(
-        tasObj@jGenotypeTable,  # TASSEL genotype table
+        jGenoTable,             # TASSEL genotype table
         ldType,                 # LD type parameter
         as.integer(windowSize), # Window size
         hetCalls                # heterozygous calls
@@ -119,8 +112,9 @@ linkageDiseq <- function(tasObj,
 #' @name seqDiversity
 #' @rdname seqDiversity
 #'
-#' @param tasObj An object of class \code{TasselGenotypePenotype} that
-#'   contains a genotype table.
+#' @param tasObj An object of class \code{\linkS4class{TasselGenotype}} or
+#'   \code{\linkS4class{TasselGenomicDataset}}. Objects of the deprecated
+#'   \code{TasselGenotypePhenotype} class are still accepted.
 #' @param startSite Start site.
 #' @param endSite End site. Defaults to the maximum index of markers.
 #' @param slidingWindowAnalysis Do you want to analyze diversity in a sliding
@@ -142,17 +136,9 @@ seqDiversity <- function(
     stepSize = 100,
     windowSize = 500
 ) {
-    if (!inherits(tasObj, "TasselGenotypePhenotype")) {
-        stop("`tasObj` must be of class `TasselGenotypePhenotype`")
-    }
+    jGenoTable <- .resolveTasselInput(tasObj, "genotype", "seqDiversity")$jGt
 
-    jGenoTable <- getGenotypeTable(tasObj)
-    if (rJava::is.jnull(jGenoTable)) {
-        stop("TASSEL genotype object not found")
-    }
-
-
-    maxIndex <- tasObj@jGenotypeTable$numberOfSites() - 1
+    maxIndex <- jGenoTable$numberOfSites() - 1
     if (is.null(endSite)) {
         endSite <- maxIndex
     } else if (endSite > maxIndex) {

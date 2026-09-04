@@ -39,8 +39,9 @@
 #' @name genomicPrediction
 #' @rdname genomicPrediction
 #'
-#' @param tasPhenoObj An object of class \code{TasselGenotypePenotype} that
-#'   contains a phenotype object.
+#' @param tasPhenoObj An object of class \code{\linkS4class{TasselPhenotype}}
+#'   or \code{\linkS4class{TasselGenomicDataset}}. Objects of the deprecated
+#'   \code{TasselGenotypePhenotype} class are still accepted.
 #' @param kinship A TASSEL kinship object of class \code{TasselDistanceMatrix}.
 #' @param doCV Do you want to perform k-fold cross-validation? Defaults to
 #'   \code{FALSE}.
@@ -53,19 +54,10 @@
 #' @importFrom rJava J
 #' @export
 genomicPrediction <- function(tasPhenoObj, kinship, doCV = FALSE, kFolds, nIter) {
-    ## Check for correct rTASSEL class
-    if (!inherits(tasPhenoObj, "TasselGenotypePhenotype")) {
-        stop("`tasObj` must be of class `TasselGenotypePhenotype`", call. = FALSE)
-    }
-
-    ## Check to see if rTASSEL class object contains phenotype table
-    jGenoTable <- getPhenotypeTable(tasPhenoObj)
-    if (rJava::is.jnull(jGenoTable)) {
-        stop("TASSEL phenotype object not found", call. = FALSE)
-    }
-
     ## Get phenotype pointer object
-    tasPhenoObj <- tasPhenoObj@jPhenotypeTable
+    tasPhenoObj <- .resolveTasselInput(
+        tasPhenoObj, "phenotype", "genomicPrediction"
+    )$jPh
 
     ## Check to see if kinship parameter is of rJava and DistanceMatrix class
     ## class(kinship) != "TasselDistanceMatrix"

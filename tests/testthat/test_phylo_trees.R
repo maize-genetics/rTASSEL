@@ -27,7 +27,7 @@ tasGenoSub <- filterGenotypeTableTaxa(
 test_that("createTree() throws general exceptions.", {
     expect_error(
         object = createTree(tasObj = mtcars),
-        regexp = "tasObj is not of class \"TasselGenotypePhenotype\""
+        regexp = "Unsupported input object"
     )
     expect_error(
         object = createTree(tasObj = tasGeno, clustMethod = "NA"),

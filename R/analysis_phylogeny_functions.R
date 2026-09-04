@@ -7,7 +7,9 @@
 #'    package to be installed.
 #'
 #' @param tasObj
-#' An object of class \code{TasselGenotypePenotype}.
+#' An object of class \code{\linkS4class{TasselGenotype}} or
+#' \code{\linkS4class{TasselGenomicDataset}}. Objects of the deprecated
+#' \code{TasselGenotypePhenotype} class are still accepted.
 #' @param clustMethod
 #' What clustering method should be used? Current options are \code{UGMA} and
 #' \code{Neighbor_Joining}. Defaults to \code{Neighbor_Joining}.
@@ -31,9 +33,7 @@ createTree <- function(tasObj, clustMethod = c("Neighbor_Joining", "UPGMA")) {
         )
     }
 
-    if (!is(tasObj, "TasselGenotypePhenotype")) {
-        rlang::abort("tasObj is not of class \"TasselGenotypePhenotype\"")
-    }
+    jGenoTable <- .resolveTasselInput(tasObj, "genotype", "createTree")$jGt
 
     clustMethod <- match.arg(clustMethod)
 
@@ -44,7 +44,7 @@ createTree <- function(tasObj, clustMethod = c("Neighbor_Joining", "UPGMA")) {
     )
 
     input <- rJava::J("net/maizegenetics/plugindef/DataSet")
-    input <- input$getDataSet(getGenotypeTable(tasObj))
+    input <- input$getDataSet(jGenoTable)
 
     plugin$setParameter("clusteringMethod", clustMethod)
     plugin$setParameter("saveDistanceMatrix", "false")

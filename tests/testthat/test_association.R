@@ -111,7 +111,7 @@ test_that("assocModelFitter() throws general exceptions.", {
             fitMarkers      = TRUE,
             maxP            = 1
         ),
-       regexp = "tasObj is not of class \"TasselGenotypePhenotype\""
+       regexp = "Unsupported input object"
     )
     expect_error(
         object = assocModelFitter(
@@ -121,7 +121,7 @@ test_that("assocModelFitter() throws general exceptions.", {
             fitMarkers      = TRUE,
             maxP            = 1
         ),
-       regexp = "tasObj does not contain a Phenotype object"
+       regexp = "needs phenotype data"
     )
     expect_error(
         object = assocModelFitter(

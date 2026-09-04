@@ -65,12 +65,12 @@ filterGenoPhenoObj <- filterGenotypeTableTaxa(
 test_that("imputeNumeric() returns correct exceptions", {
     expect_error(
         object = imputeNumeric(mtcars),
-        regexp = "`tasObj` must be of class `TasselGenotypePhenotype`"
+        regexp = "Unsupported input object"
     )
 
     expect_error(
         object = imputeNumeric(tasPheno),
-        regexp = "TASSEL genotype object not found"
+        regexp = "needs genotype data"
     )
 })
 
@@ -175,12 +175,12 @@ test_that("imputeNumeric() returns correct data", {
 test_that("imputeLDKNNi() returns correct exceptions", {
     expect_error(
         object = imputeLDKNNi(mtcars),
-        regexp = "`tasObj` must be of class `TasselGenotypePhenotype`"
+        regexp = "Unsupported input object"
     )
 
     expect_error(
         object = imputeLDKNNi(tasPheno),
-        regexp = "TASSEL genotype object not found"
+        regexp = "needs genotype data"
     )
 
     expect_error(object = imputeLDKNNi(filterGenoObj, highLDSSites = 1))

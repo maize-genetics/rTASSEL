@@ -42,7 +42,7 @@ tasGenoPhenoFast <- readGenotypePhenotype(
 test_that("seqDiversity() throws general exceptions.", {
     expect_error(
         object = seqDiversity(mtcars),
-        regexp = "`tasObj` must be of class `TasselGenotypePhenotype`"
+        regexp = "Unsupported input object"
     )
 
     expect_error(

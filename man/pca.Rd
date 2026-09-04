@@ -16,7 +16,9 @@ pca(
 )
 }
 \arguments{
-\item{tasObj}{an rTASSEL \code{TasselGenotypePhenotype} object.}
+\item{tasObj}{An object of class \code{\linkS4class{TasselGenotype}} or
+\code{\linkS4class{TasselGenomicDataset}}. Objects of the deprecated
+\code{TasselGenotypePhenotype} class are still accepted.}
 
 \item{useCovariance}{If \code{TRUE}, analysis will do an eigenvalue
 decomposition of the covariance matrix. If \code{FALSE}, it will use a

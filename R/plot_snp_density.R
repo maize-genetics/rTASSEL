@@ -7,8 +7,9 @@
 #'    number of SNPs within each window determines tile color intensity
 #'    using the Viridis palette.
 #'
-#' @param tasObj An object of class \code{TasselGenotypePhenotype} or
-#'    \code{TasselGenotype} that contains a genotype table.
+#' @param tasObj An object of class \code{\linkS4class{TasselGenotype}} or
+#'    \code{\linkS4class{TasselGenomicDataset}}. Objects of the deprecated
+#'    \code{TasselGenotypePhenotype} class are still accepted.
 #' @param windowSize Size of the genomic window (in base pairs) used to
 #'    bin SNPs for density calculation. Defaults to \code{1e6} (1 Mbp).
 #' @param colorOption Which viridis color palette to use? Options are:
@@ -36,16 +37,8 @@ plotSnpDensity <- function(
     logNorm = FALSE,
     interactive = FALSE
 ) {
-    isTGP <- is(tasObj, "TasselGenotypePhenotype")
-    isTG  <- is(tasObj, "TasselGenotype")
-
-    if (!isTGP && !isTG) {
-        rlang::abort("tasObj must be of class \"TasselGenotypePhenotype\" or \"TasselGenotype\"")
-    }
-
-    if (isTGP && rJava::is.jnull(tasObj@jGenotypeTable)) {
-        rlang::abort("tasObj does not contain a Genotype object")
-    }
+    # Reject inputs without genotype data before any plotting work starts
+    .resolveTasselInput(tasObj, "genotype", "plotSnpDensity")
 
     if (!is.numeric(windowSize) || windowSize <= 0) {
         rlang::abort("`windowSize` must be a positive numeric value")
@@ -80,11 +73,8 @@ primeSnpDensityData <- function(params) {
     tasObj     <- params$tasObj
     windowSize <- params$windowSize
 
-    if (is(tasObj, "TasselGenotype")) {
-        jtsPL <- tasObj@jRefObj$positions()
-    } else {
-        jtsPL <- getPositionList(tasObj)
-    }
+    jtsPL <- getPositionList(tasObj)
+
     posData <- rJava::J(
         "net/maizegenetics/plugindef/GenerateRCode"
     )$genotypeTableToPositionListOfArrays(jtsPL)

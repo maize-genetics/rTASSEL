@@ -7,15 +7,22 @@
 getPhenotypeDF(tasObj)
 }
 \arguments{
-\item{tasObj}{An object of class \code{TasselGenotypePenotype}.}
+\item{tasObj}{An object of class \code{\linkS4class{TasselPhenotype}} or
+\code{\linkS4class{TasselGenomicDataset}}. Objects of the deprecated
+\code{TasselGenotypePhenotype} class are still accepted.}
 }
 \value{
 Returns an \code{DataFrame} based data frame
 }
 \description{
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
+
 This function will extract a \code{DataFrame}-based R data
-   frame from an object of \code{TasselGenotypePhenotype} class that
-   contains phenotypic data. Column data will be converted to the following
+   frame from an object that contains phenotypic data. Use
+   \code{\link[base]{as.data.frame}()} on a
+   \code{\linkS4class{TasselPhenotype}} or
+   \code{\linkS4class{TasselGenomicDataset}} instead. Column data will be
+   converted to the following
    types data depending on TASSEL data type:
    \itemize{
      \item{\code{<taxa>}: \code{character}}
@@ -23,4 +30,7 @@ This function will extract a \code{DataFrame}-based R data
      \item{\code{<covariate>}: \code{numeric}}
      \item{\code{<factor>}: \code{factor}}
    }
+}
+\seealso{
+\code{\link[base]{as.data.frame}}
 }

@@ -4,7 +4,7 @@
 test_that("plotSnpDensity rejects invalid inputs", {
     expect_error(
         plotSnpDensity(mtcars),
-        "tasObj must be of class"
+        "Unsupported input object"
     )
     expect_error(
         plotSnpDensity(rtObjs$gt_hmp, windowSize = -100),

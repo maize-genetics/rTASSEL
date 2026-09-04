@@ -76,11 +76,11 @@ test_that("readPhenotypeFromDataFrame() throws general exceptions.", {
 test_that("getPhenotypeDF() throws general exceptions.", {
     expect_error(
         object = getPhenotypeDF(mtcars),
-        regexp = "`tasObj` must be of class `TasselGenotypePhenotype`"
+        regexp = "Unsupported input object"
     )
     expect_error(
         object = getPhenotypeDF(tasGeno),
-        regexp = "TASSEL phenotype object not found"
+        regexp = "needs phenotype data"
     )
 })
 

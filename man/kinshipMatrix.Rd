@@ -12,7 +12,9 @@ kinshipMatrix(
 )
 }
 \arguments{
-\item{tasObj}{An object of class \code{TasselGenotypePenotype}.}
+\item{tasObj}{An object of class \code{\linkS4class{TasselGenotype}} or
+\code{\linkS4class{TasselGenomicDataset}}. Objects of the deprecated
+\code{TasselGenotypePhenotype} class are still accepted.}
 
 \item{method}{A Kinship method. Defaults to \code{Centered_IBS}. Other
 options include \code{Normalized_IBS}, \code{Dominance_Centered_IBS},

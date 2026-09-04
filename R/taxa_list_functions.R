@@ -31,13 +31,24 @@ setMethod("taxaList", "TasselGenotypePhenotype", function(tasObj) {
 
 
 ## Methods for pulling Taxa or Samples - not exported (house keeping)
+##
+## Any object that carries either genotype or phenotype data has a taxa
+## list, so this reaches for the list directly rather than going through
+## '.resolveTasselInput()' and its component requirements.
 #' @importFrom rJava J
 getTaxaIDs <- function(tasObj) {
-    if (!inherits(tasObj, "TasselGenotypePhenotype")) {
-        stop("`tasObj` must be of class `TasselGenotypePhenotype`")
+    jtsTL <- getTaxaList(tasObj)
+
+    if (rJava::is.jnull(jtsTL)) {
+        rlang::abort(c(
+            "No taxa found in input",
+            "x" = sprintf(
+                "Got an object of class <%s>",
+                paste(class(tasObj), collapse = "/")
+            )
+        ))
     }
 
-    jtsTL <- getTaxaList(tasObj)
     rJava::J("net/maizegenetics/plugindef/GenerateRCode")$
         genotypeTableToSampleNameArray(jtsTL)
 }

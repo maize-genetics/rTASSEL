@@ -7,7 +7,15 @@
 intersectJoin(x)
 }
 \arguments{
-\item{x}{A list of rTASSEL objects containing a phenotype.}
+\item{x}{A list of rTASSEL objects containing a phenotype. Accepted
+classes are \code{\linkS4class{TasselPhenotype}},
+\code{\linkS4class{TasselGenomicDataset}},
+\code{\linkS4class{PCAResults}}, and the deprecated
+\code{TasselGenotypePhenotype}.}
+}
+\value{
+A \code{\linkS4class{TasselPhenotype}} object, or a
+   \code{TasselGenotypePhenotype} if every data-bearing input was one.
 }
 \description{
 Intersect join multiple phenotype objects based on \code{Taxa}

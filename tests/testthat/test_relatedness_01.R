@@ -48,7 +48,7 @@ test_that("kinshipMatrix() throws general exceptions.", {
             maxAlleles         = 6,
             algorithmVariation = "Observed_Allele_Freq"
         ),
-        regexp = "`tasObj` must be of class `TasselGenotypePhenotype`"
+        regexp = "Unsupported input object"
     )
     expect_error(
         object = kinshipMatrix(
@@ -57,7 +57,7 @@ test_that("kinshipMatrix() throws general exceptions.", {
             maxAlleles         = 6,
             algorithmVariation = "Observed_Allele_Freq"
         ),
-        regexp = "TASSEL genotype object not found"
+        regexp = "needs genotype data"
     )
 })
 
@@ -67,13 +67,13 @@ test_that("distanceMatrix() throws general exceptions.", {
         object = distanceMatrix(
             tasObj = mtcars
         ),
-        regexp = "`tasObj` must be of class `TasselGenotypePhenotype`"
+        regexp = "Unsupported input object"
     )
     expect_error(
         object = distanceMatrix(
             tasObj = tasPheno
         ),
-        regexp = "TASSEL genotype object not found"
+        regexp = "needs genotype data"
     )
 })
 

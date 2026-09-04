@@ -1,8 +1,15 @@
 ## ----
 #' @title TasselGenotypePhenotype Class
 #'
-#' @description Class \code{TasselGenotypePhenotype} defines a \code{rTASSEL}
-#'    Class for storing TASSEL genotype and phenotype objects.
+#' @description
+#' \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
+#'
+#' Class \code{TasselGenotypePhenotype} defines a \code{rTASSEL}
+#'    Class for storing TASSEL genotype and phenotype objects. It is
+#'    superseded by \code{\linkS4class{TasselGenotype}},
+#'    \code{\linkS4class{TasselPhenotype}}, and
+#'    \code{\linkS4class{TasselGenomicDataset}}, and is scheduled for removal
+#'    in the next major release.
 #'
 #' @name TasselGenotypePhenotype-class
 #' @rdname TasselGenotypePhenotype-class

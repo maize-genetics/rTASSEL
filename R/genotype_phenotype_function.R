@@ -1,11 +1,15 @@
 ## ----
 #' @title Wrapper function of TasselGenotypePhenotype class for
 #'    GenotypePhenotype combined data
-
-#' @description Creates a Java GenotypePhenotype object which is used for
-#'    \code{TasselGenotypePhenotype} object construction. The Java
-#'    GenotypePhenotype object is created via an \code{intersect} method
-#'    from TASSEL.
+#'
+#' @description
+#' \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
+#'
+#' Creates a Java GenotypePhenotype object which is used for
+#'    the deprecated \code{TasselGenotypePhenotype} object construction. The
+#'    Java GenotypePhenotype object is created via an \code{intersect} method
+#'    from TASSEL. Use \code{\link{readGenomicDataset}()} instead, which
+#'    returns a \code{\linkS4class{TasselGenomicDataset}} object.
 #'
 #' @name readGenotypePhenotype
 #' @rdname readGenotypePhenotype
@@ -24,16 +28,22 @@
 #'
 #' @return Returns an object of \code{TasselGenotypePhenotype} class.
 #'
+#' @seealso \code{\link{readGenomicDataset}}
+#'
 #' @importFrom rJava J
 #' @importFrom rJava is.jnull
 #' @importFrom rJava .jinstanceof
 #' @export
 readGenotypePhenotype <- function(genoPathOrObj, phenoPathDFOrObj, ...) {
-    warnMsg <- paste0(
-        "The function 'readGenotypePhenotype()' will be deprecated soon.\n",
-        "This will be replaced by '", cli::style_bold("join()"), "' in the next update."
+    lifecycle::deprecate_warn(
+        "0.14.0", "readGenotypePhenotype()", "readGenomicDataset()"
     )
-    message(warnMsg)
+
+    # The legacy readers this delegates to are deprecated in their own right;
+    # one notice per user-facing call is enough
+    oldOpts <- options(lifecycle_verbosity = "quiet")
+    on.exit(options(oldOpts), add = TRUE)
+
     genoObj <- getGenotypeTable(genoPathOrObj)
     if(rJava::is.jnull(genoObj)) {
         genoObj <- getGenotypeTable(

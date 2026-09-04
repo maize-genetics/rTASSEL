@@ -12,7 +12,9 @@ imputeNumeric(
 )
 }
 \arguments{
-\item{tasObj}{an rTASSEL \code{TasselGenotypePhenotype} object.}
+\item{tasObj}{An object of class \code{\linkS4class{TasselGenotype}} or
+\code{\linkS4class{TasselGenomicDataset}}. Objects of the deprecated
+\code{TasselGenotypePhenotype} class are still accepted.}
 
 \item{byMean}{Will imputation be performed by computing the mean of the
 respective column? Defaults to \code{TRUE}.}
@@ -22,6 +24,10 @@ Defaults to \code{5}.}
 
 \item{distance}{Distance type. Options are \code{Euclidean},
 \code{Manhattan}, or \code{Cosine}. Defaults to \code{Euclidean}.}
+}
+\value{
+An object of the same class as \code{tasObj} holding the imputed
+   genotype data.
 }
 \description{
 This method takes an input \code{GenotypeTable} object with

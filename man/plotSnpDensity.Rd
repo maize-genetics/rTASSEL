@@ -14,8 +14,9 @@ plotSnpDensity(
 )
 }
 \arguments{
-\item{tasObj}{An object of class \code{TasselGenotypePhenotype} or
-\code{TasselGenotype} that contains a genotype table.}
+\item{tasObj}{An object of class \code{\linkS4class{TasselGenotype}} or
+\code{\linkS4class{TasselGenomicDataset}}. Objects of the deprecated
+\code{TasselGenotypePhenotype} class are still accepted.}
 
 \item{windowSize}{Size of the genomic window (in base pairs) used to
 bin SNPs for density calculation. Defaults to \code{1e6} (1 Mbp).}
