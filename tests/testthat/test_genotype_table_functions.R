@@ -5,47 +5,16 @@
 ### Start logging info
 startLogger()
 
-### Load hapmap data
-genoPathHMP <- system.file(
-    "extdata",
-    "mdp_genotype.hmp.txt",
-    package = "rTASSEL"
-)
+### Shared fixtures (see helper_vars.R)
+tasPheno   <- rtObjs$ph_nomiss
+tasGeno    <- rtObjs$gt_hmp
+tasDataset <- rtObjs$ds_hmp_ph_nomiss
 
-### Read data - need only non missing data!
-phenoPathFast <- system.file(
-    "extdata",
-    "mdp_traits_nomissing.txt",
-    package = "rTASSEL"
-)
-
-### Create rTASSEL phenotype only object
-tasPheno <- readPhenotypeFromPath(
-    path = phenoPathFast
-)
-
-### Create rTASSEL genotype only object
-tasGeno <- readGenotypeTableFromPath(
-    path = genoPathHMP
-)
-
-### Create rTASSEL object - use prior TASSEL genotype object
-tasGenoPhenoFast <- readGenotypePhenotype(
-    genoPathOrObj = genoPathHMP,
-    phenoPathDFOrObj = phenoPathFast
-)
-
-### Filter object for further tests
-filterGenoObj <- filterGenotypeTableSites(
-    tasObj = tasGeno,
-    siteRangeFilterType = "sites",
-    startSite = 0,
-    endSite = 10
-)
-filterGenoObj <- filterGenotypeTableTaxa(
-    tasObj = filterGenoObj,
-    taxa = taxaList(tasGeno)[grep("^[0-9]|^A", taxaList(tasGeno))]
-)
+### A small corner of chromosome 1 for the summary tests
+filterGenoObj <- tasGeno[
+    taxaWhere(grepl("^[0-9]|^A", taxaId)),
+    sites(1:11)
+]
 
 
 test_that("readGenotypeTableFromPath()", {
@@ -84,7 +53,7 @@ test_that("getMinMaxVarSites()", {
 
 test_that("as.matrix.TasselGenotypePhenotyp()", {
     expect_error(as.matrix.TasselGenotypePhenotype(mtcars))
-    expect_error(as.matrix.TasselGenotypePhenotype(tasPheno))
+    expect_error(as.matrix.TasselGenotypePhenotype(rtObjsLegacy$ph_nomiss))
 })
 
 test_that("siteSummary()", {
@@ -159,6 +128,32 @@ test_that("taxaSummary()", {
     expect_equal(nrow(testObj), 24)
     expect_equivalent(colnames(testObj), truthColNames)
     expect_true(inherits(siteSummary(filterGenoObj), "data.frame"))
+})
+
+test_that("summaries and position ranges accept a genomic dataset", {
+    # A dataset summarises its joined genotype table, which has dropped the
+    # taxa without phenotype records
+    expect_equal(siteSummary(tasDataset), siteSummary(genotype(tasDataset)))
+    expect_equal(nrow(taxaSummary(tasDataset)), 278)
+    expect_equal(
+        getMinMaxPhysPositions(tasDataset),
+        getMinMaxPhysPositions(tasGeno)
+    )
+    expect_equal(getMinMaxVarSites(tasDataset), getMinMaxVarSites(tasGeno))
+})
+
+
+## Back-compatibility ----
+test_that("genotype table functions accept a deprecated TasselGenotypePhenotype", {
+    legacyGt <- rtObjsLegacy$gt_hmp
+
+    expect_equal(siteSummary(legacyGt), siteSummary(tasGeno))
+    expect_equal(taxaSummary(legacyGt), taxaSummary(tasGeno))
+    expect_equal(
+        getMinMaxPhysPositions(legacyGt),
+        getMinMaxPhysPositions(tasGeno)
+    )
+    expect_equal(getMinMaxVarSites(legacyGt), getMinMaxVarSites(tasGeno))
 })
 
 

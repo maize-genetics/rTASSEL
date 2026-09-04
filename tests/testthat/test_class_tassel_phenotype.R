@@ -209,8 +209,8 @@ test_that("readPhenotype from file produces consistent slots", {
 })
 
 test_that("readPhenotype from file matches readPhenotypeFromPath trait names", {
-    phNew <- readPhenotype(rtFiles$ph_nomiss_path)
-    phOld <- rtObjs$ph_nomiss
+    phNew <- rtObjs$ph_nomiss
+    phOld <- rtObjsLegacy$ph_nomiss
 
     expect_equal(
         names(getPhenotypeDF(phOld)),

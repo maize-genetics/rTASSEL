@@ -20,24 +20,30 @@ test_that("plotSnpDensity rejects invalid inputs", {
 })
 
 
-## TasselGenotypePhenotype input ----
-test_that("plotSnpDensity works with TasselGenotypePhenotype", {
+## TasselGenotype input ----
+test_that("plotSnpDensity works with TasselGenotype", {
+    expect_s4_class(rtObjs$gt_hmp, "TasselGenotype")
+
     p <- plotSnpDensity(rtObjs$gt_hmp)
     expect_s3_class(p, "gg")
 
-    pBld <- ggplot2::ggplot_build(p)
     expect_s3_class(p$layers[[1]]$geom, "GeomTile")
     expect_equal(p$labels$y, "Chromosome")
     expect_true(grepl("Position", p$labels$x))
 })
 
 
-## TasselGenotype input ----
-test_that("plotSnpDensity works with TasselGenotype", {
-    gtObj <- readGenotype(rtFiles$gt_hmp_path)
-    expect_s4_class(gtObj, "TasselGenotype")
+## TasselGenomicDataset input ----
+test_that("plotSnpDensity works with TasselGenomicDataset", {
+    p <- plotSnpDensity(rtObjs$ds_hmp_ph_nomiss)
+    expect_s3_class(p, "gg")
+    expect_s3_class(p$layers[[1]]$geom, "GeomTile")
+})
 
-    p <- plotSnpDensity(gtObj)
+
+## Back-compatibility ----
+test_that("plotSnpDensity works with a deprecated TasselGenotypePhenotype", {
+    p <- plotSnpDensity(rtObjsLegacy$gt_hmp)
     expect_s3_class(p, "gg")
     expect_s3_class(p$layers[[1]]$geom, "GeomTile")
 })

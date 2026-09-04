@@ -48,9 +48,10 @@ test_that("readGenotype accepts a matrix and returns a genotype object", {
     gt <- readGenotype(m)
 
     expect_s4_class(gt, "TasselNumericGenotype")
-    expect_type(gt@dispData, "list")
     expect_s4_class(gt@jRefObj, "jobjRef")
     expect_true(nzchar(gt@jMemAddress))
+    expect_equal(gt@jRefObj$numberOfTaxa(), nrow(m))
+    expect_equal(gt@jRefObj$numberOfSites(), ncol(m))
 })
 
 
@@ -115,7 +116,9 @@ test_that("jClass slot contains a Java class path", {
     expect_match(gtTest@jClass, "\\.", perl = TRUE)
 })
 
-test_that("dispData slot is a non-empty list", {
-    gtTest <- readGenotype(rtFiles$gt_hmp_path)
-    expect_true(length(gtTest@dispData) > 0)
+test_that("the class carries only its Java handle and metadata", {
+    expect_equal(
+        names(methods::getSlots("TasselGenotype")),
+        c("jRefObj", "jMemAddress", "jClass")
+    )
 })

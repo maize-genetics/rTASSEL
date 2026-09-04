@@ -2,14 +2,7 @@
 
 test_that("pca() returns correct data", {
     ## Load data ----
-    genoPathHMP <- system.file(
-        "extdata",
-        "mdp_genotype.hmp.txt",
-        package = "rTASSEL"
-    )
-    tasGeno <- readGenotypeTableFromPath(
-        path = genoPathHMP
-    )
+    tasGeno <- rtObjs$gt_hmp
 
     ## Run test PCA ----
     pcaRes <- pca(tasGeno)
@@ -54,6 +47,26 @@ test_that("pca() returns correct data", {
     expect_equal(
         rJava::.jclass(pcaRes@jObj),
         "net.maizegenetics.phenotype.CorePhenotype"
+    )
+})
+
+
+test_that("pca() accepts a genomic dataset", {
+    pcaRes <- pca(rtObjs$ds_hmp_ph_nomiss)
+
+    expect_true(is(pcaRes, "PCAResults"))
+    expect_equal(
+        nrow(tableReport(pcaRes, "PC_Datum")),
+        length(taxaList(rtObjs$ds_hmp_ph_nomiss))
+    )
+})
+
+
+## Back-compatibility ----
+test_that("pca() accepts a deprecated TasselGenotypePhenotype", {
+    expect_equal(
+        tableReport(pca(rtObjsLegacy$gt_hmp), "PC_Datum"),
+        tableReport(pca(rtObjs$gt_hmp), "PC_Datum")
     )
 })
 

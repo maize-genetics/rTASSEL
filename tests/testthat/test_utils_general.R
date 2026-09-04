@@ -5,35 +5,10 @@
 ### Start logging info
 startLogger()
 
-### Load hapmap data
-genoPathHMP <- system.file(
-    "extdata",
-    "mdp_genotype.hmp.txt",
-    package = "rTASSEL"
-)
-
-### Read data - need only non missing data!
-phenoPathFast <- system.file(
-    "extdata",
-    "mdp_traits_nomissing.txt",
-    package = "rTASSEL"
-)
-
-### Create rTASSEL phenotype only object
-tasPheno <- readPhenotypeFromPath(
-    path = phenoPathFast
-)
-
-### Create rTASSEL genotype only object
-tasGeno <- readGenotypeTableFromPath(
-    path = genoPathHMP
-)
-
-### Create rTASSEL object - use prior TASSEL genotype object
-tasGenoPhenoFast <- readGenotypePhenotype(
-    genoPathOrObj = genoPathHMP,
-    phenoPathDFOrObj = phenoPathFast
-)
+### Shared fixtures (see helper_vars.R)
+tasPheno   <- rtObjs$ph_nomiss
+tasGeno    <- rtObjs$gt_hmp
+tasDataset <- rtObjs$ds_hmp_ph_nomiss
 
 
 test_that("truncate() function returns correct output", {
@@ -98,7 +73,7 @@ test_that("summaryDistance() ", {
 })
 
 test_that("getGenotypePhenotype() returns correct data", {
-    testObj <- getGenotypePhenotype(tasGenoPhenoFast)
+    testObj <- getGenotypePhenotype(tasDataset)
     expect_equal(
         object = testObj$getClass()$toString(),
         expected = "class net.maizegenetics.phenotype.GenotypePhenotype"
@@ -120,7 +95,11 @@ test_that("assocStatsColumnChecker returns correct errors", {
 
 test_that("genomicRanges validates inputs correctly", {
     expect_error(genomicRanges(mtcars), "data.frame does not contain a TASSEL PositionList object")
-    expect_error(genomicRanges(tasPheno), "TasselGenotypePhenotype does not contain a TASSEL PositionList object")
+    expect_error(genomicRanges(tasPheno), "TasselPhenotype does not contain a TASSEL PositionList object")
+    expect_error(
+        genomicRanges(rtObjsLegacy$ph_nomiss),
+        "TasselGenotypePhenotype does not contain a TASSEL PositionList object"
+    )
 
     # Test with valid input
     gr <- genomicRanges(tasGeno)

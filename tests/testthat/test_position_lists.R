@@ -6,36 +6,9 @@
 startLogger()
 library(rJava)
 
-### Load hapmap data
-genoPathHMP <- system.file(
-    "extdata",
-    "mdp_genotype.hmp.txt",
-    package = "rTASSEL"
-)
-
-### Read data - need only non missing data!
-phenoPathFast <- system.file(
-    "extdata",
-    "mdp_traits_nomissing.txt",
-    package = "rTASSEL"
-)
-
-### Create rTASSEL phenotype only object
-tasPheno <- readPhenotypeFromPath(
-    path = phenoPathFast
-)
-
-### Create rTASSEL genotype only object
-tasGeno <- readGenotypeTableFromPath(
-    path = genoPathHMP
-)
-
-### Create rTASSEL object - use prior TASSEL genotype object
-tasGenoPheno <- readGenotypePhenotype(
-    genoPathOrObj = genoPathHMP,
-    phenoPathDFOrObj = phenoPathFast
-)
-
+### Shared fixtures (see helper_vars.R)
+tasGeno    <- rtObjs$gt_hmp
+tasDataset <- rtObjs$ds_hmp_ph_nomiss
 
 
 ## Error tests ----
@@ -45,16 +18,27 @@ test_that("getPositionList() throws general exceptions.", {
 })
 
 
-
 ## Return tests ----
-test_that("position list methods return correct data and classes.", {
-    tmp <- getPositionList(tasGeno@jPositionList)
-    expect_true(tmp %instanceof% "net.maizegenetics.dna.map.PositionArrayList")
+test_that("getPositionList() accepts every class carrying positions.", {
+    isPositionList <- function(x) {
+        getPositionList(x) %instanceof% "net.maizegenetics.dna.map.PositionArrayList"
+    }
 
+    expect_true(isPositionList(tasGeno))
+    expect_true(isPositionList(tasDataset))
+    expect_true(isPositionList(rtObjsLegacy$gt_hmp))
+
+    # Raw Java references pass straight through
+    expect_true(isPositionList(getPositionList(tasGeno)))
+})
+
+test_that("position list methods return correct data and classes.", {
     tmp <- genomicRanges(tasGeno)
     expect_true(class(tmp)[1] == "GRanges")
     expect_true(length(tmp$tasselIndex) == 3093)
-
 })
 
-
+test_that("positionList() agrees across the classes holding the table.", {
+    expect_equal(positionList(tasGeno), positionList(tasDataset))
+    expect_equal(nrow(positionList(tasGeno)), 3093)
+})

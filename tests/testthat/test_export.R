@@ -4,35 +4,10 @@
 ### Start logging info
 startLogger()
 
-### Load hapmap data
-genoPathHMP <- system.file(
-    "extdata",
-    "mdp_genotype.hmp.txt",
-    package = "rTASSEL"
-)
-
-### Read data - need only non missing data!
-phenoPathFast <- system.file(
-    "extdata",
-    "mdp_traits_nomissing.txt",
-    package = "rTASSEL"
-)
-
-### Create rTASSEL phenotype only object
-tasPheno <- readPhenotypeFromPath(
-    path = phenoPathFast
-)
-
-### Create rTASSEL genotype only object
-tasGeno <- readGenotypeTableFromPath(
-    path = genoPathHMP
-)
-
-### Create rTASSEL object - use prior TASSEL genotype object
-tasGenoPheno <- readGenotypePhenotype(
-    genoPathOrObj = genoPathHMP,
-    phenoPathDFOrObj = phenoPathFast
-)
+### Shared fixtures (see helper_vars.R)
+tasPheno   <- rtObjs$ph_nomiss
+tasGeno    <- rtObjs$gt_hmp
+tasDataset <- rtObjs$ds_hmp_ph_nomiss
 
 
 ## Error tests ----
@@ -152,6 +127,36 @@ test_that("exportGenotypeTable() writes correct file type.", {
 
     file.remove(fileID1)
     file.remove(fileID2)
+})
+
+test_that("exportGenotypeTable() writes a genomic dataset's genotype data.", {
+    exportGenotypeTable(
+        tasObj = tasDataset,
+        file   = "my_ds",
+        format = "hapmap"
+    )
+
+    fileID <- "my_ds.hmp.txt"
+
+    expect_true(file.exists(fileID))
+
+    file.remove(fileID)
+})
+
+
+## Back-compatibility ----
+test_that("exportGenotypeTable() accepts a deprecated TasselGenotypePhenotype", {
+    exportGenotypeTable(
+        tasObj = rtObjsLegacy$gt_hmp_ph_nomiss,
+        file   = "my_legacy_gt",
+        format = "hapmap"
+    )
+
+    fileID <- "my_legacy_gt.hmp.txt"
+
+    expect_true(file.exists(fileID))
+
+    file.remove(fileID)
 })
 
 

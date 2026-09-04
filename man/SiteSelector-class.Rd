@@ -8,6 +8,9 @@
 \usage{
 \S4method{!}{SiteSelector}(x)
 }
+\arguments{
+\item{x}{A \code{SiteSelector} object.}
+}
 \description{
 S4 class representing site selection criteria for bracket-based
 filtering of \code{TasselGenotype} objects.

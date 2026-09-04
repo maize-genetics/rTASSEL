@@ -110,13 +110,24 @@ joinGenotypePhenotype <- function(jGt, jPh, join = "intersect") {
 
     builder <- if (join == "union") builder$union() else builder$intersect()
 
-    jGp <- builder$build()
-
-    if (rJava::is.jnull(jGp)) {
+    # A Java 'Throwable' cannot be used as 'parent': rJava's '$' method
+    # intercepts the fields rlang probes when formatting a chained error
+    joinFailed <- function(cnd = NULL) {
         rlang::abort(c(
             "Could not join the genotype and phenotype data",
-            "i" = "Do the two data sets share any taxa IDs?"
+            "i" = "Do the two data sets share any taxa IDs?",
+            if (!is.null(cnd)) {
+                c("i" = paste0("TASSEL reported: ", conditionMessage(cnd)))
+            }
         ))
+    }
+
+    # A join that leaves no taxa behind surfaces as a Java exception rather
+    # than an empty result, so both outcomes report the likely cause
+    jGp <- tryCatch(builder$build(), error = joinFailed)
+
+    if (rJava::is.jnull(jGp)) {
+        joinFailed()
     }
 
     return(jGp)

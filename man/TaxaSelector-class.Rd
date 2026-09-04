@@ -8,6 +8,9 @@
 \usage{
 \S4method{!}{TaxaSelector}(x)
 }
+\arguments{
+\item{x}{A \code{TaxaSelector} object.}
+}
 \description{
 S4 class representing taxa selection criteria for bracket-based
 filtering of \code{TasselGenotype} objects.

@@ -5,38 +5,13 @@
 ### Start logging info
 startLogger()
 
-### Load hapmap data
-genoPathHMP <- system.file(
-    "extdata",
-    "mdp_genotype.hmp.txt",
-    package = "rTASSEL"
-)
-
-### Read data - need only non missing data!
-phenoPathFast <- system.file(
-    "extdata",
-    "mdp_traits_nomissing.txt",
-    package = "rTASSEL"
-)
-
-### Create rTASSEL phenotype only object
-tasPheno <- readPhenotypeFromPath(
-    path = phenoPathFast
-)
-
-### Create rTASSEL genotype only object
-tasGeno <- readGenotypeTableFromPath(
-    path = genoPathHMP
-)
-
-### Create rTASSEL object - use prior TASSEL genotype object
-tasGenoPhenoFast <- readGenotypePhenotype(
-    genoPathOrObj = genoPathHMP,
-    phenoPathDFOrObj = phenoPathFast
-)
+### Shared fixtures (see helper_vars.R)
+tasPheno   <- rtObjs$ph_nomiss
+tasGeno    <- rtObjs$gt_hmp
+tasDataset <- rtObjs$ds_hmp_ph_nomiss
 
 ### Create kinship object
-tasKin <- rTASSEL::kinshipMatrix(tasGenoPhenoFast)
+tasKin <- rTASSEL::kinshipMatrix(tasDataset)
 
 ### Create error-prone kinship object
 set.seed(123)
@@ -47,32 +22,22 @@ diag(s) <- 2
 colnames(s) <- rownames(s) <- paste0("s_", seq_len(m))
 tasKinError <- asTasselDistanceMatrix(s)
 
-### Create multi data type pheno object
-tasGenoPhenoCov <- readGenotypePhenotype(
-    genoPathOrObj = genoPathHMP,
-    phenoPathDFOrObj = system.file(
-        "extdata",
-        "mdp_phenotype.txt",
-        package = "rTASSEL"
-    )
-)
+### Multi data type pheno object (factors + covariates)
+tasDatasetCov <- rtObjs$ds_hmp_ph_full
 
 ### Create no missing data set with factors/cov (fast association)
-fullDf <- getPhenotypeDF(
-    readPhenotypeFromPath(
-        system.file(
-            "extdata",
-            "mdp_phenotype.txt",
-            package = "rTASSEL"
-        )
+fullDf <- as.data.frame(rtObjs$ph_full)
+noMissingDf <- fullDf[
+    which(!is.na(fullDf$EarHT)),
+    c("Taxa", "location", "EarHT", "Q1", "Q2", "Q3")
+]
+tasDatasetCovNoMiss <- readGenomicDataset(
+    genotype  = tasGeno,
+    phenotype = noMissingDf,
+    attr      = data.frame(
+        col_id      = colnames(noMissingDf),
+        tassel_attr = c("taxa", "factor", "data", rep("covariate", 3))
     )
-)
-noMissingDf <- fullDf[which(!is.na(fullDf$EarHT)), c("Taxa", "location", "EarHT", "Q1", "Q2", "Q3")]
-tasGenoPhenoCovNoMiss <- readGenotypePhenotype(
-    genoPathOrObj = tasGeno,
-    phenoPathDFOrObj = noMissingDf,
-    taxaID = "Taxa",
-    attributeTypes = c("factor", "data", rep("covariate", 3))
 )
 
 ### Association objects
@@ -81,18 +46,18 @@ tasBLUE <- assocModelFitter(
     formula = . ~ .
 )
 tasGLM <- assocModelFitter(
-    tasObj     = tasGenoPhenoFast,
+    tasObj     = tasDataset,
     formula    = . ~ .,
     fitMarkers = TRUE
 )
 tasMLM <- assocModelFitter(
-    tasObj     = tasGenoPhenoFast,
+    tasObj     = tasDataset,
     formula    = . ~ .,
     fitMarkers = TRUE,
     kinship    = tasKin
 )
 tasFast <- assocModelFitter(
-    tasObj          = tasGenoPhenoFast,
+    tasObj          = tasDataset,
     formula         = . ~ .,
     fitMarkers      = TRUE,
     fastAssociation = TRUE
@@ -125,7 +90,7 @@ test_that("assocModelFitter() throws general exceptions.", {
     )
     expect_error(
         object = assocModelFitter(
-            tasObj          = tasGenoPhenoFast,
+            tasObj          = tasDataset,
             formula         = . ~ .,
             fastAssociation = TRUE,
             fitMarkers      = TRUE,
@@ -135,7 +100,7 @@ test_that("assocModelFitter() throws general exceptions.", {
     )
     expect_that( # <- regex expect and actual are the same?
         object = assocModelFitter(
-            tasObj          = tasGenoPhenoFast,
+            tasObj          = tasDataset,
             formula         = . ~ .,
             fastAssociation = TRUE,
             fitMarkers      = TRUE,
@@ -148,7 +113,7 @@ test_that("assocModelFitter() throws general exceptions.", {
 test_that("assocModelFitter() kinship parameter throws correct exceptions", {
     expect_error(
         object = assocModelFitter(
-            tasObj          = tasGenoPhenoFast,
+            tasObj          = tasDataset,
             formula         = . ~ .,
             kinship         = mtcars,
             fitMarkers      = TRUE,
@@ -157,7 +122,7 @@ test_that("assocModelFitter() kinship parameter throws correct exceptions", {
     )
     expect_error(
         object = assocModelFitter(
-            tasObj          = tasGenoPhenoFast,
+            tasObj          = tasDataset,
             formula         = . ~ .,
             kinship         = tasKinError,
             fitMarkers      = TRUE,
@@ -169,21 +134,21 @@ test_that("assocModelFitter() kinship parameter throws correct exceptions", {
 test_that("assocModelFitter() formula parameter throw correct exceptions", {
     expect_error(
         object = assocModelFitter(
-            tasObj     = tasGenoPhenoFast,
+            tasObj     = tasDataset,
             formula    = not_a_trait ~ .,
             fitMarkers = TRUE
         )
     )
     expect_error(
         object = assocModelFitter(
-            tasObj     = tasGenoPhenoCov,
+            tasObj     = tasDatasetCov,
             formula    = Q1 ~ .,
             fitMarkers = TRUE
         )
     )
     expect_error(
         object = assocModelFitter(
-            tasObj     = tasGenoPhenoCov,
+            tasObj     = tasDatasetCov,
             formula    = . ~ EarHT,
             fitMarkers = TRUE
         )
@@ -268,7 +233,7 @@ test_that("assocModelFitter() throws exceptions (fast association).", {
     )
     expect_that(
         object = assocModelFitter(
-            tasObj          = tasGenoPhenoFast,
+            tasObj          = tasDataset,
             formula         = . ~ .,
             fastAssociation = TRUE,
             fitMarkers      = TRUE,
@@ -355,7 +320,7 @@ test_that("BLUE analysis return correct data types.", {
 test_that("assocModelFitter() handles threads", {
     expect_message(
         assocModelFitter(
-            tasObj          = tasGenoPhenoFast,
+            tasObj          = tasDataset,
             formula         = . ~ .,
             fitMarkers      = TRUE,
             fastAssociation = TRUE,
@@ -367,7 +332,7 @@ test_that("assocModelFitter() handles threads", {
 test_that("assocModelFitter() saves to disk", {
     tmpOut <- paste0(tempdir(), "/test_prefix")
     tmpObj <- assocModelFitter(
-        tasObj     = tasGenoPhenoFast,
+        tasObj     = tasDataset,
         formula    = . ~ .,
         fitMarkers = TRUE,
         outputFile = tmpOut
@@ -379,7 +344,7 @@ test_that("assocModelFitter() saves to disk", {
 test_that("assocModelFitter() order of operations is correct", {
     expect_message(
         object = assocModelFitter(
-            tasObj     = tasGenoPhenoCovNoMiss,
+            tasObj     = tasDatasetCovNoMiss,
             formula    = . ~ .,
             fitMarkers = TRUE,
             fastAssociation = TRUE
@@ -387,7 +352,7 @@ test_that("assocModelFitter() order of operations is correct", {
     )
     expect_message(
         object = assocModelFitter(
-            tasObj     = tasGenoPhenoCovNoMiss,
+            tasObj     = tasDatasetCovNoMiss,
             formula    = . ~ .,
             fitMarkers = TRUE,
             kinship = tasKin
@@ -396,10 +361,26 @@ test_that("assocModelFitter() order of operations is correct", {
 
     expect_message(
         object = assocModelFitter(
-            tasObj     = tasGenoPhenoCovNoMiss,
+            tasObj     = tasDatasetCovNoMiss,
             formula    = EarHT ~ location,
             fitMarkers = TRUE
         )
+    )
+})
+
+
+## Back-compatibility ----
+test_that("assocModelFitter() accepts a deprecated TasselGenotypePhenotype", {
+    legacyGLM <- assocModelFitter(
+        tasObj     = rtObjsLegacy$gt_hmp_ph_nomiss,
+        formula    = . ~ .,
+        fitMarkers = TRUE
+    )
+
+    expect_s4_class(legacyGLM, "AssociationResults")
+    expect_equal(
+        tableReport(legacyGLM, "GLM_Stats"),
+        tableReport(tasGLM, "GLM_Stats")
     )
 })
 

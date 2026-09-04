@@ -10,6 +10,7 @@
 ^pkgdown$
 ^paper$
 ^\.github$
+^\.cursor$
 ^rTASSEL_log$
 ^rtassel_log\.txt$
 ^LICENSE\.md$

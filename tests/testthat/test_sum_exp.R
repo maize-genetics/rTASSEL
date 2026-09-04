@@ -5,35 +5,10 @@
 ### Start logging info
 startLogger()
 
-### Load hapmap data
-genoPathHMP <- system.file(
-    "extdata",
-    "mdp_genotype.hmp.txt",
-    package = "rTASSEL"
-)
-
-### Read data - need only non missing data!
-phenoPathFast <- system.file(
-    "extdata",
-    "mdp_traits_nomissing.txt",
-    package = "rTASSEL"
-)
-
-### Create rTASSEL phenotype only object
-tasPheno <- readPhenotypeFromPath(
-    path = phenoPathFast
-)
-
-### Create rTASSEL genotype only object
-tasGeno <- readGenotypeTableFromPath(
-    path = genoPathHMP
-)
-
-### Create rTASSEL object - use prior TASSEL genotype object
-tasGenoPheno <- readGenotypePhenotype(
-    genoPathOrObj = genoPathHMP,
-    phenoPathDFOrObj = phenoPathFast
-)
+### Shared fixtures (see helper_vars.R)
+tasPheno   <- rtObjs$ph_nomiss
+tasGeno    <- rtObjs$gt_hmp
+tasDataset <- rtObjs$ds_hmp_ph_nomiss
 
 
 ## Error tests ----
@@ -60,7 +35,7 @@ test_that("getSumExpFromGenotypeTable() throws general exceptions.", {
 ## Return tests ----
 test_that("getSumExpFromGenotypeTable() returns correct data.", {
     tasSE <- getSumExpFromGenotypeTable(
-        tasObj            = tasGenoPheno,
+        tasObj            = tasDataset,
         coerceDosageToInt = FALSE,
         verbose           = FALSE
     )
@@ -77,14 +52,14 @@ test_that("getSumExpFromGenotypeTable() returns correct data.", {
 
 test_that("getSumExpFromGenotypeTable() returns correct dosage types.", {
     tasSERaw <- getSumExpFromGenotypeTable(
-        tasObj            = tasGenoPheno,
+        tasObj            = tasDataset,
         coerceDosageToInt = FALSE,
         verbose           = FALSE
     )
     assaySERaw <- SummarizedExperiment::assay(tasSERaw)[[1, 1]]
 
     tasSEInt <- getSumExpFromGenotypeTable(
-        tasObj            = tasGenoPheno,
+        tasObj            = tasDataset,
         coerceDosageToInt = TRUE,
         verbose           = FALSE
     )
@@ -98,6 +73,18 @@ test_that("getSumExpFromGenotypeTable() returns correct dosage types.", {
         object = class(assaySERaw),
         expected = "raw"
     )
+})
+
+
+## Back-compatibility ----
+test_that("getSumExpFromGenotypeTable() accepts a deprecated TasselGenotypePhenotype", {
+    tasSE <- getSumExpFromGenotypeTable(
+        tasObj            = rtObjsLegacy$gt_hmp_ph_nomiss,
+        coerceDosageToInt = FALSE,
+        verbose           = FALSE
+    )
+
+    expect_equal(dim(tasSE), c(3093, 278))
 })
 
 

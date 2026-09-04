@@ -5,60 +5,18 @@
 ### Start logging info
 startLogger()
 
-### Load hapmap data
-genoPathHMP <- system.file(
-    "extdata",
-    "mdp_genotype.hmp.txt",
-    package = "rTASSEL"
-)
+### Shared fixtures (see helper_vars.R)
+tasPheno   <- rtObjs$ph_nomiss
+tasGeno    <- rtObjs$gt_hmp
+tasDataset <- rtObjs$ds_hmp_ph_nomiss
 
-### Read data - need only non missing data!
-phenoPathFast <- system.file(
-    "extdata",
-    "mdp_traits_nomissing.txt",
-    package = "rTASSEL"
-)
+### Imputation is slow, so cut both fixtures down to a small block of
+### sites and the taxa whose IDs start with a digit or an "A"
+smallTaxa  <- taxaWhere(grepl("^[0-9]|^A", taxaId))
+smallSites <- sites(1:11)
 
-### Create rTASSEL phenotype only object
-tasPheno <- readPhenotypeFromPath(
-    path = phenoPathFast
-)
-
-### Create rTASSEL genotype only object
-tasGeno <- readGenotypeTableFromPath(
-    path = genoPathHMP
-)
-
-### Create rTASSEL object - use prior TASSEL genotype object
-tasGenoPhenoFast <- readGenotypePhenotype(
-    genoPathOrObj = genoPathHMP,
-    phenoPathDFOrObj = phenoPathFast
-)
-
-### Filter object for further tests (just genotype)
-filterGenoObj <- filterGenotypeTableSites(
-    tasObj = tasGeno,
-    siteRangeFilterType = "sites",
-    startSite = 0,
-    endSite = 10
-)
-filterGenoObj <- filterGenotypeTableTaxa(
-    tasObj = filterGenoObj,
-    taxa = taxaList(tasGeno)[grep("^[0-9]|^A", taxaList(tasGeno))]
-)
-
-
-### Filter object for further tests (genotype and phenotype)
-filterGenoPhenoObj <- filterGenotypeTableSites(
-    tasObj = tasGenoPhenoFast,
-    siteRangeFilterType = "sites",
-    startSite = 0,
-    endSite = 10
-)
-filterGenoPhenoObj <- filterGenotypeTableTaxa(
-    tasObj = filterGenoPhenoObj,
-    taxa = taxaList(tasGeno)[grep("^[0-9]|^A", taxaList(tasGeno))]
-)
+filterGenoObj      <- tasGeno[smallTaxa, smallSites]
+filterGenoPhenoObj <- tasDataset[smallTaxa, smallSites]
 
 
 ## Imputation (Numeric) ----
@@ -75,97 +33,63 @@ test_that("imputeNumeric() returns correct exceptions", {
 })
 
 
-test_that("imputeNumeric() returns correct data", {
-    expect_true(
-        inherits(
-            imputeNumeric(
-                tasObj = filterGenoObj,
-                byMean = TRUE,
-                nearestNeighbors = 5,
-                distance = "Euclidean"
-            ),
-            "TasselGenotypePhenotype"
-        )
-    )
-    expect_true(
-        inherits(
-            imputeNumeric(
-                tasObj = filterGenoObj,
-                byMean = FALSE,
-                nearestNeighbors = 5,
-                distance = "Euclidean"
-            ),
-            "TasselGenotypePhenotype"
-        )
-    )
-    expect_true(
-        inherits(
-            imputeNumeric(
-                tasObj = filterGenoObj,
-                byMean = FALSE,
-                nearestNeighbors = 5,
-                distance = "Manhattan"
-            ),
-            "TasselGenotypePhenotype"
-        )
-    )
-    expect_true(
-        inherits(
-            imputeNumeric(
-                tasObj = filterGenoObj,
-                byMean = FALSE,
-                nearestNeighbors = 5,
-                distance = "Cosine"
-            ),
-            "TasselGenotypePhenotype"
-        )
+test_that("imputeNumeric() returns a genotype for every distance metric", {
+    expect_s4_class(
+        imputeNumeric(
+            tasObj = filterGenoObj,
+            byMean = TRUE,
+            nearestNeighbors = 5,
+            distance = "Euclidean"
+        ),
+        "TasselGenotype"
     )
 
+    for (dist in c("Euclidean", "Manhattan", "Cosine")) {
+        expect_s4_class(
+            imputeNumeric(
+                tasObj = filterGenoObj,
+                byMean = FALSE,
+                nearestNeighbors = 5,
+                distance = dist
+            ),
+            "TasselGenotype"
+        )
+    }
+})
 
 
-    expect_true(
-        inherits(
-            imputeNumeric(
-                tasObj = filterGenoPhenoObj,
-                byMean = TRUE,
-                nearestNeighbors = 5,
-                distance = "Euclidean"
-            ),
-            "TasselGenotypePhenotype"
-        )
+test_that("imputeNumeric() returns a dataset for every distance metric", {
+    expect_s4_class(
+        imputeNumeric(
+            tasObj = filterGenoPhenoObj,
+            byMean = TRUE,
+            nearestNeighbors = 5,
+            distance = "Euclidean"
+        ),
+        "TasselGenomicDataset"
     )
-    expect_true(
-        inherits(
+
+    for (dist in c("Euclidean", "Manhattan", "Cosine")) {
+        expect_s4_class(
             imputeNumeric(
                 tasObj = filterGenoPhenoObj,
                 byMean = FALSE,
                 nearestNeighbors = 5,
-                distance = "Euclidean"
+                distance = dist
             ),
-            "TasselGenotypePhenotype"
+            "TasselGenomicDataset"
         )
-    )
-    expect_true(
-        inherits(
-            imputeNumeric(
-                tasObj = filterGenoPhenoObj,
-                byMean = FALSE,
-                nearestNeighbors = 5,
-                distance = "Manhattan"
-            ),
-            "TasselGenotypePhenotype"
-        )
-    )
-    expect_true(
-        inherits(
-            imputeNumeric(
-                tasObj = filterGenoPhenoObj,
-                byMean = FALSE,
-                nearestNeighbors = 5,
-                distance = "Cosine"
-            ),
-            "TasselGenotypePhenotype"
-        )
+    }
+})
+
+
+test_that("imputeNumeric() keeps a dataset's phenotype data attached", {
+    imputed <- imputeNumeric(filterGenoPhenoObj)
+
+    expect_equal(traitNames(imputed), traitNames(filterGenoPhenoObj))
+    expect_equal(
+        nrow(as.data.frame(imputed)),
+        nrow(as.data.frame(filterGenoPhenoObj))
     )
 })
 
@@ -202,23 +126,22 @@ test_that("imputeLDKNNi() returns correct exceptions", {
 
 
 test_that("imputeLDKNNi() returns correct data", {
-    expect_true(
-        inherits(
-            imputeLDKNNi(
-                tasObj = filterGenoObj
-            ),
-            "TasselGenotypePhenotype"
-        )
+    expect_s4_class(imputeLDKNNi(filterGenoObj), "TasselGenotype")
+    expect_s4_class(imputeLDKNNi(filterGenoPhenoObj), "TasselGenomicDataset")
+})
+
+
+## Back-compatibility ----
+test_that("imputation accepts a deprecated TasselGenotypePhenotype", {
+    legacySub <- filterGenotypeTableSites(
+        tasObj = rtObjsLegacy$gt_hmp_ph_nomiss,
+        siteRangeFilterType = "sites",
+        startSite = 0,
+        endSite = 10
     )
 
-    expect_true(
-        inherits(
-            imputeLDKNNi(
-                tasObj = filterGenoPhenoObj
-            ),
-            "TasselGenotypePhenotype"
-        )
-    )
+    expect_s4_class(imputeNumeric(legacySub), "TasselGenotypePhenotype")
+    expect_s4_class(imputeLDKNNi(legacySub), "TasselGenotypePhenotype")
 })
 
 

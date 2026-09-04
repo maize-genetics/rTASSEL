@@ -176,7 +176,7 @@ test_that("getPhenotypeDF () returns correct data.", {
 
     phenoDF <- getPhenotypeDF(tasGenoPheno)
 
-    expect_true(class(phenoDF) == "data.frame")
+    expect_s3_class(phenoDF, "data.frame")
 
     expect_equal(
         object   = names(phenoDF),

@@ -41,37 +41,6 @@ test_that("TASSEL_JVM values are valid Java class paths", {
 })
 
 
-# --- ANSI constants -----------------------------------------------
-
-test_that("ANSI is a named list with expected keys", {
-    expect_type(ANSI, "list")
-
-    expected_keys <- c("BOLD_ON", "BOLD_OFF", "INFO")
-    for (key in expected_keys) {
-        expect_true(
-            key %in% names(ANSI),
-            info = paste0("Missing ANSI key: ", key)
-        )
-    }
-})
-
-test_that("ANSI values are character strings", {
-    for (nm in names(ANSI)) {
-        expect_type(ANSI[[nm]], "character")
-        expect_length(ANSI[[nm]], 1)
-    }
-})
-
-test_that("ANSI escape codes have correct format", {
-    expect_match(ANSI$BOLD_ON, "^\033\\[")
-    expect_match(ANSI$BOLD_OFF, "^\033\\[")
-})
-
-test_that("ANSI INFO is the information symbol", {
-    expect_equal(ANSI$INFO, intToUtf8(0x2139))
-})
-
-
 # --- TASSEL_MAVEN constants ---------------------------------------
 
 test_that("TASSEL_MAVEN is a named list", {

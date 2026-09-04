@@ -5,35 +5,10 @@
 ### Start logging info
 startLogger()
 
-### Load hapmap data
-genoPathHMP <- system.file(
-    "extdata",
-    "mdp_genotype.hmp.txt",
-    package = "rTASSEL"
-)
-
-### Read data - need only non missing data!
-phenoPathFast <- system.file(
-    "extdata",
-    "mdp_traits_nomissing.txt",
-    package = "rTASSEL"
-)
-
-### Create rTASSEL phenotype only object
-tasPheno <- readPhenotypeFromPath(
-    path = phenoPathFast
-)
-
-### Create rTASSEL genotype only object
-tasGeno <- readGenotypeTableFromPath(
-    path = genoPathHMP
-)
-
-### Create rTASSEL object - use prior TASSEL genotype object
-tasGenoPhenoFast <- readGenotypePhenotype(
-    genoPathOrObj = genoPathHMP,
-    phenoPathDFOrObj = phenoPathFast
-)
+### Shared fixtures (see helper_vars.R)
+tasPheno   <- rtObjs$ph_nomiss
+tasGeno    <- rtObjs$gt_hmp
+tasDataset <- rtObjs$ds_hmp_ph_nomiss
 
 
 ## Error tests ----
@@ -74,6 +49,23 @@ test_that("seqDiversity() returns correct data structures.", {
     expect_equal(
         object   = colnames(seqDF$PolyDist),
         expected = c("Site_Freq", "ALLs0-e3092")
+    )
+})
+
+
+test_that("seqDiversity() accepts a genomic dataset", {
+    seqDF <- seqDiversity(tasDataset)
+
+    expect_equal(names(seqDF), c("Diversity", "PolyDist"))
+    expect_equal(dim(seqDF$Diversity), c(1, 14))
+})
+
+
+## Back-compatibility ----
+test_that("seqDiversity() accepts a deprecated TasselGenotypePhenotype", {
+    expect_equal(
+        seqDiversity(rtObjsLegacy$gt_hmp),
+        seqDiversity(tasGeno)
     )
 })
 

@@ -29,6 +29,17 @@ simNumericGt <- function(nRow, nCol) {
 
 
 
+# /// Options ///////////////////////////////////////////////////////
+
+## ----
+# The 0.14.0 soft deprecations are asserted on purpose in
+# test_deprecations.R, where `lifecycle::expect_deprecated()` re-enables
+# them locally. Silencing them here keeps the rest of the suite - and the
+# legacy fixtures below - free of notices that are not what is under test.
+options(lifecycle_verbosity = "quiet")
+
+
+
 # /// Constants /////////////////////////////////////////////////////
 
 ## ----
@@ -53,13 +64,40 @@ rtMatrices <- list(
 
 ## ----
 # General rTASSEL objects
-rtObjs <- list(
-    "gt_hmp"           = readGenotypeTableFromPath(rtFiles$gt_hmp_path),
-    "gt_vcf"           = readGenotypeTableFromPath(rtFiles$gt_vcf_path),
-    "ph_full"          = readPhenotypeFromPath(rtFiles$ph_full_path),
-    "ph_nomiss"        = readPhenotypeFromPath(rtFiles$ph_nomiss_path),
-    "gt_hmp_ph_full"   = readGenotypePhenotype(rtFiles$gt_hmp_path, rtFiles$ph_full_path),
-    "gt_hmp_ph_nomiss" = readGenotypePhenotype(rtFiles$gt_hmp_path, rtFiles$ph_nomiss_path)
-)
+#
+# The primary (0.14.0) classes: TasselGenotype, TasselPhenotype, and
+# TasselGenomicDataset. The genotype and phenotype objects are reused when
+# building the datasets so that the hapmap file is only parsed once.
+rtObjs <- local({
+    gtHmp    <- readGenotype(rtFiles$gt_hmp_path)
+    phFull   <- readPhenotype(rtFiles$ph_full_path)
+    phNoMiss <- readPhenotype(rtFiles$ph_nomiss_path)
+
+    list(
+        "gt_hmp"           = gtHmp,
+        "gt_vcf"           = readGenotype(rtFiles$gt_vcf_path),
+        "ph_full"          = phFull,
+        "ph_nomiss"        = phNoMiss,
+        "ds_hmp_ph_full"   = readGenomicDataset(gtHmp, phFull),
+        "ds_hmp_ph_nomiss" = readGenomicDataset(gtHmp, phNoMiss)
+    )
+})
+
+
+## ----
+# Deprecated TasselGenotypePhenotype objects
+#
+# Kept so that each suite can hold on to a single back-compatibility case
+# asserting that legacy pipelines still run and still get legacy classes back.
+rtObjsLegacy <- local({
+    gtHmp <- readGenotypeTableFromPath(rtFiles$gt_hmp_path)
+
+    list(
+        "gt_hmp"           = gtHmp,
+        "ph_nomiss"        = readPhenotypeFromPath(rtFiles$ph_nomiss_path),
+        "gt_hmp_ph_full"   = readGenotypePhenotype(gtHmp, rtFiles$ph_full_path),
+        "gt_hmp_ph_nomiss" = readGenotypePhenotype(gtHmp, rtFiles$ph_nomiss_path)
+    )
+})
 
 

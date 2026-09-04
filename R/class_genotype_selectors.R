@@ -315,6 +315,8 @@ sitesWhere <- function(expr) {
 # /// Negation Methods ///////////////////////////////////////////////
 
 ## ----
+#' @param x A \code{TaxaSelector} object.
+#'
 #' @rdname TaxaSelector-class
 #' @aliases !,TaxaSelector-method
 setMethod("!", "TaxaSelector", function(x) {
@@ -323,6 +325,8 @@ setMethod("!", "TaxaSelector", function(x) {
 })
 
 ## ----
+#' @param x A \code{SiteSelector} object.
+#'
 #' @rdname SiteSelector-class
 #' @aliases !,SiteSelector-method
 setMethod("!", "SiteSelector", function(x) {

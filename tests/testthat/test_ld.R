@@ -5,35 +5,10 @@
 ### Start logging info
 startLogger()
 
-### Load hapmap data
-genoPathHMP <- system.file(
-    "extdata",
-    "mdp_genotype.hmp.txt",
-    package = "rTASSEL"
-)
-
-### Read data - need only non missing data!
-phenoPathFast <- system.file(
-    "extdata",
-    "mdp_traits_nomissing.txt",
-    package = "rTASSEL"
-)
-
-### Create rTASSEL phenotype only object
-tasPheno <- readPhenotypeFromPath(
-    path = phenoPathFast
-)
-
-### Create rTASSEL genotype only object
-tasGeno <- readGenotypeTableFromPath(
-    path = genoPathHMP
-)
-
-### Create rTASSEL object - use prior TASSEL genotype object
-tasGenoPhenoFast <- readGenotypePhenotype(
-    genoPathOrObj = genoPathHMP,
-    phenoPathDFOrObj = phenoPathFast
-)
+### Shared fixtures (see helper_vars.R)
+tasPheno   <- rtObjs$ph_nomiss
+tasGeno    <- rtObjs$gt_hmp
+tasDataset <- rtObjs$ds_hmp_ph_nomiss
 
 
 
@@ -61,7 +36,7 @@ test_that("linkageDiseq() throws general exceptions.", {
     )
     expect_that(
         object = linkageDiseq(
-            tasObj     = tasGenoPhenoFast,
+            tasObj     = tasDataset,
             ldType     = "All",
             windowSize = NULL,
             hetCalls   = "mising"
@@ -70,7 +45,7 @@ test_that("linkageDiseq() throws general exceptions.", {
     )
     expect_that(
         object = linkageDiseq(
-            tasObj     = tasGenoPhenoFast,
+            tasObj     = tasDataset,
             ldType     = "Everything",
             windowSize = NULL,
             hetCalls   = "missing"
@@ -120,6 +95,28 @@ test_that("linkageDiseq() tableReport returns tibble.", {
     tbl <- tableReport(ldRes)
     expect_s3_class(tbl, "tbl_df")
     expect_equal(nrow(tbl), 30875)
+})
+
+
+## Back-compatibility ----
+test_that("linkageDiseq() accepts a deprecated TasselGenotypePhenotype", {
+    ldArgs <- list(
+        ldType     = "SlidingWindow",
+        windowSize = 10,
+        hetCalls   = "missing"
+    )
+
+    legacyRes <- do.call(
+        linkageDiseq,
+        c(list(tasObj = rtObjsLegacy$gt_hmp), ldArgs)
+    )
+    modernRes <- do.call(
+        linkageDiseq,
+        c(list(tasObj = tasGeno), ldArgs)
+    )
+
+    expect_s4_class(legacyRes, "LDResults")
+    expect_equal(legacyRes@results, modernRes@results)
 })
 
 
