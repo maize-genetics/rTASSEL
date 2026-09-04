@@ -21,6 +21,143 @@ articles:
   - genotype_filtration
   - rtassel_benchmarks
 
+reference:
+- title: Setup
+  desc: >
+    Install the TASSEL Java libraries and configure a session.
+  contents:
+  - setupTASSEL
+  - checkForTASSELUpdate
+  - startLogger
+
+- title: Data classes
+  desc: >
+    S4 classes wrapping the TASSEL objects that hold your data.
+  contents:
+  - TasselGenotype-class
+  - TasselNumericGenotype-class
+  - TasselPhenotype-class
+  - TasselGenomicDataset-class
+  - TasselDistanceMatrix-class
+
+- title: Reading data
+  contents:
+  - readGenotype
+  - readPhenotype
+  - readGenomicDataset
+  - readTasselDistanceMatrix
+  - readNumericGenotypeFromRMatrix
+  - asTasselDistanceMatrix
+
+- title: Filtering and subsetting
+  desc: >
+    Selectors for the bracket API, `obj[<taxa>, <sites>]`.
+  contents:
+  - taxa
+  - taxaWhere
+  - sites
+  - siteIds
+  - chrom
+  - region
+  - sitesWhere
+  - TaxaSelector-class
+  - SiteSelector-class
+
+- title: Inspecting data
+  contents:
+  - genotype
+  - phenotype
+  - taxaList
+  - positionList
+  - matches("seqnames")
+  - siteSummary
+  - taxaSummary
+  - attributeData
+  - traitNames
+  - javaRefObj
+  - matches("show,")
+  - matches("TasselDistanceMatrix-method")
+
+- title: Transforming and combining data
+  contents:
+  - removeMinorSNPStates
+  - imputeNumeric
+  - imputeLDKNNi
+  - mergeGenotypeTables
+  - intersectJoin
+  - unionJoin
+  - concatenate
+
+- title: Coercion and export
+  contents:
+  - as.data.frame.TasselPhenotype
+  - as.data.frame.TasselGenomicDataset
+  - as.matrix.TasselGenotype
+  - as.matrix.TasselGenomicDataset
+  - as.matrix.TasselDistanceMatrix
+  - exportGenotypeTable
+
+- title: Analysis
+  contents:
+  - assocModelFitter
+  - stepwiseModelFitter
+  - genomicPrediction
+  - kinshipMatrix
+  - distanceMatrix
+  - pca
+  - mds
+  - linkageDiseq
+  - seqDiversity
+  - createTree
+
+- title: Analysis results
+  desc: >
+    Classes returned by the analysis functions and the accessors that
+    read them.
+  contents:
+  - AssociationResults-class
+  - AssociationResultsBLUE-class
+  - AssociationResultsGLM-class
+  - AssociationResultsMLM-class
+  - AssociationResultsFast-class
+  - AssociationResultsStepwise-class
+  - PCAResults-class
+  - LDResults-class
+  - LDRegion
+  - LDRegion-class
+  - tableReport
+  - reportNames
+  - associationType
+  - matches("-validity")
+
+- title: Visualization
+  contents:
+  - plotManhattan
+  - plotManhattanQC
+  - plotQQ
+  - matches("plotPCA")
+  - plotScree
+  - plotSnpDensity
+  - plotLD
+
+- title: Deprecated
+  desc: >
+    Superseded by the classes and functions above. These still work but
+    warn, and are scheduled for removal in the next major release.
+  contents:
+  - TasselGenotypePhenotype-class
+  - readGenotypeTableFromPath
+  - readPhenotypeFromPath
+  - readPhenotypeFromDataFrame
+  - readGenotypePhenotype
+  - readGenotypeTableFromGigwa
+  - filterGenotypeTableSites
+  - filterGenotypeTableTaxa
+  - filterGenotypeTableBySiteName
+  - getPhenotypeDF
+  - getSumExpFromGenotypeTable
+  - as.matrix.TasselGenotypePhenotype
+
 footer:
   structure:
     left: acknowledgment

@@ -1,3 +1,83 @@
+# rTASSEL 0.14.0
+* Bracket subsetting is now the primary way to filter genotype data and is
+  no longer experimental:
+  + `gt[<taxa selector>, <site selector>]` returns an object of the same
+    class it was given
+  + Taxa selectors: `taxa()` (literal IDs) and `taxaWhere()` (predicate on
+    `taxaId`, `notMissing`, and `het`)
+  + Site selectors: `sites()` (indices), `siteIds()` (marker names),
+    `chrom()`, `region()`, and `sitesWhere()` (predicate on `siteIndex`,
+    `siteId`, `chrom`, `pos`, `maf`, `alleleCount`, `het`, `isIndel`, and
+    `isBiallelic`)
+  + Any selector can be inverted with `!`, and predicates can be combined
+    with `&` and `|` in a single call
+  + Simple predicates are pushed down to TASSEL's `FilterSiteBuilder` and
+    `FilterTaxaBuilder` plugins rather than being evaluated in R
+  + See the *Filtering Genotype Tables* vignette for a full walkthrough and
+    a migration guide from `filterGenotypeTable*()`
+* Added new `TasselGenomicDataset` class:
+  + Holds joined genotype and phenotype data, wrapping TASSEL's
+    `GenotypePhenotype` object
+  + Replaces `TasselGenotypePhenotype` for combined data sets
+  + Components are reachable with `genotype()` and `phenotype()`
+  + Subsetting with `[` filters the genotype table and re-joins the
+    phenotype data, so both components stay in step
+* Added new function `readGenomicDataset()`:
+  + Joins genotype and phenotype data into a `TasselGenomicDataset`
+  + Both arguments accept either an existing `rTASSEL` object or the raw
+    inputs that `readGenotype()` and `readPhenotype()` understand (file
+    paths, an R `matrix`, or a `data.frame`)
+  + Taxa are combined with `join = "intersect"` (default) or
+    `join = "union"`
+  + Replaces `readGenotypePhenotype()`
+* Added new function `removeMinorSNPStates()`:
+  + Collapses every site to its two most common allelic states
+  + Replaces the `removeMinorSNPStates` argument of
+    `filterGenotypeTableSites()`, which recoded genotype calls rather than
+    selecting sites and so does not fit the selector model
+* Every exported function now accepts `TasselGenotype`, `TasselPhenotype`,
+  and `TasselGenomicDataset` objects, and returns the class it was given
+* `region()` now accepts a `GRanges` object in place of a chromosome and
+  coordinate range, which is the migration path for the `gRangesObj`,
+  `bedFile`, and `chrPosFile` arguments of `filterGenotypeTableSites()`
+* `taxaWhere()` gained the `notMissing` and `het` metrics, replacing the
+  `minNotMissing`, `minHeterozygous`, and `maxHeterozygous` arguments of
+  `filterGenotypeTableTaxa()`
+* **Breaking change**: site indices in `sites()`, `sitesWhere(siteIndex)`,
+  and numeric `j` values passed to `[` are 1-based, matching R's own
+  subsetting conventions. TASSEL's 0-based index is still reported in the
+  `Site` column of `positionList()`
+* Added coercion methods promised by earlier deprecation notices:
+  + `as.data.frame()` for `TasselPhenotype` and `TasselGenomicDataset`,
+    replacing `getPhenotypeDF()`
+  + `as.matrix()` for `TasselGenotype` and `TasselGenomicDataset`
+* `filterGenotypeTableBySiteName()` now keeps phenotype data attached to
+  its input instead of dropping it
+* Converted the ad-hoc "will be deprecated soon" messages to formal
+  `lifecycle` warnings, which report the call site and fire once per
+  session. The following are deprecated and scheduled for removal in the
+  next major release:
+  + `filterGenotypeTableSites()`, `filterGenotypeTableTaxa()`, and
+    `filterGenotypeTableBySiteName()`, replaced by `[`
+  + `readGenotypeTableFromPath()`, replaced by `readGenotype()`
+  + `readPhenotypeFromPath()` and `readPhenotypeFromDataFrame()`, replaced
+    by `readPhenotype()`
+  + `readGenotypePhenotype()`, replaced by `readGenomicDataset()`
+  + `getPhenotypeDF()`, replaced by `as.data.frame()`
+  + `getSumExpFromGenotypeTable()`
+  + The `TasselGenotypePhenotype` class, replaced by `TasselGenotype`,
+    `TasselPhenotype`, and `TasselGenomicDataset`
+  + **NOTE**: passing a `TasselGenotypePhenotype` object to any function
+    also warns, but keeps working and still returns a
+    `TasselGenotypePhenotype` object
+* `readGenotypeTableFromGigwa()` still returns a `TasselGenotypePhenotype`
+  object; a `TasselGenotype`-based GIGWA reader is planned for a future
+  release
+* Rewrote the *Filtering Genotype Tables* vignette around bracket
+  subsetting and updated *Getting Started with rTASSEL* to the new classes
+* Added an explicit function reference index to the package website
+* Added `lifecycle` to Imports
+
 # rTASSEL 0.13.0
 * Added installation of TASSEL from the standalone archives published on
   GitHub, which is the only source of nightly builds:

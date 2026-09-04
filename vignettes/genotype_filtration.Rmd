@@ -17,6 +17,8 @@ vignette: >
 ---
 
 ```{r setup, include=FALSE}
+library(rTASSEL)
+
 knitr::opts_chunk$set(
     fig.path='figure/graphics-',
     cache.path='cache/graphics-',
@@ -45,7 +47,10 @@ matrix for each sample and relevant variant marker information (e.g. `0:2`).
 This includes:
 
 * The TASSEL index for each variant site (`<this value> : `)
-  + *Note:* since TASSEL is coded in Java, this value will start at 0!
+  + *Note:* since TASSEL is coded in Java, this value will start at 0! In
+    `rTASSEL`, site indexes are 1-based like every other index in R. The
+    underlying TASSEL index is still reported in the `Site` column of
+    `positionList()`.
 * The physical position (bp) for each variant site (` : <this value>`)
 
 Genotype information (e.g. each $n \times p$ element) can be viewed in several 
@@ -60,74 +65,97 @@ ways. The default view (as shown above) reflects the following:
 
 
 ## Filtering basics
-Since TASSEL allows for many features to be represented in a genotype table,
-`rTASSEL`'s filtration parameters are numerous. In the following sections, we will
-discuss how each set of parameters work. In general, these filtration schemes
-can be applied for samples (i.e. rows) and marker information (i.e. columns).
+Genotype tables are filtered with the same bracket (`[`) syntax used to
+subset a `matrix` or `data.frame` in R:
 
-The two main methods to accomplish this are:
+```
+myGT[<taxa>, <sites>]
+```
 
-* `filterGenotypeTableTaxa()`
-* `filterGenotypeTableSites()`
+Rows (`i`) select taxa and columns (`j`) select marker sites, and either
+index can be left empty to keep everything on that axis. Instead of writing
+out indexes by hand, criteria are described with **selector functions**:
 
-For each section example code will be given with an illustrated genotype table 
-to explain each method. Prior knowledge about `rTASSEL` data structures is needed
-so please refere to the vignette *Getting Started with rTASSEL* if you are
-new to this package!
+| Selector       | Axis  | Selects sites/taxa by                              |
+|----------------|-------|----------------------------------------------------|
+| `taxa()`       | Taxa  | Literal taxa IDs                                   |
+| `taxaWhere()`  | Taxa  | An expression over taxa metadata                   |
+| `sites()`      | Sites | Site index (1-based)                               |
+| `siteIds()`    | Sites | Literal marker names                               |
+| `chrom()`      | Sites | Chromosome (sequence) ID                           |
+| `region()`     | Sites | Genomic coordinates or a `GRanges` object          |
+| `sitesWhere()` | Sites | An expression over site metadata                   |
 
-*Note:* We will be using the the base R pipe operator `|>` for the
+Every selector returns the same class it was given, so filtered objects can
+be handed straight to the next filter or to any analysis function.
+
+*Note:* We will be using the base R pipe operator `|>` for some of the
 following examples. More information about this can be found [here](https://cran.r-project.org/web/packages/magrittr/vignettes/magrittr.html).
+
+**Prior knowledge about `rTASSEL` data structures is needed, so please refer
+to the vignette *Getting Started with rTASSEL* if you are new to this
+package!**
+
+If you are migrating existing scripts, the deprecated
+`filterGenotypeTableSites()`, `filterGenotypeTableTaxa()`, and
+`filterGenotypeTableBySiteName()` functions still work but will warn. A
+complete argument-by-argument mapping is given in the final section of this
+vignette.
+
+
+## A real data set
+Most of the examples below use a toy illustration so that the effect of each
+filter can be seen cell by cell. To see actual output, we will also use the
+hapmap file shipped with `rTASSEL`, read in with `readGenotype()`:
+
+```{r, eval=TRUE, echo=TRUE}
+genoPath <- system.file("extdata", "mdp_genotype.hmp.txt", package = "rTASSEL")
+
+myRealGT <- readGenotype(genoPath)
+myRealGT
+```
+
+Filtering returns a new object of the same class, leaving the original
+untouched:
+
+```{r, eval=TRUE, echo=TRUE}
+myRealGT[, sitesWhere(maf >= 0.05)]
+```
 
 
 
 # Filtering by sites...
 
 ## Overview
-In order to filter by variant sites (e.g. marker information), we can use the 
-function `filterGenotypeTableSites()`. This function was modeled after TASSEL's 
-`FilterSiteBuilder` plugin to ensure familiarity between the two methods.
-The parameters can be broken up into several components:
+Marker (column) criteria are passed as the second bracket index. The
+`sitesWhere()` selector evaluates an R expression against per-site metadata,
+and these columns are available in that expression:
 
-* Genotype information
-  + `siteMinCount`
-  + `siteMinAlleleFreq`
-  + `siteMaxAlleleFreq`
-  + `minHeterozygous`
-  + `maxHeterozygous`
-* Indexed variant sites
-  + `startSite`
-  + `endSite`
-* Physical marker positions
-  + `startChr`
-  + `endChr`
-  + `startPos`
-  + `endPos`
-* R objects
-  + `gRangesObj`
-* External files
-  + `bedFile`
-  + `chrPosFile`
-  
-*Note:* While the following examples will illustrate these parameters in
-simplified formats, genotype information parameters *and* marker index and 
-position parameters (i.e. indexed variant sites, physical marker positions,
-R objects, or external files) can be passed simultaneously! 
+| Column        | Description                                              |
+|---------------|----------------------------------------------------------|
+| `siteIndex`   | 1-based position of the site in the table                 |
+| `siteId`      | Marker name                                               |
+| `chrom`       | Chromosome (sequence) ID                                  |
+| `pos`         | Physical position (bp)                                    |
+| `maf`         | Minor allele frequency                                    |
+| `alleleCount` | Number of non-missing alleles (2 per diploid taxon)       |
+| `het`         | Proportion of taxa that are heterozygous                  |
+| `isIndel`     | Whether the site contains an indel (`+` or `-`)           |
+| `isBiallelic` | Whether the site has two or fewer allelic states          |
 
-Let's assume we have an `rTASSEL` data object that contains a genotype table:
+Positional criteria are covered by the dedicated `sites()`, `siteIds()`,
+`chrom()`, and `region()` selectors.
+
+Let's assume we have an `rTASSEL` genotype object:
 
 ```{r, eval=FALSE}
 myGT
 ```
 
 ```
-## A TasselGenotypePhenotype Dataset
-##   Class.............. TasselGenotypePhenotype 
-##   Taxa............... 5 
-##   Positions.......... 5
-##   Taxa x Positions... 25
-## ---
-##   Genotype Table..... [x]
-##   Phenotype Table.... [ ]
+# A TasselGenotype object: 5 taxa × 5 sites
+
+# ℹ Java memory address: 0x4c1d9d4b
 ```
 
 Let's also assume it contains the same structure as the prior illustration:
@@ -141,29 +169,22 @@ illustrate how allelic frequencies are calculated:
 
 
 ## ...using allelic frequency
-If we want to filter by minor allele frequency, we can use the following
-parameters...
+If we want to keep only sites above a minor allele frequency threshold, we
+can filter on the `maf` column:
 
 ```{r, eval=FALSE}
-myGT |> 
-    filterGenotypeTableSites(
-        siteMinAlleleFreq = 0.3,
-        siteMaxAlleleFreq = 1.0
-    )
+myGT[, sitesWhere(maf >= 0.3)]
 ```
 
 ...which will remove the following columns:
 
 ![](../man/figures/filter_site_03.png)
 
-We can also set a range using a limit with the `siteMaxAlleleFreq` parameter...
+Since `sitesWhere()` takes an ordinary R expression, a range is expressed by
+combining two comparisons with `&`:
 
 ```{r, eval=FALSE}
-myGT |> 
-    filterGenotypeTableSites(
-        siteMinAlleleFreq = 0.2,
-        siteMaxAlleleFreq = 0.3
-    )
+myGT[, sitesWhere(maf >= 0.2 & maf <= 0.3)]
 ```
 
 ...which will remove the following columns:
@@ -173,35 +194,29 @@ myGT |>
 
 ## ...using `NA` data
 We can also filter by missing sites (encoded in TASSEL with `N`). Similar to
-how we calculated frequency of minor alleles, we can apply the same logic with
-missing data with the `siteMinCount` parameter:
+how we calculated frequency of minor alleles, we can apply the same logic
+with missing data using the `alleleCount` column, which counts the alleles
+that were actually called at a site:
 
 ```{r, eval=FALSE}
-myGT |> 
-    filterGenotypeTableSites(
-        siteMinCount = 5
-    )
+myGT[, sitesWhere(alleleCount >= 10)]
 ```
 
-This parameter can range from 0 to the number of rows (e.g. taxa) within
-your genotype table. Since our example data only has 5 rows, this prior example
-will filter out any markers that contain at least 1 missing variant marker site:
+Our example data has 5 taxa, and each diploid taxon carries 2 alleles, so a
+fully called site has an `alleleCount` of 10. Requiring all 10 filters out
+any marker with at least 1 missing call:
 
 ![](../man/figures/filter_site_05.png)
 
 
 ## ...using heterozygosity frequency
 Similar to the prior two sections, we can filter by calculated frequency of
-heterozygous sites using the parameters, `minHeterozygous` and 
-`maxHeterozygous`. For example, if we wanted to filter sites containing $>$
-10% heterozygous sites, we could use the following:
+heterozygous sites using the `het` column. For example, if we wanted to
+filter sites containing $>$ 10% heterozygous calls, we could use the
+following:
 
 ```{r, eval=FALSE}
-myGT |> 
-    filterGenotypeTableSites(
-        minHeterozygous = 0.0,
-        maxHeterozygous = 0.1
-    )
+myGT[, sitesWhere(het <= 0.1)]
 ```
 
 which would filter out sites with calculated frequencies:
@@ -218,73 +233,57 @@ not illustrated this way in TASSEL and are only for demonstration purposes.
 
 ![](../man/figures/filter_index_01.png)
 
-To filter by site index, we must first set the `siteRangeFilterType` parameter 
-to `sites`. Next, we will be able to use the parameters, `startSite` and 
-`endSite`:
+To filter by site index, we use the `sites()` selector. Site indexes here are
+1-based, so the second through fourth markers of the table are:
 
 ```{r, eval=FALSE}
-myGT |> 
-    filterGenotypeTableSites(
-        siteRangeFilterType = "sites",
-        startSite = 1,
-        endSite = 3
-    )
+myGT[, sites(2:4)]
 ```
 
-In our example above, this will retain indexed sites 1 through 3:
+Note that the labels in the illustration (`1:300`, `2:542`, `3:213`) show
+TASSEL's own 0-based index, which is always one less than the index passed to
+`sites()`. In our example above, this retains the following markers:
 
 ![](../man/figures/filter_index_02.png)
 
-
-## ...using physical positions
-To filter by physical positions, we must first set the `siteRangeFilterType`
-parameter to `position`. Next we will be able to use the parameters:
-
-* `startChr`
-* `startPos`
-* `endChr`
-* `endPos`
-
-The `*Chr` parameters will specify which chromosomes or sequence IDs will
-remain and `*Pos` parameters will specify the physical positions within each
-chromosome sequence. For example, if we wanted to filter just chromosome 1,
-we can specify the following parameters:
+A bare numeric vector does the same thing, so the selector can be dropped
+when indexes are all that is needed:
 
 ```{r, eval=FALSE}
-myGT |> 
-    filterGenotypeTableSites(
-        siteRangeFilterType = "position",
-        startChr = 1,
-        endChr = 1,
-        startPos = NULL,
-        endPos = NULL
-    )
+myGT[, 2:4]
+```
+
+
+## ...using chromosomes
+Whole chromosomes (or sequence IDs) are selected with `chrom()`, which
+accepts any number of IDs:
+
+```{r, eval=FALSE}
+myGT[, chrom("1")]
 ```
 
 ![](../man/figures/filter_pos_01.png)
 
-If we want to be more specific in our filtering, we can include positional
-information as well:
+
+## ...using physical positions
+To filter within a chromosome, `region()` takes a chromosome ID and a start
+and end coordinate in base pairs:
 
 ```{r, eval=FALSE}
-myGT |> 
-    filterGenotypeTableSites(
-        siteRangeFilterType = "position",
-        startChr = 1,
-        endChr = 2,
-        startPos = 250,
-        endPos = 700
-    )
+myGT[, region("1", 250, 542)]
 ```
 
-![](../man/figures/filter_pos_02.png)
+Applied to our real data set, we can pull a 10 Mbp window from chromosome 2:
+
+```{r, eval=TRUE, echo=TRUE}
+myRealGT[, region("2", 20e6, 30e6)]
+```
 
 
 ## ...using `GRanges` objects
-In the prior example, we have manually set parameters to filter by physical
-position. The caveat to this process is that you can only specify a "fixed"
-range of start and stop positions. For more dynamic filtering options, we can
-specify either external files (*next section*) or range-based R objects.
+`region()` handles a single, contiguous window on one chromosome. For
+anything more dynamic (several windows, or windows on different
+chromosomes), we can hand it a range-based R object instead.
 
 `GRanges` class objects from the `GenomicRanges` package serve as the standard
 data structure for representing genomic locations within the Bioconductor
@@ -311,28 +310,39 @@ gr
 ##   seqinfo: 2 sequences from an unspecified genome; no seqlengths
 ```
 
-To implement this in our filtration method, we can pass this `GRanges` object
-into our `gRangesObj` parameters and setting `siteRangeRilterType` to `"none"`:
+This object is passed to `region()` in place of a chromosome and coordinate
+pair:
 
 ```{r, eval=FALSE}
-myGT |> 
-    filterGenotypeTableSites(
-        siteRangeFilterType = "none",
-        gRangesObj = gr
-    )
+myGT[, region(gr)]
 ```
 
 Which will dynamically filter the following marker indexes:
 
 ![](../man/figures/filter_gr_01.png)
 
+Here is the same idea on our real data set, keeping two windows on two
+different chromosomes:
 
-## ...using BED files
-`rTASSEL` allows filtering for both external
-[BED files](https://m.ensembl.org/info/website/upload/bed.html) 
-and chromosomal position files. Similar to our `GRanges` object, BED files can 
-also represent genomic range information but as a flat file. In our example, 
-let's take the same range information and save it as a BED file:
+```{r, eval=TRUE, echo=TRUE}
+gr <- GenomicRanges::GRanges(
+    seqnames = c("1", "2"),
+    ranges   = IRanges::IRanges(
+        start = c(20e6, 100e6),
+        end   = c(30e6, 150e6)
+    )
+)
+
+myRealGT[, region(gr)]
+```
+
+
+## ...using BED and chromosome position files
+`GRanges` objects are also how external range files are filtered on. Similar
+to a `GRanges` object,
+[BED files](https://m.ensembl.org/info/website/upload/bed.html) represent
+genomic range information but as a flat file. In our example, let's take the
+same range information and save it as a BED file:
 
 ```{r, engine='bash', eval=FALSE}
 $ cat my_ranges.bed
@@ -342,26 +352,15 @@ chr2    213   400
 chr2    500   700
 ```
 
-This external file can be passed to our filtration method by setting
-`siteRangeFilterType` to `"none"` and entering the location of the file on
-disk in the `bedFile` parameter:
+Read the file into a `GRanges` object with `rtracklayer::import()` and pass
+it to `region()`:
 
 ```{r, eval=FALSE}
-myGT |> 
-    filterGenotypeTableSites(
-        siteRangeFilterType = "none",
-        bedFile = "my_ranges.bed"
-    )
+myGT[, region(rtracklayer::import("my_ranges.bed"))]
 ```
 
-This will filter our genotype table as previously shown in `GRanges` section:
-
-![](../man/figures/filter_gr_01.png)
-
-
-## ...using chromsomal position files
-Similar to a BED file, we can also pass a chromosomal position file. This is
-a tab-separated file of two columns:
+The same approach covers chromosome position files - a tab-separated file of
+two columns:
 
 * `Chromosome` - the sequence or chromosome ID for each marker
 * `Position` - the physical position (bp) of each marker
@@ -371,28 +370,53 @@ In our example, this would look something like this:
 ```{r, engine='bash', eval=FALSE}
 $ cat my_chr_pos.tsv
 
-Chromsome   Position
+Chromosome  Position
 1   300
 2   213
 2   665
 ```
 
-This external file can be passed to our filtration method by setting
-`siteRangeFilterType` to `"none"` and entering the location of the file on
-disk in the `chrPosFile` parameter:
+Since each row is a single point rather than a range, the start and end
+coordinates are the same position:
 
 ```{r, eval=FALSE}
-myGT |> 
-    filterGenotypeTableSites(
-        siteRangeFilterType = "none",
-        bedFile = "my_chr_pos.tsv"
-    )
+chrPos <- read.table("my_chr_pos.tsv", sep = "\t", header = TRUE)
+
+gr <- GenomicRanges::GRanges(
+    seqnames = chrPos$Chromosome,
+    ranges   = IRanges::IRanges(start = chrPos$Position, end = chrPos$Position)
+)
+
+myGT[, region(gr)]
 ```
 
-This will also filter our genotype table as previously shown in `GRanges` 
-section:
 
-![](../man/figures/filter_gr_01.png)
+## ...using marker names
+Markers can also be selected by their literal IDs with `siteIds()`:
+
+```{r, eval=TRUE, echo=TRUE}
+myRealGT[, siteIds("PZB00859.1", "PZA01271.1")]
+```
+
+As with site indexes, a bare character vector works too:
+
+```{r, eval=TRUE, echo=TRUE}
+myMarkers <- c("PZB00859.1", "PZA01271.1")
+
+myRealGT[, myMarkers]
+```
+
+
+## Inverting a selection
+Any selector can be negated with `!`, which keeps everything the selector
+would have removed. For example, to drop the first ten markers:
+
+```{r, eval=TRUE, echo=TRUE}
+myRealGT[, !sites(1:10)]
+```
+
+Predicate expressions can be inverted either way - `!sitesWhere(isIndel)`
+and `sitesWhere(!isIndel)` are equivalent.
 
 
 
@@ -400,61 +424,48 @@ section:
 
 ## Overview
 In the prior sections we have discussed how to filter $p$ observations (i.e. 
-columns). In the following sections, we will illustrate ways to filter $n$ rows.
-In order to filter by variant sites (e.g. marker information), we can use the 
-function `filterGenotypeTableTaxa()`. This function was modeled after TASSEL's 
-`FilterTaxaBuilder` plugin to ensure familiarity between the two methods.
+columns). In the following sections, we will illustrate ways to filter $n$
+rows, which are passed as the *first* bracket index.
 
-While not as complex as site filtration, taxa filtration parameters can be
-seperated into the following sections:
+Like `sitesWhere()`, the `taxaWhere()` selector evaluates an R expression,
+here against per-taxon metadata:
 
-* Genotype information
-  + `minNotMissing`
-  + `minHeterozygous`
-  + `maxHeterozygous`
-* R objects
-  + `taxa`
+| Column       | Description                                        |
+|--------------|----------------------------------------------------|
+| `taxaId`     | Taxon name                                         |
+| `notMissing` | Proportion of sites with a genotype call           |
+| `het`        | Proportion of sites that are heterozygous          |
+
+Both proportions are taken over the total number of sites in the table.
 
 Since we will be filtering by taxa, let's represent our toy illustration to
 contain actual maize taxa IDs instead of colorful circles. This is similar to 
-how this would be encoded in
-TASSEL:
+how this would be encoded in TASSEL:
 
 ![](../man/figures/filter_taxa_00.png)
+
 
 ## ...using `NA` data
 Similar to site filtration, we can filter by missing sites (encoded in TASSEL 
 with `N`). Instead of column (e.g. marker) filtration, this will filter taxa 
-(rows) based on missing data. Similar to how we calculated frequency of minor 
-alleles, we can apply the same logic with missing data with the `minNotMissing` 
-parameter:
+(rows) based on missing data using the `notMissing` column:
 
 ```{r, eval=FALSE}
-myGT |> 
-    filterGenotypeTableTaxa(
-        minNotMissing = 1.0
-    )
+myGT[taxaWhere(notMissing >= 1.0), ]
 ```
 
-This parameter is based on the "missingness" frequency calculated for each row in
-your genotype table. Since our example data only has 5 rows, this prior example
-will filter out any taxa that contain at least 1 missing variant marker site:
+This filters out any taxa that contain at least 1 missing variant marker site:
 
 ![](../man/figures/filter_taxa_na.png)
 
 
 ## ...using heterozygosity frequency
-We can also filter taxa by calculated frequency of heterozygous sites using the 
-parameters, `minHeterozygous` and `maxHeterozygous`. For example, if we wanted 
-to filter all taxa that contain at least one heterozygous site, we could employ
-the following parameters:
+We can also filter taxa by calculated frequency of heterozygous sites using
+the `het` column. For example, if we wanted to filter all taxa that contain
+at least one heterozygous site, we could use the following:
 
 ```{r, eval=FALSE}
-myGT |> 
-    filterGenotypeTableTaxa(
-        minHeterozygous = 0.0,
-        maxHeterozygous = 0.0
-    )
+myGT[taxaWhere(het <= 0.0), ]
 ```
 
 which would filter out taxa with calculated frequencies:
@@ -462,113 +473,213 @@ which would filter out taxa with calculated frequencies:
 ![](../man/figures/filter_taxa_het.png)
 
 
-## ...using R objects
-Filtering select taxa IDs can be achieved by passing an atomic vector of 
-`character` data types to the `taxa` parameter. In our example, we will
-select the following IDs:
+## ...using taxa IDs
+Filtering select taxa IDs can be achieved by passing `character` values to
+the `taxa()` selector. In our example, we will select the following IDs:
 
 ```{r, eval=FALSE}
-myFavTaxa
+myGT[taxa("B73", "B97", "Ky21"), ]
 ```
 
-```
-## [1] "B73"  "B97"  "Ky21"
-```
-
-This vector can passed to the following argument:
-
-```{r, eval=FALSE}
-myGT |> 
-    filterGenotypeTableTaxa(
-        taxa = myFavTaxa
-    )
-```
-
-Which will filter out any IDs that are *not* contained in the previous vector
-object:
+Which will filter out any IDs that are *not* listed:
 
 ![](../man/figures/filter_taxa_vector.png)
 
-This vector logic can applied to various types of subsetting methods in R. For
-example, if we had all of the taxa represented in one vector:
+`taxa()` also accepts a vector, so IDs can be prepared with any R code:
 
 ```{r, eval=FALSE}
-allTaxa
+myFavTaxa <- c("B73", "B97", "Ky21")
+
+myGT[taxa(myFavTaxa), ]
 ```
 
-```
-## [1] "B73"   "B97"   "HP301" "Ky21"  "Mo17"
+...and, as with sites, a bare character vector can be used directly:
+
+```{r, eval=TRUE, echo=TRUE}
+myRealGT[c("33-16", "38-11", "4226"), ]
 ```
 
-We could filter from this object using regular expressions. One common method
-is using the `str_subset` method from the `stringr` 
-[package](https://stringr.tidyverse.org/) in conjunction with the base R
-pipe operator `|>`:
+
+## ...using arbitrary expressions
+Because `taxaWhere()` evaluates a regular R expression, taxa IDs can be
+matched with any function that returns a logical vector. This makes patterns
+that previously required building a vector by hand a single call:
 
 ```{r, eval=FALSE}
-myGT |> 
-    filterGenotypeTableTaxa(
-        taxa = allTaxa |> str_subset("^B|^Ky")
-    )
+# All taxa whose ID starts with "B" or "Ky"
+myGT[taxaWhere(grepl("^B|^Ky", taxaId)), ]
 ```
 
-This will create a subsetted vector containing our taxa IDs of interest in the
-prior example:
+```{r, eval=TRUE, echo=TRUE}
+myRealGT[taxaWhere(startsWith(taxaId, "CML")), ]
+```
 
-![](../man/figures/filter_taxa_vector.png)
+Metadata columns and IDs can be mixed in the same expression:
 
-While this example might be rather basic, this method is quite powerful if
-dealing with a massive breeding panel of several hundred samples.
+```{r, eval=TRUE, echo=TRUE}
+myRealGT[taxaWhere(startsWith(taxaId, "CML") & notMissing >= 0.9), ]
+```
 
 
 
-# Piping methods together
+# Combining filters
 
-## Example 1
-Like with all good practices in R and programming, various `rTASSEL` methods 
-can be "piped" together in one continuous flow of steps. For example, we could
-filter simultaneously on sites *and* taxa using both methods in conjunction 
-with the base R pipe operator `|>`. Let's use our previous toy data set:
+## Sites and taxa in one call
+Both bracket indexes can be given at once, which filters taxa and sites in a
+single expression. Let's use our previous toy data set:
 
 ![](../man/figures/filter_taxa_00.png)
 
-Let's (1) select taxa IDs that start with the letter "B" or "K" *and* (2) select
-indexed TASSEL marker sites 1 through 3. This will filter elements shown below:
+Let's (1) select taxa IDs that start with the letter "B" or "K" *and* (2)
+select the second through fourth markers. This will filter elements shown
+below:
 
 ```{r, eval=FALSE}
-myGT |>
-    filterGenotypeTableTaxa(
-        taxa = allTaxa |> str_subset("^B|^Ky")
-    ) |> 
-    filterGenotypeTableSites(
-        siteRangeFilterType = "sites",
-        startSite = 1,
-        endSite = 3
-    )
+myGT[taxaWhere(grepl("^B|^Ky", taxaId)), sites(2:4)]
 ```
 
 ![](../man/figures/filter_taxa_pipe.png)
 
 
-## Example 2
-We can also implement the same methods with other `rTASSEL` methods. In this
-example we will (1) select taxa IDs that start with the letter "B" or "K", (2) select
-indexed TASSEL marker sites 1 through 3, *and* (3) export to a VCF flat file:
+Taxa are filtered before sites, so site metrics such as `maf` and `het` are
+calculated against the taxa that survived the first index rather than the
+whole table.
+
+
+## Chaining filters
+Because each filter returns a genotype object, filters can also be applied
+one after another. This is equivalent to passing both indexes at once, and
+is often easier to read when several steps are involved:
+
+```{r, eval=TRUE, echo=TRUE}
+myFiltGT <- myRealGT[taxaWhere(notMissing >= 0.8), ]
+myFiltGT <- myFiltGT[, sitesWhere(maf >= 0.05)]
+
+myFiltGT
+```
+
+Filtered objects can be passed to any other `rTASSEL` function, such as
+writing the result out to a VCF file:
 
 ```{r, eval=FALSE}
-myGT |>
-    filterGenotypeTableTaxa(
-        taxa = allTaxa |> str_subset("^B|^Ky")
-    ) |> 
-    filterGenotypeTableSites(
-        siteRangeFilterType = "sites",
-        startSite = 1,
-        endSite = 3
-    ) |> 
+myRealGT[taxaWhere(notMissing >= 0.8), sitesWhere(maf >= 0.05)] |>
     exportGenotypeTable(
-        file = "my_filtered_gt.vcf",
+        file   = "my_filtered_gt.vcf",
         format = "vcf"
     )
 ```
 
 
+## Filtering genomic datasets
+Everything above applies unchanged to `TasselGenomicDataset` objects, which
+hold genotype and phenotype data joined on their shared taxa. Filtering one
+re-joins the phenotype data against the taxa that survive, so both halves of
+the dataset stay in step:
+
+```{r, eval=TRUE, echo=TRUE}
+phenoPath <- system.file("extdata", "mdp_traits.txt", package = "rTASSEL")
+
+myDataset <- readGenomicDataset(myRealGT, phenoPath)
+
+myDataset[taxaWhere(notMissing >= 0.9), sitesWhere(maf >= 0.05)]
+```
+
+
+
+# Transforming genotype calls
+Filtering selects a subset of the taxa and sites already in a table. A
+related operation is recoding the calls themselves, which is not a selection
+and therefore is not a selector.
+
+`removeMinorSNPStates()` collapses every site down to its two most common
+allelic states, recoding any remaining states as missing:
+
+```{r, eval=TRUE, echo=TRUE}
+myRealGT |> removeMinorSNPStates()
+```
+
+Like the filters, it returns the class it was given, so it chains with
+bracket subsetting:
+
+```{r, eval=FALSE}
+myRealGT[, sitesWhere(maf >= 0.05)] |> removeMinorSNPStates()
+```
+
+
+
+# Migrating from `filterGenotypeTable*()`
+The `filterGenotypeTableSites()`, `filterGenotypeTableTaxa()`, and
+`filterGenotypeTableBySiteName()` functions are deprecated as of `rTASSEL`
+0.14.0. They still work and still return the class they are given, but they
+warn once per session and will be removed in the next major release.
+
+## `filterGenotypeTableSites()`
+
+| Deprecated argument             | Replacement                                       |
+|---------------------------------|---------------------------------------------------|
+| `siteMinCount = 150`            | `gt[, sitesWhere(alleleCount >= 150)]`            |
+| `siteMinAlleleFreq = 0.05`      | `gt[, sitesWhere(maf >= 0.05)]`                   |
+| `siteMaxAlleleFreq = 0.3`       | `gt[, sitesWhere(maf <= 0.3)]`                    |
+| `minHeterozygous = 0.1`         | `gt[, sitesWhere(het >= 0.1)]`                    |
+| `maxHeterozygous = 0.1`         | `gt[, sitesWhere(het <= 0.1)]`                    |
+| `removeSitesWithIndels = TRUE`  | `gt[, sitesWhere(!isIndel)]`                      |
+| `removeMinorSNPStates = TRUE`   | `removeMinorSNPStates(gt)`                        |
+| `siteRangeFilterType = "sites"` | `gt[, sites(startSite:endSite)]`                  |
+| `siteRangeFilterType = "position"` | `gt[, region("1", startPos, endPos)]`          |
+| `gRangesObj = gr`               | `gt[, region(gr)]`                                |
+| `bedFile = "x.bed"`             | `gt[, region(rtracklayer::import("x.bed"))]`      |
+| `chrPosFile = "x.tsv"`          | `gt[, region(gr)]`, building `gr` from the file   |
+
+Arguments that used to be passed together are combined with `&` in a single
+`sitesWhere()` call:
+
+```{r, eval=FALSE}
+# Before
+myGT |>
+    filterGenotypeTableSites(
+        siteMinCount      = 150,
+        siteMinAlleleFreq = 0.05
+    )
+
+# After
+myGT[, sitesWhere(alleleCount >= 150 & maf >= 0.05)]
+```
+
+## `filterGenotypeTableTaxa()`
+
+| Deprecated argument         | Replacement                              |
+|-----------------------------|------------------------------------------|
+| `minNotMissing = 0.8`       | `gt[taxaWhere(notMissing >= 0.8), ]`     |
+| `minHeterozygous = 0.1`     | `gt[taxaWhere(het >= 0.1), ]`            |
+| `maxHeterozygous = 0.1`     | `gt[taxaWhere(het <= 0.1), ]`            |
+| `taxa = c("B73", "Mo17")`   | `gt[taxa("B73", "Mo17"), ]`              |
+
+## `filterGenotypeTableBySiteName()`
+
+| Deprecated argument            | Replacement                       |
+|--------------------------------|-----------------------------------|
+| `siteNames = c("rs1", "rs2")`  | `gt[, siteIds("rs1", "rs2")]`     |
+
+## Two things to watch for
+
+**Site indexes are now 1-based.** `startSite` and `endSite` were TASSEL's
+0-based indexes, while `sites()` follows R's convention, so
+`startSite = 1, endSite = 3` becomes `sites(2:4)`. TASSEL's index is still
+available in the `Site` column of `positionList()`.
+
+**Taxa and sites are filtered in one expression.** Where the old functions
+had to be piped into one another, the bracket API takes both axes at once:
+
+```{r, eval=FALSE}
+# Before
+myGT |>
+    filterGenotypeTableTaxa(minNotMissing = 0.8) |>
+    filterGenotypeTableSites(siteMinAlleleFreq = 0.05)
+
+# After
+myGT[taxaWhere(notMissing >= 0.8), sitesWhere(maf >= 0.05)]
+```
+
+These give the same result: the bracket method applies the taxa index first,
+so minor allele frequency is calculated after the low-coverage taxa have
+been dropped, exactly as in the piped version.

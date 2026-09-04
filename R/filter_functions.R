@@ -1,15 +1,52 @@
 ## ----
 #' @title Filter genotype table by sites
 #'
-#' @description This function will filter R objects of
-#'    \code{TasselGenotypePhenotype} class containing genotype tables.
-#'    The parameters for this function are derived from TASSEL's
-#'    \code{FilterSiteBuilder} plugin.
+#' @description
+#' \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
+#'
+#' This function will filter R objects containing genotype tables by
+#' marker (site) criteria. The parameters for this function are derived
+#' from TASSEL's \code{FilterSiteBuilder} plugin.
+#'
+#' Use bracket subsetting with the site selectors instead
+#' (\code{gt[, <selector>]}); see \emph{Details} for the equivalent of
+#' each argument.
+#'
+#' @details
+#' Every argument of this function has a bracket-API replacement:
+#'
+#' \tabular{ll}{
+#'    \strong{Deprecated argument} \tab \strong{Replacement} \cr
+#'    \code{siteMinCount = 150} \tab \code{gt[, sitesWhere(alleleCount >= 150)]} \cr
+#'    \code{siteMinAlleleFreq = 0.05} \tab \code{gt[, sitesWhere(maf >= 0.05)]} \cr
+#'    \code{siteMaxAlleleFreq = 0.3} \tab \code{gt[, sitesWhere(maf <= 0.3)]} \cr
+#'    \code{minHeterozygous = 0.1} \tab \code{gt[, sitesWhere(het >= 0.1)]} \cr
+#'    \code{maxHeterozygous = 0.1} \tab \code{gt[, sitesWhere(het <= 0.1)]} \cr
+#'    \code{removeSitesWithIndels = TRUE} \tab \code{gt[, sitesWhere(!isIndel)]} \cr
+#'    \code{removeMinorSNPStates = TRUE} \tab \code{removeMinorSNPStates(gt)} \cr
+#'    \code{siteRangeFilterType = "sites"} \tab \code{gt[, sites(startSite:endSite)]} \cr
+#'    \code{siteRangeFilterType = "position"} \tab \code{gt[, region("1", startPos, endPos)]} \cr
+#'    \code{gRangesObj = gr} \tab \code{gt[, region(gr)]} \cr
+#'    \code{bedFile = "x.bed"} \tab \code{gt[, region(rtracklayer::import("x.bed"))]} \cr
+#'    \code{chrPosFile = "x.tsv"} \tab \code{gt[, region(gr)]}, building \code{gr} from the file
+#' }
+#'
+#' Site indices passed to \code{\link{sites}()} are 1-based, while
+#' \code{startSite} and \code{endSite} are the 0-based indices TASSEL uses
+#' internally: \code{startSite = 1, endSite = 3} becomes
+#' \code{gt[, sites(2:4)]}.
+#'
+#' Unlike this function, selectors can be combined with \code{&} inside a
+#' single \code{\link{sitesWhere}()} call and taxa can be filtered in the
+#' same expression:
+#' \code{gt[taxaWhere(notMissing >= 0.8), sitesWhere(maf >= 0.05 & !isIndel)]}.
 #'
 #' @name filterGenotypeTableSites
 #' @rdname filterGenotypeTableSites
 #'
-#' @param tasObj An object of class \code{TasselGenotypePenotype}.
+#' @param tasObj An object of class \code{\linkS4class{TasselGenotype}} or
+#'    \code{\linkS4class{TasselGenomicDataset}}. Objects of the deprecated
+#'    \code{TasselGenotypePhenotype} class are still accepted.
 #' @param siteMinCount Site minimum count of alleles not unknown. Can range
 #'    from 0 to inf. Defaults to 0.
 #' @param siteMinAlleleFreq Site minimum minor allele frequency. Can range
@@ -54,7 +91,12 @@
 #' @param bedFile An optional BED coordinate file path of
 #'    \code{character} class. Defaults to \code{NULL}.
 #'
-#' @return Returns an object of \code{TasselGenotypePhenotype} class.
+#' @return Returns an object of the same class as \code{tasObj}.
+#'
+#' @seealso \code{\link{sitesWhere}}, \code{\link{sites}},
+#'    \code{\link{siteIds}}, \code{\link{chrom}}, \code{\link{region}},
+#'    \code{\link{removeMinorSNPStates}},
+#'    \code{\linkS4class{TasselGenotype}}
 #'
 #' @importFrom GenomicRanges end
 #' @importFrom GenomicRanges seqnames
@@ -85,15 +127,24 @@ filterGenotypeTableSites <- function(
     chrPosFile = NULL,
     bedFile = NULL
 ) {
+    lifecycle::deprecate_warn(
+        when    = "0.14.0",
+        what    = "filterGenotypeTableSites()",
+        details = c(
+            "i" = "Use bracket subsetting instead, e.g. `gt[, sitesWhere(maf >= 0.05)]`.",
+            "i" = "See `?filterGenotypeTableSites` for a full argument mapping."
+        )
+    )
 
-    if (!inherits(tasObj, "TasselGenotypePhenotype")) {
-        stop("`tasObj` must be of class `TasselGenotypePhenotype`")
-    }
+    # The notice above already flags legacy usage, so the one
+    # '.resolveTasselInput()' raises for <TasselGenotypePhenotype>
+    # input would only repeat it
+    rlang::local_options(lifecycle_verbosity = "quiet")
 
-    jGenoTable <- getGenotypeTable(tasObj)
-    if (rJava::is.jnull(jGenoTable)) {
-        stop("TASSEL genotype object not found")
-    }
+    tasIn <- .resolveTasselInput(
+        tasObj, "genotype", "filterGenotypeTableSites"
+    )
+    jGenoTable <- tasIn$jGt
 
     # Range check
     if (siteMinAlleleFreq > 1 || siteMinAlleleFreq < 0) {
@@ -110,8 +161,8 @@ filterGenotypeTableSites <- function(
     }
 
     # Site check
-    taxa <- getTaxaList(tasObj)
-    if (siteMinCount > taxa$size()) {
+    jTaxa <- getTaxaList(tasObj)
+    if (siteMinCount > jTaxa$size()) {
         stop("Minimum number of taxa exceeds total number of taxa in genotype table.")
     }
 
@@ -237,23 +288,12 @@ filterGenotypeTableSites <- function(
         }
     )
 
-    # Check if input had phenotype table. If yes, combine genotype with phenotype
     if (!inherits(out, "jobjRef")) {
         message("No data returned.")
         return(NA)
-    } else {
-        jPhenoTable <- getPhenotypeTable(tasObj)
-        if (rJava::is.jnull(jPhenoTable)) {
-            .tasselObjectConstructor(out)
-        } else {
-            .tasselObjectConstructor(
-                combineTasselGenotypePhenotype(
-                    genotypeTable = out,
-                    phenotype = jPhenoTable
-                )
-            )
-        }
     }
+
+    .wrapGenotypeResult(out, tasIn)
 }
 
 
@@ -261,27 +301,52 @@ filterGenotypeTableSites <- function(
 #' @title Filter genotype table by site IDs
 #'
 #' @description
+#' \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
+#'
 #' Filter a genotype table object by specifying literal site names (IDs)
 #' for variant markers.
+#'
+#' Use bracket subsetting with \code{\link{siteIds}()} instead; see
+#' \emph{Details}.
+#'
+#' @details
+#' \tabular{ll}{
+#'    \strong{Deprecated argument} \tab \strong{Replacement} \cr
+#'    \code{siteNames = c("rs1", "rs2")} \tab \code{gt[, siteIds("rs1", "rs2")]}
+#' }
+#'
+#' A character vector can be handed to \code{\link{siteIds}()} directly
+#' (\code{gt[, siteIds(myMarkers)]}), or passed as the \code{j} index
+#' without a selector (\code{gt[, myMarkers]}).
 #'
 #' @name filterGenotypeTableBySiteName
 #' @rdname filterGenotypeTableBySiteName
 #'
-#' @param tasObj An object of class \code{TasselGenotypePenotype}.
+#' @param tasObj An object of class \code{\linkS4class{TasselGenotype}} or
+#'    \code{\linkS4class{TasselGenomicDataset}}. Objects of the deprecated
+#'    \code{TasselGenotypePhenotype} class are still accepted.
 #' @param siteNames A character vector of site names to filter on.
 #'
-#' @return Returns an object of \code{TasselGenotypePhenotype} class.
+#' @return Returns an object of the same class as \code{tasObj}.
+#'
+#' @seealso \code{\link{siteIds}}, \code{\linkS4class{TasselGenotype}}
 #'
 #' @export
 filterGenotypeTableBySiteName <- function(tasObj, siteNames) {
+    lifecycle::deprecate_warn(
+        when    = "0.14.0",
+        what    = "filterGenotypeTableBySiteName()",
+        details = c(
+            "i" = 'Use bracket subsetting instead, e.g. `gt[, siteIds("rs1", "rs2")]`.'
+        )
+    )
 
-    # Rudimentary type check
-    if (!inherits(tasObj, "TasselGenotypePhenotype")) {
-        stop("`tasObj` must be of class `TasselGenotypePhenotype`")
-    }
+    rlang::local_options(lifecycle_verbosity = "quiet")
 
-    # Get Java memory pointer
-    gtJava <- getGenotypeTable(tasObj)
+    tasIn <- .resolveTasselInput(
+        tasObj, "genotype", "filterGenotypeTableBySiteName"
+    )
+    gtJava <- tasIn$jGt
 
     # Instantiate new ArrayList object and populate with site names
     idsToKeep <- rJava::.jnew("java.util.ArrayList")
@@ -301,9 +366,9 @@ filterGenotypeTableBySiteName <- function(tasObj, siteNames) {
     # Try to filter data - if outofbounds exception - no sites returned
     gtFilter <- tryCatch(
         expr = {
-            # run plugin and return S4 rTASSEL object (filtered)
-            .tasselObjectConstructor(
-                plugin$runPlugin(dataSet$getDataSet(gtJava))
+            .wrapGenotypeResult(
+                plugin$runPlugin(dataSet$getDataSet(gtJava)),
+                tasIn
             )
         },
         error = function(e) {
@@ -319,15 +384,38 @@ filterGenotypeTableBySiteName <- function(tasObj, siteNames) {
 ## ----
 #' @title Filter genotype table by taxa
 #'
-#' @description This function will filter R objects of
-#'    \code{TasselGenotypePhenotype} class containing genotype tables.
-#'    The parameters for this function are derived from TASSEL's
-#'    \code{FilterTaxaBuilder} plugin.
+#' @description
+#' \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
+#'
+#' This function will filter R objects containing genotype tables by taxa
+#' (sample) criteria. The parameters for this function are derived from
+#' TASSEL's \code{FilterTaxaBuilder} plugin.
+#'
+#' Use bracket subsetting with the taxa selectors instead
+#' (\code{gt[<selector>, ]}); see \emph{Details} for the equivalent of each
+#' argument.
+#'
+#' @details
+#' Every argument of this function has a bracket-API replacement:
+#'
+#' \tabular{ll}{
+#'    \strong{Deprecated argument} \tab \strong{Replacement} \cr
+#'    \code{minNotMissing = 0.8} \tab \code{gt[taxaWhere(notMissing >= 0.8), ]} \cr
+#'    \code{minHeterozygous = 0.1} \tab \code{gt[taxaWhere(het >= 0.1), ]} \cr
+#'    \code{maxHeterozygous = 0.1} \tab \code{gt[taxaWhere(het <= 0.1), ]} \cr
+#'    \code{taxa = c("B73", "Mo17")} \tab \code{gt[taxa("B73", "Mo17"), ]}
+#'  }
+#'
+#' \code{\link{taxaWhere}()} also evaluates arbitrary R expressions against
+#' the \code{taxaId} column, which has no equivalent here:
+#' \code{gt[taxaWhere(startsWith(taxaId, "NAM")), ]}.
 #'
 #' @name filterGenotypeTableTaxa
 #' @rdname filterGenotypeTableTaxa
 #'
-#' @param tasObj An object of class \code{TasselGenotypePenotype}.
+#' @param tasObj An object of class \code{\linkS4class{TasselGenotype}} or
+#'    \code{\linkS4class{TasselGenomicDataset}}. Objects of the deprecated
+#'    \code{TasselGenotypePhenotype} class are still accepted.
 #' @param minNotMissing Minimum proportion of sites not unknown to pass this
 #'    filter. Value can be between 0.0 and 1.0.
 #' @param minHeterozygous Minimum proportion of sites that are heterozygous.
@@ -337,7 +425,10 @@ filterGenotypeTableBySiteName <- function(tasObj, siteNames) {
 #' @param taxa Vector of taxa IDs (as character) to subset. Defaults to
 #'    \code{NULL}.
 #'
-#' @return Returns an object of \code{TasselGenotypePhenotype} class.
+#' @return Returns an object of the same class as \code{tasObj}.
+#'
+#' @seealso \code{\link{taxaWhere}}, \code{\link{taxa}},
+#'    \code{\linkS4class{TasselGenotype}}
 #'
 #' @importFrom rJava is.jnull
 #' @importFrom rJava new
@@ -351,15 +442,21 @@ filterGenotypeTableTaxa <- function(
     maxHeterozygous = 1.0,
     taxa = NULL
 ) {
+    lifecycle::deprecate_warn(
+        when    = "0.14.0",
+        what    = "filterGenotypeTableTaxa()",
+        details = c(
+            "i" = "Use bracket subsetting instead, e.g. `gt[taxaWhere(notMissing >= 0.8), ]`.",
+            "i" = "See `?filterGenotypeTableTaxa` for a full argument mapping."
+        )
+    )
 
-    if (!inherits(tasObj, "TasselGenotypePhenotype")) {
-        stop("`tasObj` must be of class `TasselGenotypePhenotype`")
-    }
+    rlang::local_options(lifecycle_verbosity = "quiet")
 
-    jGenoTable <- getGenotypeTable(tasObj)
-    if (rJava::is.jnull(jGenoTable)) {
-        stop("TASSEL genotype object not found")
-    }
+    tasIn <- .resolveTasselInput(
+        tasObj, "genotype", "filterGenotypeTableTaxa"
+    )
+    jGenoTable <- tasIn$jGt
 
     # Range check
     if (minNotMissing > 1 || minNotMissing < 0 ) {
@@ -398,18 +495,5 @@ filterGenotypeTableTaxa <- function(
         plugin$setParameter("taxaList", taxaArray)
     }
 
-    resultDataSet <- plugin$runPlugin(jGenoTable)
-
-    # Check if input had phenotype table. If yes, combine genotype with phenotype
-    jPhenoTable <- getPhenotypeTable(tasObj)
-    if (rJava::is.jnull(jPhenoTable)) {
-        .tasselObjectConstructor(resultDataSet)
-    } else {
-        .tasselObjectConstructor(
-            combineTasselGenotypePhenotype(
-                genotypeTable = resultDataSet,
-                phenotype = jPhenoTable
-            )
-        )
-    }
+    .wrapGenotypeResult(plugin$runPlugin(jGenoTable), tasIn)
 }
