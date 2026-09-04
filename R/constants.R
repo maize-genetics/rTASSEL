@@ -9,6 +9,7 @@ TASSEL_JVM <- list(
     "ARRAY_LIST"               = "java.util.ArrayList",
     "CHROMOSOME"               = "net.maizegenetics.dna.map.Chromosome",
     "GENERAL_POSITION_BUILDER" = "net.maizegenetics.dna.map.GeneralPosition$Builder",
+    "GENO_PHENO_BUILDER"       = "net.maizegenetics.phenotype.GenotypePhenotypeBuilder",
     "GENOTYPE_TABLE_BUILDER"   = "net.maizegenetics.dna.snp.GenotypeTableBuilder",
     "LOGGING_UTILS"            = "net.maizegenetics.util.LoggingUtils",
     "PHENO_BUILDER"            = "net.maizegenetics.phenotype.PhenotypeBuilder",

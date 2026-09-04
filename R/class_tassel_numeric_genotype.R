@@ -7,6 +7,8 @@
 #' `TasselGenotype` class. This class is used to represent numeric
 #' genotype data in the TASSEL 5 framework.
 #'
+#' @include class_tassel_genotype.R
+#'
 #' @name TasselNumericGenotype-class
 #' @rdname TasselNumericGenotype-class
 #' @exportClass TasselNumericGenotype

@@ -672,6 +672,33 @@ readNumericGenotypeFromRMatrix <- function(m, asTGP = TRUE) {
 
 
 ## ----
+# Wrap a Java GenotypeTable in the matching rTASSEL genotype class
+#
+# @description
+# Tables carrying discrete allele calls become `TasselGenotype`
+# objects; tables that only hold site scores (e.g. reference
+# probabilities) become `TasselNumericGenotype` objects.
+#
+# @param javaGt
+# A Java `GenotypeTable` object reference.
+#
+# @return
+# A `TasselGenotype` or `TasselNumericGenotype` object.
+createTasselGenotype <- function(javaGt) {
+    methods::new(
+        Class = if (javaGt$hasGenotype()) {
+            "TasselGenotype"
+        } else {
+            "TasselNumericGenotype"
+        },
+        jRefObj     = javaGt,
+        jMemAddress = gsub(".*@", "", rJava::.jstrVal(javaGt)),
+        jClass      = rJava::.jclass(javaGt)
+    )
+}
+
+
+## ----
 # Read Genotype Data from File Path
 #
 # @description
@@ -689,26 +716,9 @@ readNumericGenotypeFromRMatrix <- function(m, asTGP = TRUE) {
 # @return
 # A TasselGenotype or TasselNumericGenotype object.
 readGenotypeFromPath <- function(x, sortPositions, keepDepth) {
-    rJc         <- rJava::.jnew(TASSEL_JVM$R_METHODS)
-    javaGt      <- rJc$read(x, keepDepth, sortPositions)
-    jClass      <- rJava::.jclass(javaGt)
-    jMemAddress <- gsub(".*@", "", rJava::.jstrVal(javaGt))
+    rJc <- rJava::.jnew(TASSEL_JVM$R_METHODS)
 
-    if (javaGt$hasGenotype()) {
-        methods::new(
-            Class = "TasselGenotype",
-            jRefObj     = javaGt,
-            jMemAddress = jMemAddress,
-            jClass      = jClass
-        )
-    } else {
-        methods::new(
-            Class = "TasselNumericGenotype",
-            jRefObj     = javaGt,
-            jMemAddress = jMemAddress,
-            jClass      = jClass
-        )
-    }
+    createTasselGenotype(rJc$read(x, keepDepth, sortPositions))
 }
 
 

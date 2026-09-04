@@ -234,3 +234,60 @@ setMethod(
 )
 
 
+## ----
+#' @rdname traitNames
+#' @aliases traitNames,TasselPhenotype-method
+#' @export
+setMethod(
+    f = "traitNames",
+    signature = signature(object = "TasselPhenotype"),
+    definition = function(object) {
+        attrData <- object@attrData
+
+        return(attrData$trait_id[attrData$trait_type != "taxa"])
+    }
+)
+
+
+
+# /// Methods (taxa) ////////////////////////////////////////////////
+
+## ----
+#' @rdname taxaList
+#' @aliases taxaList,TasselPhenotype-method
+#' @export
+setMethod("taxaList", "TasselPhenotype", function(tasObj) {
+    rJava::J(TASSEL_JVM$R_METHODS)$
+        genotypeTableToSampleNameArray(tasObj@jRefObj$taxa())
+})
+
+
+
+# /// Methods (coercion) ////////////////////////////////////////////
+
+## ----
+#' @title Coerce phenotype data to a data frame
+#'
+#' @description
+#' Returns the phenotype data held by a \code{TasselPhenotype} object as a
+#' \code{tibble}. Attribute metadata is available separately via
+#' \code{\link{attributeData}()}.
+#'
+#' @param x A \code{TasselPhenotype} object.
+#' @param row.names Ignored, present for generic compatibility.
+#' @param optional Ignored, present for generic compatibility.
+#' @param ... Additional arguments to be passed to or from methods.
+#'
+#' @return A \code{tibble} of phenotype data.
+#'
+#' @export
+as.data.frame.TasselPhenotype <- function(
+    x,
+    row.names = NULL,
+    optional = FALSE,
+    ...
+) {
+    return(x@rData)
+}
+
+

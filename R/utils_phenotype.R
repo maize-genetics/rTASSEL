@@ -573,12 +573,16 @@ readPhenotypeFromDf <- function(df, attrDf) {
         dataVectors$add(rJava::.jarray(colData))
     }
 
-    # Make TASSEL phenotype object from valid dataframe components
+    # Make TASSEL phenotype object from valid dataframe components.
+    # Each character vector is explicitly arrayed so that single-column
+    # cases still resolve to the Java 'String[]' overload.
     rJc <- rJava::.jnew(TASSEL_JVM$R_METHODS)
     javaPh <- rJc$createPhenotypeFromRDataFrameElements(
-        df[[attrDf[attrDf$tassel_attr == "taxa", ]$col_id]], # taxa column
-        nonTaxaRows$col_id,                                  # column IDs (not type taxa)
-        nonTaxaRows$tassel_attr,                             # attribute types
+        rJava::.jarray(                                      # taxa column
+            as.character(df[[attrDf[attrDf$tassel_attr == "taxa", ]$col_id]])
+        ),
+        rJava::.jarray(nonTaxaRows$col_id),                  # column IDs (not type taxa)
+        rJava::.jarray(nonTaxaRows$tassel_attr),             # attribute types
         dataVectors                                          # non-taxa columns
     )
 

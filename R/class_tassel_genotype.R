@@ -207,6 +207,49 @@ setMethod("taxaSummary", "TasselGenotype", function(tasObj) {
 
 
 
+# /// Methods (coercion) ////////////////////////////////////////////
+
+## ----
+#' @title Coerce genotype data to an R matrix
+#'
+#' @description
+#' Converts the genotype table held by a \code{TasselGenotype} object into a
+#' matrix of dosage values, with taxa as rows and sites as columns.
+#'
+#' @param x A \code{TasselGenotype} object.
+#' @param ... Additional arguments to be passed to or from methods.
+#'
+#' @return An \code{integer} matrix of taxa (rows) by sites (columns).
+#'
+#' @importFrom rJava .jevalArray
+#'
+#' @export
+as.matrix.TasselGenotype <- function(x, ...) {
+    if (!x@jRefObj$hasGenotype()) {
+        rlang::abort(c(
+            "`x` does not contain discrete genotype calls",
+            "i" = "Only allele-based genotype tables can be coerced to a matrix"
+        ))
+    }
+
+    jrc <- rJava::J(TASSEL_JVM$R_METHODS)
+    m <- rJava::.jevalArray(
+        jrc$genotypeTableToDosageByteArray(x@jRefObj),
+        simplify = TRUE
+    )
+    mode(m) <- "integer"
+
+    # 128 is a conversion artifact of TASSEL's unsigned missing value
+    m[m == 128] <- NA
+
+    colnames(m) <- positionList(x)$Name
+    rownames(m) <- taxaList(x)
+
+    return(m)
+}
+
+
+
 # /// Bracket Method /////////////////////////////////////////////////
 
 ## ----

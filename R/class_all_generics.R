@@ -101,6 +101,22 @@ setGeneric("attributeData", function(object, ...) standardGeneric("attributeData
 
 
 ## ----
+#' @title Return the genotype component of an rTASSEL object
+#'
+#' @description
+#' Returns the genotype data held by a composite \code{rTASSEL} object, such as
+#' the \code{\linkS4class{TasselGenotype}} carried by a
+#' \code{\linkS4class{TasselGenomicDataset}}.
+#'
+#' @param object an \code{rTASSEL} object
+#' @param ... Additional arguments, for use in specific methods
+#'
+#' @rdname genotype
+#' @export
+setGeneric("genotype", function(object, ...) standardGeneric("genotype"))
+
+
+## ----
 #' @title Return \code{rJava} reference object
 #'
 #' @description
@@ -112,6 +128,22 @@ setGeneric("attributeData", function(object, ...) standardGeneric("attributeData
 #' @rdname javaRefObj
 #' @export
 setGeneric("javaRefObj", function(object, ...) standardGeneric("javaRefObj"))
+
+
+## ----
+#' @title Return the phenotype component of an rTASSEL object
+#'
+#' @description
+#' Returns the phenotype data held by a composite \code{rTASSEL} object, such as
+#' the \code{\linkS4class{TasselPhenotype}} carried by a
+#' \code{\linkS4class{TasselGenomicDataset}}.
+#'
+#' @param object an \code{rTASSEL} object
+#' @param ... Additional arguments, for use in specific methods
+#'
+#' @rdname phenotype
+#' @export
+setGeneric("phenotype", function(object, ...) standardGeneric("phenotype"))
 
 
 ## ----
