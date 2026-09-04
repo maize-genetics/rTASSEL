@@ -15,9 +15,9 @@ A \code{\linkS4class{SiteSelector}} object.
 \description{
 Creates a \code{\linkS4class{SiteSelector}} using a predicate
 expression evaluated against site metadata. Available columns in
-the data mask: \code{siteIndex}, \code{siteId}, \code{chrom},
-\code{pos}, \code{maf}, \code{alleleCount}, \code{het},
-\code{isIndel}, \code{isBiallelic}.
+the data mask: \code{siteIndex} (1-based), \code{siteId},
+\code{chrom}, \code{pos}, \code{maf}, \code{alleleCount},
+\code{het}, \code{isIndel}, \code{isBiallelic}.
 }
 \examples{
 \dontrun{

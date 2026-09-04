@@ -15,7 +15,7 @@
 \item{i}{Taxa selector: a character vector of IDs, a
 \code{\linkS4class{TaxaSelector}}, or missing.}
 
-\item{j}{Site selector: an integer vector of 0-based indices, a
+\item{j}{Site selector: an integer vector of 1-based indices, a
 character vector of site names, a
 \code{\linkS4class{SiteSelector}}, or missing.}
 
@@ -51,10 +51,11 @@ interact with Java objects used in TASSEL 5.
 \examples{
 \dontrun{
 gt[taxa("B73", "Mo17"), ]
-gt[, sites(0:999)]
+gt[, sites(1:1000)]
 gt[, sitesWhere(maf >= 0.05)]
+gt[taxaWhere(notMissing >= 0.8), ]
 gt[taxa("B73"), region("chr1", 1e6, 2e6)]
-gt[, !sites(0:9)]
+gt[, !sites(1:10)]
 }
 
 }

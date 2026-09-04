@@ -33,10 +33,10 @@ setClass("TaxaSelector", slots = c(
 #' filtering of \code{TasselGenotype} objects.
 #'
 #' @slot type Character indicating selector type: \code{"indices"},
-#'   \code{"names"}, \code{"chrom"}, \code{"region"}, or
-#'   \code{"predicate"}.
-#' @slot indices Integer vector of 0-based TASSEL site indices (used
-#'   when \code{type = "indices"}).
+#'   \code{"names"}, \code{"chrom"}, \code{"region"},
+#'   \code{"granges"}, or \code{"predicate"}.
+#' @slot indices Integer vector of 1-based site indices (used when
+#'   \code{type = "indices"}).
 #' @slot ids Character vector of site/marker names (used when
 #'   \code{type = "names"}).
 #' @slot chromId Character vector of chromosome IDs (used when
@@ -45,6 +45,8 @@ setClass("TaxaSelector", slots = c(
 #'   \code{type = "region"}).
 #' @slot end Numeric end position in bp (used when
 #'   \code{type = "region"}).
+#' @slot granges A \code{GRanges} object (used when
+#'   \code{type = "granges"}).
 #' @slot quo Quosure for predicate evaluation (used when
 #'   \code{type = "predicate"}).
 #' @slot negate Logical indicating whether to negate the selection.
@@ -59,6 +61,7 @@ setClass("SiteSelector", slots = c(
     chromId = "character",
     start   = "numeric",
     end     = "numeric",
+    granges = "ANY",
     quo     = "ANY",
     negate  = "logical"
 ))
@@ -96,16 +99,20 @@ taxa <- function(...) {
 #'
 #' @description
 #' Creates a \code{\linkS4class{TaxaSelector}} using a predicate
-#' expression evaluated against taxa metadata.
+#' expression evaluated against taxa metadata. Available columns in
+#' the data mask are \code{taxaId} (taxon name), \code{notMissing}
+#' (proportion of sites with a genotype call), and \code{het}
+#' (proportion of sites that are heterozygous).
 #'
-#' @param expr An unquoted expression evaluated against a data frame
-#'   containing a \code{taxaId} column.
+#' @param expr An unquoted expression evaluated against taxa metadata.
 #'
 #' @return A \code{\linkS4class{TaxaSelector}} object.
 #'
 #' @examples
 #' \dontrun{
 #' gt[taxaWhere(startsWith(taxaId, "NAM")), ]
+#' gt[taxaWhere(notMissing >= 0.8), ]
+#' gt[taxaWhere(het <= 0.1), ]
 #' }
 #'
 #' @export
@@ -120,16 +127,18 @@ taxaWhere <- function(expr) {
 #' @title Select Sites by Index
 #'
 #' @description
-#' Creates a \code{\linkS4class{SiteSelector}} for filtering by
-#' 0-based TASSEL site indices.
+#' Creates a \code{\linkS4class{SiteSelector}} for filtering by site
+#' index. Indices are 1-based, matching R's own subsetting
+#' conventions; the 0-based index TASSEL uses internally is reported
+#' in the \code{Site} column of \code{\link{positionList}()}.
 #'
-#' @param ... Integer site indices (0-based).
+#' @param ... Integer site indices (1-based).
 #'
 #' @return A \code{\linkS4class{SiteSelector}} object.
 #'
 #' @examples
 #' \dontrun{
-#' gt[, sites(0:999)]
+#' gt[, sites(1:1000)]
 #' gt[, sites(c(10, 50, 100))]
 #' }
 #'
@@ -137,10 +146,16 @@ taxaWhere <- function(expr) {
 sites <- function(...) {
     idx <- as.integer(c(...))
     if (length(idx) == 0) rlang::abort("At least one site index must be provided")
+    if (any(idx < 1)) {
+        rlang::abort(c(
+            "Site indices must be 1-based",
+            "x" = "Got an index less than 1"
+        ))
+    }
     methods::new("SiteSelector",
         type = "indices", indices = idx, ids = character(0),
         chromId = character(0), start = numeric(0), end = numeric(0),
-        quo = NULL, negate = FALSE
+        granges = NULL, quo = NULL, negate = FALSE
     )
 }
 
@@ -167,7 +182,7 @@ siteIds <- function(...) {
     methods::new("SiteSelector",
         type = "names", indices = integer(0), ids = ids,
         chromId = character(0), start = numeric(0), end = numeric(0),
-        quo = NULL, negate = FALSE
+        granges = NULL, quo = NULL, negate = FALSE
     )
 }
 
@@ -195,7 +210,7 @@ chrom <- function(...) {
     methods::new("SiteSelector",
         type = "chrom", indices = integer(0), ids = character(0),
         chromId = chromIds, start = numeric(0), end = numeric(0),
-        quo = NULL, negate = FALSE
+        granges = NULL, quo = NULL, negate = FALSE
     )
 }
 
@@ -203,10 +218,22 @@ chrom <- function(...) {
 #' @title Select Sites by Genomic Region
 #'
 #' @description
-#' Creates a \code{\linkS4class{SiteSelector}} for filtering by a
-#' chromosomal coordinate range.
+#' Creates a \code{\linkS4class{SiteSelector}} for filtering by
+#' genomic coordinates, given either as a single chromosome and
+#' coordinate range or as a \code{GRanges} object holding any number
+#' of ranges.
 #'
-#' @param chrom Character chromosome ID.
+#' @details
+#' A \code{GRanges} object is the migration path for the
+#' \code{bedFile} and \code{chrPosFile} arguments of the deprecated
+#' \code{\link{filterGenotypeTableSites}()}: read a BED file with
+#' \code{rtracklayer::import()} and build ranges from a chromosome
+#' and position table with
+#' \code{GenomicRanges::GRanges(chrom, IRanges::IRanges(pos, pos))}.
+#'
+#' @param x A character chromosome ID, or a \code{GRanges} object. If
+#'   a \code{GRanges} is supplied, \code{start} and \code{end} must be
+#'   omitted.
 #' @param start Numeric start position in bp.
 #' @param end Numeric end position in bp.
 #'
@@ -215,14 +242,38 @@ chrom <- function(...) {
 #' @examples
 #' \dontrun{
 #' gt[, region("chr1", 1e6, 2e6)]
+#'
+#' gr <- GenomicRanges::GRanges(
+#'     seqnames = c("chr1", "chr2"),
+#'     ranges   = IRanges::IRanges(start = c(1e6, 5e5), end = c(2e6, 1e6))
+#' )
+#' gt[, region(gr)]
 #' }
 #'
 #' @export
-region <- function(chrom, start, end) {
+region <- function(x, start, end) {
+    if (methods::is(x, "GRanges")) {
+        if (!missing(start) || !missing(end)) {
+            rlang::abort(c(
+                "`start` and `end` cannot be used with a <GRanges> object",
+                "i" = "Encode the coordinates in the <GRanges> object instead"
+            ))
+        }
+        if (length(x) == 0) {
+            rlang::abort("At least one range must be provided")
+        }
+
+        return(methods::new("SiteSelector",
+            type = "granges", indices = integer(0), ids = character(0),
+            chromId = character(0), start = numeric(0), end = numeric(0),
+            granges = x, quo = NULL, negate = FALSE
+        ))
+    }
+
     methods::new("SiteSelector",
         type = "region", indices = integer(0), ids = character(0),
-        chromId = as.character(chrom), start = as.numeric(start),
-        end = as.numeric(end), quo = NULL, negate = FALSE
+        chromId = as.character(x), start = as.numeric(start),
+        end = as.numeric(end), granges = NULL, quo = NULL, negate = FALSE
     )
 }
 
@@ -232,9 +283,9 @@ region <- function(chrom, start, end) {
 #' @description
 #' Creates a \code{\linkS4class{SiteSelector}} using a predicate
 #' expression evaluated against site metadata. Available columns in
-#' the data mask: \code{siteIndex}, \code{siteId}, \code{chrom},
-#' \code{pos}, \code{maf}, \code{alleleCount}, \code{het},
-#' \code{isIndel}, \code{isBiallelic}.
+#' the data mask: \code{siteIndex} (1-based), \code{siteId},
+#' \code{chrom}, \code{pos}, \code{maf}, \code{alleleCount},
+#' \code{het}, \code{isIndel}, \code{isBiallelic}.
 #'
 #' @param expr An unquoted expression evaluated against site metadata.
 #'
@@ -256,7 +307,7 @@ sitesWhere <- function(expr) {
     methods::new("SiteSelector",
         type = "predicate", indices = integer(0), ids = character(0),
         chromId = character(0), start = numeric(0), end = numeric(0),
-        quo = quo, negate = FALSE
+        granges = NULL, quo = quo, negate = FALSE
     )
 }
 

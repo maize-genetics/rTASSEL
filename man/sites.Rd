@@ -7,18 +7,20 @@
 sites(...)
 }
 \arguments{
-\item{...}{Integer site indices (0-based).}
+\item{...}{Integer site indices (1-based).}
 }
 \value{
 A \code{\linkS4class{SiteSelector}} object.
 }
 \description{
-Creates a \code{\linkS4class{SiteSelector}} for filtering by
-0-based TASSEL site indices.
+Creates a \code{\linkS4class{SiteSelector}} for filtering by site
+index. Indices are 1-based, matching R's own subsetting
+conventions; the 0-based index TASSEL uses internally is reported
+in the \code{Site} column of \code{\link{positionList}()}.
 }
 \examples{
 \dontrun{
-gt[, sites(0:999)]
+gt[, sites(1:1000)]
 gt[, sites(c(10, 50, 100))]
 }
 

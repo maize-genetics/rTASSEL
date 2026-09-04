@@ -4,10 +4,12 @@
 \alias{region}
 \title{Select Sites by Genomic Region}
 \usage{
-region(chrom, start, end)
+region(x, start, end)
 }
 \arguments{
-\item{chrom}{Character chromosome ID.}
+\item{x}{A character chromosome ID, or a \code{GRanges} object. If
+a \code{GRanges} is supplied, \code{start} and \code{end} must be
+omitted.}
 
 \item{start}{Numeric start position in bp.}
 
@@ -17,12 +19,28 @@ region(chrom, start, end)
 A \code{\linkS4class{SiteSelector}} object.
 }
 \description{
-Creates a \code{\linkS4class{SiteSelector}} for filtering by a
-chromosomal coordinate range.
+Creates a \code{\linkS4class{SiteSelector}} for filtering by
+genomic coordinates, given either as a single chromosome and
+coordinate range or as a \code{GRanges} object holding any number
+of ranges.
+}
+\details{
+A \code{GRanges} object is the migration path for the
+\code{bedFile} and \code{chrPosFile} arguments of the deprecated
+\code{\link{filterGenotypeTableSites}()}: read a BED file with
+\code{rtracklayer::import()} and build ranges from a chromosome
+and position table with
+\code{GenomicRanges::GRanges(chrom, IRanges::IRanges(pos, pos))}.
 }
 \examples{
 \dontrun{
 gt[, region("chr1", 1e6, 2e6)]
+
+gr <- GenomicRanges::GRanges(
+    seqnames = c("chr1", "chr2"),
+    ranges   = IRanges::IRanges(start = c(1e6, 5e5), end = c(2e6, 1e6))
+)
+gt[, region(gr)]
 }
 
 }

@@ -16,11 +16,11 @@ filtering of \code{TasselGenotype} objects.
 
 \describe{
 \item{\code{type}}{Character indicating selector type: \code{"indices"},
-\code{"names"}, \code{"chrom"}, \code{"region"}, or
-\code{"predicate"}.}
+\code{"names"}, \code{"chrom"}, \code{"region"},
+\code{"granges"}, or \code{"predicate"}.}
 
-\item{\code{indices}}{Integer vector of 0-based TASSEL site indices (used
-when \code{type = "indices"}).}
+\item{\code{indices}}{Integer vector of 1-based site indices (used when
+\code{type = "indices"}).}
 
 \item{\code{ids}}{Character vector of site/marker names (used when
 \code{type = "names"}).}
@@ -33,6 +33,9 @@ when \code{type = "indices"}).}
 
 \item{\code{end}}{Numeric end position in bp (used when
 \code{type = "region"}).}
+
+\item{\code{granges}}{A \code{GRanges} object (used when
+\code{type = "granges"}).}
 
 \item{\code{quo}}{Quosure for predicate evaluation (used when
 \code{type = "predicate"}).}

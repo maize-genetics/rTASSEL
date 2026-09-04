@@ -490,7 +490,7 @@ as.matrix.TasselGenomicDataset <- function(x, ...) {
 #' @param x A \code{TasselGenomicDataset} object.
 #' @param i Taxa selector: a character vector of IDs, a
 #'   \code{\linkS4class{TaxaSelector}}, or missing.
-#' @param j Site selector: an integer vector of 0-based indices, a
+#' @param j Site selector: an integer vector of 1-based indices, a
 #'   character vector of site names, a
 #'   \code{\linkS4class{SiteSelector}}, or missing.
 #' @param ... Ignored.

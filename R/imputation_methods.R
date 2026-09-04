@@ -50,38 +50,8 @@ imputeNumeric <- function(
     dataSet <- rJava::J("net.maizegenetics.plugindef.DataSet")
     res <- plugin$processData(dataSet$getDataSet(jGenoTable))
 
-    .wrapImputed(res$getData(0L)$getData(), tasIn)
+    .wrapGenotypeResult(res$getData(0L)$getData(), tasIn)
 }
-
-
-## ----
-# Rebuild an imputation result as the class that was handed in
-#
-# @description
-# Imputation plugins hand back a bare `GenotypeTable`. Inputs that also
-# carried phenotype data are re-joined against it so that the returned
-# object holds the same components as the original.
-#
-# @param jGt
-# The Java `GenotypeTable` produced by the imputation plugin.
-# @param tasIn
-# The list returned by `.resolveTasselInput()` for the original input.
-#
-# @return
-# An object of the same class as `tasIn$original`.
-.wrapImputed <- function(jGt, tasIn) {
-    jRes <- if (rJava::is.jnull(tasIn$jPh)) {
-        jGt
-    } else {
-        combineTasselGenotypePhenotype(
-            genotypeTable = jGt,
-            phenotype     = tasIn$jPh
-        )
-    }
-
-    .wrapLikeInput(jRes, tasIn$original)
-}
-
 
 
 #' @title LD KNNi imputation
@@ -142,7 +112,7 @@ imputeLDKNNi <- function(
     dataSet <- rJava::J("net.maizegenetics.plugindef.DataSet")
     res <- plugin$processData(dataSet$getDataSet(jGenoTable))
 
-    .wrapImputed(res$getData(0L)$getData(), tasIn)
+    .wrapGenotypeResult(res$getData(0L)$getData(), tasIn)
 }
 
 

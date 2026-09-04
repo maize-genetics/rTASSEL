@@ -115,6 +115,7 @@ Collate:
     'rTASSEL-package.R'
     'setup.R'
     'taxa_list_functions.R'
+    'transform_genotype.R'
     'utils_deprecation.R'
     'utils_export.R'
     'utils_formula.R'

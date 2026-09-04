@@ -24,6 +24,9 @@ newTasselGenotype <- function(jGt, original) {
 #   computed, avoiding unnecessary JNI round-trips.  siteIndex, chrom,
 #   and pos are always included because they come from a single batch
 #   Java call.
+#
+# siteIndex is 1-based for the user-facing data mask; the 0-based
+# TASSEL indices needed for the JNI calls below are kept in 'idx'.
 buildSiteMetadata <- function(jGt, needed = NULL) {
     nSites    <- jGt$numberOfSites()
     positions <- jGt$positions()
@@ -33,7 +36,7 @@ buildSiteMetadata <- function(jGt, needed = NULL) {
     plArrays <- jRc$genotypeTableToPositionListOfArrays(positions)
 
     meta <- tibble::tibble(
-        siteIndex = idx,
+        siteIndex = seq_len(nSites),
         chrom     = plArrays$chromosomes,
         pos       = as.numeric(plArrays$startPos)
     )
@@ -108,6 +111,45 @@ batchTaxaNames <- function(jGt) {
 
 
 ## ----
+# Build a taxa metadata data frame from a Java GenotypeTable for
+# predicate evaluation in taxaWhere().
+#
+# @param needed Character vector of column names the caller actually
+#   requires.  taxaId comes from a single batch Java call and is always
+#   included; notMissing and het cost one JNI round-trip per taxon, so
+#   they are computed only when asked for.
+#
+# Both proportions are taken over the total number of sites, matching
+# FilterTaxaBuilderPlugin (and buildSiteMetadata()'s per-site het) so
+# that a predicate returns the same taxa whether or not
+# tryTaxaPluginShortCircuit() handles it.  Note this differs from
+# taxaSummary(), which divides by the non-missing count.
+buildTaxaMetadata <- function(jGt, needed = NULL) {
+    taxaIds <- batchTaxaNames(jGt)
+    nSites  <- jGt$numberOfSites()
+    idx     <- seq_along(taxaIds) - 1L
+
+    meta <- tibble::tibble(taxaId = taxaIds)
+
+    want <- function(col) is.null(needed) || col %in% needed
+
+    if (want("notMissing")) {
+        meta$notMissing <- vapply(idx, function(i) {
+            jGt$totalNonMissingForTaxon(as.integer(i)) / nSites
+        }, FUN.VALUE = numeric(1))
+    }
+
+    if (want("het")) {
+        meta$het <- vapply(idx, function(i) {
+            jGt$heterozygousCountForTaxon(as.integer(i)) / nSites
+        }, FUN.VALUE = numeric(1))
+    }
+
+    meta
+}
+
+
+## ----
 # Resolve a taxa selector (character vector or TaxaSelector) to a
 # character vector of taxa IDs.
 resolveTaxaIds <- function(jGt, selector) {
@@ -120,16 +162,14 @@ resolveTaxaIds <- function(jGt, selector) {
     if (selector@type == "ids") return(selector@ids)
 
     if (selector@type == "predicate") {
-        taxaIds <- batchTaxaNames(jGt)
+        needed <- all.vars(rlang::quo_get_expr(selector@quo))
+        meta <- buildTaxaMetadata(jGt, needed = needed)
 
-        mask <- rlang::eval_tidy(
-            selector@quo,
-            data = data.frame(taxaId = taxaIds, stringsAsFactors = FALSE)
-        )
+        mask <- rlang::eval_tidy(selector@quo, data = meta)
         if (!is.logical(mask)) {
             rlang::abort("taxaWhere() expression must evaluate to a logical vector")
         }
-        return(taxaIds[which(mask)])
+        return(meta$taxaId[which(mask)])
     }
 
     rlang::abort(paste0("Unknown TaxaSelector type: ", selector@type))
@@ -137,9 +177,77 @@ resolveTaxaIds <- function(jGt, selector) {
 
 
 ## ----
+# Try to translate a predicate TaxaSelector into FilterTaxaBuilderPlugin
+# parameters.  Returns the filtered Java GenotypeTable on success, or
+# NULL when the expression cannot be mapped to plugin parameters, in
+# which case the caller falls back to buildTaxaMetadata().
+tryTaxaPluginShortCircuit <- function(jGt, selector) {
+    if (!methods::is(selector, "TaxaSelector") || selector@type != "predicate") {
+        return(NULL)
+    }
+    if (selector@negate) return(NULL)
+
+    params <- list(
+        minNotMissing   = 0.0,
+        minHeterozygous = 0.0,
+        maxHeterozygous = 1.0
+    )
+
+    # Walk the AST and fill params. Returns TRUE if the full expression
+    # was consumed, FALSE if any sub-expression is unsupported.
+    consume <- function(expr) {
+        if (!is.call(expr)) return(FALSE)
+
+        op <- as.character(expr[[1]])
+
+        if (op == "&" && length(expr) == 3L) {
+            return(consume(expr[[2]]) && consume(expr[[3]]))
+        }
+
+        if (op %in% c(">=", "<=", ">", "<") && length(expr) == 3L) {
+            lhs <- expr[[2]]
+            rhs <- expr[[3]]
+            if (!is.name(lhs) || !is.numeric(rhs)) return(FALSE)
+            var <- as.character(lhs)
+            val <- as.numeric(rhs)
+
+            if (var == "notMissing" && op %in% c(">=", ">")) {
+                params$minNotMissing <<- val
+                return(TRUE)
+            }
+            if (var == "het") {
+                if (op %in% c(">=", ">")) { params$minHeterozygous <<- val; return(TRUE) }
+                if (op %in% c("<=", "<")) { params$maxHeterozygous <<- val; return(TRUE) }
+            }
+        }
+
+        FALSE
+    }
+
+    if (!consume(rlang::quo_get_expr(selector@quo))) return(NULL)
+
+    plugin <- rJava::new(
+        rJava::J("net.maizegenetics.analysis.filter.FilterTaxaBuilderPlugin"),
+        rJava::.jnull(),
+        FALSE
+    )
+    plugin$setParameter("minNotMissing",   toString(params$minNotMissing))
+    plugin$setParameter("minHeterozygous", toString(params$minHeterozygous))
+    plugin$setParameter("maxHeterozygous", toString(params$maxHeterozygous))
+
+    result <- tryCatch(plugin$runPlugin(jGt), error = function(e) NULL)
+    if (!inherits(result, "jobjRef")) return(NULL)
+    result
+}
+
+
+## ----
 # Apply a taxa selector to a Java GenotypeTable. Returns a filtered
 # Java GenotypeTable.
 applyTaxaSelector <- function(jGt, selector) {
+    shortCircuit <- tryTaxaPluginShortCircuit(jGt, selector)
+    if (!is.null(shortCircuit)) return(shortCircuit)
+
     taxaIds <- resolveTaxaIds(jGt, selector)
 
     allTaxa <- batchTaxaNames(jGt)
@@ -181,10 +289,36 @@ batchSiteNames <- function(jGt) {
 
 
 ## ----
-# Resolve a site selector to 0-based integer site indices.
+# Return a "chrom:pos" key for every site in a GenotypeTable, used to
+# line up a filtered table against its parent.
+sitePositionKeys <- function(jGt) {
+    jRc <- rJava::J("net/maizegenetics/plugindef/GenerateRCode")
+    plArrays <- jRc$genotypeTableToPositionListOfArrays(jGt$positions())
+    paste0(plArrays$chromosomes, ":", plArrays$startPos)
+}
+
+
+## ----
+# Filter a Java GenotypeTable down to the sites overlapping a GRanges
+# object.  Returns a filtered Java GenotypeTable.
+filterSitesByGRanges <- function(jGt, gr) {
+    jRc <- rJava::J("net/maizegenetics/plugindef/GenerateRCode")
+    jRc$filterSitesByGRanges(
+        jGt,
+        rJava::.jarray(as.character(GenomicRanges::seqnames(gr))),
+        rJava::.jarray(as.integer(GenomicRanges::start(gr))),
+        rJava::.jarray(as.integer(GenomicRanges::end(gr)))
+    )
+}
+
+
+## ----
+# Resolve a site selector to 0-based TASSEL site indices.  User-facing
+# indices (bare numeric vectors and sites()) are 1-based and are
+# translated here.
 resolveSiteIndices <- function(jGt, selector) {
     if (is.numeric(selector) || is.integer(selector)) {
-        return(as.integer(selector))
+        return(oneToZeroBased(selector))
     }
 
     if (is.character(selector)) {
@@ -199,7 +333,7 @@ resolveSiteIndices <- function(jGt, selector) {
 
     switch(selector@type,
         "indices" = {
-            selector@indices
+            oneToZeroBased(selector@indices)
         },
         "names" = {
             allNames <- batchSiteNames(jGt)
@@ -248,6 +382,14 @@ resolveSiteIndices <- function(jGt, selector) {
             if (posStart > posEnd) return(integer(0))
             as.integer(seq.int(posStart, posEnd))
         },
+        "granges" = {
+            jSub <- filterSitesByGRanges(jGt, selector@granges)
+            if (rJava::is.jnull(jSub) || jSub$numberOfSites() == 0) {
+                return(integer(0))
+            }
+            idx <- match(sitePositionKeys(jSub), sitePositionKeys(jGt))
+            as.integer(idx[!is.na(idx)] - 1L)
+        },
         "predicate" = {
             needed <- all.vars(rlang::quo_get_expr(selector@quo))
             meta <- buildSiteMetadata(jGt, needed = needed)
@@ -255,10 +397,25 @@ resolveSiteIndices <- function(jGt, selector) {
             if (!is.logical(mask)) {
                 rlang::abort("sitesWhere() expression must evaluate to a logical vector")
             }
-            as.integer(meta$siteIndex[which(mask)])
+            oneToZeroBased(meta$siteIndex[which(mask)])
         },
         rlang::abort(paste0("Unknown SiteSelector type: ", selector@type))
     )
+}
+
+
+## ----
+# Translate user-facing 1-based site indices into the 0-based indices
+# TASSEL expects.
+oneToZeroBased <- function(idx) {
+    idx <- as.integer(idx)
+    if (length(idx) > 0 && any(idx < 1)) {
+        rlang::abort(c(
+            "Site indices must be 1-based",
+            "x" = "Got an index less than 1"
+        ))
+    }
+    idx - 1L
 }
 
 
@@ -350,6 +507,19 @@ tryPluginShortCircuit <- function(jGt, selector) {
 applySiteSelector <- function(jGt, selector) {
     shortCircuit <- tryPluginShortCircuit(jGt, selector)
     if (!is.null(shortCircuit)) return(shortCircuit)
+
+    isGRanges <- methods::is(selector, "SiteSelector") &&
+        selector@type == "granges"
+
+    # Negated GRanges selections still need explicit indices, so only
+    # the plain case can hand back TASSEL's filtered table directly
+    if (isGRanges && !selector@negate) {
+        jSub <- filterSitesByGRanges(jGt, selector@granges)
+        if (rJava::is.jnull(jSub) || jSub$numberOfSites() == 0) {
+            rlang::abort("No sites match the selection criteria")
+        }
+        return(jSub)
+    }
 
     indices <- resolveSiteIndices(jGt, selector)
 

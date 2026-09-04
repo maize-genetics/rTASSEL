@@ -262,7 +262,7 @@ as.matrix.TasselGenotype <- function(x, ...) {
 #' @param x A \code{TasselGenotype} object.
 #' @param i Taxa selector: a character vector of IDs, a
 #'   \code{\linkS4class{TaxaSelector}}, or missing.
-#' @param j Site selector: an integer vector of 0-based indices, a
+#' @param j Site selector: an integer vector of 1-based indices, a
 #'   character vector of site names, a
 #'   \code{\linkS4class{SiteSelector}}, or missing.
 #' @param ... Ignored.
@@ -274,10 +274,11 @@ as.matrix.TasselGenotype <- function(x, ...) {
 #' @examples
 #' \dontrun{
 #' gt[taxa("B73", "Mo17"), ]
-#' gt[, sites(0:999)]
+#' gt[, sites(1:1000)]
 #' gt[, sitesWhere(maf >= 0.05)]
+#' gt[taxaWhere(notMissing >= 0.8), ]
 #' gt[taxa("B73"), region("chr1", 1e6, 2e6)]
-#' gt[, !sites(0:9)]
+#' gt[, !sites(1:10)]
 #' }
 #'
 #' @rdname TasselGenotype-class

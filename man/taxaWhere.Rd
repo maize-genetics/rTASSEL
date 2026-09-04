@@ -7,19 +7,23 @@
 taxaWhere(expr)
 }
 \arguments{
-\item{expr}{An unquoted expression evaluated against a data frame
-containing a \code{taxaId} column.}
+\item{expr}{An unquoted expression evaluated against taxa metadata.}
 }
 \value{
 A \code{\linkS4class{TaxaSelector}} object.
 }
 \description{
 Creates a \code{\linkS4class{TaxaSelector}} using a predicate
-expression evaluated against taxa metadata.
+expression evaluated against taxa metadata. Available columns in
+the data mask are \code{taxaId} (taxon name), \code{notMissing}
+(proportion of sites with a genotype call), and \code{het}
+(proportion of sites that are heterozygous).
 }
 \examples{
 \dontrun{
 gt[taxaWhere(startsWith(taxaId, "NAM")), ]
+gt[taxaWhere(notMissing >= 0.8), ]
+gt[taxaWhere(het <= 0.1), ]
 }
 
 }

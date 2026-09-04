@@ -20,7 +20,7 @@
 \item{i}{Taxa selector: a character vector of IDs, a
 \code{\linkS4class{TaxaSelector}}, or missing.}
 
-\item{j}{Site selector: an integer vector of 0-based indices, a
+\item{j}{Site selector: an integer vector of 1-based indices, a
 character vector of site names, a
 \code{\linkS4class{SiteSelector}}, or missing.}
 

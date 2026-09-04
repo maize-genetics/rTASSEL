@@ -211,6 +211,36 @@ TASSEL_INPUT <- list(
 
 
 ## ----
+# Rebuild a bare genotype result as the class that was handed in
+#
+# @description
+# TASSEL plugins that transform a genotype table (imputation, site
+# filtering) hand back a bare 'GenotypeTable'. Inputs that also carried
+# phenotype data are re-joined against it so that the returned object
+# holds the same components as the original.
+#
+# @param jGt
+# The Java 'GenotypeTable' produced by the plugin.
+# @param tasIn
+# The list returned by '.resolveTasselInput()' for the original input.
+#
+# @return
+# An object of the same class as 'tasIn$original'.
+.wrapGenotypeResult <- function(jGt, tasIn) {
+    jRes <- if (rJava::is.jnull(tasIn$jPh)) {
+        jGt
+    } else {
+        combineTasselGenotypePhenotype(
+            genotypeTable = jGt,
+            phenotype     = tasIn$jPh
+        )
+    }
+
+    .wrapLikeInput(jRes, tasIn$original)
+}
+
+
+## ----
 # Name of the function two frames up the call stack
 #
 # @description
