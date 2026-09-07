@@ -1,3 +1,99 @@
+# /// S3 - method extensions ////////////////////////////////////////
+
+## ----
+#' @importFrom pillar pillar_shaft
+#' @method pillar_shaft geno
+#' @export
+pillar_shaft.geno <- function(x, ...) {
+    minorAlleles <- attr(x, "minorAlleles")
+    isNumeric    <- attr(x, "numeric")
+    truncated    <- attr(x, "nSites") > attr(x, "nSitesShown")
+
+    formatCell <- function(site) {
+        if (length(site) == 0) {
+            return("")
+        }
+
+        styled <- if (isNumeric) {
+            formatRefProb(site)
+        } else {
+            Map(formatAllele, site, minorAlleles)
+        }
+
+        paste0(
+            paste0(styled, collapse = ""),
+            if (truncated) subEllipsis() else ""
+        )
+    }
+
+    cells <- vapply(vctrs::vec_data(x), formatCell, FUN.VALUE = character(1))
+
+    pillar::new_pillar_shaft_simple(cells, align = "left")
+}
+
+
+## ----
+#' @importFrom pillar tbl_format_header
+#' @method tbl_format_header java_geno_pheno_tbl
+#' @export
+tbl_format_header.java_geno_pheno_tbl <- function(x, ...) {
+    header <- sprintf(
+        "# A %s object: %s taxa %s %s sites",
+        cli::style_bold("TasselGenomicDataset"),
+        attr(x, "nTaxa"),
+        cli::symbol$times,
+        attr(x, "nSites")
+    )
+
+    return(pillar::style_subtle(header))
+}
+
+
+## ----
+#' @importFrom pillar tbl_format_footer
+#' @method tbl_format_footer java_geno_pheno_tbl
+#' @export
+tbl_format_footer.java_geno_pheno_tbl <- function(x, ...) {
+    # Retains pillar's own footer, which lists the phenotype columns
+    # that were squeezed out of a narrow console
+    defaultFooter <- NextMethod()
+
+    infoLine <- function(...) {
+        pillar::style_subtle(paste0("# ", cli::symbol$info, " ", ...))
+    }
+
+    footerLines <- list()
+
+    if (attr(x, "nDfRow") > attr(x, "nCap")) {
+        footerLines[[length(footerLines) + 1]] <- infoLine(sprintf(
+            "showing the first %s of %s rows%s",
+            attr(x, "nCap"),
+            attr(x, "nDfRow"),
+            cli::symbol$ellipsis
+        ))
+    }
+
+    if (attr(x, "nSites") > attr(x, "nSitesShown")) {
+        footerLines[[length(footerLines) + 1]] <- infoLine(sprintf(
+            "Genotype: showing the first %s of %s sites%s",
+            attr(x, "nSitesShown"),
+            attr(x, "nSites"),
+            cli::symbol$ellipsis
+        ))
+    }
+
+    footerLines[[length(footerLines) + 1]] <- infoLine(
+        "Column types: ", attr(x, "colTypes")
+    )
+    footerLines[[length(footerLines) + 1]] <- infoLine(
+        "Java memory address: 0x", cli::style_bold(attr(x, "jMem"))
+    )
+
+    c(defaultFooter, unlist(footerLines))
+}
+
+
+
 # /// S4 - class definition /////////////////////////////////////////
 
 ## ----
@@ -264,31 +360,20 @@ readGenomicDataset <- function(
 # /// Methods (show) ////////////////////////////////////////////////
 
 ## ----
-# Collapse a phenotype attribute summary into a single display string
-#
-# @param attrSummary
-# The `attrSummary` slot of a `TasselPhenotype`: a named list of trait
-# counts keyed by TASSEL attribute type.
-#
-# @return
-# A single `character` value, e.g. `"data: 3, taxa: 1"`.
-formatTraitSummary <- function(attrSummary) {
-    if (length(attrSummary) == 0) {
-        return("no traits")
-    }
-
-    paste0(names(attrSummary), ": ", unlist(attrSummary), collapse = ", ")
-}
-
-
-## ----
 #' @title
 #' Display summary information of a TasselGenomicDataset object
 #'
 #' @description
-#' Prints the dimensions of the joined genotype table, a breakdown of the
-#' phenotype traits by TASSEL attribute type, and the memory address of the
-#' backing Java object.
+#' Prints the joined phenotype data as a \code{tibble}-style table with a
+#' trailing \code{Genotype} column holding the leading sites of the joined
+#' genotype table. The footer reports the dimensions of the data, a
+#' breakdown of the columns by type, and the memory address of the backing
+#' Java object.
+#'
+#' @details
+#' The \code{Genotype} column is always shown. When the console is too
+#' narrow to hold every column, phenotype columns are moved into the footer
+#' instead.
 #'
 #' @param object
 #' A \code{TasselGenomicDataset} object.
@@ -296,28 +381,7 @@ formatTraitSummary <- function(attrSummary) {
 #' @rdname TasselGenomicDataset-class
 #' @aliases show,TasselGenomicDataset-method
 setMethod("show", "TasselGenomicDataset", function(object) {
-    jGt <- object@genotype@jRefObj
-
-    infoLine <- function(...) {
-        pillar::style_subtle(paste0("# ", cli::symbol$info, " ", ...))
-    }
-
-    cli::cat_line(pillar::style_subtle(paste0(
-        "# A ", cli::style_bold("TasselGenomicDataset"), " object: ",
-        jGt$numberOfTaxa(), " taxa ", cli::symbol$times, " ",
-        jGt$numberOfSites(), " sites"
-    )))
-    cli::cat_line()
-    cli::cat_line(infoLine(
-        "Genotype..: <", methods::is(object@genotype)[[1]], ">"
-    ))
-    cli::cat_line(infoLine(
-        "Phenotype.: ", nrow(object@phenotype@attrData), " traits (",
-        formatTraitSummary(object@phenotype@attrSummary), ")"
-    ))
-    cli::cat_line(infoLine(
-        "Java memory address: 0x", cli::style_bold(object@jMemAddress)
-    ))
+    print(formatGenomicDatasetDisplay(object))
 })
 
 

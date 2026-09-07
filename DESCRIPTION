@@ -50,7 +50,7 @@ Imports:
     jsonlite,
     lifecycle,
     methods,
-    pillar,
+    pillar (>= 1.8.0),
     plotly,
     rJava,
     rlang,
@@ -122,6 +122,7 @@ Collate:
     'utils_export.R'
     'utils_formula.R'
     'utils_general.R'
+    'utils_genomic_dataset.R'
     'utils_genotype.R'
     'utils_genotype_subsetting.R'
     'utils_phenotype.R'

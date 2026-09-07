@@ -185,26 +185,81 @@ test_that("attributeData() carries every phenotype attribute type", {
 
 # /// show ///////////////////////////////////////////////////////////
 
-test_that("show() reports dimensions, traits, and the Java address", {
+test_that("show() reports dimensions, columns, and the Java address", {
     out <- capture_output(show(ds))
 
     expect_match(out, "TasselGenomicDataset")
     expect_match(out, "278 taxa")
     expect_match(out, "3093 sites")
-    expect_match(out, "<TasselGenotype>")
-    expect_match(out, "4 traits \\(data: 3, taxa: 1\\)")
+    expect_match(out, "Column types: taxa: 1, data: 3, genotype: 1")
     expect_match(out, ds@jMemAddress)
 })
 
-test_that("show() breaks traits down by attribute type", {
-    out <- capture_output(show(rtObjs$ds_hmp_ph_full))
+test_that("show() prints the phenotype traits as tibble columns", {
+    out <- capture_output(show(ds))
 
-    expect_match(out, "8 traits \\(covariate: 3, data: 3, factor: 1, taxa: 1\\)")
+    expect_match(out, "Taxa")
+    expect_match(out, "EarHT")
+    expect_match(out, "<data>")
+    expect_match(out, "33-16")
 })
 
-test_that("formatTraitSummary() handles a phenotype with no traits", {
-    expect_equal(formatTraitSummary(list()), "no traits")
-    expect_equal(formatTraitSummary(list(data = 2, taxa = 1)), "data: 2, taxa: 1")
+test_that("show() adds a Genotype column holding the leading sites", {
+    out <- capture_output(show(ds))
+
+    expect_match(out, "Genotype")
+    expect_match(out, "<geno>")
+    expect_match(out, "Genotype: showing the first 5 of 3093 sites")
+})
+
+test_that("show() reports the number of observations when truncated", {
+    out <- capture_output(show(rtObjs$ds_hmp_ph_full))
+
+    expect_match(out, "showing the first 10 of 525 rows")
+})
+
+test_that("show() breaks columns down by type", {
+    out <- capture_output(show(rtObjs$ds_hmp_ph_full))
+
+    expect_match(
+        out,
+        "Column types: taxa: 1, factor: 1, data: 3, covariate: 3, genotype: 1"
+    )
+})
+
+test_that("show() keeps the Genotype column on a narrow console", {
+    dispData <- rTASSEL:::formatGenomicDatasetDisplay(rtObjs$ds_hmp_ph_full)
+    out      <- paste(capture_output(print(dispData, width = 40)), collapse = "\n")
+
+    # The genotype column holds its place while the trailing traits are
+    # squeezed into pillar's own footer
+    expect_match(out, "<geno>")
+    expect_match(out, "more variables")
+    expect_match(out, "Q3 <cov>")
+})
+
+test_that("show() omits the site notice when every site is displayed", {
+    out <- capture_output(show(ds[, sites(1:3)]))
+
+    expect_match(out, "3 sites")
+    expect_false(grepl("showing the first 3 of 3 sites", out))
+})
+
+test_that("show() displays reference probabilities for numeric genotypes", {
+    dsNum <- readGenomicDataset(
+        rtMatrices$num_gt_sm,
+        data.frame(Taxa = rownames(rtMatrices$num_gt_sm), yield = c(1, 2, 3)),
+        attr = data.frame(
+            col_id      = c("Taxa", "yield"),
+            tassel_attr = c("taxa", "data")
+        )
+    )
+
+    out <- capture_output(show(dsNum))
+
+    expect_match(out, "<geno>")
+    expect_match(out, "0\\.\\d{3}")
+    expect_match(out, "Column types: taxa: 1, data: 1, genotype: 1")
 })
 
 

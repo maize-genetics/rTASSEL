@@ -39,9 +39,11 @@ primary object for analyses that need both data types (e.g.
 \code{assocModelFitter()}) and wraps TASSEL 5's \code{GenotypePhenotype}
 class.
 
-Prints the dimensions of the joined genotype table, a breakdown of the
-phenotype traits by TASSEL attribute type, and the memory address of the
-backing Java object.
+Prints the joined phenotype data as a \code{tibble}-style table with a
+trailing \code{Genotype} column holding the leading sites of the joined
+genotype table. The footer reports the dimensions of the data, a
+breakdown of the columns by type, and the memory address of the backing
+Java object.
 
 Matrix-style subsetting for \code{TasselGenomicDataset} objects using the
 \code{ds[taxa, sites]} syntax. Selectors are applied to the genotype table
@@ -53,6 +55,10 @@ The \code{genotype} and \code{phenotype} slots hold wrappers around the
 \emph{joined} tables rather than the tables originally handed to
 \code{readGenomicDataset()}, so component accessors always reflect what the
 dataset actually contains.
+
+The \code{Genotype} column is always shown. When the console is too
+narrow to hold every column, phenotype columns are moved into the footer
+instead.
 }
 \section{Slots}{
 
