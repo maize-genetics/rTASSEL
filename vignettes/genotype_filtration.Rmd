@@ -64,9 +64,16 @@ ways. The default view (as shown above) reflects the following:
 | Unknown       | Sites where no information is given (e.g. `NA`s)    | Grey/White |
 
 
-## Filtering basics
-Genotype tables are filtered with the same bracket (`[`) syntax used to
-subset a `matrix` or `data.frame` in R:
+## Two ways to filter
+`rTASSEL` offers two interchangeable grammars for filtering. Both build
+the same selection under the hood and return a new object of the same class
+they were given, so you can use whichever reads better to you - and mix them
+freely in the same script. Every example in this vignette is shown in both
+forms.
+
+### Bracket subsetting
+The first is the bracket (`[`) syntax used to subset a `matrix` or
+`data.frame` in R:
 
 ```
 myGT[<taxa>, <sites>]
@@ -86,11 +93,46 @@ out indexes by hand, criteria are described with **selector functions**:
 | `region()`     | Sites | Genomic coordinates or a `GRanges` object          |
 | `sitesWhere()` | Sites | An expression over site metadata                   |
 
-Every selector returns the same class it was given, so filtered objects can
-be handed straight to the next filter or to any analysis function.
+Any selector can be inverted with `!`.
 
-*Note:* We will be using the base R pipe operator `|>` for some of the
-following examples. More information about this can be found [here](https://cran.r-project.org/web/packages/magrittr/vignettes/magrittr.html).
+### Verbs
+The second is a set of pipe-friendly **verbs** modelled on the `dplyr`
+package. Where `dplyr`'s verbs address one axis each, a genotype table has
+two, so each verb comes in a taxa and a sites flavour:
+
+| Verb                            | Modelled on       | Selects taxa/sites by         |
+|---------------------------------|-------------------|-------------------------------|
+| `filterTaxa()`, `filterSites()` | `dplyr::filter()` | Expressions over metadata     |
+| `selectTaxa()`, `selectSites()` | `dplyr::select()` | Literal IDs and `tidyselect`  |
+| `sliceTaxa()`, `sliceSites()`   | `dplyr::slice()`  | Position (1-based)            |
+
+Otherwise they behave as their `dplyr` namesakes do: `filter*()` takes any
+number of predicates and combines them with `&`, `select*()` takes the whole
+`tidyselect` vocabulary (`all_of()`, `any_of()`, `starts_with()`,
+`matches()`, ...), and `slice*()` takes positions where a leading `-` drops
+instead of keeps.
+
+### How the two line up
+Each selector has a verb counterpart:
+
+| Selector       | Verb equivalent                                           |
+|----------------|-----------------------------------------------------------|
+| `taxa()`       | `selectTaxa()`                                            |
+| `taxaWhere()`  | `filterTaxa()`                                            |
+| `sites()`      | `sliceSites()`                                            |
+| `siteIds()`    | `selectSites()`                                           |
+| `chrom()`      | `filterSites()` on the `chrom` column                     |
+| `region()`     | `filterSites()` on `chrom` and `pos`, or with `overlaps()` |
+| `sitesWhere()` | `filterSites()`                                           |
+
+Two conventions differ. Criteria that a selector combines with `&` become
+separate arguments to a `filter*()` verb, matching `dplyr::filter()`. And
+where a selector is inverted with `!`, a verb follows `dplyr`: `filter*()`
+negates the predicate itself, while `select*()` and `slice*()` drop with a
+leading `-`.
+
+*Note:* We will be using the base R pipe operator `|>` for the verb examples.
+More information about this can be found [here](https://cran.r-project.org/web/packages/magrittr/vignettes/magrittr.html).
 
 **Prior knowledge about `rTASSEL` data structures is needed, so please refer
 to the vignette *Getting Started with rTASSEL* if you are new to this
@@ -99,8 +141,8 @@ package!**
 If you are migrating existing scripts, the deprecated
 `filterGenotypeTableSites()`, `filterGenotypeTableTaxa()`, and
 `filterGenotypeTableBySiteName()` functions still work but will warn. A
-complete argument-by-argument mapping is given in the final section of this
-vignette.
+complete argument-by-argument mapping to both grammars is given in the final
+section of this vignette.
 
 
 ## A real data set
@@ -116,75 +158,28 @@ myRealGT
 ```
 
 Filtering returns a new object of the same class, leaving the original
-untouched:
+untouched. Here is the same filter in both grammars, keeping sites with a
+minor allele frequency of at least 5%:
 
 ```{r, eval=TRUE, echo=TRUE}
 myRealGT[, sitesWhere(maf >= 0.05)]
 ```
 
-
-## Two flavours: brackets and verbs
-Everything in this vignette can be written two ways. The bracket syntax
-above is one; the other is a set of pipe-friendly **verbs** modelled on the
-`dplyr` package, for anyone who finds that grammar more natural:
-
-| Verb                            | Modelled on       | Selects taxa/sites by         |
-|---------------------------------|-------------------|-------------------------------|
-| `filterTaxa()`, `filterSites()` | `dplyr::filter()` | Expressions over metadata     |
-| `selectTaxa()`, `selectSites()` | `dplyr::select()` | Literal IDs and `tidyselect`  |
-| `sliceTaxa()`, `sliceSites()`   | `dplyr::slice()`  | Position (1-based)            |
-
-Where `dplyr`'s verbs address one axis each, a genotype table has two, so
-each verb comes in a taxa and a sites flavour. Otherwise they behave as
-their `dplyr` namesakes do: `filter*()` takes any number of predicates and
-combines them with `&`, `select*()` takes the whole `tidyselect`
-vocabulary, and `slice*()` takes positions where a leading `-` drops
-instead of keeps.
-
 ```{r, eval=TRUE, echo=TRUE}
 myRealGT |> filterSites(maf >= 0.05)
 ```
 
-Both flavours build the same selection under the hood, so they are
-interchangeable and can be mixed freely in the same script. Each line below
-is one query written twice:
-
-```{r, eval=FALSE}
-myGT[taxa("B73", "Mo17"), ]           # myGT |> selectTaxa("B73", "Mo17")
-myGT[taxaWhere(notMissing >= 0.8), ]  # myGT |> filterTaxa(notMissing >= 0.8)
-myGT[, sites(1:100)]                  # myGT |> sliceSites(1:100)
-myGT[, !sites(1:10)]                  # myGT |> sliceSites(-(1:10))
-myGT[, siteIds(myMarkers)]            # myGT |> selectSites(all_of(myMarkers))
-myGT[, chrom("1", "5")]               # myGT |> filterSites(chrom %in% c("1", "5"))
-myGT[, region("1", 1e6, 2e6)]         # myGT |> filterSites(chrom == "1", pos >= 1e6, pos <= 2e6)
-myGT[, region(gr)]                    # myGT |> filterSites(overlaps(gr))
-myGT[, sitesWhere(maf >= 0.05 & !isIndel)]
-                                      # myGT |> filterSites(maf >= 0.05, !isIndel)
-```
-
-Two differences are worth pointing out. Criteria that a single selector
-combines with `&` become separate arguments to a `filter*()` call, matching
-`dplyr::filter()`. And where `region()` accepts a `GRanges` object
-directly, the verbs reach the same ranges through `overlaps()`, which -
-unlike `region()` - can sit alongside other site criteria in one
-expression:
-
-```{r, eval=FALSE}
-myGT |> filterSites(overlaps(gr), maf >= 0.05)
-```
-
-The sections that follow are written with brackets, since that is the
-shorter form for a single criterion. The verb equivalent of any of them can
-be read off the list above.
+From here on, each example is given first with brackets and then with verbs.
 
 
 
 # Filtering by sites...
 
 ## Overview
-Marker (column) criteria are passed as the second bracket index. The
-`sitesWhere()` selector evaluates an R expression against per-site metadata,
-and these columns are available in that expression:
+Marker (column) criteria are passed as the second bracket index or to a
+`*Sites()` verb. The `sitesWhere()` selector and the `filterSites()` verb
+evaluate an R expression against per-site metadata, and these columns are
+available in that expression:
 
 | Column        | Description                                              |
 |---------------|----------------------------------------------------------|
@@ -199,7 +194,9 @@ and these columns are available in that expression:
 | `isBiallelic` | Whether the site has two or fewer allelic states          |
 
 Positional criteria are covered by the dedicated `sites()`, `siteIds()`,
-`chrom()`, and `region()` selectors.
+`chrom()`, and `region()` selectors on the bracket side, and by
+`sliceSites()`, `selectSites()`, and the `chrom` and `pos` columns on the
+verb side.
 
 Let's assume we have an `rTASSEL` genotype object:
 
@@ -229,17 +226,22 @@ can filter on the `maf` column:
 
 ```{r, eval=FALSE}
 myGT[, sitesWhere(maf >= 0.3)]
+
+myGT |> filterSites(maf >= 0.3)
 ```
 
 ...which will remove the following columns:
 
 ![](../man/figures/filter_site_03.png)
 
-Since `sitesWhere()` takes an ordinary R expression, a range is expressed by
-combining two comparisons with `&`:
+A range is expressed with two comparisons. Since `sitesWhere()` takes an
+ordinary R expression, they are joined with `&`; `filterSites()` takes them
+as separate arguments and joins them for you:
 
 ```{r, eval=FALSE}
 myGT[, sitesWhere(maf >= 0.2 & maf <= 0.3)]
+
+myGT |> filterSites(maf >= 0.2, maf <= 0.3)
 ```
 
 ...which will remove the following columns:
@@ -255,6 +257,8 @@ that were actually called at a site:
 
 ```{r, eval=FALSE}
 myGT[, sitesWhere(alleleCount >= 10)]
+
+myGT |> filterSites(alleleCount >= 10)
 ```
 
 Our example data has 5 taxa, and each diploid taxon carries 2 alleles, so a
@@ -272,6 +276,8 @@ following:
 
 ```{r, eval=FALSE}
 myGT[, sitesWhere(het <= 0.1)]
+
+myGT |> filterSites(het <= 0.1)
 ```
 
 which would filter out sites with calculated frequencies:
@@ -288,21 +294,25 @@ not illustrated this way in TASSEL and are only for demonstration purposes.
 
 ![](../man/figures/filter_index_01.png)
 
-To filter by site index, we use the `sites()` selector. Site indexes here are
-1-based, so the second through fourth markers of the table are:
+To filter by site index, we use the `sites()` selector or the `sliceSites()`
+verb. Site indexes here are 1-based, so the second through fourth markers of
+the table are:
 
 ```{r, eval=FALSE}
 myGT[, sites(2:4)]
+
+myGT |> sliceSites(2:4)
 ```
 
 Note that the labels in the illustration (`1:300`, `2:542`, `3:213`) show
 TASSEL's own 0-based index, which is always one less than the index passed to
-`sites()`. In our example above, this retains the following markers:
+`sites()` or `sliceSites()`. In our example above, this retains the following
+markers:
 
 ![](../man/figures/filter_index_02.png)
 
-A bare numeric vector does the same thing, so the selector can be dropped
-when indexes are all that is needed:
+On the bracket side, a bare numeric vector does the same thing, so the
+selector can be dropped when indexes are all that is needed:
 
 ```{r, eval=FALSE}
 myGT[, 2:4]
@@ -311,27 +321,40 @@ myGT[, 2:4]
 
 ## ...using chromosomes
 Whole chromosomes (or sequence IDs) are selected with `chrom()`, which
-accepts any number of IDs:
+accepts any number of IDs. The verb form is a predicate on the `chrom`
+column:
 
 ```{r, eval=FALSE}
 myGT[, chrom("1")]
+
+myGT |> filterSites(chrom == "1")
 ```
 
 ![](../man/figures/filter_pos_01.png)
 
+Several chromosomes are `chrom("1", "2")` on the bracket side and
+`filterSites(chrom %in% c("1", "2"))` on the verb side.
+
 
 ## ...using physical positions
 To filter within a chromosome, `region()` takes a chromosome ID and a start
-and end coordinate in base pairs:
+and end coordinate in base pairs. The verb form spells the same window out
+as predicates on the `chrom` and `pos` columns:
 
 ```{r, eval=FALSE}
 myGT[, region("1", 250, 542)]
+
+myGT |> filterSites(chrom == "1", pos >= 250, pos <= 542)
 ```
 
 Applied to our real data set, we can pull a 10 Mbp window from chromosome 2:
 
 ```{r, eval=TRUE, echo=TRUE}
 myRealGT[, region("2", 20e6, 30e6)]
+```
+
+```{r, eval=TRUE, echo=TRUE}
+myRealGT |> filterSites(chrom == "2", pos >= 20e6, pos <= 30e6)
 ```
 
 
@@ -366,10 +389,13 @@ gr
 ```
 
 This object is passed to `region()` in place of a chromosome and coordinate
-pair:
+pair. On the verb side, ranges are tested with `overlaps()`, a helper that
+only has meaning inside a site predicate:
 
 ```{r, eval=FALSE}
 myGT[, region(gr)]
+
+myGT |> filterSites(overlaps(gr))
 ```
 
 Which will dynamically filter the following marker indexes:
@@ -391,12 +417,21 @@ gr <- GenomicRanges::GRanges(
 myRealGT[, region(gr)]
 ```
 
-Inside a predicate, the same ranges are tested with `overlaps()`. This is
-the only way to combine ranges with other site criteria in a single
-expression, since `region()` occupies the whole site index on its own:
+```{r, eval=TRUE, echo=TRUE}
+myRealGT |> filterSites(overlaps(gr))
+```
+
+Because `overlaps()` is a predicate, it can be combined with other site
+criteria in a single expression - something `region()` cannot do, since it
+occupies the whole site index on its own. `overlaps()` works inside
+`sitesWhere()` as well, so the bracket form gets the same ability:
 
 ```{r, eval=TRUE, echo=TRUE}
 myRealGT[, sitesWhere(overlaps(gr) & maf >= 0.05)]
+```
+
+```{r, eval=TRUE, echo=TRUE}
+myRealGT |> filterSites(overlaps(gr), maf >= 0.05)
 ```
 
 
@@ -416,10 +451,12 @@ chr2    500   700
 ```
 
 Read the file into a `GRanges` object with `rtracklayer::import()` and pass
-it to `region()`:
+it to `region()` or `overlaps()`:
 
 ```{r, eval=FALSE}
 myGT[, region(rtracklayer::import("my_ranges.bed"))]
+
+myGT |> filterSites(overlaps(rtracklayer::import("my_ranges.bed")))
 ```
 
 The same approach covers chromosome position files - a tab-separated file of
@@ -451,22 +488,44 @@ gr <- GenomicRanges::GRanges(
 )
 
 myGT[, region(gr)]
+
+myGT |> filterSites(overlaps(gr))
 ```
 
 
 ## ...using marker names
-Markers can also be selected by their literal IDs with `siteIds()`:
+Markers can also be selected by their literal IDs with `siteIds()` or
+`selectSites()`:
 
 ```{r, eval=TRUE, echo=TRUE}
 myRealGT[, siteIds("PZB00859.1", "PZA01271.1")]
 ```
 
-As with site indexes, a bare character vector works too:
+```{r, eval=TRUE, echo=TRUE}
+myRealGT |> selectSites("PZB00859.1", "PZA01271.1")
+```
+
+Marker names held in a variable are passed to `siteIds()` directly, or on
+the bracket side as a bare character vector. `selectSites()` follows
+`tidyselect`, which asks for `all_of()` around a variable so that a typo in
+the variable name cannot be mistaken for a marker name:
 
 ```{r, eval=TRUE, echo=TRUE}
 myMarkers <- c("PZB00859.1", "PZA01271.1")
 
 myRealGT[, myMarkers]
+```
+
+```{r, eval=TRUE, echo=TRUE}
+myRealGT |> selectSites(all_of(myMarkers))
+```
+
+The rest of the `tidyselect` vocabulary is available too. `any_of()`
+silently skips markers that are not in the table, and `starts_with()`,
+`ends_with()`, and `matches()` select by pattern:
+
+```{r, eval=TRUE, echo=TRUE}
+myRealGT |> selectSites(starts_with("PZA00"))
 ```
 
 
@@ -476,6 +535,18 @@ would have removed. For example, to drop the first ten markers:
 
 ```{r, eval=TRUE, echo=TRUE}
 myRealGT[, !sites(1:10)]
+```
+
+The verbs follow `dplyr` instead: `sliceSites()` and `selectSites()` drop
+with a leading `-`, and `filterSites()` negates the predicate itself:
+
+```{r, eval=TRUE, echo=TRUE}
+myRealGT |> sliceSites(-(1:10))
+```
+
+```{r, eval=FALSE}
+myGT[, !siteIds("rs1", "rs2")]        # myGT |> selectSites(-any_of(c("rs1", "rs2")))
+myGT[, !sitesWhere(isIndel)]          # myGT |> filterSites(!isIndel)
 ```
 
 Predicate expressions can be inverted either way - `!sitesWhere(isIndel)`
@@ -488,10 +559,11 @@ and `sitesWhere(!isIndel)` are equivalent.
 ## Overview
 In the prior sections we have discussed how to filter $p$ observations (i.e. 
 columns). In the following sections, we will illustrate ways to filter $n$
-rows, which are passed as the *first* bracket index.
+rows, which are passed as the *first* bracket index or to a `*Taxa()` verb.
 
-Like `sitesWhere()`, the `taxaWhere()` selector evaluates an R expression,
-here against per-taxon metadata:
+Like `sitesWhere()` and `filterSites()`, the `taxaWhere()` selector and the
+`filterTaxa()` verb evaluate an R expression, here against per-taxon
+metadata:
 
 | Column       | Description                                        |
 |--------------|----------------------------------------------------|
@@ -515,6 +587,8 @@ with `N`). Instead of column (e.g. marker) filtration, this will filter taxa
 
 ```{r, eval=FALSE}
 myGT[taxaWhere(notMissing >= 1.0), ]
+
+myGT |> filterTaxa(notMissing >= 1.0)
 ```
 
 This filters out any taxa that contain at least 1 missing variant marker site:
@@ -529,6 +603,8 @@ at least one heterozygous site, we could use the following:
 
 ```{r, eval=FALSE}
 myGT[taxaWhere(het <= 0.0), ]
+
+myGT |> filterTaxa(het <= 0.0)
 ```
 
 which would filter out taxa with calculated frequencies:
@@ -538,43 +614,68 @@ which would filter out taxa with calculated frequencies:
 
 ## ...using taxa IDs
 Filtering select taxa IDs can be achieved by passing `character` values to
-the `taxa()` selector. In our example, we will select the following IDs:
+the `taxa()` selector or the `selectTaxa()` verb. In our example, we will
+select the following IDs:
 
 ```{r, eval=FALSE}
 myGT[taxa("B73", "B97", "Ky21"), ]
+
+myGT |> selectTaxa("B73", "B97", "Ky21")
 ```
 
 Which will filter out any IDs that are *not* listed:
 
 ![](../man/figures/filter_taxa_vector.png)
 
-`taxa()` also accepts a vector, so IDs can be prepared with any R code:
+`taxa()` also accepts a vector, so IDs can be prepared with any R code. As
+with markers, `selectTaxa()` asks for `all_of()` around a variable:
 
 ```{r, eval=FALSE}
 myFavTaxa <- c("B73", "B97", "Ky21")
 
 myGT[taxa(myFavTaxa), ]
+
+myGT |> selectTaxa(all_of(myFavTaxa))
 ```
 
-...and, as with sites, a bare character vector can be used directly:
+...and, as with sites, a bare character vector can be used directly in the
+brackets:
 
 ```{r, eval=TRUE, echo=TRUE}
 myRealGT[c("33-16", "38-11", "4226"), ]
 ```
 
+```{r, eval=TRUE, echo=TRUE}
+myRealGT |> selectTaxa(c("33-16", "38-11", "4226"))
+```
+
 
 ## ...using arbitrary expressions
-Because `taxaWhere()` evaluates a regular R expression, taxa IDs can be
-matched with any function that returns a logical vector. This makes patterns
-that previously required building a vector by hand a single call:
+Because `taxaWhere()` and `filterTaxa()` evaluate a regular R expression,
+taxa IDs can be matched with any function that returns a logical vector.
+This makes patterns that previously required building a vector by hand a
+single call:
 
 ```{r, eval=FALSE}
 # All taxa whose ID starts with "B" or "Ky"
 myGT[taxaWhere(grepl("^B|^Ky", taxaId)), ]
+
+myGT |> filterTaxa(grepl("^B|^Ky", taxaId))
 ```
 
 ```{r, eval=TRUE, echo=TRUE}
 myRealGT[taxaWhere(startsWith(taxaId, "CML")), ]
+```
+
+```{r, eval=TRUE, echo=TRUE}
+myRealGT |> filterTaxa(startsWith(taxaId, "CML"))
+```
+
+For pattern matching on IDs alone, `selectTaxa()` with a `tidyselect`
+helper is the shorter spelling:
+
+```{r, eval=TRUE, echo=TRUE}
+myRealGT |> selectTaxa(starts_with("CML"))
 ```
 
 Metadata columns and IDs can be mixed in the same expression:
@@ -583,13 +684,18 @@ Metadata columns and IDs can be mixed in the same expression:
 myRealGT[taxaWhere(startsWith(taxaId, "CML") & notMissing >= 0.9), ]
 ```
 
+```{r, eval=TRUE, echo=TRUE}
+myRealGT |> filterTaxa(startsWith(taxaId, "CML"), notMissing >= 0.9)
+```
+
 
 
 # Combining filters
 
 ## Sites and taxa in one call
 Both bracket indexes can be given at once, which filters taxa and sites in a
-single expression. Let's use our previous toy data set:
+single expression. With verbs, the two axes are filtered by piping one verb
+into the next. Let's use our previous toy data set:
 
 ![](../man/figures/filter_taxa_00.png)
 
@@ -599,14 +705,19 @@ below:
 
 ```{r, eval=FALSE}
 myGT[taxaWhere(grepl("^B|^Ky", taxaId)), sites(2:4)]
+
+myGT |>
+    filterTaxa(grepl("^B|^Ky", taxaId)) |>
+    sliceSites(2:4)
 ```
 
 ![](../man/figures/filter_taxa_pipe.png)
 
 
-Taxa are filtered before sites, so site metrics such as `maf` and `het` are
-calculated against the taxa that survived the first index rather than the
-whole table.
+The bracket method filters taxa before sites, so site metrics such as `maf`
+and `het` are calculated against the taxa that survived the first index
+rather than the whole table. With verbs the order is whatever you pipe, so
+put the taxa verb first to get the same result.
 
 
 ## Chaining filters
@@ -630,11 +741,28 @@ myRealGT |>
     filterSites(maf >= 0.05)
 ```
 
+The two grammars can also be mixed in one pipeline. Since a bracket
+expression is just a value, it can start a chain of verbs, and a verb's
+result can be subset with brackets:
+
+```{r, eval=FALSE}
+myRealGT[taxaWhere(notMissing >= 0.8), ] |>
+    filterSites(maf >= 0.05)
+```
+
 Filtered objects can be passed to any other `rTASSEL` function, such as
 writing the result out to a VCF file:
 
 ```{r, eval=FALSE}
 myRealGT[taxaWhere(notMissing >= 0.8), sitesWhere(maf >= 0.05)] |>
+    exportGenotypeTable(
+        file   = "my_filtered_gt.vcf",
+        format = "vcf"
+    )
+
+myRealGT |>
+    filterTaxa(notMissing >= 0.8) |>
+    filterSites(maf >= 0.05) |>
     exportGenotypeTable(
         file   = "my_filtered_gt.vcf",
         format = "vcf"
@@ -669,7 +797,7 @@ myDataset |>
 # Transforming genotype calls
 Filtering selects a subset of the taxa and sites already in a table. A
 related operation is recoding the calls themselves, which is not a selection
-and therefore is not a selector.
+and therefore is neither a selector nor a verb.
 
 `removeMinorSNPStates()` collapses every site down to its two most common
 allelic states, recoding any remaining states as missing:
@@ -678,11 +806,13 @@ allelic states, recoding any remaining states as missing:
 myRealGT |> removeMinorSNPStates()
 ```
 
-Like the filters, it returns the class it was given, so it chains with
-bracket subsetting:
+Like the filters, it returns the class it was given, so it chains with either
+grammar:
 
 ```{r, eval=FALSE}
 myRealGT[, sitesWhere(maf >= 0.05)] |> removeMinorSNPStates()
+
+myRealGT |> filterSites(maf >= 0.05) |> removeMinorSNPStates()
 ```
 
 
@@ -693,25 +823,35 @@ The `filterGenotypeTableSites()`, `filterGenotypeTableTaxa()`, and
 0.14.0. They still work and still return the class they are given, but they
 warn once per session and will be removed in the next major release.
 
+Every argument of the old functions has a replacement in both grammars. The
+tables below list them side by side, using `gt` for the genotype object;
+the verb column is written as a plain call, but reads the same when piped
+(`gt |> filterSites(...)`).
+
+If your existing scripts already pipe the old functions together, the verbs
+are the smaller change: each `filterGenotypeTable*()` call becomes a
+`filter*()` call and the pipeline keeps its shape. Brackets collapse the
+same pipeline into a single expression.
+
 ## `filterGenotypeTableSites()`
 
-| Deprecated argument             | Replacement                                       |
-|---------------------------------|---------------------------------------------------|
-| `siteMinCount = 150`            | `gt[, sitesWhere(alleleCount >= 150)]`            |
-| `siteMinAlleleFreq = 0.05`      | `gt[, sitesWhere(maf >= 0.05)]`                   |
-| `siteMaxAlleleFreq = 0.3`       | `gt[, sitesWhere(maf <= 0.3)]`                    |
-| `minHeterozygous = 0.1`         | `gt[, sitesWhere(het >= 0.1)]`                    |
-| `maxHeterozygous = 0.1`         | `gt[, sitesWhere(het <= 0.1)]`                    |
-| `removeSitesWithIndels = TRUE`  | `gt[, sitesWhere(!isIndel)]`                      |
-| `removeMinorSNPStates = TRUE`   | `removeMinorSNPStates(gt)`                        |
-| `siteRangeFilterType = "sites"` | `gt[, sites(startSite:endSite)]`                  |
-| `siteRangeFilterType = "position"` | `gt[, region("1", startPos, endPos)]`          |
-| `gRangesObj = gr`               | `gt[, region(gr)]`                                |
-| `bedFile = "x.bed"`             | `gt[, region(rtracklayer::import("x.bed"))]`      |
-| `chrPosFile = "x.tsv"`          | `gt[, region(gr)]`, building `gr` from the file   |
+| Deprecated argument                | Bracket replacement                          | Verb replacement                                       |
+|------------------------------------|----------------------------------------------|--------------------------------------------------------|
+| `siteMinCount = 150`               | `gt[, sitesWhere(alleleCount >= 150)]`       | `filterSites(gt, alleleCount >= 150)`                  |
+| `siteMinAlleleFreq = 0.05`         | `gt[, sitesWhere(maf >= 0.05)]`              | `filterSites(gt, maf >= 0.05)`                         |
+| `siteMaxAlleleFreq = 0.3`          | `gt[, sitesWhere(maf <= 0.3)]`               | `filterSites(gt, maf <= 0.3)`                          |
+| `minHeterozygous = 0.1`            | `gt[, sitesWhere(het >= 0.1)]`               | `filterSites(gt, het >= 0.1)`                          |
+| `maxHeterozygous = 0.1`            | `gt[, sitesWhere(het <= 0.1)]`               | `filterSites(gt, het <= 0.1)`                          |
+| `removeSitesWithIndels = TRUE`     | `gt[, sitesWhere(!isIndel)]`                 | `filterSites(gt, !isIndel)`                            |
+| `removeMinorSNPStates = TRUE`      | `removeMinorSNPStates(gt)`                   | `removeMinorSNPStates(gt)`                             |
+| `siteRangeFilterType = "sites"`    | `gt[, sites(startSite:endSite)]`             | `sliceSites(gt, startSite:endSite)`                    |
+| `siteRangeFilterType = "position"` | `gt[, region("1", startPos, endPos)]`        | `filterSites(gt, chrom == "1", pos >= startPos, pos <= endPos)` |
+| `gRangesObj = gr`                  | `gt[, region(gr)]`                           | `filterSites(gt, overlaps(gr))`                        |
+| `bedFile = "x.bed"`                | `gt[, region(rtracklayer::import("x.bed"))]` | `filterSites(gt, overlaps(rtracklayer::import("x.bed")))` |
+| `chrPosFile = "x.tsv"`             | `gt[, region(gr)]`, building `gr` from the file | `filterSites(gt, overlaps(gr))`, building `gr` from the file |
 
 Arguments that used to be passed together are combined with `&` in a single
-`sitesWhere()` call:
+`sitesWhere()` call, or listed as separate arguments to `filterSites()`:
 
 ```{r, eval=FALSE}
 # Before
@@ -721,34 +861,40 @@ myGT |>
         siteMinAlleleFreq = 0.05
     )
 
-# After
+# After (brackets)
 myGT[, sitesWhere(alleleCount >= 150 & maf >= 0.05)]
+
+# After (verbs)
+myGT |> filterSites(alleleCount >= 150, maf >= 0.05)
 ```
 
 ## `filterGenotypeTableTaxa()`
 
-| Deprecated argument         | Replacement                              |
-|-----------------------------|------------------------------------------|
-| `minNotMissing = 0.8`       | `gt[taxaWhere(notMissing >= 0.8), ]`     |
-| `minHeterozygous = 0.1`     | `gt[taxaWhere(het >= 0.1), ]`            |
-| `maxHeterozygous = 0.1`     | `gt[taxaWhere(het <= 0.1), ]`            |
-| `taxa = c("B73", "Mo17")`   | `gt[taxa("B73", "Mo17"), ]`              |
+| Deprecated argument         | Bracket replacement                      | Verb replacement                    |
+|-----------------------------|------------------------------------------|-------------------------------------|
+| `minNotMissing = 0.8`       | `gt[taxaWhere(notMissing >= 0.8), ]`     | `filterTaxa(gt, notMissing >= 0.8)` |
+| `minHeterozygous = 0.1`     | `gt[taxaWhere(het >= 0.1), ]`            | `filterTaxa(gt, het >= 0.1)`        |
+| `maxHeterozygous = 0.1`     | `gt[taxaWhere(het <= 0.1), ]`            | `filterTaxa(gt, het <= 0.1)`        |
+| `taxa = c("B73", "Mo17")`   | `gt[taxa("B73", "Mo17"), ]`              | `selectTaxa(gt, "B73", "Mo17")`     |
+| `taxa = myTaxa`             | `gt[taxa(myTaxa), ]`                     | `selectTaxa(gt, all_of(myTaxa))`    |
 
 ## `filterGenotypeTableBySiteName()`
 
-| Deprecated argument            | Replacement                       |
-|--------------------------------|-----------------------------------|
-| `siteNames = c("rs1", "rs2")`  | `gt[, siteIds("rs1", "rs2")]`     |
+| Deprecated argument            | Bracket replacement               | Verb replacement                      |
+|--------------------------------|-----------------------------------|---------------------------------------|
+| `siteNames = c("rs1", "rs2")`  | `gt[, siteIds("rs1", "rs2")]`     | `selectSites(gt, "rs1", "rs2")`       |
+| `siteNames = myMarkers`        | `gt[, siteIds(myMarkers)]`        | `selectSites(gt, all_of(myMarkers))`  |
 
-## Two things to watch for
+## Three things to watch for
 
 **Site indexes are now 1-based.** `startSite` and `endSite` were TASSEL's
-0-based indexes, while `sites()` follows R's convention, so
-`startSite = 1, endSite = 3` becomes `sites(2:4)`. TASSEL's index is still
-available in the `Site` column of `positionList()`.
+0-based indexes, while `sites()` and `sliceSites()` follow R's convention,
+so `startSite = 1, endSite = 3` becomes `sites(2:4)` or `sliceSites(2:4)`.
+TASSEL's index is still available in the `Site` column of `positionList()`.
 
 **Taxa and sites are filtered in one expression.** Where the old functions
-had to be piped into one another, the bracket API takes both axes at once:
+had to be piped into one another, the bracket API takes both axes at once.
+The verbs keep the piped shape, one verb per axis:
 
 ```{r, eval=FALSE}
 # Before
@@ -756,10 +902,21 @@ myGT |>
     filterGenotypeTableTaxa(minNotMissing = 0.8) |>
     filterGenotypeTableSites(siteMinAlleleFreq = 0.05)
 
-# After
+# After (brackets)
 myGT[taxaWhere(notMissing >= 0.8), sitesWhere(maf >= 0.05)]
+
+# After (verbs)
+myGT |>
+    filterTaxa(notMissing >= 0.8) |>
+    filterSites(maf >= 0.05)
 ```
 
-These give the same result: the bracket method applies the taxa index first,
-so minor allele frequency is calculated after the low-coverage taxa have
-been dropped, exactly as in the piped version.
+All three give the same result: the bracket method applies the taxa index
+first, so minor allele frequency is calculated after the low-coverage taxa
+have been dropped, exactly as in the piped versions.
+
+**Variables of IDs need `all_of()` in the verbs.** `filterGenotypeTableTaxa(taxa = myTaxa)`
+took a variable directly, and so do `taxa()` and `siteIds()`. `selectTaxa()`
+and `selectSites()` follow `tidyselect`, which asks for `all_of(myTaxa)` -
+or `any_of(myTaxa)` to skip IDs that are not in the table - so that a bare
+name is never ambiguous between a variable and an ID.
