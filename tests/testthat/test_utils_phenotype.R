@@ -62,15 +62,19 @@ test_that("selectTraitsCommon warns on missing traits and retains Taxa", {
     )
 })
 
-test_that("selectTraitsFromFormula calls attributeData, parseFormula, selectTraits", {
+test_that("selectTraitsFromFormula calls attributeData, parseFormula, selectTraitsCommon", {
     res <- selectTraitsFromFormula(phFromDf, plant_height ~ PC1)
     expect_true(is(res, "TasselPhenotype"))
     expect_equal(attributeData(res)$trait_id, c("Taxa", "plant_height", "PC1"))
     expect_true(is(javaRefObj(res), "jobjRef"))
 })
 
-test_that("selectTraits delegates to selectTraitsCommon with correct args", {
-    out <- selectTraits(phFromDf, c("plant_height", "PC1"))
+test_that("selectTraitsCommon keeps the named traits alongside Taxa", {
+    out <- selectTraitsCommon(
+        attributeData(phFromDf),
+        c("plant_height", "PC1"),
+        javaRefObj(phFromDf)
+    )
     expect_equal(attributeData(out)$trait_id, c("Taxa", "plant_height", "PC1"))
     expect_true(is(javaRefObj(out), "jobjRef"))
 })

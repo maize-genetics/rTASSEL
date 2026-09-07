@@ -125,5 +125,6 @@ Collate:
     'utils_genotype.R'
     'utils_genotype_subsetting.R'
     'utils_phenotype.R'
+    'utils_phenotype_subsetting.R'
     'utils_plot_association.R'
     'zzz.R'

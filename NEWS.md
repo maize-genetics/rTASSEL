@@ -31,6 +31,28 @@
   + The verbs build the same selectors `[` does, so predicate push-down to
     TASSEL's filter plugins and the "class in, class out" rule apply
     equally to both
+* The verbs also filter phenotype data, where the two axes are
+  observations and traits:
+  + `filterTaxa()` filters observations with predicates over the
+    phenotype's own columns, plus a `taxaId` alias for whichever column
+    holds the taxa, so `filterTaxa(ph, EarHT > 100, location == "A")`
+    works alongside the genotype form `filterTaxa(gt, notMissing >= 0.8)`
+  + `selectTaxa()` and `sliceTaxa()` work a taxon at a time, keeping every
+    observation of a selected taxon
+  + New `filterTraits()`, `selectTraits()`, and `sliceTraits()` address
+    the trait axis. `filterTraits()` takes predicates over `traitIndex`,
+    `traitId`, `traitType`, and `notMissing`; `selectTraits()` takes
+    `tidyselect` expressions over the trait columns, so `where()` can pick
+    traits out by their values; `sliceTraits()` takes 1-based positions.
+    The taxa column is an axis rather than a trait, so it is never
+    dropped
+  + On a `TasselGenomicDataset`, `filterTaxa()` reads the predicate to
+    decide which axis to filter: naming a phenotype column filters
+    observations, and anything else filters the genotype table, so
+    `notMissing` and `het` keep their genotype meaning and can be combined
+    with phenotype criteria in one call. Either way the two components are
+    re-joined, so taxa left without observations are dropped from the
+    genotype table as well
 * Added `tidyselect` to Imports
 * Added new `TasselGenomicDataset` class:
   + Holds joined genotype and phenotype data, wrapping TASSEL's

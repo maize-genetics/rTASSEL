@@ -12,6 +12,7 @@ TASSEL_JVM <- list(
     "GENO_PHENO_BUILDER"       = "net.maizegenetics.phenotype.GenotypePhenotypeBuilder",
     "GENOTYPE_TABLE_BUILDER"   = "net.maizegenetics.dna.snp.GenotypeTableBuilder",
     "LOGGING_UTILS"            = "net.maizegenetics.util.LoggingUtils",
+    "PHENO_ATTRIBUTE"          = "net.maizegenetics.phenotype.PhenotypeAttribute",
     "PHENO_BUILDER"            = "net.maizegenetics.phenotype.PhenotypeBuilder",
     "POSITION_LIST_BUILDER"    = "net.maizegenetics.dna.map.PositionListBuilder",
     "R_METHODS"                = "net.maizegenetics.plugindef.GenerateRCode",

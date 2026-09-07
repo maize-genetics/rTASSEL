@@ -3,33 +3,40 @@
 \name{filterSites}
 \alias{filterSites}
 \alias{filterTaxa}
-\title{Filter taxa or sites by metadata}
+\alias{filterTraits}
+\title{Filter taxa, sites, or traits by metadata}
 \usage{
 filterSites(x, ...)
 
 filterTaxa(x, ...)
+
+filterTraits(x, ...)
 }
 \arguments{
-\item{x}{An object of class \code{\linkS4class{TasselGenotype}} or
+\item{x}{An object of class \code{\linkS4class{TasselGenotype}},
+\code{\linkS4class{TasselPhenotype}}, or
 \code{\linkS4class{TasselGenomicDataset}}. Objects of the
-deprecated \code{TasselGenotypePhenotype} class are still accepted.}
+deprecated \code{TasselGenotypePhenotype} class are still accepted.
+\code{filterTraits()} needs phenotype data and
+\code{filterSites()} needs genotype data.}
 
 \item{...}{Expressions that evaluate to a logical vector, one element
-per taxon or site.}
+per taxon, observation, site, or trait.}
 }
 \value{
 An object of the same class as \code{x}.
 }
 \description{
-Keeps the taxa or sites for which every given expression is
-\code{TRUE}, in the manner of \code{dplyr::filter()}. These are the
-pipe-friendly equivalents of \code{\link{taxaWhere}()} and
-\code{\link{sitesWhere}()} used inside \code{[}, and are backed by the
-same machinery, so either style gives the same result.
+Keeps the taxa, sites, or traits for which every given expression is
+\code{TRUE}, in the manner of \code{dplyr::filter()}.
+\code{filterTaxa()} and \code{filterSites()} are the pipe-friendly
+equivalents of \code{\link{taxaWhere}()} and \code{\link{sitesWhere}()}
+used inside \code{[}, and are backed by the same machinery, so either
+style gives the same result.
 }
 \details{
-\code{filterTaxa()} evaluates its expressions against per-taxon
-metadata:
+On genotype data, \code{filterTaxa()} evaluates its expressions
+against per-taxon metadata:
 
 \tabular{ll}{
    \strong{Column} \tab \strong{Description} \cr
@@ -37,6 +44,13 @@ metadata:
    \code{notMissing} \tab Proportion of sites with a genotype call \cr
    \code{het} \tab Proportion of sites that are heterozygous
 }
+
+On phenotype data it instead evaluates them against the phenotype's
+own columns, one element per \emph{observation}, plus a \code{taxaId}
+alias for whichever column holds the taxa so that the same predicate
+reads the same way on either kind of data. A phenotype may hold
+several observations of one taxon, in which case only the matching
+rows are kept.
 
 \code{filterSites()} evaluates its expressions against per-site
 metadata:
@@ -54,13 +68,37 @@ metadata:
    \code{isBiallelic} \tab Whether the site has two or fewer states
 }
 
+\code{filterTraits()} evaluates its expressions against per-trait
+metadata:
+
+\tabular{ll}{
+   \strong{Column} \tab \strong{Description} \cr
+   \code{traitIndex} \tab 1-based position of the trait \cr
+   \code{traitId} \tab Trait name \cr
+   \code{traitType} \tab TASSEL attribute type: \code{"data"}, \code{"covariate"}, or \code{"factor"} \cr
+   \code{notMissing} \tab Proportion of observations that are not missing
+}
+
+The taxa column is an axis rather than a trait, so it is never
+offered to \code{filterTraits()} and never dropped by it.
+
 Several expressions are combined with \code{&}, so
 \code{filterSites(gt, maf >= 0.05, !isIndel)} and
-\code{gt[, sitesWhere(maf >= 0.05 & !isIndel)]} are the same query.
-\code{\link{overlaps}()} is also available inside
-\code{filterSites()} for range-based criteria.
+\code{gt[, sitesWhere(maf >= 0.05 & !isIndel)]} are the same query. As
+in \code{dplyr::filter()}, an expression that evaluates to \code{NA}
+drops what it was testing. \code{\link{overlaps}()} is also available
+inside \code{filterSites()} for range-based criteria.
 
-Called with no expressions, both verbs return \code{x} unchanged.
+Called with no expressions, all three verbs return \code{x} unchanged.
+
+A \code{\linkS4class{TasselGenomicDataset}} carries both kinds of
+data, so \code{filterTaxa()} looks at the expressions to decide which
+to read: naming a phenotype column filters observations, and anything
+else filters the genotype table. \code{notMissing} and \code{het}
+therefore keep their genotype meaning throughout, and can be combined
+with phenotype criteria in one call. Whichever axis is filtered, the
+two components of the returned dataset are re-joined, so taxa left
+without any observations are dropped from the genotype table as well.
 }
 \examples{
 \dontrun{
@@ -74,6 +112,19 @@ gt |> filterTaxa(notMissing >= 0.8, het <= 0.1)
 gt |>
     filterTaxa(startsWith(taxaId, "CML")) |>
     filterSites(maf >= 0.05, !isIndel)
+
+# On phenotype data, the trait columns are in scope
+ph <- readPhenotype("path/to/phenotype.txt")
+
+ph |> filterTaxa(EarHT > 100)
+ph |> filterTaxa(location == "A", !is.na(EarDia))
+ph |> filterTraits(traitType == "covariate")
+ph |> filterTraits(notMissing >= 0.95)
+
+# A dataset can be filtered on either kind of data, or both at once
+ds <- readGenomicDataset(gt, ph)
+
+ds |> filterTaxa(notMissing >= 0.8, location == "A")
 }
 
 }

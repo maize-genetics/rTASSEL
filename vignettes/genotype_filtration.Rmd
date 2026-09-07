@@ -792,6 +792,26 @@ myDataset |>
     filterSites(maf >= 0.05)
 ```
 
+A dataset also carries phenotype data, which the verbs can filter in its own
+right. `selectTraits()`, `filterTraits()`, and `sliceTraits()` address the
+trait axis, and `filterTaxa()` reads its expressions to decide which half of
+the dataset to filter: naming a phenotype column selects observations, while
+anything else - including `notMissing` and `het`, which keep their genotype
+meaning throughout - filters the genotype table. Either way the two halves
+are re-joined, so a taxon left without any observations is dropped from the
+genotype table as well.
+
+```{r, eval=TRUE, echo=TRUE}
+# One trait, all taxa
+myDataset |> selectTraits(EarHT)
+
+# Genotype and phenotype criteria in one call
+myDataset |> filterTaxa(notMissing >= 0.9, EarHT > 100)
+```
+
+The phenotype verbs are covered in full in the vignette *Getting Started
+with rTASSEL*.
+
 
 
 # Transforming genotype calls

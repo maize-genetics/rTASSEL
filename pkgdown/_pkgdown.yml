@@ -52,7 +52,8 @@ reference:
 - title: Filtering and subsetting
   desc: >
     Two interchangeable ways to filter genotype data: bracket subsetting
-    with selectors, and dplyr-style verbs.
+    with selectors, and dplyr-style verbs. The verbs also filter the
+    observations and traits of phenotype data.
 - subtitle: Bracket selectors
   desc: >
     Selectors for the bracket API, `obj[<taxa>, <sites>]`.

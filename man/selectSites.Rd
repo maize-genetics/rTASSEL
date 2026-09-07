@@ -3,28 +3,35 @@
 \name{selectSites}
 \alias{selectSites}
 \alias{selectTaxa}
-\title{Select taxa or sites by ID}
+\alias{selectTraits}
+\title{Select taxa, sites, or traits by ID}
 \usage{
 selectSites(x, ...)
 
 selectTaxa(x, ...)
+
+selectTraits(x, ...)
 }
 \arguments{
-\item{x}{An object of class \code{\linkS4class{TasselGenotype}} or
+\item{x}{An object of class \code{\linkS4class{TasselGenotype}},
+\code{\linkS4class{TasselPhenotype}}, or
 \code{\linkS4class{TasselGenomicDataset}}. Objects of the
-deprecated \code{TasselGenotypePhenotype} class are still accepted.}
+deprecated \code{TasselGenotypePhenotype} class are still accepted.
+\code{selectTraits()} needs phenotype data and
+\code{selectSites()} needs genotype data.}
 
-\item{...}{\code{tidyselect} expressions naming taxa or sites.}
+\item{...}{\code{tidyselect} expressions naming taxa, sites, or
+traits.}
 }
 \value{
 An object of the same class as \code{x}.
 }
 \description{
-Keeps taxa or sites named by a \code{tidyselect} expression, in the
-manner of \code{dplyr::select()}. These are the pipe-friendly
-equivalents of \code{\link{taxa}()} and \code{\link{siteIds}()} used
-inside \code{[}, with the whole \code{tidyselect} vocabulary available
-on top.
+Keeps taxa, sites, or traits named by a \code{tidyselect} expression,
+in the manner of \code{dplyr::select()}. \code{selectTaxa()} and
+\code{selectSites()} are the pipe-friendly equivalents of
+\code{\link{taxa}()} and \code{\link{siteIds}()} used inside \code{[},
+with the whole \code{tidyselect} vocabulary available on top.
 }
 \details{
 IDs can be given literally, as a vector, or with any
@@ -43,7 +50,18 @@ keeps:
 
 Bare IDs are matched exactly, so a marker name occurring more than
 once in a table resolves to its first occurrence. Called with no
-expressions, both verbs return \code{x} unchanged.
+expressions, all three verbs return \code{x} unchanged.
+
+\code{selectTraits()} selects from the trait columns themselves rather
+than from their names alone, so the \code{where()} helper can pick
+traits out by their values, as in
+\code{selectTraits(ph, where(is.numeric))}. The taxa column is an axis
+rather than a trait, so it is neither selectable nor droppable.
+
+\code{selectTaxa()} on phenotype data works a taxon at a time rather
+than an observation at a time: every observation of a selected taxon
+is kept. Use \code{\link{filterTaxa}()} to select observations
+instead.
 }
 \examples{
 \dontrun{
@@ -57,6 +75,14 @@ gt |> selectSites(all_of(myMarkers))
 
 # Everything but a handful of taxa
 gt |> selectTaxa(-any_of(c("33-16", "38-11")))
+
+# On phenotype data, traits are selected by name or by type
+ph <- readPhenotype("path/to/phenotype.txt")
+
+ph |> selectTraits(EarHT, dpoll)
+ph |> selectTraits(starts_with("Q"))
+ph |> selectTraits(where(is.numeric))
+ph |> selectTraits(-EarDia)
 }
 
 }

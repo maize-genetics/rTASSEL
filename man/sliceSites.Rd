@@ -3,16 +3,22 @@
 \name{sliceSites}
 \alias{sliceSites}
 \alias{sliceTaxa}
-\title{Select taxa or sites by position}
+\alias{sliceTraits}
+\title{Select taxa, sites, or traits by position}
 \usage{
 sliceSites(x, ...)
 
 sliceTaxa(x, ...)
+
+sliceTraits(x, ...)
 }
 \arguments{
-\item{x}{An object of class \code{\linkS4class{TasselGenotype}} or
+\item{x}{An object of class \code{\linkS4class{TasselGenotype}},
+\code{\linkS4class{TasselPhenotype}}, or
 \code{\linkS4class{TasselGenomicDataset}}. Objects of the
-deprecated \code{TasselGenotypePhenotype} class are still accepted.}
+deprecated \code{TasselGenotypePhenotype} class are still accepted.
+\code{sliceTraits()} needs phenotype data and \code{sliceSites()}
+needs genotype data.}
 
 \item{...}{Numeric positions, all positive or all negative.}
 }
@@ -20,10 +26,10 @@ deprecated \code{TasselGenotypePhenotype} class are still accepted.}
 An object of the same class as \code{x}.
 }
 \description{
-Keeps taxa or sites at the given positions, in the manner of
-\code{dplyr::slice()}. These are the pipe-friendly equivalents of
-\code{\link{sites}()} and of a bare numeric index used inside
-\code{[}.
+Keeps taxa, sites, or traits at the given positions, in the manner of
+\code{dplyr::slice()}. \code{sliceTaxa()} and \code{sliceSites()} are
+the pipe-friendly equivalents of \code{\link{sites}()} and of a bare
+numeric index used inside \code{[}.
 }
 \details{
 Positions are 1-based, matching \code{R}'s own subsetting
@@ -33,7 +39,15 @@ the \code{Site} column of \code{\link{positionList}()}.
 As in \code{dplyr::slice()}, negative positions drop rather than keep,
 positive and negative positions cannot be mixed, and zeros and
 positions past the end of the axis are ignored. Called with no
-positions, both verbs return \code{x} unchanged.
+positions, all three verbs return \code{x} unchanged.
+
+Taxa are counted as \code{\link{taxaList}()} reports them and traits
+as \code{\link{traitNames}()} does, so the taxa column of a phenotype
+is not a trait position and is never dropped.
+
+\code{sliceTaxa()} on phenotype data works a taxon at a time rather
+than an observation at a time: every observation of a kept taxon is
+kept.
 }
 \examples{
 \dontrun{
@@ -45,6 +59,12 @@ gt |> sliceTaxa(1:10)
 
 # Drop the first ten markers
 gt |> sliceSites(-(1:10))
+
+# The first three traits of a phenotype, then all but the first
+ph <- readPhenotype("path/to/phenotype.txt")
+
+ph |> sliceTraits(1:3)
+ph |> sliceTraits(-1)
 }
 
 }

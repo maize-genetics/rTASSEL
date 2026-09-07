@@ -304,6 +304,14 @@ myDataset |>
 
 
 ## ----eval=TRUE, echo=TRUE-----------------------------------------------------
+# One trait, all taxa
+myDataset |> selectTraits(EarHT)
+
+# Genotype and phenotype criteria in one call
+myDataset |> filterTaxa(notMissing >= 0.9, EarHT > 100)
+
+
+## ----eval=TRUE, echo=TRUE-----------------------------------------------------
 myRealGT |> removeMinorSNPStates()
 
 

@@ -188,7 +188,7 @@ selectTraitsCommon <- function(attrData, traits, jRefObj) {
 # object using `attributeData()`. It then parses the formula to
 # identify the traits to keep using `parseFormula()`. Finally, it
 # selects the specified traits from the phenotype object using
-# `selectTraits()`.
+# `selectTraitsCommon()`.
 #
 # @param ph
 # A phenotype object containing trait data.
@@ -203,9 +203,9 @@ selectTraitsFromFormula <- function(ph, f) {
 
     traitsToKeep <- parseFormula(f, attrDf)
 
-    subPh <- selectTraits(ph, unlist(traitsToKeep))
-
-    return(subPh)
+    return(
+        selectTraitsCommon(attrDf, unlist(traitsToKeep), javaRefObj(ph))
+    )
 }
 
 
@@ -237,30 +237,6 @@ selectTraitsFromJavaRef <- function(jRefObj, traits) {
 
     # Use the common helper for further processing
     return(selectTraitsCommon(attrData, traits, jRefObj))
-}
-
-
-## ----
-# Select Traits from Phenotype Data
-#
-# @description
-# This function retrieves attribute data from a phenotype object and
-# processes it to select specific traits using a common helper
-# function.
-#
-# @param ph
-# A phenotype object containing the data to be processed.
-# @param traits
-# A vector of trait names to be selected from the phenotype data.
-#
-# @return
-# A processed object containing the selected traits.
-selectTraits <- function(ph, traits) {
-    # Retrieve attribute data directly
-    attrData <- attributeData(ph)
-
-    # Use the common helper for further processing
-    return(selectTraitsCommon(attrData, traits, javaRefObj(ph)))
 }
 
 
