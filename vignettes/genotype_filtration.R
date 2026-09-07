@@ -23,6 +23,27 @@ myRealGT
 myRealGT[, sitesWhere(maf >= 0.05)]
 
 
+## ----eval=TRUE, echo=TRUE-----------------------------------------------------
+myRealGT |> filterSites(maf >= 0.05)
+
+
+## ----eval=FALSE---------------------------------------------------------------
+# myGT[taxa("B73", "Mo17"), ]           # myGT |> selectTaxa("B73", "Mo17")
+# myGT[taxaWhere(notMissing >= 0.8), ]  # myGT |> filterTaxa(notMissing >= 0.8)
+# myGT[, sites(1:100)]                  # myGT |> sliceSites(1:100)
+# myGT[, !sites(1:10)]                  # myGT |> sliceSites(-(1:10))
+# myGT[, siteIds(myMarkers)]            # myGT |> selectSites(all_of(myMarkers))
+# myGT[, chrom("1", "5")]               # myGT |> filterSites(chrom %in% c("1", "5"))
+# myGT[, region("1", 1e6, 2e6)]         # myGT |> filterSites(chrom == "1", pos >= 1e6, pos <= 2e6)
+# myGT[, region(gr)]                    # myGT |> filterSites(overlaps(gr))
+# myGT[, sitesWhere(maf >= 0.05 & !isIndel)]
+#                                       # myGT |> filterSites(maf >= 0.05, !isIndel)
+
+
+## ----eval=FALSE---------------------------------------------------------------
+# myGT |> filterSites(overlaps(gr), maf >= 0.05)
+
+
 ## ----eval=FALSE---------------------------------------------------------------
 # myGT
 
@@ -81,6 +102,10 @@ gr <- GenomicRanges::GRanges(
 )
 
 myRealGT[, region(gr)]
+
+
+## ----eval=TRUE, echo=TRUE-----------------------------------------------------
+myRealGT[, sitesWhere(overlaps(gr) & maf >= 0.05)]
 
 
 ## $ cat my_ranges.bed
@@ -171,6 +196,12 @@ myFiltGT <- myFiltGT[, sitesWhere(maf >= 0.05)]
 myFiltGT
 
 
+## ----eval=TRUE, echo=TRUE-----------------------------------------------------
+myRealGT |>
+    filterTaxa(notMissing >= 0.8) |>
+    filterSites(maf >= 0.05)
+
+
 ## ----eval=FALSE---------------------------------------------------------------
 # myRealGT[taxaWhere(notMissing >= 0.8), sitesWhere(maf >= 0.05)] |>
 #     exportGenotypeTable(
@@ -185,6 +216,12 @@ phenoPath <- system.file("extdata", "mdp_traits.txt", package = "rTASSEL")
 myDataset <- readGenomicDataset(myRealGT, phenoPath)
 
 myDataset[taxaWhere(notMissing >= 0.9), sitesWhere(maf >= 0.05)]
+
+
+## ----eval=TRUE, echo=TRUE-----------------------------------------------------
+myDataset |>
+    filterTaxa(notMissing >= 0.9) |>
+    filterSites(maf >= 0.05)
 
 
 ## ----eval=TRUE, echo=TRUE-----------------------------------------------------

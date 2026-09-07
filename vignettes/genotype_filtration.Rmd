@@ -123,6 +123,61 @@ myRealGT[, sitesWhere(maf >= 0.05)]
 ```
 
 
+## Two flavours: brackets and verbs
+Everything in this vignette can be written two ways. The bracket syntax
+above is one; the other is a set of pipe-friendly **verbs** modelled on the
+`dplyr` package, for anyone who finds that grammar more natural:
+
+| Verb                            | Modelled on       | Selects taxa/sites by         |
+|---------------------------------|-------------------|-------------------------------|
+| `filterTaxa()`, `filterSites()` | `dplyr::filter()` | Expressions over metadata     |
+| `selectTaxa()`, `selectSites()` | `dplyr::select()` | Literal IDs and `tidyselect`  |
+| `sliceTaxa()`, `sliceSites()`   | `dplyr::slice()`  | Position (1-based)            |
+
+Where `dplyr`'s verbs address one axis each, a genotype table has two, so
+each verb comes in a taxa and a sites flavour. Otherwise they behave as
+their `dplyr` namesakes do: `filter*()` takes any number of predicates and
+combines them with `&`, `select*()` takes the whole `tidyselect`
+vocabulary, and `slice*()` takes positions where a leading `-` drops
+instead of keeps.
+
+```{r, eval=TRUE, echo=TRUE}
+myRealGT |> filterSites(maf >= 0.05)
+```
+
+Both flavours build the same selection under the hood, so they are
+interchangeable and can be mixed freely in the same script. Each line below
+is one query written twice:
+
+```{r, eval=FALSE}
+myGT[taxa("B73", "Mo17"), ]           # myGT |> selectTaxa("B73", "Mo17")
+myGT[taxaWhere(notMissing >= 0.8), ]  # myGT |> filterTaxa(notMissing >= 0.8)
+myGT[, sites(1:100)]                  # myGT |> sliceSites(1:100)
+myGT[, !sites(1:10)]                  # myGT |> sliceSites(-(1:10))
+myGT[, siteIds(myMarkers)]            # myGT |> selectSites(all_of(myMarkers))
+myGT[, chrom("1", "5")]               # myGT |> filterSites(chrom %in% c("1", "5"))
+myGT[, region("1", 1e6, 2e6)]         # myGT |> filterSites(chrom == "1", pos >= 1e6, pos <= 2e6)
+myGT[, region(gr)]                    # myGT |> filterSites(overlaps(gr))
+myGT[, sitesWhere(maf >= 0.05 & !isIndel)]
+                                      # myGT |> filterSites(maf >= 0.05, !isIndel)
+```
+
+Two differences are worth pointing out. Criteria that a single selector
+combines with `&` become separate arguments to a `filter*()` call, matching
+`dplyr::filter()`. And where `region()` accepts a `GRanges` object
+directly, the verbs reach the same ranges through `overlaps()`, which -
+unlike `region()` - can sit alongside other site criteria in one
+expression:
+
+```{r, eval=FALSE}
+myGT |> filterSites(overlaps(gr), maf >= 0.05)
+```
+
+The sections that follow are written with brackets, since that is the
+shorter form for a single criterion. The verb equivalent of any of them can
+be read off the list above.
+
+
 
 # Filtering by sites...
 
@@ -334,6 +389,14 @@ gr <- GenomicRanges::GRanges(
 )
 
 myRealGT[, region(gr)]
+```
+
+Inside a predicate, the same ranges are tested with `overlaps()`. This is
+the only way to combine ranges with other site criteria in a single
+expression, since `region()` occupies the whole site index on its own:
+
+```{r, eval=TRUE, echo=TRUE}
+myRealGT[, sitesWhere(overlaps(gr) & maf >= 0.05)]
 ```
 
 
@@ -558,6 +621,15 @@ myFiltGT <- myFiltGT[, sitesWhere(maf >= 0.05)]
 myFiltGT
 ```
 
+This is the case the verbs are built for, since each one takes an object
+and returns one:
+
+```{r, eval=TRUE, echo=TRUE}
+myRealGT |>
+    filterTaxa(notMissing >= 0.8) |>
+    filterSites(maf >= 0.05)
+```
+
 Filtered objects can be passed to any other `rTASSEL` function, such as
 writing the result out to a VCF file:
 
@@ -582,6 +654,14 @@ phenoPath <- system.file("extdata", "mdp_traits.txt", package = "rTASSEL")
 myDataset <- readGenomicDataset(myRealGT, phenoPath)
 
 myDataset[taxaWhere(notMissing >= 0.9), sitesWhere(maf >= 0.05)]
+```
+
+The verbs accept datasets on the same terms:
+
+```{r, eval=TRUE, echo=TRUE}
+myDataset |>
+    filterTaxa(notMissing >= 0.9) |>
+    filterSites(maf >= 0.05)
 ```
 
 

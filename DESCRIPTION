@@ -57,6 +57,7 @@ Imports:
     S4Vectors,
     SummarizedExperiment,
     tibble,
+    tidyselect,
     vctrs
 Suggests:
     ape,
@@ -94,6 +95,7 @@ Collate:
     'class_tassel_numeric_genotype.R'
     'constants.R'
     'filter_functions.R'
+    'filter_verbs.R'
     'genomic_prediction.R'
     'genotype_phenotype_function.R'
     'genotype_table_functions.R'

@@ -40,8 +40,8 @@ filtering of \code{TasselGenotype} objects.
 \item{\code{granges}}{A \code{GRanges} object (used when
 \code{type = "granges"}).}
 
-\item{\code{quo}}{Quosure for predicate evaluation (used when
-\code{type = "predicate"}).}
+\item{\code{quo}}{A quosure, or a list of quosures combined with \code{&},
+for predicate evaluation (used when \code{type = "predicate"}).}
 
 \item{\code{negate}}{Logical indicating whether to negate the selection.}
 }}

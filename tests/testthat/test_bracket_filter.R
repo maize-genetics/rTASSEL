@@ -197,6 +197,14 @@ test_that("taxaWhere() metrics match the legacy taxa filter", {
     expect_equal(sub@jRefObj$numberOfTaxa(), getTaxaList(legacy)$size())
 })
 
+test_that("out-of-range thresholds are not handed to TASSEL", {
+    # TASSEL's filter plugins call System.exit() on a proportion outside
+    # 0-1, so these have to be left to the R fallback
+    expect_error(gt[taxaWhere(notMissing >= 1.1), ], "No taxa match")
+    expect_error(gt[, sitesWhere(maf >= 1.5)], "No sites match")
+    expect_equal(gt@jRefObj$numberOfTaxa(), 281L)
+})
+
 test_that("[!taxaWhere()] negates a metric predicate", {
     meta <- rTASSEL:::buildTaxaMetadata(gt@jRefObj, needed = "het")
     sub <- gt[!taxaWhere(het <= 0.01), ]

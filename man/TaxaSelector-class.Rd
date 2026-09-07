@@ -24,8 +24,8 @@ filtering of \code{TasselGenotype} objects.
 \item{\code{ids}}{Character vector of taxa IDs (used when
 \code{type = "ids"}).}
 
-\item{\code{quo}}{Quosure for predicate evaluation (used when
-\code{type = "predicate"}).}
+\item{\code{quo}}{A quosure, or a list of quosures combined with \code{&},
+for predicate evaluation (used when \code{type = "predicate"}).}
 
 \item{\code{negate}}{Logical indicating whether to negate the selection.}
 }}

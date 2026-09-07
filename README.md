@@ -78,6 +78,15 @@ gt[taxaWhere(notMissing >= 0.8), region("2", 20e6, 30e6)]
 gt[taxa("B73", "Mo17"), siteIds("PZB00859.1")]
 ```
 
+The same filters are also available as pipe-friendly verbs, for anyone who
+would rather write them the way `dplyr` does:
+
+```r
+gt |>
+    filterTaxa(notMissing >= 0.8) |>
+    filterSites(maf >= 0.05, !isIndel)
+```
+
 Filtered objects keep their class, so a dataset stays a dataset - with its
 phenotype data re-joined against the taxa that survived - and can be passed
 straight into an analysis:

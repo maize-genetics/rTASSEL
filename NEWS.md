@@ -15,6 +15,23 @@
     `FilterTaxaBuilder` plugins rather than being evaluated in R
   + See the *Filtering Genotype Tables* vignette for a full walkthrough and
     a migration guide from `filterGenotypeTable*()`
+* Every filter is also available as a pipe-friendly verb modelled on
+  `dplyr`, so either grammar can be used interchangeably:
+  + `filterSites()` and `filterTaxa()` take any number of predicates over
+    the same metadata columns as `sitesWhere()` and `taxaWhere()`, combined
+    with `&`, in the manner of `dplyr::filter()`
+  + `selectSites()` and `selectTaxa()` take `tidyselect` expressions over
+    marker names and taxa IDs, so `all_of()`, `any_of()`, `starts_with()`,
+    `matches()`, and `-` all work, in the manner of `dplyr::select()`
+  + `sliceSites()` and `sliceTaxa()` take 1-based positions, where negative
+    positions drop rather than keep, in the manner of `dplyr::slice()`
+  + `overlaps()` tests sites against a `GRanges` object from inside
+    `filterSites()` or `sitesWhere()`, which is the one range-based
+    criterion that `region()` cannot combine with other site criteria
+  + The verbs build the same selectors `[` does, so predicate push-down to
+    TASSEL's filter plugins and the "class in, class out" rule apply
+    equally to both
+* Added `tidyselect` to Imports
 * Added new `TasselGenomicDataset` class:
   + Holds joined genotype and phenotype data, wrapping TASSEL's
     `GenotypePhenotype` object

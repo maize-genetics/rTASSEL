@@ -150,6 +150,46 @@ buildTaxaMetadata <- function(jGt, needed = NULL) {
 
 
 ## ----
+# Predicate selectors hold either a single quosure (from 'taxaWhere()'
+# and 'sitesWhere()') or several (from 'filterTaxa()' and
+# 'filterSites()', which combine their arguments with '&' the way
+# 'dplyr::filter()' does).  These three helpers let the resolvers treat
+# both the same way.
+
+## ----
+# The individual expressions a predicate is built from.
+predicateExprs <- function(quo) {
+    if (rlang::is_quosure(quo)) return(list(rlang::quo_get_expr(quo)))
+
+    lapply(quo, rlang::quo_get_expr)
+}
+
+
+## ----
+# Metadata columns a predicate refers to, for the lazy 'needed' logic of
+# 'buildSiteMetadata()' and 'buildTaxaMetadata()'.
+predicateVars <- function(quo) {
+    unique(unlist(lapply(predicateExprs(quo), all.vars)))
+}
+
+
+## ----
+# Evaluate a predicate against a data mask, combining several
+# expressions with '&'.
+#
+# @return
+# Whatever the expressions evaluate to, which the caller checks is a
+# logical vector.
+evalPredicate <- function(quo, mask) {
+    if (rlang::is_quosure(quo)) {
+        return(rlang::eval_tidy(quo, data = mask))
+    }
+
+    Reduce(`&`, lapply(quo, rlang::eval_tidy, data = mask))
+}
+
+
+## ----
 # Resolve a taxa selector (character vector or TaxaSelector) to a
 # character vector of taxa IDs.
 resolveTaxaIds <- function(jGt, selector) {
@@ -162,17 +202,29 @@ resolveTaxaIds <- function(jGt, selector) {
     if (selector@type == "ids") return(selector@ids)
 
     if (selector@type == "predicate") {
-        needed <- all.vars(rlang::quo_get_expr(selector@quo))
-        meta <- buildTaxaMetadata(jGt, needed = needed)
+        meta <- buildTaxaMetadata(jGt, needed = predicateVars(selector@quo))
 
-        mask <- rlang::eval_tidy(selector@quo, data = meta)
+        mask <- evalPredicate(selector@quo, meta)
         if (!is.logical(mask)) {
-            rlang::abort("taxaWhere() expression must evaluate to a logical vector")
+            rlang::abort("A taxa predicate must evaluate to a logical vector")
         }
         return(meta$taxaId[which(mask)])
     }
 
     rlang::abort(paste0("Unknown TaxaSelector type: ", selector@type))
+}
+
+
+## ----
+# Is a value usable as a TASSEL proportion parameter?
+#
+# TASSEL's filter plugins call System.exit() when handed a parameter
+# outside their accepted range, which would take the R session down with
+# them.  Out-of-range thresholds are therefore left to the R fallback,
+# where they simply match nothing and raise the usual empty-selection
+# error.
+inUnitRange <- function(val) {
+    is.finite(val) && val >= 0 && val <= 1
 }
 
 
@@ -211,6 +263,8 @@ tryTaxaPluginShortCircuit <- function(jGt, selector) {
             var <- as.character(lhs)
             val <- as.numeric(rhs)
 
+            if (!inUnitRange(val)) return(FALSE)
+
             if (var == "notMissing" && op %in% c(">=", ">")) {
                 params$minNotMissing <<- val
                 return(TRUE)
@@ -224,7 +278,8 @@ tryTaxaPluginShortCircuit <- function(jGt, selector) {
         FALSE
     }
 
-    if (!consume(rlang::quo_get_expr(selector@quo))) return(NULL)
+    consumed <- vapply(predicateExprs(selector@quo), consume, logical(1))
+    if (!all(consumed)) return(NULL)
 
     plugin <- rJava::new(
         rJava::J("net.maizegenetics.analysis.filter.FilterTaxaBuilderPlugin"),
@@ -273,6 +328,58 @@ applyTaxaSelector <- function(jGt, selector) {
 
     rJava::J("net.maizegenetics.dna.snp.FilterGenotypeTable")$getInstance(
         jGt, taxaList
+    )
+}
+
+
+## ----
+# Which sites fall inside a set of genomic ranges?
+#
+# Ranges are matched one chromosome at a time rather than through
+# 'GenomicRanges::overlapsAny()' so that a 'GRanges' naming chromosomes
+# absent from the genotype table does not raise a seqlevel mismatch.
+#
+# @return A 'logical' vector as long as 'chrom' and 'pos'.
+sitesOverlappingRanges <- function(chrom, pos, ranges) {
+    if (!methods::is(ranges, "GRanges")) {
+        rlang::abort("`overlaps()` needs a <GRanges> object")
+    }
+
+    hits <- logical(length(pos))
+
+    rangeChroms <- as.character(GenomicRanges::seqnames(ranges))
+    rangeStarts <- as.numeric(GenomicRanges::start(ranges))
+    rangeEnds   <- as.numeric(GenomicRanges::end(ranges))
+
+    for (chromId in unique(rangeChroms)) {
+        onChrom <- which(chrom == chromId)
+        if (length(onChrom) == 0) next
+
+        inRange <- rangeChroms == chromId
+        hits[onChrom] <- IRanges::overlapsAny(
+            IRanges::IRanges(start = pos[onChrom], width = 1L),
+            IRanges::IRanges(start = rangeStarts[inRange], end = rangeEnds[inRange])
+        )
+    }
+
+    hits
+}
+
+
+## ----
+# Build the data mask a site predicate is evaluated against.
+#
+# Alongside the metadata columns the mask carries an 'overlaps()' that
+# closes over the sites at hand, shadowing the exported stub that only
+# exists to document the helper.
+siteDataMask <- function(meta) {
+    c(
+        as.list(meta),
+        list(
+            overlaps = function(ranges) {
+                sitesOverlappingRanges(meta$chrom, meta$pos, ranges)
+            }
+        )
     )
 }
 
@@ -391,11 +498,10 @@ resolveSiteIndices <- function(jGt, selector) {
             as.integer(idx[!is.na(idx)] - 1L)
         },
         "predicate" = {
-            needed <- all.vars(rlang::quo_get_expr(selector@quo))
-            meta <- buildSiteMetadata(jGt, needed = needed)
-            mask <- rlang::eval_tidy(selector@quo, data = meta)
+            meta <- buildSiteMetadata(jGt, needed = predicateVars(selector@quo))
+            mask <- evalPredicate(selector@quo, siteDataMask(meta))
             if (!is.logical(mask)) {
-                rlang::abort("sitesWhere() expression must evaluate to a logical vector")
+                rlang::abort("A site predicate must evaluate to a logical vector")
             }
             oneToZeroBased(meta$siteIndex[which(mask)])
         },
@@ -456,6 +562,8 @@ tryPluginShortCircuit <- function(jGt, selector) {
             var <- as.character(lhs)
             val <- as.numeric(rhs)
 
+            if (var %in% c("maf", "het") && !inUnitRange(val)) return(FALSE)
+
             if (var == "maf") {
                 if (op %in% c(">=", ">")) { params$siteMinAlleleFreq <<- val; return(TRUE) }
                 if (op %in% c("<=", "<")) { params$siteMaxAlleleFreq <<- val; return(TRUE) }
@@ -464,7 +572,7 @@ tryPluginShortCircuit <- function(jGt, selector) {
                 if (op %in% c(">=", ">")) { params$minHeterozygous <<- val; return(TRUE) }
                 if (op %in% c("<=", "<")) { params$maxHeterozygous <<- val; return(TRUE) }
             }
-            if (var == "alleleCount") {
+            if (var == "alleleCount" && val >= 0 && val <= jGt$numberOfTaxa()) {
                 if (op %in% c(">=", ">")) { params$siteMinCount <<- as.integer(val); return(TRUE) }
             }
             return(FALSE)
@@ -480,8 +588,8 @@ tryPluginShortCircuit <- function(jGt, selector) {
         FALSE
     }
 
-    expr <- rlang::quo_get_expr(selector@quo)
-    if (!consume(expr)) return(NULL)
+    consumed <- vapply(predicateExprs(selector@quo), consume, logical(1))
+    if (!all(consumed)) return(NULL)
 
     plugin <- rJava::new(
         rJava::J("net.maizegenetics.analysis.filter.FilterSiteBuilderPlugin"),

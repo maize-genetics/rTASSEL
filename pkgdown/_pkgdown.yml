@@ -51,6 +51,10 @@ reference:
 
 - title: Filtering and subsetting
   desc: >
+    Two interchangeable ways to filter genotype data: bracket subsetting
+    with selectors, and dplyr-style verbs.
+- subtitle: Bracket selectors
+  desc: >
     Selectors for the bracket API, `obj[<taxa>, <sites>]`.
   contents:
   - taxa
@@ -62,6 +66,15 @@ reference:
   - sitesWhere
   - TaxaSelector-class
   - SiteSelector-class
+- subtitle: dplyr-style verbs
+  desc: >
+    Pipe-friendly verbs modelled on `dplyr::filter()`, `dplyr::select()`,
+    and `dplyr::slice()`.
+  contents:
+  - filterSites
+  - selectSites
+  - sliceSites
+  - overlaps
 
 - title: Inspecting data
   contents:

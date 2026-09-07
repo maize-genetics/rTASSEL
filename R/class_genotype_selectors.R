@@ -11,8 +11,8 @@
 #'   \code{"predicate"}.
 #' @slot ids Character vector of taxa IDs (used when
 #'   \code{type = "ids"}).
-#' @slot quo Quosure for predicate evaluation (used when
-#'   \code{type = "predicate"}).
+#' @slot quo A quosure, or a list of quosures combined with \code{&},
+#'   for predicate evaluation (used when \code{type = "predicate"}).
 #' @slot negate Logical indicating whether to negate the selection.
 #'
 #' @name TaxaSelector-class
@@ -47,8 +47,8 @@ setClass("TaxaSelector", slots = c(
 #'   \code{type = "region"}).
 #' @slot granges A \code{GRanges} object (used when
 #'   \code{type = "granges"}).
-#' @slot quo Quosure for predicate evaluation (used when
-#'   \code{type = "predicate"}).
+#' @slot quo A quosure, or a list of quosures combined with \code{&},
+#'   for predicate evaluation (used when \code{type = "predicate"}).
 #' @slot negate Logical indicating whether to negate the selection.
 #'
 #' @name SiteSelector-class
@@ -117,7 +117,13 @@ taxa <- function(...) {
 #'
 #' @export
 taxaWhere <- function(expr) {
-    quo <- rlang::enquo(expr)
+    predicateTaxaSelector(rlang::enquo(expr))
+}
+
+## ----
+# Wrap a predicate in a TaxaSelector.  Shared by taxaWhere(), which
+# passes a single quosure, and filterTaxa(), which passes a list of them.
+predicateTaxaSelector <- function(quo) {
     methods::new("TaxaSelector",
         type = "predicate", ids = character(0), quo = quo, negate = FALSE
     )
@@ -303,12 +309,56 @@ region <- function(x, start, end) {
 #'
 #' @export
 sitesWhere <- function(expr) {
-    quo <- rlang::enquo(expr)
+    predicateSiteSelector(rlang::enquo(expr))
+}
+
+## ----
+# Wrap a predicate in a SiteSelector.  Shared by sitesWhere(), which
+# passes a single quosure, and filterSites(), which passes a list of them.
+predicateSiteSelector <- function(quo) {
     methods::new("SiteSelector",
         type = "predicate", indices = integer(0), ids = character(0),
         chromId = character(0), start = numeric(0), end = numeric(0),
         granges = NULL, quo = quo, negate = FALSE
     )
+}
+
+
+## ----
+#' @title Select Sites Overlapping Genomic Ranges
+#'
+#' @description
+#' Tests whether each site falls inside a set of genomic ranges. This
+#' function has no use on its own: it is only meaningful inside
+#' \code{\link{sitesWhere}()} or \code{\link{filterSites}()}, where the
+#' site metadata it needs is in scope. It is the predicate-friendly
+#' counterpart of \code{\link{region}()}, and unlike \code{region()} it
+#' can be combined with other site criteria in one expression.
+#'
+#' @param ranges A \code{GRanges} object.
+#'
+#' @return A \code{logical} vector with one element per site.
+#'
+#' @seealso \code{\link{region}}, \code{\link{sitesWhere}},
+#'    \code{\link{filterSites}}
+#'
+#' @examples
+#' \dontrun{
+#' gr <- GenomicRanges::GRanges(
+#'     seqnames = c("1", "2"),
+#'     ranges   = IRanges::IRanges(start = c(1e6, 5e5), end = c(2e6, 1e6))
+#' )
+#'
+#' gt[, sitesWhere(overlaps(gr))]
+#' gt |> filterSites(overlaps(gr), maf >= 0.05)
+#' }
+#'
+#' @export
+overlaps <- function(ranges) {
+    rlang::abort(c(
+        "`overlaps()` must be used inside `sitesWhere()` or `filterSites()`",
+        "i" = "Outside a site predicate there is no site metadata to test"
+    ))
 }
 
 
