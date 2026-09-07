@@ -53,6 +53,7 @@
     with phenotype criteria in one call. Either way the two components are
     re-joined, so taxa left without observations are dropped from the
     genotype table as well
+  + See the *Filtering Phenotype Data* vignette for a full walkthrough
 * Added `tidyselect` to Imports
 * Added new `TasselGenomicDataset` class:
   + Holds joined genotype and phenotype data, wrapping TASSEL's

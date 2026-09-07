@@ -809,8 +809,8 @@ myDataset |> selectTraits(EarHT)
 myDataset |> filterTaxa(notMissing >= 0.9, EarHT > 100)
 ```
 
-The phenotype verbs are covered in full in the vignette *Getting Started
-with rTASSEL*.
+The phenotype verbs are covered in full in the vignette *Filtering
+Phenotype Data*.
 
 
 

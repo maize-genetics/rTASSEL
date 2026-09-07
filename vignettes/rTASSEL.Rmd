@@ -305,10 +305,14 @@ tasPhenoDF
 
 
 ## Filtering phenotype data
+
+**NOTE**: This is just a "snapshot" of how we can filter phenotype
+information in rTASSEL. For more information, please see the additional
+vignette, *"Filtering Phenotype Data"*.
+
 Phenotype objects are filtered with the same pipe-friendly verbs used on
-genotype tables, which are covered in depth in the vignette *Filtering
-Genotype Tables*. A phenotype has its own two axes, so the verbs address
-those instead:
+genotype tables. A phenotype has its own two axes - observations and traits -
+so the verbs address those instead:
 
 | Verb              | Modelled on       | Selects observations/traits by |
 |-------------------|-------------------|--------------------------------|
@@ -330,66 +334,25 @@ tasPhenoFull <- readPhenotype(
 tasPhenoFull
 ```
 
-`filterTaxa()` keeps observations, with every trait column in scope:
+`filterTaxa()` keeps observations, with every trait column in scope. Several
+expressions are combined with `&`, as in `dplyr::filter()`:
 
 ```{r, eval=TRUE, echo=TRUE}
-tasPhenoFull |> filterTaxa(EarHT > 100)
-```
-
-Several expressions are combined with `&`, as in `dplyr::filter()`, and an
-expression that evaluates to `NA` drops its observation:
-
-```{r, eval=TRUE, echo=TRUE}
-tasPhenoFull |> filterTaxa(location == "A", !is.na(EarDia))
-```
-
-Whichever column holds the taxa is also reachable as `taxaId`, so a predicate
-written against a genotype table reads the same way here:
-
-```{r, eval=TRUE, echo=TRUE}
-tasPhenoFull |> filterTaxa(startsWith(taxaId, "CML"))
-```
-
-`selectTaxa()` and `sliceTaxa()` work a taxon at a time rather than an
-observation at a time, so every observation of a selected taxon is kept.
-That distinction matters whenever taxa are replicated, as they are here:
-this file holds 563 observations of 284 taxa.
-
-```{r, eval=TRUE, echo=TRUE}
-tasPhenoFull |> selectTaxa("33-16", "38-11")
+tasPhenoFull |> filterTaxa(location == "A", EarHT > 100)
 ```
 
 On the other axis, `selectTraits()` takes trait names or any `tidyselect`
-expression:
+expression, and `filterTraits()` describes traits by their metadata, such as
+their TASSEL attribute type:
 
 ```{r, eval=TRUE, echo=TRUE}
-tasPhenoFull |> selectTraits(EarHT, dpoll)
+tasPhenoFull |> selectTraits(EarHT, starts_with("Q"))
 
-tasPhenoFull |> selectTraits(starts_with("Q"))
-```
-
-Traits are selected from the columns themselves rather than from their names
-alone, so `where()` can pick them out by their values:
-
-```{r, eval=TRUE, echo=TRUE}
-tasPhenoFull |> selectTraits(where(is.numeric))
-```
-
-`filterTraits()` instead describes traits by their metadata - `traitIndex`,
-`traitId`, `traitType`, and `notMissing`, the proportion of observations that
-are not missing:
-
-```{r, eval=TRUE, echo=TRUE}
-# Just the population structure covariates
 tasPhenoFull |> filterTraits(traitType == "covariate")
-
-# Drop traits that are missing more than 5% of their observations
-tasPhenoFull |> filterTraits(notMissing >= 0.95)
 ```
 
-The taxa column is an axis rather than a trait, so it is never offered to the
-trait verbs and never dropped by them. Attribute types survive filtering
-untouched, and as with genotype data every verb returns a new object of the
+The taxa column is an axis rather than a trait, so it is never dropped by the
+trait verbs. As with genotype data, every verb returns a new object of the
 same class it was given, leaving the original alone.
 
 

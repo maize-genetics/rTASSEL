@@ -19,6 +19,7 @@ articles:
   contents:
   - rtassel_installation
   - genotype_filtration
+  - phenotype_filtration
   - rtassel_benchmarks
 
 reference:
