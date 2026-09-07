@@ -4,20 +4,30 @@
 \alias{concatenate}
 \title{Concatenate phenotype tables}
 \usage{
-concatenate(x)
+concatenate(...)
 }
 \arguments{
-\item{x}{A list of rTASSEL objects containing a phenotype. Accepted
+\item{...}{Any number of rTASSEL objects containing a phenotype. Accepted
 classes are \code{\linkS4class{TasselPhenotype}},
 \code{\linkS4class{TasselGenomicDataset}},
 \code{\linkS4class{PCAResults}}, and the deprecated
-\code{TasselGenotypePhenotype}.}
+\code{TasselGenotypePhenotype}. Lists of objects are flattened, so
+earlier \code{concatenate(c(ph1, ph2))} style calls keep working.
+Unlike the joins, this function binds phenotype rows together and so
+does not accept genotype-only input.}
 }
 \value{
 A \code{\linkS4class{TasselPhenotype}} object, or a
    \code{TasselGenotypePhenotype} if every data-bearing input was one.
 }
 \description{
-Concatenate (e.g. bind rows) multiple phenotype objects based
-   on \code{Taxa} column.
+Concatenate (e.g. bind rows) any number of phenotype objects
+   based on the \code{Taxa} column.
+}
+\examples{
+\dontrun{
+# Stack phenotype tables that share the same traits
+concatenate(ph2021, ph2022, ph2023)
+}
+
 }

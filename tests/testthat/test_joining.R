@@ -53,6 +53,40 @@ test_that("Union join returns correct values", {
 })
 
 
+phC <- readPhenotype(
+    data.frame(
+        taxa = c("a", "b", "c"),
+        girth = c(3, 4, 5)
+    ),
+    attr = phAttr("girth")
+)
+
+test_that("Joins take any number of objects without a list", {
+    intersectPheno <- intersectJoin(phA, phB, phC)
+
+    expect_s4_class(intersectPheno, "TasselPhenotype")
+    expect_equal(getTaxaIDs(intersectPheno), c("a", "b", "c"))
+    expect_equal(
+        attributeData(intersectPheno)$trait_id,
+        c("Taxa", "weight", "height", "girth")
+    )
+
+    unionPheno <- unionJoin(phA, phB, phC)
+    expect_equal(getTaxaIDs(unionPheno), c("a", "b", "c", "d"))
+})
+
+test_that("Variadic and list call styles agree", {
+    expect_equal(
+        attributeData(intersectJoin(phA, phB)),
+        attributeData(intersectJoin(c(phA, phB)))
+    )
+    expect_equal(
+        getTaxaIDs(unionJoin(phA, phB)),
+        getTaxaIDs(unionJoin(list(phA, phB)))
+    )
+})
+
+
 ## Concatenation tests ----
 phA1 <- readPhenotype(
     data.frame(
@@ -106,9 +140,66 @@ test_that("Joining accepts a genomic dataset's phenotype data", {
     )
 })
 
+test_that("Joining a genotype object returns a genomic dataset", {
+    phCov <- readPhenotype(rtFiles$ph_popstruct_path)
+
+    joined <- intersectJoin(rtObjs$gt_hmp, rtObjs$ph_nomiss, phCov)
+
+    expect_s4_class(joined, "TasselGenomicDataset")
+    expect_equal(
+        traitNames(joined),
+        c("EarHT", "dpoll", "EarDia", "Q1", "Q2", "Q3")
+    )
+    expect_equal(
+        joined@genotype@jRefObj$numberOfSites(),
+        rtObjs$gt_hmp@jRefObj$numberOfSites()
+    )
+    expect_setequal(
+        getTaxaIDs(joined),
+        intersect(getTaxaIDs(rtObjs$ds_hmp_ph_nomiss), getTaxaIDs(phCov))
+    )
+})
+
+test_that("The join mode carries through to the genotype join", {
+    # A taxon the genotype table does not know about, so the genotype
+    # join mode - not just the phenotype one - decides whether it stays
+    phTaxa <- c(head(getTaxaIDs(rtObjs$gt_hmp), 3), "fake_line")
+
+    phX <- readPhenotype(
+        data.frame(taxa = phTaxa, weight = c(120, 150, 100, 70)),
+        attr = phAttr("weight")
+    )
+    phY <- readPhenotype(
+        data.frame(taxa = phTaxa, height = c(12, 15, 10, 9)),
+        attr = phAttr("height")
+    )
+
+    intersectDs <- intersectJoin(rtObjs$gt_hmp, phX, phY)
+    unionDs     <- unionJoin(rtObjs$gt_hmp, phX, phY)
+
+    expect_s4_class(unionDs, "TasselGenomicDataset")
+    expect_equal(getTaxaIDs(phenotype(intersectDs)), head(phTaxa, 3))
+    expect_equal(getTaxaIDs(phenotype(unionDs)), phTaxa)
+})
+
 test_that("Joins reject empty and unsupported input", {
     expect_error(intersectJoin(list()), "at least one object")
     expect_error(intersectJoin(c(phA, mtcars)), "Unsupported input object")
+})
+
+test_that("Joins reject genotype input they cannot use", {
+    expect_error(
+        intersectJoin(rtObjs$gt_hmp),
+        "at least one object with phenotype data"
+    )
+    expect_error(
+        intersectJoin(rtObjs$gt_hmp, rtObjs$gt_vcf, phA),
+        "at most one genotype-only object"
+    )
+    expect_error(
+        concatenate(rtObjs$gt_hmp, phA1, phA2),
+        "does not accept genotype data"
+    )
 })
 
 
@@ -146,6 +237,14 @@ test_that("joins and merges accept deprecated TasselGenotypePhenotype input", {
     legacyJoin <- intersectJoin(c(legacyPhA, legacyPhB))
     expect_s4_class(legacyJoin, "TasselGenotypePhenotype")
     expect_equal(getTaxaIDs(legacyJoin), c("a", "b", "c"))
+
+    legacyGtJoin <- intersectJoin(
+        rtObjsLegacy$gt_hmp,
+        rtObjsLegacy$ph_nomiss,
+        readPhenotypeFromPath(rtFiles$ph_popstruct_path)
+    )
+    expect_s4_class(legacyGtJoin, "TasselGenotypePhenotype")
+    expect_false(rJava::is.jnull(getGenotypeTable(legacyGtJoin)))
 
     legacyMerge <- mergeGenotypeTables(list(
         rtObjsLegacy$gt_hmp,

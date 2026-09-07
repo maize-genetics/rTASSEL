@@ -79,7 +79,8 @@ TASSEL_INPUT <- list(
 # (deprecated) 'TasselGenotypePhenotype' object.
 # @param what
 # Which data the calling function requires: '"genotype"',
-# '"phenotype"', or '"both"'.
+# '"phenotype"', '"both"', or '"any"' when either component on its own
+# is enough.
 # @param fn
 # Name of the calling function, used in errors and warnings. Defaults
 # to the function that called '.resolveTasselInput()'.
@@ -93,7 +94,7 @@ TASSEL_INPUT <- list(
 # @importFrom rJava is.jnull
 .resolveTasselInput <- function(
     x,
-    what = c("genotype", "phenotype", "both"),
+    what = c("genotype", "phenotype", "both", "any"),
     fn = NULL
 ) {
     what <- rlang::arg_match(what)
@@ -157,6 +158,15 @@ TASSEL_INPUT <- list(
     if (what %in% c("phenotype", "both") && rJava::is.jnull(jComps$jPh)) {
         rlang::abort(
             sprintf("`%s()` needs phenotype data - none found in input", fn)
+        )
+    }
+    if (
+        what == "any" &&
+        rJava::is.jnull(jComps$jGt) &&
+        rJava::is.jnull(jComps$jPh)
+    ) {
+        rlang::abort(
+            sprintf("`%s()` needs data - none found in input", fn)
         )
     }
 

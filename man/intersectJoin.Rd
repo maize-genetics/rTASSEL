@@ -4,20 +4,37 @@
 \alias{intersectJoin}
 \title{Intersect join phenotype tables}
 \usage{
-intersectJoin(x)
+intersectJoin(...)
 }
 \arguments{
-\item{x}{A list of rTASSEL objects containing a phenotype. Accepted
+\item{...}{Any number of rTASSEL objects containing a phenotype. Accepted
 classes are \code{\linkS4class{TasselPhenotype}},
 \code{\linkS4class{TasselGenomicDataset}},
 \code{\linkS4class{PCAResults}}, and the deprecated
-\code{TasselGenotypePhenotype}.}
+\code{TasselGenotypePhenotype}. At most one object carrying only
+genotype data (\code{\linkS4class{TasselGenotype}}) may also be given.
+Lists of objects are flattened, so earlier
+\code{intersectJoin(c(ph1, ph2))} style calls keep working.}
 }
 \value{
 A \code{\linkS4class{TasselPhenotype}} object, or a
-   \code{TasselGenotypePhenotype} if every data-bearing input was one.
+   \code{\linkS4class{TasselGenomicDataset}} if genotype data was given.
+   Returns a \code{TasselGenotypePhenotype} if every data-bearing input
+   was one.
 }
 \description{
-Intersect join multiple phenotype objects based on \code{Taxa}
-   column.
+Intersect join any number of phenotype objects based on the
+   \code{Taxa} column. If one of the objects carries only genotype data,
+   the joined phenotype is attached to it and a
+   \code{\linkS4class{TasselGenomicDataset}} is returned.
+}
+\examples{
+\dontrun{
+# Merge several phenotype tables of covariates and traits
+intersectJoin(ph1Cov, ph2Traits, ph3MoreTraits)
+
+# Attach a genotype table at the same time
+intersectJoin(gt, ph1Cov, ph2Traits, ph3MoreTraits)
+}
+
 }

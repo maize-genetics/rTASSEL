@@ -30,6 +30,17 @@
   + Taxa are combined with `join = "intersect"` (default) or
     `join = "union"`
   + Replaces `readGenotypePhenotype()`
+* `intersectJoin()`, `unionJoin()`, and `concatenate()` now take objects
+  directly instead of a single list:
+  + `intersectJoin(ph1Cov, ph2Traits, ph3MoreTraits)` joins any number of
+    phenotype objects in one call
+  + `intersectJoin()` and `unionJoin()` also accept one object holding only
+    genotype data, which is joined to the result. The return value is then a
+    `TasselGenomicDataset` rather than a `TasselPhenotype`, so a study's
+    genotype, covariates, and trait tables can be assembled in one step:
+    `intersectJoin(gt, ph1Cov, ph2Traits)`
+  + Lists are still flattened, so earlier `intersectJoin(c(ph1, ph2))` calls
+    keep working unchanged
 * Added new function `removeMinorSNPStates()`:
   + Collapses every site to its two most common allelic states
   + Replaces the `removeMinorSNPStates` argument of
