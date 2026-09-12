@@ -30,6 +30,18 @@ knitr::opts_chunk$set(
 )
 ```
 
+```{css, echo=FALSE}
+/* BiocStyle keeps a 150px gutter to the right of every paragraph for margin
+   notes; the illustrations below are wide, so let them reclaim it. */
+@media screen and (min-width: 992px) {
+    p > img {
+        padding: 0;
+        margin-left: -65px;
+        max-width: calc(100% + 215px);
+    }
+}
+```
+
 
 # Introduction
 
@@ -65,6 +77,15 @@ observations rather than taxa. And the `taxa` column is the label on that
 axis rather than a trait in its own right, so it is never something you
 filter out.
 
+![](../man/figures/pheno_anatomy.svg)
+
+The pills along the top are the attribute types from the table above, one
+per column. Alongside them TASSEL computes a small table of metadata for
+each trait - which position it holds, what type it is, and how much of it
+was measured - and that is what a trait filter asks its questions about.
+The row axis has no such summary: a row filter reads the trait values
+themselves.
+
 
 ## The verbs
 Phenotype data is filtered with the same pipe-friendly **verbs** used on
@@ -87,6 +108,8 @@ phenotype data, `filterTaxa()` keeps observations, while `selectTaxa()` and
 `*Traits()` verbs are specific to phenotype data and address the column
 axis.
 
+![](../man/figures/phenotype_filter.svg)
+
 Otherwise the verbs behave as their `dplyr` namesakes do: `filter*()` takes
 any number of predicates and combines them with `&`, `select*()` takes the
 whole `tidyselect` vocabulary (`all_of()`, `any_of()`, `starts_with()`,
@@ -108,7 +131,12 @@ package!**
 
 
 ## A real data set
-Every example in this vignette uses the phenotype file shipped with
+The illustrations in this vignette all draw the same toy phenotype, called
+`ph` in their headers: three taxa measured at two locations, so six
+observations of six traits. It is small enough that the effect of each verb
+can be read cell by cell.
+
+To see actual output, every example uses the phenotype file shipped with
 `rTASSEL`, read in with `readPhenotype()`. It carries all three non-taxa
 attribute types - a `factor`, three `data` traits, and three `covariate`
 traits:
@@ -172,6 +200,11 @@ way on any phenotype - and the same way as it does on a genotype table.
 Whole taxa are covered by `selectTaxa()` (by ID) and `sliceTaxa()` (by
 position).
 
+In the toy phenotype below, each of the three taxa was measured at both
+locations, which is what makes the row axis observations rather than taxa:
+
+![](../man/figures/pheno_obs_overview.svg)
+
 
 ## ...using trait values
 A comparison on any numeric trait keeps the observations for which it is
@@ -180,6 +213,12 @@ A comparison on any numeric trait keeps the observations for which it is
 ```{r, eval=TRUE, echo=TRUE}
 myPheno |> filterTaxa(EarHT > 100)
 ```
+
+Each row is tested on its own, so a replicated taxon can pass on one row
+and fail on another. With a lower threshold on the toy phenotype, B73 is
+tall enough at location B but not at location A:
+
+![](../man/figures/pheno_obs_value.svg)
 
 A range is expressed with two comparisons. `filterTaxa()` takes them as
 separate arguments and joins them with `&` for you, exactly as
@@ -219,6 +258,8 @@ single location:
 myPheno |> filterTaxa(location == "A")
 ```
 
+![](../man/figures/pheno_obs_factor.svg)
+
 Several levels are tested with `%in%`, as in `filterTaxa(location %in%
 c("A", "B"))`.
 
@@ -232,6 +273,8 @@ silently removes those observations along with the ones that fail the test:
 ```{r, eval=TRUE, echo=TRUE}
 myPheno |> filterTaxa(EarDia > 35)
 ```
+
+![](../man/figures/pheno_obs_missing.svg)
 
 To drop missing observations and nothing else, test for them directly:
 
@@ -258,6 +301,8 @@ observation of a selected taxon is kept, so here two taxa give four rows:
 ```{r, eval=TRUE, echo=TRUE}
 myPheno |> selectTaxa("33-16", "38-11")
 ```
+
+![](../man/figures/pheno_obs_select.svg)
 
 IDs held in a variable are wrapped in `all_of()`, following `tidyselect`,
 so that a typo in the variable name cannot be mistaken for a taxon name.
@@ -292,6 +337,11 @@ and starting from 1. Like `selectTaxa()`, it works a taxon at a time:
 ```{r, eval=TRUE, echo=TRUE}
 myPheno |> sliceTaxa(1:3)
 ```
+
+The strip on the right of the illustration below is the position each row's
+taxon holds in `taxaList()`, which is what `sliceTaxa()` counts:
+
+![](../man/figures/pheno_obs_slice.svg)
 
 A leading `-` drops instead, so the phenotype without its first three taxa
 is:
@@ -344,6 +394,11 @@ the taxa that passed it, select those taxa back out of the original:
 myPheno |> selectTaxa(all_of(taxaList(tallEars)))
 ```
 
+Side by side on the toy phenotype, the two steps are the difference between
+keeping the rows that passed and keeping the taxa that passed:
+
+![](../man/figures/pheno_obs_vs_taxa.svg)
+
 
 
 # Filtering traits...
@@ -370,6 +425,11 @@ it is not counted by any of these verbs: it is never offered to
 in `sliceTraits()`. Whatever traits are kept, the taxa column stays with
 them.
 
+The strips below the toy table are those metadata columns, one value per
+trait and nothing under `Taxa`:
+
+![](../man/figures/pheno_trait_overview.svg)
+
 
 ## ...using trait names
 Traits can be selected by their literal names with `selectTraits()`:
@@ -377,6 +437,8 @@ Traits can be selected by their literal names with `selectTraits()`:
 ```{r, eval=TRUE, echo=TRUE}
 myPheno |> selectTraits(EarHT, dpoll)
 ```
+
+![](../man/figures/pheno_trait_select.svg)
 
 As with taxa, names held in a variable are wrapped in `all_of()` (or
 `any_of()` to skip names that are not in the phenotype):
@@ -419,6 +481,8 @@ the `location` factor:
 myPheno |> selectTraits(where(is.numeric))
 ```
 
+![](../man/figures/pheno_trait_where.svg)
+
 `where()` sees the R representation of each column, as returned by
 `as.data.frame()`. To select on the TASSEL attribute type instead, use
 `filterTraits()`.
@@ -432,6 +496,8 @@ covariates can be pulled out on their own:
 ```{r, eval=TRUE, echo=TRUE}
 myPheno |> filterTraits(traitType == "covariate")
 ```
+
+![](../man/figures/pheno_trait_type.svg)
 
 ...or everything that is not a covariate:
 
@@ -473,6 +539,11 @@ drops it:
 myPheno |> filterTraits(notMissing >= 0.95)
 ```
 
+In the toy phenotype `EarDia` is the trait with a gap, so the same
+threshold drops it there too:
+
+![](../man/figures/pheno_trait_missing.svg)
+
 Several predicates are combined with `&`, so criteria on type and
 completeness go in one call:
 
@@ -489,6 +560,8 @@ is the first trait:
 ```{r, eval=TRUE, echo=TRUE}
 myPheno |> sliceTraits(1:3)
 ```
+
+![](../man/figures/pheno_trait_slice.svg)
 
 A leading `-` drops:
 
@@ -542,6 +615,10 @@ myPheno |>
     selectTraits(EarHT, dpoll, EarDia)
 ```
 
+What is left is the intersection of the two steps:
+
+![](../man/figures/pheno_combined.svg)
+
 The same verb can appear more than once, and the result of any step can be
 saved and reused:
 
@@ -570,6 +647,11 @@ myPheno |>
     filterTraits(notMissing >= 0.95) |>
     traitNames()
 ```
+
+The `notMissing` strip in the illustration below is what each pipeline sees
+when it reaches `filterTraits()`:
+
+![](../man/figures/pheno_order.svg)
 
 The other way round, a predicate can only name traits that are still
 present. To filter observations on a trait you do not want to keep, filter
@@ -618,6 +700,8 @@ myPheno |>
 Everything above applies unchanged to `TasselGenomicDataset` objects, which
 hold genotype and phenotype data joined on their shared taxa:
 
+![](../man/figures/genomic_dataset_01.svg)
+
 ```{r, eval=TRUE, echo=TRUE}
 genoPath <- system.file("extdata", "mdp_genotype.hmp.txt", package = "rTASSEL")
 
@@ -656,7 +740,10 @@ myDataset |> filterTaxa(notMissing >= 0.9, location == "A")
 ```
 
 Whichever half is filtered, the two are re-joined afterwards, so a taxon
-left without any observations is dropped from the genotype table as well.
+left without any observations is dropped from the genotype table as well:
+
+![](../man/figures/genomic_dataset_02.svg)
+
 Both halves can be pulled back out with `genotype()` and `phenotype()`:
 
 ```{r, eval=TRUE, echo=TRUE}

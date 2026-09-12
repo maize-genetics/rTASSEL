@@ -30,6 +30,18 @@ knitr::opts_chunk$set(
 )
 ```
 
+```{css, echo=FALSE}
+/* BiocStyle keeps a 150px gutter to the right of every paragraph for margin
+   notes; the illustrations below are wide, so let them reclaim it. */
+@media screen and (min-width: 992px) {
+    p > img {
+        padding: 0;
+        margin-left: -65px;
+        max-width: calc(100% + 215px);
+    }
+}
+```
+
 
 # Introduction
 
@@ -39,29 +51,34 @@ in `rTASSEL`. As a reminder, a genotype table in TASSEL is essentially an
 $n \times p$ matrix consisting of $n$ samples or taxa with $p$ genotypic
 observations. To illustrate this, see the diagram below:
 
-![](../man/figures/genotype_table_diagram.png)
+![](../man/figures/gt_anatomy.svg)
 
-In this illustration, sequence information is processed for variant sites of
-each parental copy. Variant data is partitioned into an $n \times p$
-matrix for each sample and relevant variant marker information (e.g. `0:2`). 
-This includes:
+In this illustration, each row is a taxon (sample) and each column is a
+variant marker site. Columns are labelled with the chromosome (sequence ID)
+and the physical position (bp) of their marker, written `chrom:pos`, and each
+cell holds the genotype call of one taxon at one site (e.g. `C:G`).
 
-* The TASSEL index for each variant site (`<this value> : `)
-  + *Note:* since TASSEL is coded in Java, this value will start at 0! In
-    `rTASSEL`, site indexes are 1-based like every other index in R. The
-    underlying TASSEL index is still reported in the `Site` column of
-    `positionList()`.
-* The physical position (bp) for each variant site (` : <this value>`)
+*Note:* since TASSEL is coded in Java, its own site index starts at 0. In
+`rTASSEL`, site indexes are 1-based like every other index in R. The
+underlying TASSEL index is still reported in the `Site` column of
+`positionList()`.
+
+Alongside the calls, TASSEL computes a table of metadata for each axis, and
+this is what a filter asks its questions about. Every taxon knows how much of
+it was called (`notMissing`) and how often it is heterozygous (`het`), and
+every site knows where it sits (`chrom`, `pos`), how common its rarer allele
+is (`maf`), how many alleles were called (`alleleCount`), and more. Both sets
+of columns are listed in full in the overview sections below.
 
 Genotype information (e.g. each $n \times p$ element) can be viewed in several 
 ways. The default view (as shown above) reflects the following:
 
 | Cell Type     | Definition                                          | Color      |
 |---------------|-----------------------------------------------------|------------|
-| Major alleles | The most frequently observed allele of each column  | Yellow     |
+| Major alleles | The most frequently observed allele of each column  | Orange     |
 | Minor alleles | The least frequently observed allele of each column | Blue       |
 | Heterozygous  | Sites where parental copies differ (e.g. `C:G`)     | Green      |
-| Unknown       | Sites where no information is given (e.g. `NA`s)    | Grey/White |
+| Unknown       | Sites where no information is given (e.g. `NA`s)    | Grey       |
 
 
 ## Two ways to filter
@@ -130,6 +147,10 @@ separate arguments to a `filter*()` verb, matching `dplyr::filter()`. And
 where a selector is inverted with `!`, a verb follows `dplyr`: `filter*()`
 negates the predicate itself, while `select*()` and `slice*()` drop with a
 leading `-`.
+
+Whichever grammar you reach for, the two axes stay the same:
+
+![](../man/figures/filter_two_grammars.svg)
 
 *Note:* We will be using the base R pipe operator `|>` for the verb examples.
 More information about this can be found [here](https://cran.r-project.org/web/packages/magrittr/vignettes/magrittr.html).
@@ -205,19 +226,22 @@ myGT
 ```
 
 ```
-# A TasselGenotype object: 5 taxa × 5 sites
+# A TasselGenotype object: 5 taxa × 8 sites
 
 # ℹ Java memory address: 0x4c1d9d4b
 ```
 
 Let's also assume it contains the same structure as the prior illustration:
 
-![](../man/figures/filter_site_01.png)
+![](../man/figures/filter_site_overview.svg)
 
 In order for us to understand how the next few parameters work, we will
-illustrate how allelic frequencies are calculated:
+illustrate how the per-site metadata is calculated. In the strips below the
+table, `major` and `minor` count the two most common alleles of each column,
+`alleleCount` counts every allele actually called (2 per diploid taxon), and
+`maf` and `het` are the frequencies derived from them:
 
-![](../man/figures/filter_site_02.png)
+![](../man/figures/filter_site_stats.svg)
 
 
 ## ...using allelic frequency
@@ -232,7 +256,7 @@ myGT |> filterSites(maf >= 0.3)
 
 ...which will remove the following columns:
 
-![](../man/figures/filter_site_03.png)
+![](../man/figures/filter_site_maf.svg)
 
 A range is expressed with two comparisons. Since `sitesWhere()` takes an
 ordinary R expression, they are joined with `&`; `filterSites()` takes them
@@ -246,7 +270,7 @@ myGT |> filterSites(maf >= 0.2, maf <= 0.3)
 
 ...which will remove the following columns:
 
-![](../man/figures/filter_site_04.png)
+![](../man/figures/filter_site_maf_range.svg)
 
 
 ## ...using `NA` data
@@ -265,7 +289,7 @@ Our example data has 5 taxa, and each diploid taxon carries 2 alleles, so a
 fully called site has an `alleleCount` of 10. Requiring all 10 filters out
 any marker with at least 1 missing call:
 
-![](../man/figures/filter_site_05.png)
+![](../man/figures/filter_site_count.svg)
 
 
 ## ...using heterozygosity frequency
@@ -282,21 +306,20 @@ myGT |> filterSites(het <= 0.1)
 
 which would filter out sites with calculated frequencies:
 
-![](../man/figures/filter_site_06.png)
+![](../man/figures/filter_site_het.svg)
 
 
 ## ...using variant indexes
 For the next several sections we will be illustrating how to filter sites
-using positional information for each marker. To better explain these concepts,
-let's modify our genotype table (`myGT`) to showcase (1) a broader range of positions
-and (2) different sequence IDs (i.e. chromosomes). *Note* Chromosome IDs are
-not illustrated this way in TASSEL and are only for demonstration purposes.
+using positional information for each marker. Since each column is labelled
+`chrom:pos`, the illustrations below also bracket the columns by chromosome
+and show each site's position in the table:
 
-![](../man/figures/filter_index_01.png)
+![](../man/figures/filter_site_index.svg)
 
 To filter by site index, we use the `sites()` selector or the `sliceSites()`
-verb. Site indexes here are 1-based, so the second through fourth markers of
-the table are:
+verb. Site indexes here are 1-based - the `siteIndex` strip in the
+illustration above - so the second through fourth markers of the table are:
 
 ```{r, eval=FALSE}
 myGT[, sites(2:4)]
@@ -304,12 +327,10 @@ myGT[, sites(2:4)]
 myGT |> sliceSites(2:4)
 ```
 
-Note that the labels in the illustration (`1:300`, `2:542`, `3:213`) show
-TASSEL's own 0-based index, which is always one less than the index passed to
-`sites()` or `sliceSites()`. In our example above, this retains the following
-markers:
+In our example above, this retains the following markers, and note that the
+window is free to cross a chromosome boundary:
 
-![](../man/figures/filter_index_02.png)
+![](../man/figures/filter_site_slice.svg)
 
 On the bracket side, a bare numeric vector does the same thing, so the
 selector can be dropped when indexes are all that is needed:
@@ -330,7 +351,7 @@ myGT[, chrom("1")]
 myGT |> filterSites(chrom == "1")
 ```
 
-![](../man/figures/filter_pos_01.png)
+![](../man/figures/filter_site_chrom.svg)
 
 Several chromosomes are `chrom("1", "2")` on the bracket side and
 `filterSites(chrom %in% c("1", "2"))` on the verb side.
@@ -342,10 +363,16 @@ and end coordinate in base pairs. The verb form spells the same window out
 as predicates on the `chrom` and `pos` columns:
 
 ```{r, eval=FALSE}
-myGT[, region("1", 250, 542)]
+myGT[, region("1", 250, 500)]
 
-myGT |> filterSites(chrom == "1", pos >= 250, pos <= 542)
+myGT |> filterSites(chrom == "1", pos >= 250, pos <= 500)
 ```
+
+Only markers on the named chromosome *and* inside the coordinate window are
+kept, so `1:120` and `1:870` are dropped along with everything on the other
+chromosomes:
+
+![](../man/figures/filter_site_region.svg)
 
 Applied to our real data set, we can pull a 10 Mbp window from chromosome 2:
 
@@ -381,9 +408,9 @@ gr
 ## GRanges object with 3 ranges and 0 metadata columns:
 ##       seqnames    ranges strand
 ##          <Rle> <IRanges>  <Rle>
-##   [1]     chr1   250-500      *
-##   [2]     chr2   213-400      *
-##   [3]     chr2   500-700      *
+##   [1]        1   250-500      *
+##   [2]        2   213-400      *
+##   [3]        2   500-700      *
 ##   -------
 ##   seqinfo: 2 sequences from an unspecified genome; no seqlengths
 ```
@@ -400,7 +427,7 @@ myGT |> filterSites(overlaps(gr))
 
 Which will dynamically filter the following marker indexes:
 
-![](../man/figures/filter_gr_01.png)
+![](../man/figures/filter_site_granges.svg)
 
 Here is the same idea on our real data set, keeping two windows on two
 different chromosomes:
@@ -445,9 +472,9 @@ same range information and save it as a BED file:
 ```{r, engine='bash', eval=FALSE}
 $ cat my_ranges.bed
 
-chr1    250   500
-chr2    213   400
-chr2    500   700
+1    250   500
+2    213   400
+2    500   700
 ```
 
 Read the file into a `GRanges` object with `rtracklayer::import()` and pass
@@ -471,9 +498,9 @@ In our example, this would look something like this:
 $ cat my_chr_pos.tsv
 
 Chromosome  Position
-1   300
-2   213
-2   665
+1   450
+2   95
+3   210
 ```
 
 Since each row is a single point rather than a range, the start and end
@@ -573,11 +600,11 @@ metadata:
 
 Both proportions are taken over the total number of sites in the table.
 
-Since we will be filtering by taxa, let's represent our toy illustration to
-contain actual maize taxa IDs instead of colorful circles. This is similar to 
-how this would be encoded in TASSEL:
+Since we will be filtering by taxa, the illustrations below move the
+metadata strips to the right of the table, where there is one value per row
+instead of one per column:
 
-![](../man/figures/filter_taxa_00.png)
+![](../man/figures/filter_taxa_overview.svg)
 
 
 ## ...using `NA` data
@@ -586,14 +613,15 @@ with `N`). Instead of column (e.g. marker) filtration, this will filter taxa
 (rows) based on missing data using the `notMissing` column:
 
 ```{r, eval=FALSE}
-myGT[taxaWhere(notMissing >= 1.0), ]
+myGT[taxaWhere(notMissing >= 0.8), ]
 
-myGT |> filterTaxa(notMissing >= 1.0)
+myGT |> filterTaxa(notMissing >= 0.8)
 ```
 
-This filters out any taxa that contain at least 1 missing variant marker site:
+This filters out any taxa called at fewer than 80% of the variant marker
+sites:
 
-![](../man/figures/filter_taxa_na.png)
+![](../man/figures/filter_taxa_missing.svg)
 
 
 ## ...using heterozygosity frequency
@@ -609,7 +637,7 @@ myGT |> filterTaxa(het <= 0.0)
 
 which would filter out taxa with calculated frequencies:
 
-![](../man/figures/filter_taxa_het.png)
+![](../man/figures/filter_taxa_het.svg)
 
 
 ## ...using taxa IDs
@@ -618,20 +646,20 @@ the `taxa()` selector or the `selectTaxa()` verb. In our example, we will
 select the following IDs:
 
 ```{r, eval=FALSE}
-myGT[taxa("B73", "B97", "Ky21"), ]
+myGT[taxa("B73", "Mo17", "Ki3"), ]
 
-myGT |> selectTaxa("B73", "B97", "Ky21")
+myGT |> selectTaxa("B73", "Mo17", "Ki3")
 ```
 
 Which will filter out any IDs that are *not* listed:
 
-![](../man/figures/filter_taxa_vector.png)
+![](../man/figures/filter_taxa_select.svg)
 
 `taxa()` also accepts a vector, so IDs can be prepared with any R code. As
 with markers, `selectTaxa()` asks for `all_of()` around a variable:
 
 ```{r, eval=FALSE}
-myFavTaxa <- c("B73", "B97", "Ky21")
+myFavTaxa <- c("B73", "Mo17", "Ki3")
 
 myGT[taxa(myFavTaxa), ]
 
@@ -657,10 +685,10 @@ This makes patterns that previously required building a vector by hand a
 single call:
 
 ```{r, eval=FALSE}
-# All taxa whose ID starts with "B" or "Ky"
-myGT[taxaWhere(grepl("^B|^Ky", taxaId)), ]
+# All taxa whose ID starts with "B" or "K"
+myGT[taxaWhere(grepl("^B|^K", taxaId)), ]
 
-myGT |> filterTaxa(grepl("^B|^Ky", taxaId))
+myGT |> filterTaxa(grepl("^B|^K", taxaId))
 ```
 
 ```{r, eval=TRUE, echo=TRUE}
@@ -697,21 +725,21 @@ Both bracket indexes can be given at once, which filters taxa and sites in a
 single expression. With verbs, the two axes are filtered by piping one verb
 into the next. Let's use our previous toy data set:
 
-![](../man/figures/filter_taxa_00.png)
+![](../man/figures/filter_taxa_overview.svg)
 
 Let's (1) select taxa IDs that start with the letter "B" or "K" *and* (2)
 select the second through fourth markers. This will filter elements shown
 below:
 
 ```{r, eval=FALSE}
-myGT[taxaWhere(grepl("^B|^Ky", taxaId)), sites(2:4)]
+myGT[taxaWhere(grepl("^B|^K", taxaId)), sites(2:4)]
 
 myGT |>
-    filterTaxa(grepl("^B|^Ky", taxaId)) |>
+    filterTaxa(grepl("^B|^K", taxaId)) |>
     sliceSites(2:4)
 ```
 
-![](../man/figures/filter_taxa_pipe.png)
+![](../man/figures/filter_combined.svg)
 
 
 The bracket method filters taxa before sites, so site metrics such as `maf`
@@ -772,9 +800,12 @@ myRealGT |>
 
 ## Filtering genomic datasets
 Everything above applies unchanged to `TasselGenomicDataset` objects, which
-hold genotype and phenotype data joined on their shared taxa. Filtering one
-re-joins the phenotype data against the taxa that survive, so both halves of
-the dataset stay in step:
+hold genotype and phenotype data joined on their shared taxa:
+
+![](../man/figures/genomic_dataset_01.svg)
+
+Filtering one re-joins the phenotype data against the taxa that survive, so
+both halves of the dataset stay in step:
 
 ```{r, eval=TRUE, echo=TRUE}
 phenoPath <- system.file("extdata", "mdp_traits.txt", package = "rTASSEL")
@@ -799,7 +830,9 @@ the dataset to filter: naming a phenotype column selects observations, while
 anything else - including `notMissing` and `het`, which keep their genotype
 meaning throughout - filters the genotype table. Either way the two halves
 are re-joined, so a taxon left without any observations is dropped from the
-genotype table as well.
+genotype table as well:
+
+![](../man/figures/genomic_dataset_02.svg)
 
 ```{r, eval=TRUE, echo=TRUE}
 # One trait, all taxa
