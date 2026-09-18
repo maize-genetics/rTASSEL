@@ -208,6 +208,79 @@ setMethod("show", "TasselPhenotype", function(object) {
 
 
 
+# /// Bracket Method /////////////////////////////////////////////////
+
+## ----
+#' @title Subset a TasselPhenotype
+#'
+#' @description
+#' Matrix-style subsetting for \code{TasselPhenotype} objects using
+#' the \code{ph[observations, traits]} syntax, the phenotype
+#' counterpart of the \code{gt[taxa, sites]} syntax used on genotype
+#' tables.
+#'
+#' @details
+#' The row axis is observations rather than taxa, since a phenotype
+#' may hold several observations of one taxon.
+#' \code{\link{taxaWhere}()} tests each observation on its own, while
+#' \code{\link{taxa}()} and a bare character vector keep whole taxa
+#' with every observation they have.
+#'
+#' The column axis is traits. The taxa column is the label on the row
+#' axis rather than a trait, so it is not a position in \code{j} and
+#' is never dropped.
+#'
+#' Indices are applied left to right, so a trait predicate sees the
+#' observations that the row index left behind. \code{notMissing} in
+#' \code{\link{traitsWhere}()} is therefore computed over the
+#' surviving observations, as it is when \code{\link{filterTraits}()}
+#' follows \code{\link{filterTaxa}()} in a pipeline.
+#'
+#' @param x A \code{TasselPhenotype} object.
+#' @param i Observation selector: a character vector of taxa IDs, a
+#'   \code{\linkS4class{TaxaSelector}}, or missing.
+#' @param j Trait selector: an integer vector of 1-based trait
+#'   positions, a character vector of trait names, a
+#'   \code{\linkS4class{TraitSelector}}, or missing.
+#' @param ... Ignored.
+#' @param drop Ignored.
+#'
+#' @return A new \code{TasselPhenotype} containing the selected
+#'   observations and/or traits.
+#'
+#' @examples
+#' \dontrun{
+#' ph[taxa("33-16", "38-11"), ]
+#' ph[taxaWhere(EarHT > 100), ]
+#' ph[, traits("EarHT", "dpoll")]
+#' ph[, traitsWhere(traitType == "covariate")]
+#' ph[taxaWhere(location == "A"), 1:3]
+#' ph[, !traits("EarDia")]
+#' }
+#'
+#' @rdname TasselPhenotype-class
+#' @aliases [,TasselPhenotype,ANY,ANY-method
+setMethod("[", "TasselPhenotype", function(x, i, j, ..., drop = FALSE) {
+    tasIn <- .resolveTasselInput(x, "phenotype", "[")
+
+    jPh   <- x@jRefObj
+    rData <- x@rData
+
+    if (!missing(i)) {
+        kept  <- applyPhenotypeTaxaSelector(jPh, i, tasIn, rData)
+        jPh   <- kept$jPh
+        rData <- rData[kept$positions, , drop = FALSE]
+    }
+
+    # An observation subset keeps every attribute, so the attribute
+    # metadata cached on 'x' still describes the traits of 'jPh'
+    if (!missing(j)) jPh <- applyTraitSelector(jPh, j, x@attrData, rData)
+
+    createTasselPhenotype(jPh)
+})
+
+
+
 # /// Methods (general) /////////////////////////////////////////////
 
 ## ----

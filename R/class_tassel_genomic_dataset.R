@@ -558,37 +558,87 @@ as.matrix.TasselGenomicDataset <- function(x, ...) {
 #'
 #' @description
 #' Matrix-style subsetting for \code{TasselGenomicDataset} objects using the
-#' \code{ds[taxa, sites]} syntax. Selectors are applied to the genotype table
-#' and the phenotype data is then re-joined against the surviving taxa, so
-#' both components of the returned dataset stay in step.
+#' \code{ds[taxa, sites]} syntax. Whichever component a selector addresses,
+#' the two are re-joined afterwards, so a taxon left without any
+#' observations is dropped from the genotype table as well.
+#'
+#' @details
+#' A dataset has two row axes that \code{i} could address, so the selector
+#' decides, exactly as it does in \code{\link{filterTaxa}()}: a
+#' \code{\link{taxaWhere}()} predicate naming a phenotype column filters
+#' observations, and anything else filters the taxa of the genotype table.
+#' The genotype metrics \code{notMissing} and \code{het} therefore keep
+#' their meaning, and can be combined with phenotype criteria in one call.
+#'
+#' The column index is likewise read from what it is given. A
+#' \code{\linkS4class{TraitSelector}} addresses the traits of the phenotype
+#' data, and everything else addresses the sites of the genotype table. To
+#' subset both column axes, chain two calls:
+#' \code{ds[, sites(1:1000)][, traits("EarHT")]}.
 #'
 #' @param x A \code{TasselGenomicDataset} object.
-#' @param i Taxa selector: a character vector of IDs, a
+#' @param i Taxa or observation selector: a character vector of IDs, a
 #'   \code{\linkS4class{TaxaSelector}}, or missing.
-#' @param j Site selector: an integer vector of 1-based indices, a
-#'   character vector of site names, a
-#'   \code{\linkS4class{SiteSelector}}, or missing.
+#' @param j Site or trait selector: an integer vector of 1-based site
+#'   indices, a character vector of site names, a
+#'   \code{\linkS4class{SiteSelector}}, a
+#'   \code{\linkS4class{TraitSelector}}, or missing.
 #' @param ... Ignored.
 #' @param drop Ignored.
 #'
-#' @return A new \code{TasselGenomicDataset} containing the selected taxa
-#'   and/or sites.
+#' @return A new \code{TasselGenomicDataset} containing the selected taxa,
+#'   observations, sites, and/or traits.
 #'
 #' @examples
 #' \dontrun{
 #' ds[taxa("B73", "Mo17"), ]
 #' ds[, sitesWhere(maf >= 0.05)]
 #' ds[taxaWhere(startsWith(taxaId, "NAM")), region("chr1", 1e6, 2e6)]
+#'
+#' # A predicate over a phenotype column filters observations
+#' ds[taxaWhere(EarHT > 100), ]
+#'
+#' # Traits are addressed by the column index too
+#' ds[, traits("EarHT", "dpoll")]
+#' ds[, sites(1:1000)][, traitsWhere(notMissing >= 0.95)]
 #' }
 #'
 #' @rdname TasselGenomicDataset-class
 #' @aliases [,TasselGenomicDataset,ANY,ANY-method
 setMethod("[", "TasselGenomicDataset", function(x, i, j, ..., drop = FALSE) {
+    tasIn <- .resolveTasselInput(x, "both", "[")
+
     jGt <- x@genotype@jRefObj
-    if (!missing(i)) jGt <- applyTaxaSelector(jGt, i)
-    if (!missing(j)) jGt <- applySiteSelector(jGt, j)
+    jPh <- x@phenotype@jRefObj
+
+    if (!missing(i)) {
+        if (isPhenotypeTaxaPredicate(i, x@phenotype@rData)) {
+            jPh <- applyPhenotypeTaxaSelector(
+                jPh, i, tasIn, x@phenotype@rData
+            )$jPh
+        } else {
+            jGt <- applyTaxaSelector(jGt, i)
+        }
+    }
+
+    onTraits <- !missing(j) && methods::is(j, "TraitSelector")
+
+    if (!missing(j) && !onTraits) jGt <- applySiteSelector(jGt, j)
+
+    jGp <- joinGenotypePhenotype(jGt, jPh)
+
+    if (!onTraits) return(createTasselGenomicDataset(jGp))
+
+    # The trait metadata a predicate asks about is computed from the
+    # observations the join left behind, so the traits are selected
+    # after it and the result is joined a second time
+    jPh   <- getPhenotypeTable(jGp)
+    rData <- tableReportToDF(jPh)
 
     createTasselGenomicDataset(
-        joinGenotypePhenotype(jGt, x@phenotype@jRefObj)
+        joinGenotypePhenotype(
+            getGenotypeTable(jGp),
+            applyTraitSelector(jPh, j, makeAttributeData(jPh, rData), rData)
+        )
     )
 })

@@ -87,6 +87,7 @@ Collate:
     'class_ld_region.R'
     'class_ld_results.R'
     'class_pca_results.R'
+    'class_phenotype_selectors.R'
     'class_tassel_dataset.R'
     'class_tassel_distance_matrix.R'
     'class_tassel_phenotype.R'

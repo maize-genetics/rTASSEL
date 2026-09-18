@@ -12,6 +12,8 @@ knitr::opts_chunk$set(
 )
 
 
+
+
 ## ----eval=TRUE, echo=TRUE-----------------------------------------------------
 genoPath <- system.file("extdata", "mdp_genotype.hmp.txt", package = "rTASSEL")
 
@@ -72,9 +74,9 @@ myRealGT |> filterSites(maf >= 0.05)
 
 
 ## ----eval=FALSE---------------------------------------------------------------
-# myGT[, region("1", 250, 542)]
+# myGT[, region("1", 250, 500)]
 # 
-# myGT |> filterSites(chrom == "1", pos >= 250, pos <= 542)
+# myGT |> filterSites(chrom == "1", pos >= 250, pos <= 500)
 
 
 ## ----eval=TRUE, echo=TRUE-----------------------------------------------------
@@ -121,9 +123,9 @@ myRealGT |> filterSites(overlaps(gr), maf >= 0.05)
 
 ## $ cat my_ranges.bed
 ## 
-## chr1    250   500
-## chr2    213   400
-## chr2    500   700
+## 1    250   500
+## 2    213   400
+## 2    500   700
 
 ## ----eval=FALSE---------------------------------------------------------------
 # myGT[, region(rtracklayer::import("my_ranges.bed"))]
@@ -134,9 +136,9 @@ myRealGT |> filterSites(overlaps(gr), maf >= 0.05)
 ## $ cat my_chr_pos.tsv
 ## 
 ## Chromosome  Position
-## 1   300
-## 2   213
-## 2   665
+## 1   450
+## 2   95
+## 3   210
 
 ## ----eval=FALSE---------------------------------------------------------------
 # chrPos <- read.table("my_chr_pos.tsv", sep = "\t", header = TRUE)
@@ -187,9 +189,9 @@ myRealGT |> sliceSites(-(1:10))
 
 
 ## ----eval=FALSE---------------------------------------------------------------
-# myGT[taxaWhere(notMissing >= 1.0), ]
+# myGT[taxaWhere(notMissing >= 0.8), ]
 # 
-# myGT |> filterTaxa(notMissing >= 1.0)
+# myGT |> filterTaxa(notMissing >= 0.8)
 
 
 ## ----eval=FALSE---------------------------------------------------------------
@@ -199,13 +201,13 @@ myRealGT |> sliceSites(-(1:10))
 
 
 ## ----eval=FALSE---------------------------------------------------------------
-# myGT[taxa("B73", "B97", "Ky21"), ]
+# myGT[taxa("B73", "Mo17", "Ki3"), ]
 # 
-# myGT |> selectTaxa("B73", "B97", "Ky21")
+# myGT |> selectTaxa("B73", "Mo17", "Ki3")
 
 
 ## ----eval=FALSE---------------------------------------------------------------
-# myFavTaxa <- c("B73", "B97", "Ky21")
+# myFavTaxa <- c("B73", "Mo17", "Ki3")
 # 
 # myGT[taxa(myFavTaxa), ]
 # 
@@ -221,10 +223,10 @@ myRealGT |> selectTaxa(c("33-16", "38-11", "4226"))
 
 
 ## ----eval=FALSE---------------------------------------------------------------
-# # All taxa whose ID starts with "B" or "Ky"
-# myGT[taxaWhere(grepl("^B|^Ky", taxaId)), ]
+# # All taxa whose ID starts with "B" or "K"
+# myGT[taxaWhere(grepl("^B|^K", taxaId)), ]
 # 
-# myGT |> filterTaxa(grepl("^B|^Ky", taxaId))
+# myGT |> filterTaxa(grepl("^B|^K", taxaId))
 
 
 ## ----eval=TRUE, echo=TRUE-----------------------------------------------------
@@ -248,10 +250,10 @@ myRealGT |> filterTaxa(startsWith(taxaId, "CML"), notMissing >= 0.9)
 
 
 ## ----eval=FALSE---------------------------------------------------------------
-# myGT[taxaWhere(grepl("^B|^Ky", taxaId)), sites(2:4)]
+# myGT[taxaWhere(grepl("^B|^K", taxaId)), sites(2:4)]
 # 
 # myGT |>
-#     filterTaxa(grepl("^B|^Ky", taxaId)) |>
+#     filterTaxa(grepl("^B|^K", taxaId)) |>
 #     sliceSites(2:4)
 
 
@@ -305,10 +307,18 @@ myDataset |>
 
 ## ----eval=TRUE, echo=TRUE-----------------------------------------------------
 # One trait, all taxa
+myDataset[, traits("EarHT")]
+
 myDataset |> selectTraits(EarHT)
 
 # Genotype and phenotype criteria in one call
+myDataset[taxaWhere(notMissing >= 0.9 & EarHT > 100), ]
+
 myDataset |> filterTaxa(notMissing >= 0.9, EarHT > 100)
+
+
+## ----eval=FALSE---------------------------------------------------------------
+# myDataset[, sitesWhere(maf >= 0.05)][, traits("EarHT")]
 
 
 ## ----eval=TRUE, echo=TRUE-----------------------------------------------------

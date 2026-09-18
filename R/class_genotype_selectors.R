@@ -5,7 +5,8 @@
 #'
 #' @description
 #' S4 class representing taxa selection criteria for bracket-based
-#' filtering of \code{TasselGenotype} objects.
+#' filtering of \code{TasselGenotype}, \code{TasselPhenotype}, and
+#' \code{TasselGenomicDataset} objects.
 #'
 #' @slot type Character indicating selector type: \code{"ids"} or
 #'   \code{"predicate"}.
@@ -30,7 +31,8 @@ setClass("TaxaSelector", slots = c(
 #'
 #' @description
 #' S4 class representing site selection criteria for bracket-based
-#' filtering of \code{TasselGenotype} objects.
+#' filtering of \code{TasselGenotype} and \code{TasselGenomicDataset}
+#' objects.
 #'
 #' @slot type Character indicating selector type: \code{"indices"},
 #'   \code{"names"}, \code{"chrom"}, \code{"region"},
@@ -73,8 +75,12 @@ setClass("SiteSelector", slots = c(
 #' @title Select Taxa by ID
 #'
 #' @description
-#' Creates a \code{\linkS4class{TaxaSelector}} for filtering a
-#' \code{TasselGenotype} by taxa names.
+#' Creates a \code{\linkS4class{TaxaSelector}} for filtering by taxa
+#' names.
+#'
+#' @details
+#' On phenotype data a taxon may hold more than one observation, in
+#' which case every observation of a named taxon is kept.
 #'
 #' @param ... Character taxa IDs to select.
 #'
@@ -83,6 +89,7 @@ setClass("SiteSelector", slots = c(
 #' @examples
 #' \dontrun{
 #' gt[taxa("B73", "Mo17"), ]
+#' ph[taxa("B73", "Mo17"), ]
 #' }
 #'
 #' @export
@@ -99,10 +106,23 @@ taxa <- function(...) {
 #'
 #' @description
 #' Creates a \code{\linkS4class{TaxaSelector}} using a predicate
-#' expression evaluated against taxa metadata. Available columns in
-#' the data mask are \code{taxaId} (taxon name), \code{notMissing}
-#' (proportion of sites with a genotype call), and \code{het}
-#' (proportion of sites that are heterozygous).
+#' expression evaluated against taxa metadata. On a genotype table
+#' the available columns in the data mask are \code{taxaId} (taxon
+#' name), \code{notMissing} (proportion of sites with a genotype
+#' call), and \code{het} (proportion of sites that are
+#' heterozygous).
+#'
+#' @details
+#' On phenotype data the mask is the phenotype's own columns, one
+#' element per observation, plus a \code{taxaId} alias for whichever
+#' column holds the taxa, so the same predicate reads the same way on
+#' either kind of data. \code{notMissing} and \code{het} are genotype
+#' metrics and are not in scope on a phenotype by itself.
+#'
+#' A \code{\linkS4class{TasselGenomicDataset}} carries both, so the
+#' predicate picks the axis: naming a phenotype column filters
+#' observations, and anything else filters the taxa of the genotype
+#' table. This is the same rule \code{\link{filterTaxa}()} applies.
 #'
 #' @param expr An unquoted expression evaluated against taxa metadata.
 #'
@@ -113,6 +133,10 @@ taxa <- function(...) {
 #' gt[taxaWhere(startsWith(taxaId, "NAM")), ]
 #' gt[taxaWhere(notMissing >= 0.8), ]
 #' gt[taxaWhere(het <= 0.1), ]
+#'
+#' # On phenotype data the trait columns are in scope
+#' ph[taxaWhere(EarHT > 100), ]
+#' ph[taxaWhere(location == "A" & !is.na(EarDia)), ]
 #' }
 #'
 #' @export

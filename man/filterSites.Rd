@@ -29,10 +29,11 @@ An object of the same class as \code{x}.
 \description{
 Keeps the taxa, sites, or traits for which every given expression is
 \code{TRUE}, in the manner of \code{dplyr::filter()}.
-\code{filterTaxa()} and \code{filterSites()} are the pipe-friendly
-equivalents of \code{\link{taxaWhere}()} and \code{\link{sitesWhere}()}
-used inside \code{[}, and are backed by the same machinery, so either
-style gives the same result.
+\code{filterTaxa()}, \code{filterSites()}, and \code{filterTraits()}
+are the pipe-friendly equivalents of \code{\link{taxaWhere}()},
+\code{\link{sitesWhere}()}, and \code{\link{traitsWhere}()} used inside
+\code{[}, and are backed by the same machinery, so either style gives
+the same result.
 }
 \details{
 On genotype data, \code{filterTaxa()} evaluates its expressions
@@ -130,6 +131,6 @@ ds |> filterTaxa(notMissing >= 0.8, location == "A")
 }
 \seealso{
 \code{\link{taxaWhere}}, \code{\link{sitesWhere}},
-   \code{\link{selectSites}}, \code{\link{sliceSites}},
-   \code{\link{overlaps}}
+   \code{\link{traitsWhere}}, \code{\link{selectSites}},
+   \code{\link{sliceSites}}, \code{\link{overlaps}}
 }

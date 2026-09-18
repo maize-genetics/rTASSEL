@@ -136,10 +136,15 @@ resolveSlicePositions <- function(idx, n, fn) {
 # single value is recycled to.
 # @param noun
 # Plural noun naming the axis, used in error messages.
+# @param negate
+# Whether to keep everything the predicate did not match, as a
+# selector inverted with '!' asks for. The complement is taken before
+# the emptiness check, so negating a predicate that matched everything
+# is what raises the error.
 #
 # @return
 # An 'integer' vector of 1-based positions to keep.
-resolvePredicatePositions <- function(quos, mask, n, noun) {
+resolvePredicatePositions <- function(quos, mask, n, noun, negate = FALSE) {
     keep <- evalPredicate(quos, mask)
 
     if (!is.logical(keep)) {
@@ -153,6 +158,10 @@ resolvePredicatePositions <- function(quos, mask, n, noun) {
     # 'NA' is not 'TRUE', so a missing value drops its row as it does in
     # 'dplyr::filter()'
     positions <- which(!is.na(keep) & keep)
+
+    if (negate) {
+        positions <- setdiff(seq_len(n), positions)
+    }
 
     if (length(positions) == 0L) {
         rlang::abort(sprintf("No %s match the selection criteria", noun))
@@ -247,10 +256,11 @@ applyTraitPositions <- function(tasIn, axis, positions) {
 #' @description
 #' Keeps the taxa, sites, or traits for which every given expression is
 #' \code{TRUE}, in the manner of \code{dplyr::filter()}.
-#' \code{filterTaxa()} and \code{filterSites()} are the pipe-friendly
-#' equivalents of \code{\link{taxaWhere}()} and \code{\link{sitesWhere}()}
-#' used inside \code{[}, and are backed by the same machinery, so either
-#' style gives the same result.
+#' \code{filterTaxa()}, \code{filterSites()}, and \code{filterTraits()}
+#' are the pipe-friendly equivalents of \code{\link{taxaWhere}()},
+#' \code{\link{sitesWhere}()}, and \code{\link{traitsWhere}()} used inside
+#' \code{[}, and are backed by the same machinery, so either style gives
+#' the same result.
 #'
 #' @details
 #' On genotype data, \code{filterTaxa()} evaluates its expressions
@@ -330,8 +340,8 @@ applyTraitPositions <- function(tasIn, axis, positions) {
 #' @return An object of the same class as \code{x}.
 #'
 #' @seealso \code{\link{taxaWhere}}, \code{\link{sitesWhere}},
-#'    \code{\link{selectSites}}, \code{\link{sliceSites}},
-#'    \code{\link{overlaps}}
+#'    \code{\link{traitsWhere}}, \code{\link{selectSites}},
+#'    \code{\link{sliceSites}}, \code{\link{overlaps}}
 #'
 #' @examples
 #' \dontrun{
@@ -380,11 +390,11 @@ filterTaxa <- function(x, ...) {
     quos <- rlang::enquos(...)
     if (length(quos) == 0L) return(x)
 
-    tasIn <- .resolveTasselInput(x, "any", "filterTaxa")
-    vars  <- predicateVars(quos)
+    tasIn    <- .resolveTasselInput(x, "any", "filterTaxa")
+    selector <- predicateTaxaSelector(quos)
 
     onGenotype <- function() {
-        applyVerbSelectors(tasIn, taxaSel = predicateTaxaSelector(quos))
+        applyVerbSelectors(tasIn, taxaSel = selector)
     }
 
     if (rJava::is.jnull(tasIn$jPh)) return(onGenotype())
@@ -392,22 +402,17 @@ filterTaxa <- function(x, ...) {
     rData <- phenotypeRowData(tasIn)
 
     # An object carrying both kinds of data has two axes this verb could
-    # filter, so the predicate decides: naming a phenotype column is a
-    # phenotype query, and anything else stays on the genotype, where a
-    # simple threshold can be pushed down to a TASSEL filter plugin
+    # filter, and 'isPhenotypeTaxaPredicate()' applies the same rule to
+    # the selector that '[' does
     onBoth <- !rJava::is.jnull(tasIn$jGt)
-    if (onBoth && !any(vars %in% phenotypeOnlyVars(rData))) {
+    if (onBoth && !isPhenotypeTaxaPredicate(selector, rData)) {
         return(onGenotype())
     }
 
-    positions <- resolvePredicatePositions(
-        quos,
-        phenotypeTaxaMask(tasIn, rData, vars),
-        nrow(rData),
-        "observations"
+    .wrapPhenotypeResult(
+        applyPhenotypeTaxaSelector(tasIn$jPh, selector, tasIn, rData)$jPh,
+        tasIn
     )
-
-    .wrapPhenotypeResult(subsetPhenotypeObs(tasIn$jPh, positions), tasIn)
 }
 
 
@@ -420,13 +425,15 @@ filterTraits <- function(x, ...) {
 
     tasIn <- .resolveTasselInput(x, "phenotype", "filterTraits")
 
-    axis      <- traitAxis(tasIn)
-    meta      <- buildTraitMetadata(axis$rows, phenotypeRowData(tasIn))
-    positions <- resolvePredicatePositions(
-        quos, meta, nrow(axis$rows), "traits"
+    .wrapPhenotypeResult(
+        applyTraitSelector(
+            tasIn$jPh,
+            predicateTraitSelector(quos),
+            phenotypeAttrData(tasIn),
+            phenotypeRowData(tasIn)
+        ),
+        tasIn
     )
-
-    applyTraitPositions(tasIn, axis, positions)
 }
 
 
@@ -438,10 +445,11 @@ filterTraits <- function(x, ...) {
 #'
 #' @description
 #' Keeps taxa, sites, or traits named by a \code{tidyselect} expression,
-#' in the manner of \code{dplyr::select()}. \code{selectTaxa()} and
-#' \code{selectSites()} are the pipe-friendly equivalents of
-#' \code{\link{taxa}()} and \code{\link{siteIds}()} used inside \code{[},
-#' with the whole \code{tidyselect} vocabulary available on top.
+#' in the manner of \code{dplyr::select()}. \code{selectTaxa()},
+#' \code{selectSites()}, and \code{selectTraits()} are the pipe-friendly
+#' equivalents of \code{\link{taxa}()}, \code{\link{siteIds}()}, and
+#' \code{\link{traits}()} used inside \code{[}, with the whole
+#' \code{tidyselect} vocabulary available on top.
 #'
 #' @details
 #' IDs can be given literally, as a vector, or with any
@@ -485,7 +493,8 @@ filterTraits <- function(x, ...) {
 #' @return An object of the same class as \code{x}.
 #'
 #' @seealso \code{\link{taxa}}, \code{\link{siteIds}},
-#'    \code{\link{filterSites}}, \code{\link{sliceSites}}
+#'    \code{\link{traits}}, \code{\link{filterSites}},
+#'    \code{\link{sliceSites}}
 #'
 #' @examples
 #' \dontrun{
@@ -585,7 +594,7 @@ selectTraits <- function(x, ...) {
 #'
 #' @description
 #' Keeps taxa, sites, or traits at the given positions, in the manner of
-#' \code{dplyr::slice()}. \code{sliceTaxa()} and \code{sliceSites()} are
+#' \code{dplyr::slice()}. \code{sliceSites()} and \code{sliceTraits()} are
 #' the pipe-friendly equivalents of \code{\link{sites}()} and of a bare
 #' numeric index used inside \code{[}.
 #'
@@ -597,7 +606,9 @@ selectTraits <- function(x, ...) {
 #' As in \code{dplyr::slice()}, negative positions drop rather than keep,
 #' positive and negative positions cannot be mixed, and zeros and
 #' positions past the end of the axis are ignored. Called with no
-#' positions, all three verbs return \code{x} unchanged.
+#' positions, all three verbs return \code{x} unchanged. A numeric index
+#' inside \code{[} is stricter on this last point: \code{ph[, 99]} is an
+#' error where \code{sliceTraits(ph, 99)} keeps everything.
 #'
 #' Taxa are counted as \code{\link{taxaList}()} reports them and traits
 #' as \code{\link{traitNames}()} does, so the taxa column of a phenotype

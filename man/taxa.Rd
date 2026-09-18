@@ -13,12 +13,17 @@ taxa(...)
 A \code{\linkS4class{TaxaSelector}} object.
 }
 \description{
-Creates a \code{\linkS4class{TaxaSelector}} for filtering a
-\code{TasselGenotype} by taxa names.
+Creates a \code{\linkS4class{TaxaSelector}} for filtering by taxa
+names.
+}
+\details{
+On phenotype data a taxon may hold more than one observation, in
+which case every observation of a named taxon is kept.
 }
 \examples{
 \dontrun{
 gt[taxa("B73", "Mo17"), ]
+ph[taxa("B73", "Mo17"), ]
 }
 
 }

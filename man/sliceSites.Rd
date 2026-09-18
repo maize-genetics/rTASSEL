@@ -27,7 +27,7 @@ An object of the same class as \code{x}.
 }
 \description{
 Keeps taxa, sites, or traits at the given positions, in the manner of
-\code{dplyr::slice()}. \code{sliceTaxa()} and \code{sliceSites()} are
+\code{dplyr::slice()}. \code{sliceSites()} and \code{sliceTraits()} are
 the pipe-friendly equivalents of \code{\link{sites}()} and of a bare
 numeric index used inside \code{[}.
 }
@@ -39,7 +39,9 @@ the \code{Site} column of \code{\link{positionList}()}.
 As in \code{dplyr::slice()}, negative positions drop rather than keep,
 positive and negative positions cannot be mixed, and zeros and
 positions past the end of the axis are ignored. Called with no
-positions, all three verbs return \code{x} unchanged.
+positions, all three verbs return \code{x} unchanged. A numeric index
+inside \code{[} is stricter on this last point: \code{ph[, 99]} is an
+error where \code{sliceTraits(ph, 99)} keeps everything.
 
 Taxa are counted as \code{\link{taxaList}()} reports them and traits
 as \code{\link{traitNames}()} does, so the taxa column of a phenotype

@@ -267,6 +267,243 @@ subsetPhenotypeTraits <- function(jPh, attrIdx, taxaIdx) {
 
 
 ## ----
+# Does a taxa selector ask a question only a phenotype can answer?
+#
+# @description
+# An object carrying both kinds of data has two row axes a taxa
+# predicate could address, so the predicate decides: naming a phenotype
+# column is a phenotype query, and anything else stays on the genotype
+# table, where a simple threshold can be pushed down to a TASSEL filter
+# plugin. Shared by 'filterTaxa()' and by '[' on a
+# 'TasselGenomicDataset' so that the two grammars route alike.
+#
+# @param selector
+# A 'TaxaSelector', or any other value a taxa index accepts.
+# @param rData
+# The tibble returned by 'phenotypeRowData()'.
+#
+# @return
+# A single 'logical' value.
+isPhenotypeTaxaPredicate <- function(selector, rData) {
+    if (!methods::is(selector, "TaxaSelector")) return(FALSE)
+    if (selector@type != "predicate") return(FALSE)
+
+    any(predicateVars(selector@quo) %in% phenotypeOnlyVars(rData))
+}
+
+
+## ----
+# Resolve a taxa selector to the taxa IDs it names
+#
+# @description
+# The phenotype counterpart of the 'ids' branch of
+# 'resolveTaxaIds()'. Predicates are handled by the caller, which has
+# the data mask they are evaluated against.
+#
+# @param selector
+# A 'character' vector or a 'TaxaSelector' of type '"ids"'.
+#
+# @return
+# A 'character' vector of taxa IDs.
+resolvePhenotypeTaxaIds <- function(selector) {
+    if (is.character(selector)) return(selector)
+
+    if (!methods::is(selector, "TaxaSelector")) {
+        rlang::abort(
+            "Taxa selector must be a character vector or TaxaSelector"
+        )
+    }
+
+    if (selector@type == "ids") return(selector@ids)
+
+    rlang::abort(paste0("Unknown TaxaSelector type: ", selector@type))
+}
+
+
+## ----
+# Apply a taxa selector to a Java Phenotype
+#
+# @description
+# The phenotype counterpart of 'applyTaxaSelector()'. Named taxa are
+# kept whole, with every observation they have, while a predicate is
+# evaluated one observation at a time, so a replicated taxon can pass
+# on one row and fail on another.
+#
+# The positions are returned alongside the subset phenotype because a
+# bracket call goes on to evaluate its trait index against the
+# observations that survived this one.
+#
+# @param jPh
+# A Java 'Phenotype' object reference.
+# @param selector
+# A 'character' vector or a 'TaxaSelector'.
+# @param tasIn
+# The list returned by '.resolveTasselInput()'.
+# @param rData
+# The tibble returned by 'phenotypeRowData()'.
+#
+# @return
+# A 'list' with the subset Java 'Phenotype' 'jPh' and the 1-based
+# 'integer' 'positions' of the observations kept.
+applyPhenotypeTaxaSelector <- function(jPh, selector, tasIn, rData) {
+    negate <- methods::is(selector, "TaxaSelector") && selector@negate
+
+    isPredicate <- methods::is(selector, "TaxaSelector") &&
+        selector@type == "predicate"
+
+    positions <- if (isPredicate) {
+        vars <- predicateVars(selector@quo)
+
+        resolvePredicatePositions(
+            selector@quo,
+            phenotypeTaxaMask(tasIn, rData, vars),
+            nrow(rData),
+            "observations",
+            negate = negate
+        )
+    } else {
+        taxaCol <- taxaColumnName(phenotypeAttrData(tasIn))
+        allTaxa <- unique(rData[[taxaCol]])
+        ids     <- resolvePhenotypeTaxaIds(selector)
+
+        if (negate) {
+            ids <- setdiff(allTaxa, ids)
+        } else {
+            # An ID that names no taxon is skipped, as it is on a
+            # genotype table, but naming nothing at all is an error
+            if (length(setdiff(ids, allTaxa)) == length(ids)) {
+                rlang::abort("No taxa match the selection criteria")
+            }
+            ids <- intersect(ids, allTaxa)
+        }
+
+        if (length(ids) == 0L) {
+            rlang::abort("No taxa match the selection criteria")
+        }
+
+        which(rData[[taxaCol]] %in% ids)
+    }
+
+    list(
+        jPh       = subsetPhenotypeObs(jPh, positions),
+        positions = positions
+    )
+}
+
+
+## ----
+# Resolve a trait selector to 1-based positions among the traits
+#
+# @description
+# Positions are counted as 'traitNames()' reports them, so the taxa
+# column is not one of them.
+#
+# @param selector
+# A 'numeric' vector, a 'character' vector, or a 'TraitSelector'.
+# @param traitRows
+# The tibble returned by 'traitAttrRows()'.
+# @param rData
+# The tibble returned by 'phenotypeRowData()'.
+# @param negate
+# Whether to keep the traits the selector did not name, as a selector
+# inverted with '!' asks for.
+#
+# @return
+# An 'integer' vector of 1-based positions in 'traitRows'.
+resolveTraitPositions <- function(selector, traitRows, rData, negate = FALSE) {
+    n <- nrow(traitRows)
+
+    byName <- function(ids) {
+        idx <- match(ids, traitRows$trait_id)
+        as.integer(idx[!is.na(idx)])
+    }
+
+    byPosition <- function(idx) {
+        idx <- as.integer(idx)
+
+        if (any(idx < 1L) || any(idx > n)) {
+            rlang::abort(c(
+                "Trait positions must be 1-based and within the phenotype",
+                "x" = sprintf("There %s %s trait%s to index",
+                    if (n == 1L) "is" else "are", n, if (n == 1L) "" else "s"
+                ),
+                "i" = "`traitNames()` reports the traits in order"
+            ))
+        }
+
+        idx
+    }
+
+    # A predicate takes its own complement, so that negating one that
+    # matched nothing keeps every trait rather than raising an error
+    complement <- function(idx) if (negate) setdiff(seq_len(n), idx) else idx
+
+    if (is.numeric(selector)) return(complement(byPosition(selector)))
+    if (is.character(selector)) return(complement(byName(selector)))
+
+    if (!methods::is(selector, "TraitSelector")) {
+        rlang::abort(
+            "Trait selector must be numeric, character, or TraitSelector"
+        )
+    }
+
+    switch(selector@type,
+        "names" = complement(byName(selector@ids)),
+        "predicate" = resolvePredicatePositions(
+            selector@quo,
+            buildTraitMetadata(traitRows, rData),
+            n,
+            "traits",
+            negate = negate
+        ),
+        rlang::abort(paste0("Unknown TraitSelector type: ", selector@type))
+    )
+}
+
+
+## ----
+# Apply a trait selector to a Java Phenotype
+#
+# @description
+# The trait-axis counterpart of 'applySiteSelector()'. The taxa column
+# is the axis the observations sit on rather than a trait, so
+# 'subsetPhenotypeTraits()' keeps it whatever the selector named.
+#
+# @param jPh
+# A Java 'Phenotype' object reference.
+# @param selector
+# A 'numeric' vector, a 'character' vector, or a 'TraitSelector'.
+# @param attrData
+# The tibble returned by 'phenotypeAttrData()'.
+# @param rData
+# The tibble returned by 'phenotypeRowData()', holding the
+# observations a predicate's 'notMissing' is computed over.
+#
+# @return
+# A Java 'Phenotype' object reference.
+applyTraitSelector <- function(jPh, selector, attrData, rData) {
+    traitRows <- traitAttrRows(attrData)
+
+    positions <- resolveTraitPositions(
+        selector,
+        traitRows,
+        rData,
+        negate = methods::is(selector, "TraitSelector") && selector@negate
+    )
+
+    if (length(positions) == 0L) {
+        rlang::abort("No traits match the selection criteria")
+    }
+
+    subsetPhenotypeTraits(
+        jPh,
+        traitRows$attr_idx[positions],
+        attrData$attr_idx[attrData$trait_type == "taxa"][[1L]]
+    )
+}
+
+
+## ----
 # Rebuild a phenotype result as the class that was handed in
 #
 # @description

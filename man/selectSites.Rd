@@ -28,10 +28,11 @@ An object of the same class as \code{x}.
 }
 \description{
 Keeps taxa, sites, or traits named by a \code{tidyselect} expression,
-in the manner of \code{dplyr::select()}. \code{selectTaxa()} and
-\code{selectSites()} are the pipe-friendly equivalents of
-\code{\link{taxa}()} and \code{\link{siteIds}()} used inside \code{[},
-with the whole \code{tidyselect} vocabulary available on top.
+in the manner of \code{dplyr::select()}. \code{selectTaxa()},
+\code{selectSites()}, and \code{selectTraits()} are the pipe-friendly
+equivalents of \code{\link{taxa}()}, \code{\link{siteIds}()}, and
+\code{\link{traits}()} used inside \code{[}, with the whole
+\code{tidyselect} vocabulary available on top.
 }
 \details{
 IDs can be given literally, as a vector, or with any
@@ -88,5 +89,6 @@ ph |> selectTraits(-EarDia)
 }
 \seealso{
 \code{\link{taxa}}, \code{\link{siteIds}},
-   \code{\link{filterSites}}, \code{\link{sliceSites}}
+   \code{\link{traits}}, \code{\link{filterSites}},
+   \code{\link{sliceSites}}
 }

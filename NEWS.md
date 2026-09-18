@@ -31,6 +31,32 @@
   + The verbs build the same selectors `[` does, so predicate push-down to
     TASSEL's filter plugins and the "class in, class out" rule apply
     equally to both
+* Bracket subsetting also works on phenotype data, where the two axes are
+  observations and traits:
+  + `ph[<taxa selector>, <trait selector>]` returns a new
+    `TasselPhenotype`
+  + The row index takes the same selectors it does on a genotype table:
+    `taxa()` and a bare character vector keep whole taxa with every
+    observation they have, while `taxaWhere()` tests each observation on
+    its own against the phenotype's own columns, plus a `taxaId` alias
+    for whichever column holds the taxa
+  + New `traits()` (literal names) and `traitsWhere()` (predicate on
+    `traitIndex`, `traitId`, `traitType`, and `notMissing`) address the
+    trait axis, alongside a bare numeric vector of 1-based trait
+    positions and a bare character vector of trait names
+  + The taxa column is an axis rather than a trait, so no trait index
+    can drop it
+  + Indices are applied left to right, so a trait predicate sees the
+    observations the row index left behind, exactly as `filterTraits()`
+    does when it follows `filterTaxa()` in a pipeline
+  + Both selectors can be inverted with `!`
+  + On a `TasselGenomicDataset`, the row index routes the way
+    `filterTaxa()` does - a predicate naming a phenotype column filters
+    observations, and anything else filters the genotype table - and the
+    column index takes a trait selector as well as a site selector, so
+    `ds[, traits("EarHT")]` addresses the phenotype half. Chain two calls
+    to subset both column axes: `ds[, sites(1:1000)][, traits("EarHT")]`
+  + See the *Filtering Phenotype Data* vignette for a full walkthrough
 * The verbs also filter phenotype data, where the two axes are
   observations and traits:
   + `filterTaxa()` filters observations with predicates over the

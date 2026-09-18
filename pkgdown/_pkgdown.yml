@@ -52,12 +52,12 @@ reference:
 
 - title: Filtering and subsetting
   desc: >
-    Two interchangeable ways to filter genotype data: bracket subsetting
-    with selectors, and dplyr-style verbs. The verbs also filter the
-    observations and traits of phenotype data.
+    Two interchangeable ways to filter genotype and phenotype data:
+    bracket subsetting with selectors, and dplyr-style verbs.
 - subtitle: Bracket selectors
   desc: >
-    Selectors for the bracket API, `obj[<taxa>, <sites>]`.
+    Selectors for the bracket API, `gt[<taxa>, <sites>]` on genotype data
+    and `ph[<taxa>, <traits>]` on phenotype data.
   contents:
   - taxa
   - taxaWhere
@@ -66,8 +66,11 @@ reference:
   - chrom
   - region
   - sitesWhere
+  - traits
+  - traitsWhere
   - TaxaSelector-class
   - SiteSelector-class
+  - TraitSelector-class
 - subtitle: dplyr-style verbs
   desc: >
     Pipe-friendly verbs modelled on `dplyr::filter()`, `dplyr::select()`,

@@ -12,6 +12,13 @@ knitr::opts_chunk$set(
 )
 
 
+
+
+## ----eval=FALSE---------------------------------------------------------------
+# myPheno[taxaWhere(EarHT > 100), ]
+# myPheno |> filterTaxa(EarHT > 100)
+
+
 ## ----eval=TRUE, echo=TRUE-----------------------------------------------------
 phenoPath <- system.file("extdata", "mdp_phenotype.txt", package = "rTASSEL")
 
@@ -32,18 +39,26 @@ nrow(as.data.frame(myPheno))
 
 
 ## ----eval=TRUE, echo=TRUE-----------------------------------------------------
+myPheno[taxaWhere(EarHT > 100), ]
+
 myPheno |> filterTaxa(EarHT > 100)
 
 
 ## ----eval=TRUE, echo=TRUE-----------------------------------------------------
+myPheno[, traits("EarHT")]
+
 myPheno |> selectTraits(EarHT)
 
 
 ## ----eval=TRUE, echo=TRUE-----------------------------------------------------
+myPheno[taxaWhere(EarHT > 100), ]
+
 myPheno |> filterTaxa(EarHT > 100)
 
 
 ## ----eval=TRUE, echo=TRUE-----------------------------------------------------
+myPheno[taxaWhere(EarHT >= 60 & EarHT <= 80), ]
+
 myPheno |> filterTaxa(EarHT >= 60, EarHT <= 80)
 
 
@@ -60,6 +75,8 @@ myPheno |> filterTaxa(Q3 > 0.9)
 
 
 ## ----eval=TRUE, echo=TRUE-----------------------------------------------------
+myPheno[taxaWhere(location == "A"), ]
+
 myPheno |> filterTaxa(location == "A")
 
 
@@ -68,6 +85,8 @@ myPheno |> filterTaxa(EarDia > 35)
 
 
 ## ----eval=TRUE, echo=TRUE-----------------------------------------------------
+myPheno[taxaWhere(!is.na(EarDia)), ]
+
 myPheno |> filterTaxa(!is.na(EarDia))
 
 
@@ -76,6 +95,8 @@ myPheno |> filterTaxa(!is.na(EarHT), !is.na(dpoll), !is.na(EarDia))
 
 
 ## ----eval=TRUE, echo=TRUE-----------------------------------------------------
+myPheno[taxa("33-16", "38-11"), ]
+
 myPheno |> selectTaxa("33-16", "38-11")
 
 
@@ -90,6 +111,8 @@ myPheno |> selectTaxa(starts_with("CML"))
 
 
 ## ----eval=TRUE, echo=TRUE-----------------------------------------------------
+myPheno[taxaWhere(taxaId %in% myTaxa), ]
+
 myPheno |> filterTaxa(taxaId %in% myTaxa)
 
 
@@ -102,6 +125,8 @@ myPheno |> sliceTaxa(-(1:3))
 
 
 ## ----eval=TRUE, echo=TRUE-----------------------------------------------------
+myPheno[taxaWhere(startsWith(taxaId, "CML")), ]
+
 myPheno |> filterTaxa(startsWith(taxaId, "CML"))
 
 
@@ -122,6 +147,8 @@ myPheno |> selectTaxa(all_of(taxaList(tallEars)))
 
 
 ## ----eval=TRUE, echo=TRUE-----------------------------------------------------
+myPheno[, traits("EarHT", "dpoll")]
+
 myPheno |> selectTraits(EarHT, dpoll)
 
 
@@ -148,6 +175,8 @@ myPheno |> selectTraits(where(is.numeric))
 
 
 ## ----eval=TRUE, echo=TRUE-----------------------------------------------------
+myPheno[, traitsWhere(traitType == "covariate")]
+
 myPheno |> filterTraits(traitType == "covariate")
 
 
@@ -170,19 +199,33 @@ colMeans(!is.na(phenoDF[traitNames(myPheno)]))
 
 
 ## ----eval=TRUE, echo=TRUE-----------------------------------------------------
+myPheno[, traitsWhere(notMissing >= 0.95)]
+
 myPheno |> filterTraits(notMissing >= 0.95)
 
 
 ## ----eval=TRUE, echo=TRUE-----------------------------------------------------
+myPheno[, traitsWhere(traitType == "data" & notMissing >= 0.95)]
+
 myPheno |> filterTraits(traitType == "data", notMissing >= 0.95)
 
 
 ## ----eval=TRUE, echo=TRUE-----------------------------------------------------
+myPheno[, 1:3]
+
 myPheno |> sliceTraits(1:3)
 
 
 ## ----eval=TRUE, echo=TRUE-----------------------------------------------------
 myPheno |> sliceTraits(-1)
+
+
+## ----eval=TRUE, echo=TRUE-----------------------------------------------------
+myPheno[, !traits("EarDia")]
+
+
+## ----eval=TRUE, echo=TRUE-----------------------------------------------------
+myPheno[, !traitsWhere(traitType == "covariate")]
 
 
 ## ----eval=TRUE, echo=TRUE-----------------------------------------------------
@@ -206,6 +249,11 @@ myPheno |> filterTaxa(location != "A")
 
 
 ## ----eval=TRUE, echo=TRUE-----------------------------------------------------
+myPheno[
+    taxaWhere(location == "A" & !is.na(EarDia)),
+    traits("EarHT", "dpoll", "EarDia")
+]
+
 myPheno |>
     filterTaxa(location == "A", !is.na(EarDia)) |>
     selectTraits(EarHT, dpoll, EarDia)
@@ -216,6 +264,11 @@ completeCases <- myPheno |>
     filterTaxa(!is.na(EarHT), !is.na(dpoll), !is.na(EarDia))
 
 completeCases |> filterTraits(traitType == "data")
+
+
+## ----eval=FALSE---------------------------------------------------------------
+# myPheno[taxaWhere(location == "A"), ] |>
+#     selectTraits(EarHT, dpoll)
 
 
 ## ----eval=TRUE, echo=TRUE-----------------------------------------------------
@@ -230,6 +283,16 @@ myPheno |>
 
 
 ## ----eval=TRUE, echo=TRUE-----------------------------------------------------
+myPheno[, traitsWhere(notMissing >= 0.95)] |>
+    traitNames()
+
+myPheno[taxaWhere(!is.na(EarDia)), traitsWhere(notMissing >= 0.95)] |>
+    traitNames()
+
+
+## ----eval=TRUE, echo=TRUE-----------------------------------------------------
+myPheno[taxaWhere(location == "A"), !traits("location")]
+
 myPheno |>
     filterTaxa(location == "A") |>
     selectTraits(-location)
@@ -262,18 +325,28 @@ myDataset
 
 
 ## ----eval=TRUE, echo=TRUE-----------------------------------------------------
+myDataset[, traits("EarHT", "Q1", "Q2", "Q3")]
+
 myDataset |> selectTraits(EarHT, starts_with("Q"))
 
 
 ## ----eval=TRUE, echo=TRUE-----------------------------------------------------
 # Observations: a phenotype column is named
-myDataset |> filterTaxa(EarHT > 100)
+myDataset[taxaWhere(EarHT > 100), ]
 
 # Genotype table: only genotype metadata is named
+myDataset[taxaWhere(notMissing >= 0.9), ]
+
+
+## ----eval=TRUE, echo=TRUE-----------------------------------------------------
+myDataset |> filterTaxa(EarHT > 100)
+
 myDataset |> filterTaxa(notMissing >= 0.9)
 
 
 ## ----eval=TRUE, echo=TRUE-----------------------------------------------------
+myDataset[taxaWhere(notMissing >= 0.9 & location == "A"), ]
+
 myDataset |> filterTaxa(notMissing >= 0.9, location == "A")
 
 
@@ -283,6 +356,10 @@ tallEarsDataset <- myDataset |> filterTaxa(EarHT > 100)
 tallEarsDataset |> genotype()
 
 tallEarsDataset |> phenotype()
+
+
+## ----eval=TRUE, echo=TRUE-----------------------------------------------------
+myDataset[, sitesWhere(maf >= 0.05)][, traits("EarHT", "dpoll")]
 
 
 ## ----eval=TRUE, echo=TRUE-----------------------------------------------------

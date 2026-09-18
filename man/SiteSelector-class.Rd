@@ -13,7 +13,8 @@
 }
 \description{
 S4 class representing site selection criteria for bracket-based
-filtering of \code{TasselGenotype} objects.
+filtering of \code{TasselGenotype} and \code{TasselGenomicDataset}
+objects.
 }
 \section{Slots}{
 

@@ -30,7 +30,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{css, echo=FALSE}
+```{css, echo=FALSE, purl=FALSE}
 /* BiocStyle keeps a 150px gutter to the right of every paragraph for margin
    notes; the illustrations below are wide, so let them reclaim it. */
 @media screen and (min-width: 992px) {
@@ -117,10 +117,41 @@ whole `tidyselect` vocabulary (`all_of()`, `any_of()`, `starts_with()`,
 `-` drops instead of keeps. Every verb returns a new object of the same
 class it was given and leaves the original untouched.
 
-Genotype tables also offer a bracket (`[`) grammar built from selector
-functions. Phenotype data has no bracket grammar: the verbs are the whole
-API. On a `TasselGenomicDataset`, `[` addresses the genotype table, as
-described in the vignette *Filtering Genotype Tables*.
+
+## The two grammars
+Phenotype data is also filtered with the same bracket (`[`) grammar used on
+genotype tables, built from **selector** functions. Where a genotype table
+is indexed `gt[<taxa>, <sites>]`, a phenotype is indexed
+`ph[<observations>, <traits>]`:
+
+| Selector        | Verb equivalent  | Selects observations/traits by  |
+|-----------------|------------------|---------------------------------|
+| `taxaWhere()`   | `filterTaxa()`   | Expressions over trait columns  |
+| `taxa()`        | `selectTaxa()`   | Taxa IDs                        |
+| numeric `i`     | -                | (not available; use `sliceTaxa()`) |
+| `traitsWhere()` | `filterTraits()` | Expressions over trait metadata |
+| `traits()`      | `selectTraits()` | Trait names                     |
+| numeric `j`     | `sliceTraits()`  | Trait position (1-based)        |
+
+The row selectors are the ones you already use on genotype tables, and
+`traits()` and `traitsWhere()` are new for the trait axis. A bare character
+vector works in either index, naming taxa in `i` and traits in `j`, and any
+selector can be inverted with `!`. Leave an index out to keep everything on
+that axis.
+
+Both grammars are backed by the same machinery, so either style gives the
+same result:
+
+```{r, eval=FALSE}
+myPheno[taxaWhere(EarHT > 100), ]
+myPheno |> filterTaxa(EarHT > 100)
+```
+
+The rest of this vignette shows both spellings side by side. Which to reach
+for is a matter of taste, with two things to note. The verbs take the whole
+`tidyselect` vocabulary, so pattern matching on names is theirs alone; and
+brackets filter both axes in one expression, where verbs are piped one after
+another.
 
 *Note:* We will be using the base R pipe operator `|>` throughout. More
 information about this can be found [here](https://cran.r-project.org/web/packages/magrittr/vignettes/magrittr.html).
@@ -171,10 +202,14 @@ Here is one filter on each axis. The first keeps the observations with an
 ear height above 100, and the second keeps a single trait:
 
 ```{r, eval=TRUE, echo=TRUE}
+myPheno[taxaWhere(EarHT > 100), ]
+
 myPheno |> filterTaxa(EarHT > 100)
 ```
 
 ```{r, eval=TRUE, echo=TRUE}
+myPheno[, traits("EarHT")]
+
 myPheno |> selectTraits(EarHT)
 ```
 
@@ -183,9 +218,10 @@ myPheno |> selectTraits(EarHT)
 # Filtering observations...
 
 ## Overview
-Row criteria are passed to a `*Taxa()` verb. `filterTaxa()` evaluates an R
-expression against the phenotype's own columns, one element per
-observation, so these are available in that expression:
+Row criteria go in the first bracket index, or to a `*Taxa()` verb.
+`taxaWhere()` and `filterTaxa()` evaluate an R expression against the
+phenotype's own columns, one element per observation, so these are
+available in that expression:
 
 | Column          | Description                                                  |
 |-----------------|--------------------------------------------------------------|
@@ -197,8 +233,8 @@ reads a file but which keeps whatever name it was given when a phenotype is
 built from a `data.frame`. Using the alias means a predicate reads the same
 way on any phenotype - and the same way as it does on a genotype table.
 
-Whole taxa are covered by `selectTaxa()` (by ID) and `sliceTaxa()` (by
-position).
+Whole taxa are covered by `taxa()` and `selectTaxa()` (by ID), and by
+`sliceTaxa()` (by position).
 
 In the toy phenotype below, each of the three taxa was measured at both
 locations, which is what makes the row axis observations rather than taxa:
@@ -211,6 +247,8 @@ A comparison on any numeric trait keeps the observations for which it is
 `TRUE`:
 
 ```{r, eval=TRUE, echo=TRUE}
+myPheno[taxaWhere(EarHT > 100), ]
+
 myPheno |> filterTaxa(EarHT > 100)
 ```
 
@@ -220,11 +258,14 @@ tall enough at location B but not at location A:
 
 ![](../man/figures/pheno_obs_value.svg)
 
-A range is expressed with two comparisons. `filterTaxa()` takes them as
-separate arguments and joins them with `&` for you, exactly as
-`dplyr::filter()` does:
+A range is expressed with two comparisons. `taxaWhere()` takes one
+expression, so they are joined with `&`, while `filterTaxa()` takes them as
+separate arguments and joins them for you, exactly as `dplyr::filter()`
+does:
 
 ```{r, eval=TRUE, echo=TRUE}
+myPheno[taxaWhere(EarHT >= 60 & EarHT <= 80), ]
+
 myPheno |> filterTaxa(EarHT >= 60, EarHT <= 80)
 ```
 
@@ -255,6 +296,8 @@ A `factor` attribute is compared as text. To keep the observations from a
 single location:
 
 ```{r, eval=TRUE, echo=TRUE}
+myPheno[taxaWhere(location == "A"), ]
+
 myPheno |> filterTaxa(location == "A")
 ```
 
@@ -279,6 +322,8 @@ myPheno |> filterTaxa(EarDia > 35)
 To drop missing observations and nothing else, test for them directly:
 
 ```{r, eval=TRUE, echo=TRUE}
+myPheno[taxaWhere(!is.na(EarDia)), ]
+
 myPheno |> filterTaxa(!is.na(EarDia))
 ```
 
@@ -295,12 +340,18 @@ below.
 
 
 ## ...using taxa IDs
-Whole taxa are selected with `selectTaxa()`, which takes literal IDs. Every
-observation of a selected taxon is kept, so here two taxa give four rows:
+Whole taxa are selected with `taxa()` or `selectTaxa()`, which take literal
+IDs. Every observation of a selected taxon is kept, so here two taxa give
+four rows:
 
 ```{r, eval=TRUE, echo=TRUE}
+myPheno[taxa("33-16", "38-11"), ]
+
 myPheno |> selectTaxa("33-16", "38-11")
 ```
+
+A bare character vector means the same thing in the first index, so
+`myPheno[c("33-16", "38-11"), ]` is another way to write it.
 
 ![](../man/figures/pheno_obs_select.svg)
 
@@ -315,24 +366,29 @@ myPheno |> selectTaxa(all_of(myTaxa))
 ```
 
 The rest of the `tidyselect` vocabulary is available too, so taxa can be
-picked out by pattern:
+picked out by pattern. This is the one thing `taxa()` cannot do, since the
+bracket grammar takes literal IDs only:
 
 ```{r, eval=TRUE, echo=TRUE}
 myPheno |> selectTaxa(starts_with("CML"))
 ```
 
-Because `taxaId` is in scope for `filterTaxa()`, the same selection can be
-written as a predicate. The two are equivalent, since testing the taxon ID
-either keeps or drops every observation of that taxon:
+Because `taxaId` is in scope for `taxaWhere()` and `filterTaxa()`, the same
+selection can be written as a predicate in either grammar. It is equivalent
+to the above, since testing the taxon ID either keeps or drops every
+observation of that taxon:
 
 ```{r, eval=TRUE, echo=TRUE}
+myPheno[taxaWhere(taxaId %in% myTaxa), ]
+
 myPheno |> filterTaxa(taxaId %in% myTaxa)
 ```
 
 
 ## ...using taxa positions
 `sliceTaxa()` keeps taxa by position, counted as `taxaList()` reports them
-and starting from 1. Like `selectTaxa()`, it works a taxon at a time:
+and starting from 1. Like `selectTaxa()`, it works a taxon at a time. The
+row index has no positional spelling, so this one is a verb only:
 
 ```{r, eval=TRUE, echo=TRUE}
 myPheno |> sliceTaxa(1:3)
@@ -355,10 +411,12 @@ and positions past the end are ignored.
 
 
 ## ...using arbitrary expressions
-Because `filterTaxa()` evaluates a regular R expression, taxa IDs can be
-matched with any function that returns a logical vector:
+Because a row predicate is a regular R expression, taxa IDs can be matched
+with any function that returns a logical vector:
 
 ```{r, eval=TRUE, echo=TRUE}
+myPheno[taxaWhere(startsWith(taxaId, "CML")), ]
+
 myPheno |> filterTaxa(startsWith(taxaId, "CML"))
 ```
 
@@ -404,11 +462,12 @@ keeping the rows that passed and keeping the taxa that passed:
 # Filtering traits...
 
 ## Overview
-Column criteria are passed to a `*Traits()` verb. There are two ways to
-describe a trait. `selectTraits()` works from the trait columns themselves,
-by name or by value, with the `tidyselect` vocabulary. `filterTraits()`
-instead evaluates an R expression against per-trait metadata, and these
-columns are available in that expression:
+Column criteria go in the second bracket index, or to a `*Traits()` verb.
+There are two ways to describe a trait. `traits()` and `selectTraits()`
+work from the trait columns themselves - by name, and in the verb's case by
+value too, with the `tidyselect` vocabulary. `traitsWhere()` and
+`filterTraits()` instead evaluate an R expression against per-trait
+metadata, and these columns are available in that expression:
 
 | Column       | Description                                                        |
 |--------------|--------------------------------------------------------------------|
@@ -417,13 +476,14 @@ columns are available in that expression:
 | `traitType`  | TASSEL attribute type: `"data"`, `"covariate"`, or `"factor"`      |
 | `notMissing` | Proportion of observations that are not missing                    |
 
-Positional criteria are covered by `sliceTraits()`.
+Positional criteria are covered by `sliceTraits()` and by a bare numeric
+second index.
 
 The taxa column is the axis the observations sit on rather than a trait, so
-it is not counted by any of these verbs: it is never offered to
-`filterTraits()`, cannot be named in `selectTraits()`, and is not a position
-in `sliceTraits()`. Whatever traits are kept, the taxa column stays with
-them.
+it is not counted by any of these: it is never offered to `traitsWhere()`
+or `filterTraits()`, cannot be named in `traits()` or `selectTraits()`, and
+is not a position in `sliceTraits()` or in `ph[, 1:3]`. Whatever traits are
+kept, the taxa column stays with them.
 
 The strips below the toy table are those metadata columns, one value per
 trait and nothing under `Taxa`:
@@ -432,11 +492,17 @@ trait and nothing under `Taxa`:
 
 
 ## ...using trait names
-Traits can be selected by their literal names with `selectTraits()`:
+Traits can be selected by their literal names with `traits()` or
+`selectTraits()`:
 
 ```{r, eval=TRUE, echo=TRUE}
+myPheno[, traits("EarHT", "dpoll")]
+
 myPheno |> selectTraits(EarHT, dpoll)
 ```
+
+As in the first index, a bare character vector means the same thing, so
+`myPheno[, c("EarHT", "dpoll")]` is another way to write it.
 
 ![](../man/figures/pheno_trait_select.svg)
 
@@ -450,8 +516,9 @@ myPheno |> selectTraits(all_of(myTraits))
 ```
 
 Since `selectTraits()` follows `tidyselect`, the helpers that work in
-`dplyr::select()` work here. `starts_with()`, `ends_with()`, and
-`matches()` select by pattern:
+`dplyr::select()` work here. As with taxa, this is what the verb gives you
+over `traits()`, which takes literal names only. `starts_with()`,
+`ends_with()`, and `matches()` select by pattern:
 
 ```{r, eval=TRUE, echo=TRUE}
 myPheno |> selectTraits(starts_with("Q"))
@@ -485,15 +552,17 @@ myPheno |> selectTraits(where(is.numeric))
 
 `where()` sees the R representation of each column, as returned by
 `as.data.frame()`. To select on the TASSEL attribute type instead, use
-`filterTraits()`.
+`traitsWhere()` or `filterTraits()`.
 
 
 ## ...using attribute types
-`filterTraits()` describes traits by their metadata. The `traitType` column
-holds each trait's TASSEL attribute type, so the population structure
-covariates can be pulled out on their own:
+A trait predicate describes traits by their metadata. The `traitType`
+column holds each trait's TASSEL attribute type, so the population
+structure covariates can be pulled out on their own:
 
 ```{r, eval=TRUE, echo=TRUE}
+myPheno[, traitsWhere(traitType == "covariate")]
+
 myPheno |> filterTraits(traitType == "covariate")
 ```
 
@@ -536,6 +605,8 @@ colMeans(!is.na(phenoDF[traitNames(myPheno)]))
 drops it:
 
 ```{r, eval=TRUE, echo=TRUE}
+myPheno[, traitsWhere(notMissing >= 0.95)]
+
 myPheno |> filterTraits(notMissing >= 0.95)
 ```
 
@@ -548,16 +619,20 @@ Several predicates are combined with `&`, so criteria on type and
 completeness go in one call:
 
 ```{r, eval=TRUE, echo=TRUE}
+myPheno[, traitsWhere(traitType == "data" & notMissing >= 0.95)]
+
 myPheno |> filterTraits(traitType == "data", notMissing >= 0.95)
 ```
 
 
 ## ...using trait positions
-`sliceTraits()` keeps traits by position, counted as `traitNames()` reports
-them and starting from 1. The taxa column is not a position, so position 1
-is the first trait:
+A bare numeric second index and `sliceTraits()` keep traits by position,
+counted as `traitNames()` reports them and starting from 1. The taxa column
+is not a position, so position 1 is the first trait:
 
 ```{r, eval=TRUE, echo=TRUE}
+myPheno[, 1:3]
+
 myPheno |> sliceTraits(1:3)
 ```
 
@@ -569,13 +644,24 @@ A leading `-` drops:
 myPheno |> sliceTraits(-1)
 ```
 
-`traitIndex` inside `filterTraits()` is the same 1-based position, so
-`filterTraits(traitIndex <= 3)` is another way to write `sliceTraits(1:3)`.
+`traitIndex` inside a trait predicate is the same 1-based position, so
+`traitsWhere(traitIndex <= 3)` is another way to write `myPheno[, 1:3]`.
 
 
 ## Inverting a selection
-The verbs follow `dplyr` for negation. `selectTraits()` and `sliceTraits()`
-drop with a leading `-`:
+The two grammars negate differently. In brackets, `!` inverts the selector,
+so it keeps whatever the selector did not name:
+
+```{r, eval=TRUE, echo=TRUE}
+myPheno[, !traits("EarDia")]
+```
+
+```{r, eval=TRUE, echo=TRUE}
+myPheno[, !traitsWhere(traitType == "covariate")]
+```
+
+The verbs follow `dplyr` instead. `selectTraits()` and `sliceTraits()` drop
+with a leading `-`:
 
 ```{r, eval=TRUE, echo=TRUE}
 myPheno |> selectTraits(-EarDia)
@@ -599,17 +685,24 @@ myPheno |> filterTraits(traitType != "covariate")
 myPheno |> filterTaxa(location != "A")
 ```
 
-`filterTaxa(!(location == "A"))` is the same query as the last one.
+`filterTaxa(!(location == "A"))` and `myPheno[!taxaWhere(location == "A"), ]`
+are the same query as the last one.
 
 
 
 # Combining filters
 
-## Observations and traits in one pipeline
-Each verb takes an object and returns one, so the two axes are filtered by
-piping one verb into the next:
+## Observations and traits in one call
+Both bracket indexes can be given at once, which filters observations and
+traits in a single expression. With verbs, each takes an object and returns
+one, so the two axes are filtered by piping one verb into the next:
 
 ```{r, eval=TRUE, echo=TRUE}
+myPheno[
+    taxaWhere(location == "A" & !is.na(EarDia)),
+    traits("EarHT", "dpoll", "EarDia")
+]
+
 myPheno |>
     filterTaxa(location == "A", !is.na(EarDia)) |>
     selectTraits(EarHT, dpoll, EarDia)
@@ -629,10 +722,19 @@ completeCases <- myPheno |>
 completeCases |> filterTraits(traitType == "data")
 ```
 
+The two grammars can also be mixed in one pipeline. Since a bracket
+expression is just a value, it can start a chain of verbs, and a verb's
+result can be subset with brackets:
+
+```{r, eval=FALSE}
+myPheno[taxaWhere(location == "A"), ] |>
+    selectTraits(EarHT, dpoll)
+```
+
 
 ## Order matters
 Trait metadata is computed from the observations that are in the object at
-the time, so filtering observations first changes what `filterTraits()`
+the time, so filtering observations first changes what a trait predicate
 sees. On the full phenotype, `notMissing >= 0.95` drops `EarDia`. Once the
 observations missing `EarDia` have been removed, the same trait filter keeps
 it:
@@ -648,16 +750,30 @@ myPheno |>
     traitNames()
 ```
 
+Brackets apply their indexes left to right, so the same two pipelines are
+written with and without a row index:
+
+```{r, eval=TRUE, echo=TRUE}
+myPheno[, traitsWhere(notMissing >= 0.95)] |>
+    traitNames()
+
+myPheno[taxaWhere(!is.na(EarDia)), traitsWhere(notMissing >= 0.95)] |>
+    traitNames()
+```
+
 The `notMissing` strip in the illustration below is what each pipeline sees
-when it reaches `filterTraits()`:
+when it reaches the trait filter:
 
 ![](../man/figures/pheno_order.svg)
 
 The other way round, a predicate can only name traits that are still
 present. To filter observations on a trait you do not want to keep, filter
-the observations first and drop the trait second:
+the observations first and drop the trait second, which the bracket order
+does for you:
 
 ```{r, eval=TRUE, echo=TRUE}
+myPheno[taxaWhere(location == "A"), !traits("location")]
+
 myPheno |>
     filterTaxa(location == "A") |>
     selectTraits(-location)
@@ -709,25 +825,33 @@ myDataset <- readGenomicDataset(genoPath, myPheno)
 myDataset
 ```
 
-The trait verbs act on the phenotype half and leave the genotype table
-alone:
+The trait selectors and verbs act on the phenotype half and leave the
+genotype table alone:
 
 ```{r, eval=TRUE, echo=TRUE}
+myDataset[, traits("EarHT", "Q1", "Q2", "Q3")]
+
 myDataset |> selectTraits(EarHT, starts_with("Q"))
 ```
 
-A dataset has two row axes that `filterTaxa()` could address - the taxa of
-the genotype table and the observations of the phenotype - so it reads its
-expressions to decide which. Naming a phenotype column filters
-observations; anything else filters the genotype table, so the genotype
-metrics `notMissing` and `het` described in *Filtering Genotype Tables* keep
-their meaning throughout:
+A dataset has two row axes that a taxa predicate could address - the taxa
+of the genotype table and the observations of the phenotype - so both
+grammars read the expression to decide which. Naming a phenotype column
+filters observations; anything else filters the genotype table, so the
+genotype metrics `notMissing` and `het` described in *Filtering Genotype
+Tables* keep their meaning throughout:
 
 ```{r, eval=TRUE, echo=TRUE}
 # Observations: a phenotype column is named
-myDataset |> filterTaxa(EarHT > 100)
+myDataset[taxaWhere(EarHT > 100), ]
 
 # Genotype table: only genotype metadata is named
+myDataset[taxaWhere(notMissing >= 0.9), ]
+```
+
+```{r, eval=TRUE, echo=TRUE}
+myDataset |> filterTaxa(EarHT > 100)
+
 myDataset |> filterTaxa(notMissing >= 0.9)
 ```
 
@@ -736,6 +860,8 @@ looked up for the taxon each observation belongs to, so this keeps the
 location A observations of taxa with at least 90% of their sites called:
 
 ```{r, eval=TRUE, echo=TRUE}
+myDataset[taxaWhere(notMissing >= 0.9 & location == "A"), ]
+
 myDataset |> filterTaxa(notMissing >= 0.9, location == "A")
 ```
 
@@ -754,12 +880,21 @@ tallEarsDataset |> genotype()
 tallEarsDataset |> phenotype()
 ```
 
-`selectTaxa()` and `sliceTaxa()` mean the same thing on either half, so on a
-dataset they are read through the genotype table and give the same result
-they would on either component alone.
+`taxa()`, `selectTaxa()`, and `sliceTaxa()` mean the same thing on either
+half, so on a dataset they are read through the genotype table and give the
+same result they would on either component alone.
 
-The phenotype verbs chain with the site verbs, so a dataset can be trimmed
-on every axis in one pipeline:
+A dataset has two column axes as well, which the second bracket index tells
+apart by what it is given: a trait selector addresses the phenotype and
+everything else addresses the sites of the genotype table. To subset both,
+chain two calls:
+
+```{r, eval=TRUE, echo=TRUE}
+myDataset[, sitesWhere(maf >= 0.05)][, traits("EarHT", "dpoll")]
+```
+
+The phenotype verbs likewise chain with the site verbs, so a dataset can be
+trimmed on every axis in one pipeline:
 
 ```{r, eval=TRUE, echo=TRUE}
 myDataset |>
@@ -782,7 +917,7 @@ shown earlier.
 
 
 # How this lines up with genotype filtering
-The phenotype verbs are the genotype verbs applied to a different pair of
+Phenotype filtering is genotype filtering applied to a different pair of
 axes. If you already filter genotype tables, the table below is the whole
 difference:
 
@@ -794,7 +929,8 @@ difference:
 | `selectTaxa()`, `sliceTaxa()` | Taxa by ID and position                       | Taxa by ID and position, keeping every observation   |
 | Column verbs               | `filterSites()`, `selectSites()`, `sliceSites()` | `filterTraits()`, `selectTraits()`, `sliceTraits()`  |
 | `filter*()` column metadata | `siteIndex`, `siteId`, `chrom`, `pos`, `maf`, `alleleCount`, `het`, `isIndel`, `isBiallelic` | `traitIndex`, `traitId`, `traitType`, `notMissing` |
-| Bracket grammar            | `gt[<taxa>, <sites>]`                            | None; the verbs are the API                          |
+| Bracket grammar            | `gt[<taxa>, <sites>]`                            | `ph[<observations>, <traits>]`                       |
+| Column selectors           | `sites()`, `siteIds()`, `chrom()`, `region()`, `sitesWhere()` | `traits()`, `traitsWhere()`, numeric `j` |
 
 One name is shared across the two with different meanings: `notMissing` is
 a per-taxon proportion of called sites on a genotype table, and a per-trait

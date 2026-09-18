@@ -155,6 +155,6 @@
 <path d="M 419 221.0 C 479 221.0, 494 221.0, 554 221.0" stroke="#57534e" stroke-width="1.4" fill="none" opacity="0.25"/>
 <path d="M 419 221.0 C 479 221.0, 494 320.0, 554 320.0" stroke="#57534e" stroke-width="1.4" fill="none" opacity="0.25"/>
 <text x="486.5" y="96" font-size="13" fill="#57534e" text-anchor="middle" font-family="'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" >joined on taxa</text>
-<text x="60" y="390" font-size="17" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" xml:space="preserve"><tspan fill="#1c1917">ds |&gt; </tspan><tspan fill="#7c2d12" font-weight="600">filterTaxa(EarHT &gt; 80)</tspan></text>
+<text x="60" y="390" font-size="17" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" xml:space="preserve"><tspan fill="#1c1917">ds[</tspan><tspan fill="#7c2d12" font-weight="600">taxaWhere(EarHT &gt; 80)</tspan><tspan fill="#1c1917">, ]   |   ds |&gt; </tspan><tspan fill="#7c2d12" font-weight="600">filterTaxa(EarHT &gt; 80)</tspan></text>
 <text x="60" y="418" font-size="14" fill="#57534e" text-anchor="start" font-family="'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" >Filtering one side re-joins the other: CML52 has no observations left, so it leaves the genotype table too.</text>
 </svg>
