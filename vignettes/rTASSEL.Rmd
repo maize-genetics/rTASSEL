@@ -235,7 +235,8 @@ tasGenoHMP |> javaRefObj()
 
 This entity is a `rJava` internal identifier. It isn't until we call
 downstream `rTASSEL` functions where we will bring the TASSEL data into the R
-environment.
+environment. Every function that does so is collected in the
+[Extracting Data into R](extracting_data.html) vignette.
 
 
 ## Loading phenotype data
@@ -505,6 +506,10 @@ numGt
 
 # Converting TASSEL 5 data into R objects
 
+**NOTE**: This is just a "snapshot" of how we can pull data out of rTASSEL
+objects. For the full set of accessors and coercion methods, please see the
+additional vignette, *"Extracting Data into R"*.
+
 ## Convert genotype data
 To convert a TASSEL 5 genotype table into an R `matrix` object, you can use
 base R's `as.matrix()` function. This will by deafault, return a **dosage
@@ -539,7 +544,7 @@ types are tranlated into within the R environment:
 | taxa        | character             |
 | data        | numeric               |
 | covariate   | numeric               |
-| factor      | factor                |
+| factor      | character             |
 
 
 

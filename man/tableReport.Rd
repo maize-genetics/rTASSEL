@@ -33,10 +33,24 @@ tableReport(assocRes = missing(), reportName = missing())
 \S4method{tableReport}{PCAResults}(assocRes = missing(), reportName = missing())
 }
 \arguments{
-\item{assocRes}{a \code{\linkS4class{AssociationResults}} object}
+\item{assocRes}{an \code{\linkS4class{AssociationResults}},
+\code{\linkS4class{PCAResults}}, or \code{\linkS4class{LDResults}}
+object}
 
-\item{reportName}{a specific table report to return}
+\item{reportName}{a specific table report to return. \code{"ALL"}
+returns every report.}
+}
+\value{
+A \code{tibble}, or a named \code{list} of them when every report is
+asked for.
 }
 \description{
-Returns a \code{data.frame} object of association table reports
+Returns one of the table reports held by a results object.
+}
+\details{
+Every class that answers \code{tableReport()} reads
+\code{reportName} the same way. Left missing, it returns the class's
+default report, or every report when the class has no single default.
+\code{"ALL"} always returns every report as a named \code{list}, and
+any other name returns that one report.
 }

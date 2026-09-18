@@ -28,7 +28,7 @@ setMethod(
     definition = function(assocRes, reportName) {
         if (missing(reportName)) reportName <- NULL
         returnReportElements(
-            assocRes             = assocRes,
+            results              = assocRes@results,
             reportName           = reportName,
             defaultReportElement = "BLUE"
         )
@@ -67,7 +67,7 @@ setMethod(
     definition = function(assocRes, reportName) {
         if (missing(reportName)) reportName <- NULL
         returnReportElements(
-            assocRes             = assocRes,
+            results              = assocRes@results,
             reportName           = reportName,
             defaultReportElement = "GLM_Stats"
         )
@@ -106,7 +106,7 @@ setMethod(
     definition = function(assocRes, reportName) {
         if (missing(reportName)) reportName <- NULL
         returnReportElements(
-            assocRes             = assocRes,
+            results              = assocRes@results,
             reportName           = reportName,
             defaultReportElement = "MLM_Stats"
         )
@@ -145,7 +145,7 @@ setMethod(
     definition = function(assocRes, reportName) {
         if (missing(reportName)) reportName <- NULL
         returnReportElements(
-            assocRes             = assocRes,
+            results              = assocRes@results,
             reportName           = reportName,
             defaultReportElement = "FastAssociation"
         )
@@ -184,7 +184,7 @@ setMethod(
     definition = function(assocRes, reportName) {
         if (missing(reportName)) reportName <- NULL
         returnReportElements(
-            assocRes             = assocRes,
+            results              = assocRes@results,
             reportName           = reportName,
             defaultReportElement = "ANOVA_report"
         )

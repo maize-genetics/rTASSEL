@@ -11,7 +11,10 @@ readPhenotype(x, attr = NULL)
 or a data frame containing the phenotype data.}
 
 \item{attr}{An optional attribute metadata parameter required when \code{x} is
-a data frame. Defaults to \code{NULL}.}
+a data frame. Defaults to \code{NULL}. Two spellings are accepted:
+\code{col_id} and \code{tassel_attr}, or the \code{trait_id} and
+\code{trait_type} that \code{\link{attributeData}()} reports, so the
+metadata read off one phenotype can be used to build another.}
 }
 \value{
 A phenotype object created from the input data.
@@ -57,6 +60,9 @@ df <- tibble::tribble(
 )
 
 phenotypeDf <- readPhenotype(df, attr = attrDf)
+
+# The return trip, using the metadata of an existing phenotype
+readPhenotype(as.data.frame(phenotype), attr = attributeData(phenotype))
 }
 
 }

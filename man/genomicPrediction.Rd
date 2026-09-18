@@ -21,7 +21,8 @@ or \code{\linkS4class{TasselGenomicDataset}}. Objects of the deprecated
 \item{nIter}{Number of iterations to be ran.}
 }
 \value{
-Returns a \code{DataFrame}-based data frame
+A \code{tibble} of either accuracies or predictions, depending on
+whether cross-validation was asked for.
 }
 \description{
 This function acts as a front-end for TASSEL's genomic

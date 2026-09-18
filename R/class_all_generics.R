@@ -46,7 +46,7 @@ setGeneric("positionList", function(tasObj) standardGeneric("positionList"))
 #' @param tasObj A \code{TasselGenotypePhenotype} or \code{TasselGenotype}
 #'   object containing genotype data.
 #'
-#' @return A \code{data.frame} of per-site summary statistics.
+#' @return A \code{tibble} of per-site summary statistics.
 #'
 #' @rdname siteSummary
 #' @export
@@ -65,7 +65,7 @@ setGeneric("siteSummary", function(tasObj) standardGeneric("siteSummary"))
 #' @param tasObj A \code{TasselGenotypePhenotype} or \code{TasselGenotype}
 #'   object containing genotype data.
 #'
-#' @return A \code{data.frame} of per-taxon summary statistics.
+#' @return A \code{tibble} of per-taxon summary statistics.
 #'
 #' @rdname taxaSummary
 #' @export
@@ -152,7 +152,11 @@ setGeneric("phenotype", function(object, ...) standardGeneric("phenotype"))
 #' @description
 #' Returns a \code{character} vector of table report names
 #'
-#' @param object a \code{\linkS4class{AssociationResults}} object
+#' @param object an \code{\linkS4class{AssociationResults}},
+#'    \code{\linkS4class{PCAResults}}, or \code{\linkS4class{LDResults}}
+#'    object
+#'
+#' @return A \code{character} vector of report names.
 #'
 #' @rdname reportNames
 #' @export
@@ -163,10 +167,24 @@ setGeneric("reportNames", function(object) standardGeneric("reportNames"))
 #' @title Return selected table report
 #'
 #' @description
-#' Returns a \code{data.frame} object of association table reports
+#' Returns one of the table reports held by a results object.
 #'
-#' @param assocRes a \code{\linkS4class{AssociationResults}} object
-#' @param reportName a specific table report to return
+#' @details
+#' Every class that answers \code{tableReport()} reads
+#' \code{reportName} the same way. Left missing, it returns the class's
+#' default report, or every report when the class has no single default.
+#' \code{"ALL"} always returns every report as a named \code{list}, and
+#' any other name returns that one report.
+#'
+#' @param assocRes an \code{\linkS4class{AssociationResults}},
+#'    \code{\linkS4class{PCAResults}}, or \code{\linkS4class{LDResults}}
+#'    object
+#' @param reportName a specific table report to return. \code{"ALL"}
+#'    returns every report.
+#'
+#' @return
+#' A \code{tibble}, or a named \code{list} of them when every report is
+#' asked for.
 #'
 #' @rdname tableReport
 #' @export

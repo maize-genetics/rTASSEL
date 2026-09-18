@@ -2,7 +2,7 @@
 % Please edit documentation in R/phenotype_functions.R
 \name{getPhenotypeDF}
 \alias{getPhenotypeDF}
-\title{Get an R/\code{DataFrame} phenotype data frame from TASSEL object}
+\title{Get a phenotype data frame from a TASSEL object}
 \usage{
 getPhenotypeDF(tasObj)
 }
@@ -12,24 +12,15 @@ getPhenotypeDF(tasObj)
 \code{TasselGenotypePhenotype} class are still accepted.}
 }
 \value{
-Returns an \code{DataFrame} based data frame
+A \code{tibble}, one row per observation.
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
 
-This function will extract a \code{DataFrame}-based R data
-   frame from an object that contains phenotypic data. Use
-   \code{\link[base]{as.data.frame}()} on a
+This function will extract phenotype data from an object that contains
+   it. Use \code{\link[base]{as.data.frame}()} on a
    \code{\linkS4class{TasselPhenotype}} or
-   \code{\linkS4class{TasselGenomicDataset}} instead. Column data will be
-   converted to the following
-   types data depending on TASSEL data type:
-   \itemize{
-     \item{\code{<taxa>}: \code{character}}
-     \item{\code{<data>}: \code{numeric}}
-     \item{\code{<covariate>}: \code{numeric}}
-     \item{\code{<factor>}: \code{factor}}
-   }
+   \code{\linkS4class{TasselGenomicDataset}} instead.
 }
 \seealso{
 \code{\link[base]{as.data.frame}}

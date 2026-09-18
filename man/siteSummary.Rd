@@ -22,7 +22,7 @@ siteSummary(tasObj)
 object containing genotype data.}
 }
 \value{
-A \code{data.frame} of per-site summary statistics.
+A \code{tibble} of per-site summary statistics.
 }
 \description{
 Returns per-site summary statistics (allele frequencies, heterozygosity,

@@ -20,6 +20,7 @@ articles:
   - rtassel_installation
   - genotype_filtration
   - phenotype_filtration
+  - extracting_data
   - rtassel_benchmarks
 
 reference:
@@ -88,6 +89,7 @@ reference:
   - taxaList
   - positionList
   - matches("seqnames")
+  - granges
   - siteSummary
   - taxaSummary
   - attributeData
@@ -112,7 +114,11 @@ reference:
   - as.data.frame.TasselGenomicDataset
   - as.matrix.TasselGenotype
   - as.matrix.TasselGenomicDataset
+  - as.matrix.TasselNumericGenotype
   - as.matrix.TasselDistanceMatrix
+  - as.dist.TasselDistanceMatrix
+  - coerce-TasselGenotype-SummarizedExperiment
+  - coerce-TasselGenomicDataset-SummarizedExperiment
   - exportGenotypeTable
 
 - title: Analysis

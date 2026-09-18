@@ -22,7 +22,7 @@ Prints a compact summary of an \code{LDResults} object.
 \section{Slots}{
 
 \describe{
-\item{\code{results}}{A \code{data.frame} containing the pairwise LD
+\item{\code{results}}{A \code{tibble} containing the pairwise LD
 statistics. Expected columns include \code{Locus1}, \code{Position1},
 \code{Locus2}, \code{Position2}, \code{R^2}, \code{DPrime},
 \code{pDiseq}, and \code{N}, among others.}

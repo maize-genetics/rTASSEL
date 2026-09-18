@@ -4,17 +4,40 @@
 \alias{as.matrix.TasselGenotype}
 \title{Coerce genotype data to an R matrix}
 \usage{
-\method{as.matrix}{TasselGenotype}(x, ...)
+\method{as.matrix}{TasselGenotype}(x, type = c("dosage", "allele"), ...)
 }
 \arguments{
 \item{x}{A \code{TasselGenotype} object.}
 
+\item{type}{Reading of the genotype calls to return. Either
+\code{"dosage"} (the default) for alternate allele counts, or
+\code{"allele"} for call strings.}
+
 \item{...}{Additional arguments to be passed to or from methods.}
 }
 \value{
-An \code{integer} matrix of taxa (rows) by sites (columns).
+An \code{integer} matrix of taxa (rows) by sites (columns) when
+\code{type} is \code{"dosage"}, or a \code{character} matrix of the same
+shape when \code{type} is \code{"allele"}.
 }
 \description{
 Converts the genotype table held by a \code{TasselGenotype} object into a
-matrix of dosage values, with taxa as rows and sites as columns.
+matrix with taxa as rows and sites as columns.
+}
+\details{
+Two readings of the same calls are available. \code{"dosage"} counts the
+alternate alleles a taxon carries at a site, which is the form most
+models want. \code{"allele"} returns the calls as TASSEL itself spells
+them, which for nucleotide data means one IUPAC code per cell and
+\code{"N"} for a missing call.
+
+Both readings are as large as the data, so a table of any real size
+should be filtered down to the taxa and sites of interest first.
+}
+\examples{
+\dontrun{
+as.matrix(gt)
+as.matrix(gt, type = "allele")
+}
+
 }

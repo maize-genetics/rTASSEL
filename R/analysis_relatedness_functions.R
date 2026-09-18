@@ -224,7 +224,7 @@ asTasselDistanceMatrix <- function(m) {
 #'    Singular Value Decomposition of the data. The resulting table can be
 #'    quite large if the number of variants and taxa are big.
 #'
-#' @return A \code{DataFrame} object.
+#' @return A \code{\linkS4class{PCAResults}} object.
 #'
 #' @importFrom rJava new
 #' @importFrom rJava J
@@ -275,9 +275,6 @@ pca <- function(
     })
 
     names(reportBody) <- unlist(reportNames)
-    if (reportEigenvalues) {
-        colnames(reportBody$Eigenvalues_Datum) <- gsub(" ", "_", colnames(reportBody$Eigenvalues_Datum))
-    }
 
     return(
         methods::new(
@@ -311,7 +308,7 @@ pca <- function(
 #' @param removeNaN Remove \code{NaNs} from matrix before performing MDS.
 #'    Defaults to \code{TRUE}.
 #'
-#' @return A \code{DataFrame} object.
+#' @return A \code{tibble} of axes, one row per taxon.
 #'
 #' @importFrom rJava new
 #' @importFrom rJava J

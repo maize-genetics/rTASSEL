@@ -4,17 +4,24 @@
 \alias{as.matrix.TasselGenomicDataset}
 \title{Coerce a genomic dataset's genotype data to an R matrix}
 \usage{
-\method{as.matrix}{TasselGenomicDataset}(x, ...)
+\method{as.matrix}{TasselGenomicDataset}(x, type = c("dosage", "allele"), ...)
 }
 \arguments{
 \item{x}{A \code{TasselGenomicDataset} object.}
 
+\item{type}{Reading of the genotype calls to return. Either
+\code{"dosage"} (the default) for alternate allele counts, or
+\code{"allele"} for call strings.}
+
 \item{...}{Additional arguments to be passed to or from methods.}
 }
 \value{
-An \code{integer} matrix of taxa (rows) by sites (columns).
+An \code{integer} matrix of taxa (rows) by sites (columns) when
+\code{type} is \code{"dosage"}, or a \code{character} matrix of the same
+shape when \code{type} is \code{"allele"}.
 }
 \description{
 Returns the joined genotype table held by a
-\code{\linkS4class{TasselGenomicDataset}} as a matrix of dosage values.
+\code{\linkS4class{TasselGenomicDataset}} as a matrix, in the same two
+readings \code{\link{as.matrix.TasselGenotype}} offers.
 }

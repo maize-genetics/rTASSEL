@@ -48,7 +48,9 @@
 #' @param kFolds Number of folds to be entered.
 #' @param nIter Number of iterations to be ran.
 #'
-#' @return Returns a \code{DataFrame}-based data frame
+#' @return
+#' A \code{tibble} of either accuracies or predictions, depending on
+#' whether cross-validation was asked for.
 #'
 #' @importFrom rJava is.jnull
 #' @importFrom rJava J

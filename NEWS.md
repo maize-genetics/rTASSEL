@@ -128,6 +128,44 @@
   + `as.data.frame()` for `TasselPhenotype` and `TasselGenomicDataset`,
     replacing `getPhenotypeDF()`
   + `as.matrix()` for `TasselGenotype` and `TasselGenomicDataset`
+* Every route data takes out of the JVM now has a single implementation,
+  so the conventions each one follows hold everywhere it is used:
+  + `as.matrix()` on a `TasselGenotype`, on the deprecated
+    `TasselGenotypePhenotype`, and inside `getSumExpFromGenotypeTable()`
+    share one dosage reader, so the missing value rule is stated once
+  + `as.matrix()` on a `TasselDistanceMatrix` reads TASSEL's own array of
+    distances instead of parsing its tab-delimited text, which is faster
+    and carries full precision rather than the eight significant digits
+    the text form rounds to
+  + `tableReport()` reads its `reportName` argument the same way on every
+    results class. `"ALL"` now returns every report as a named list on
+    `AssociationResults` and `LDResults` as well as `PCAResults`
+  + `attributeData()` and the internal trait metadata agree on one set of
+    column names
+* Filled in the gaps in the extraction surface:
+  + `granges()` returns marker positions as a `GRanges` object, with the
+    rest of `positionList()` available as metadata columns via
+    `use.mcols = TRUE`. The result can be handed back to `region()` or
+    `overlaps()`, so one genotype table can be cut down to the markers of
+    another
+  + `as(x, "SummarizedExperiment")` assembles the Bioconductor container
+    from a `TasselGenotype` or `TasselGenomicDataset`, replacing the
+    deprecated `getSumExpFromGenotypeTable()`
+  + `as.matrix()` gained a `type` argument, where `type = "allele"`
+    returns the genotype calls as TASSEL spells them rather than as
+    dosages
+  + `as.matrix()` on a `TasselNumericGenotype` returns the reference
+    probabilities instead of failing. TASSEL reads these one cell at a
+    time, so filter before materializing
+  + `TasselDistanceMatrix` gained `javaRefObj()` and `taxaList()` methods,
+    which every other class already answered, and an `as.dist()` coercion
+    for `hclust()` and friends
+  + `LDResults` gained a `reportNames()` method
+  + The `attr` argument of `readPhenotype()` accepts the `trait_id` and
+    `trait_type` columns that `attributeData()` reports, alongside the
+    `col_id` and `tassel_attr` spelling, so
+    `readPhenotype(as.data.frame(ph), attr = attributeData(ph))` makes the
+    return trip
 * `filterGenotypeTableBySiteName()` now keeps phenotype data attached to
   its input instead of dropping it
 * Converted the ad-hoc "will be deprecated soon" messages to formal
@@ -152,6 +190,9 @@
   release
 * Rewrote the *Filtering Genotype Tables* vignette around bracket
   subsetting and updated *Getting Started with rTASSEL* to the new classes
+* Added the *Extracting Data into R* vignette, which collects every
+  accessor and coercion method for pulling data out of the JVM-backed
+  classes, and linked it from *Getting Started with rTASSEL*
 * Added an explicit function reference index to the package website
 * Added `lifecycle` to Imports
 

@@ -457,6 +457,19 @@ setMethod("seqnames", "TasselGenomicDataset", function(x) {
 })
 
 
+## ----
+#' @rdname granges
+#' @aliases granges,TasselGenomicDataset-method
+#' @export
+setMethod(
+    "granges",
+    "TasselGenomicDataset",
+    function(x, use.names = TRUE, use.mcols = FALSE, ...) {
+        granges(genotype(x), use.names, use.mcols, ...)
+    }
+)
+
+
 
 # /// Methods (summary) /////////////////////////////////////////////
 
@@ -537,17 +550,60 @@ as.data.frame.TasselGenomicDataset <- function(
 #'
 #' @description
 #' Returns the joined genotype table held by a
-#' \code{\linkS4class{TasselGenomicDataset}} as a matrix of dosage values.
+#' \code{\linkS4class{TasselGenomicDataset}} as a matrix, in the same two
+#' readings \code{\link{as.matrix.TasselGenotype}} offers.
 #'
 #' @param x A \code{TasselGenomicDataset} object.
+#' @param type Reading of the genotype calls to return. Either
+#'   \code{"dosage"} (the default) for alternate allele counts, or
+#'   \code{"allele"} for call strings.
 #' @param ... Additional arguments to be passed to or from methods.
 #'
-#' @return An \code{integer} matrix of taxa (rows) by sites (columns).
+#' @return
+#' An \code{integer} matrix of taxa (rows) by sites (columns) when
+#' \code{type} is \code{"dosage"}, or a \code{character} matrix of the same
+#' shape when \code{type} is \code{"allele"}.
 #'
 #' @export
-as.matrix.TasselGenomicDataset <- function(x, ...) {
-    as.matrix(genotype(x), ...)
+as.matrix.TasselGenomicDataset <- function(x, type = c("dosage", "allele"), ...) {
+    as.matrix(genotype(x), type = match.arg(type), ...)
 }
+
+
+## ----
+#' @title Coerce a genomic dataset's genotype data to a SummarizedExperiment
+#'
+#' @description
+#' Assembles the genotype half of a
+#' \code{\linkS4class{TasselGenomicDataset}} into a
+#' \code{SummarizedExperiment::SummarizedExperiment}, as
+#' \code{as(gt, "SummarizedExperiment")} does for a
+#' \code{\linkS4class{TasselGenotype}}.
+#'
+#' @details
+#' Only the genotype half crosses over. The phenotype half is reached
+#' with \code{\link{as.data.frame}()}, and can be joined to the result on
+#' the taxa column.
+#'
+#' @param from A \code{TasselGenomicDataset} object.
+#' @param to The target class, \code{"SummarizedExperiment"}.
+#' @param strict Supplied by \code{\link[methods]{as}()}; unused here.
+#'
+#' @return
+#' A \code{SummarizedExperiment} of sites (rows) by taxa (columns).
+#'
+#' @name coerce-TasselGenomicDataset-SummarizedExperiment
+#' @aliases coerce,TasselGenomicDataset,SummarizedExperiment-method
+#'
+#' @examples
+#' \dontrun{
+#' se <- as(ds, "SummarizedExperiment")
+#' }
+#'
+#' @export
+setAs("TasselGenomicDataset", "SummarizedExperiment", function(from) {
+    .genotypeSummarizedExperiment(from)
+})
 
 
 

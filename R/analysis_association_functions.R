@@ -53,7 +53,10 @@
 #'   only be estimated when the data source is genotype (not a probability).
 #'   The additive effect will always be non-negative. Defaults to \code{FALSE}.
 #'
-#' @return Returns an R list containing \code{DataFrame}-based data frames
+#' @return
+#' An \code{\linkS4class{AssociationResults}} object holding one
+#' \code{tibble} per TASSEL table report, which
+#' \code{\link{tableReport}()} reads.
 #'
 #' @importFrom rJava is.jnull
 #' @importFrom rJava J
@@ -369,12 +372,12 @@ tasPhenoFilter <- function(jPh, jGt, filtObj) {
 
     # Convert <data> and <covariates> to doubles (correct pass to TASSEL)
     doubCols <- as.character(
-        phenoAttDf$traitName[which(phenoAttDf$traitType == "data" | phenoAttDf$traitType == "covariate")]
+        phenoAttDf$trait_id[which(phenoAttDf$trait_type == "data" | phenoAttDf$trait_type == "covariate")]
     )
     phenoDF[doubCols] <- sapply(phenoDF[doubCols], as.double)
 
     # Get taxa column
-    taxaCol <- as.character(phenoAttDf$traitName[which(phenoAttDf$traitType == "taxa")])
+    taxaCol <- as.character(phenoAttDf$trait_id[which(phenoAttDf$trait_type == "taxa")])
     taxaNames <- as.vector(phenoDF[[taxaCol]])
 
     # Get non-taxa columns and reorder filtered columns (correct pass to TASSEL)
@@ -385,14 +388,14 @@ tasPhenoFilter <- function(jPh, jGt, filtObj) {
 
     # Filter data frame columns based on association formula
     phenoDF <- phenoDF[, filtObjRight]
-    phenoAttDf <- phenoAttDf[phenoAttDf$traitName %in% filtObjRight, , drop = FALSE]
+    phenoAttDf <- phenoAttDf[phenoAttDf$trait_id %in% filtObjRight, , drop = FALSE]
 
     # Get vector of non-taxa column names
     phenoColNames <- colnames(phenoDF)
     notTaxaCols <- phenoColNames[!(phenoColNames %in% taxaCol)]
 
     # Get attribute types
-    attTypes <- as.vector(phenoAttDf$traitType[which(phenoAttDf$traitType != "taxa")])
+    attTypes <- as.vector(phenoAttDf$trait_type[which(phenoAttDf$trait_type != "taxa")])
 
     # Send filtered data frame to TASSEL methods
     jList <- rJava::new(rJava::J("java/util/ArrayList"))

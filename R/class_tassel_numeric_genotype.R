@@ -49,3 +49,53 @@ setMethod("show", "TasselNumericGenotype", function(object) {
 })
 
 
+
+# /// Methods (coercion) ////////////////////////////////////////////
+
+## ----
+#' @title Coerce numeric genotype data to an R matrix
+#'
+#' @description
+#' Converts the numeric genotype table held by a
+#' \code{TasselNumericGenotype} object into a matrix of reference
+#' probabilities, with taxa as rows and sites as columns.
+#'
+#' @details
+#' A numeric genotype table holds a probability rather than a discrete
+#' call, so there is no dosage to report and the \code{type} argument of
+#' \code{\link{as.matrix.TasselGenotype}} does not apply.
+#'
+#' TASSEL 5 reads reference probabilities one cell at a time, so this
+#' costs a Java call per cell and is far slower than the dosage matrix of
+#' a comparably sized allele-based table. Filter the table down to the
+#' taxa and sites of interest before materializing it.
+#'
+#' @param x A \code{TasselNumericGenotype} object.
+#' @param ... Additional arguments to be passed to or from methods.
+#'
+#' @return A \code{numeric} matrix of taxa (rows) by sites (columns).
+#'
+#' @examples
+#' \dontrun{
+#' numGtPath <- system.file("extdata", "numeric_genotype.txt", package = "rTASSEL")
+#'
+#' readGenotype(numGtPath) |> as.matrix()
+#' }
+#'
+#' @export
+as.matrix.TasselNumericGenotype <- function(x, ...) {
+    if (!x@jRefObj$hasReferenceProbablity()) {
+        rlang::abort(c(
+            "`x` does not contain reference probabilities",
+            "i" = "Only numeric genotype tables can be coerced this way"
+        ))
+    }
+
+    .refProbMatrix(
+        jGt       = x@jRefObj,
+        taxa      = taxaList(x),
+        siteNames = positionList(x)$Name
+    )
+}
+
+

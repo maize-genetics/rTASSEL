@@ -22,7 +22,7 @@ taxaSummary(tasObj)
 object containing genotype data.}
 }
 \value{
-A \code{data.frame} of per-taxon summary statistics.
+A \code{tibble} of per-taxon summary statistics.
 }
 \description{
 Returns per-taxon summary statistics (missingness, heterozygosity, etc.)

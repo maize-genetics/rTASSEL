@@ -16,7 +16,7 @@ be returned by the analysis. Defaults to \code{5}.}
 Defaults to \code{TRUE}.}
 }
 \value{
-A \code{DataFrame} object.
+A \code{tibble} of axes, one row per taxon.
 }
 \description{
 Perform multidimensional scaling (MDS) on

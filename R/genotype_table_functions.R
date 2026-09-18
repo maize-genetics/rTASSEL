@@ -85,21 +85,13 @@ getSumExpFromGenotypeTable <- function(tasObj,
     genomicRangesDF <- genomicRanges(jGT)
 
     # Create and return byte array from TASSEL
-    if (verbose) message("Generating byte array...")
-    jc <- rJava::J("net/maizegenetics/plugindef/GenerateRCode")
-    genoCallByteArray <- jc$genotypeTableToDosageByteArray(jGT)
     if (verbose) message("Returning Java byte array to R...")
-    dosMat <- lapply(genoCallByteArray, rJava::.jevalArray)
-    if (coerceDosageToInt) {
-        if (verbose) message("Coercing to integer...")
-        dosMat <- lapply(dosMat, as.integer)
 
-        # Replace 128 values (conversion artifact?) with NAs...
-        dosMat <- lapply(dosMat, function(i) replace(i, i == 128, NA))
-    }
+    # A 'SummarizedExperiment' puts features in rows and samples in
+    # columns, which is the transpose of the taxa-by-sites dosage matrix
+    dosMat <- t(.dosageMatrix(jGT, asInteger = coerceDosageToInt))
+
     if (verbose) message("Transforming to SummarizedExperiment...")
-    dosMat <- simplify2array(dosMat)
-
     se <- SummarizedExperiment::SummarizedExperiment(
         assays = dosMat,
         rowRanges = genomicRangesDF,
@@ -219,8 +211,6 @@ readGenotypeTableFromGigwa <- function(gigwa) {
 #'
 #' @export
 as.matrix.TasselGenotypePhenotype <- function(x, ...) {
-    plugin <- rJava::J("net/maizegenetics/plugindef/GenerateRCode")
-
     if (!inherits(x, "TasselGenotypePhenotype")) {
         stop("`x` must be of class `TasselGenotypePhenotype`")
     }
@@ -229,17 +219,11 @@ as.matrix.TasselGenotypePhenotype <- function(x, ...) {
         stop("`x` must contain genotype data")
     }
 
-    jg <- x@jGenotypeTable
-    m <- rJava::.jevalArray(plugin$genotypeTableToDosageByteArray(jg), simplify = TRUE)
-    mode(m) <- "integer"
-
-    siteNames <- positionList(x)
-
-    m[m == 128] <- NA
-    colnames(m) <- siteNames$Name
-    rownames(m) <- getTaxaIDs(x)
-
-    return(m)
+    .dosageMatrix(
+        jGt       = x@jGenotypeTable,
+        taxa      = getTaxaIDs(x),
+        siteNames = positionList(x)$Name
+    )
 }
 
 

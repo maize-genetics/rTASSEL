@@ -49,7 +49,7 @@ Singular Value Decomposition of the data. The resulting table can be
 quite large if the number of variants and taxa are big.}
 }
 \value{
-A \code{DataFrame} object.
+A \code{\linkS4class{PCAResults}} object.
 }
 \description{
 This method performs principal components analysis and returns

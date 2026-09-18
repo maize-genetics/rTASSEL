@@ -2,10 +2,12 @@
 
 S3method(as.data.frame,TasselGenomicDataset)
 S3method(as.data.frame,TasselPhenotype)
+S3method(as.dist,TasselDistanceMatrix)
 S3method(as.matrix,TasselDistanceMatrix)
 S3method(as.matrix,TasselGenomicDataset)
 S3method(as.matrix,TasselGenotype)
 S3method(as.matrix,TasselGenotypePhenotype)
+S3method(as.matrix,TasselNumericGenotype)
 S3method(pillar_shaft,cov)
 S3method(pillar_shaft,data)
 S3method(pillar_shaft,fact)
@@ -110,8 +112,10 @@ exportClasses(TaxaSelector)
 exportClasses(TraitSelector)
 exportMethods(associationType)
 exportMethods(attributeData)
+exportMethods(coerce)
 exportMethods(colnames)
 exportMethods(genotype)
+exportMethods(granges)
 exportMethods(javaRefObj)
 exportMethods(ncol)
 exportMethods(nrow)
@@ -134,10 +138,13 @@ importFrom(BiocGenerics,
   rownames
 )
 importFrom(GenomicRanges,
+  GRanges,
   end,
+  granges,
   seqnames,
   start
 )
+importFrom(IRanges,IRanges)
 importFrom(S4Vectors,DataFrame)
 importFrom(SummarizedExperiment,SummarizedExperiment)
 importFrom(grDevices,
@@ -172,4 +179,5 @@ importFrom(rJava,
   new
 )
 importFrom(rlang,.data)
+importFrom(stats,as.dist)
 importFrom(utils,head)

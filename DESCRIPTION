@@ -121,6 +121,7 @@ Collate:
     'transform_genotype.R'
     'utils_deprecation.R'
     'utils_export.R'
+    'utils_extraction.R'
     'utils_formula.R'
     'utils_general.R'
     'utils_genomic_dataset.R'

@@ -117,26 +117,17 @@ readPhenotypeFromDataFrame <- function(phenotypeDF,
 }
 
 
-#' @title Get an R/\code{DataFrame} phenotype data frame from TASSEL object
+#' @title Get a phenotype data frame from a TASSEL object
 #'
 #' @description
 #' \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
 #'
-#' This function will extract a \code{DataFrame}-based R data
-#'    frame from an object that contains phenotypic data. Use
-#'    \code{\link[base]{as.data.frame}()} on a
+#' This function will extract phenotype data from an object that contains
+#'    it. Use \code{\link[base]{as.data.frame}()} on a
 #'    \code{\linkS4class{TasselPhenotype}} or
-#'    \code{\linkS4class{TasselGenomicDataset}} instead. Column data will be
-#'    converted to the following
-#'    types data depending on TASSEL data type:
-#'    \itemize{
-#'      \item{\code{<taxa>}: \code{character}}
-#'      \item{\code{<data>}: \code{numeric}}
-#'      \item{\code{<covariate>}: \code{numeric}}
-#'      \item{\code{<factor>}: \code{factor}}
-#'    }
+#'    \code{\linkS4class{TasselGenomicDataset}} instead.
 #'
-#' @return Returns an \code{DataFrame} based data frame
+#' @return A \code{tibble}, one row per observation.
 #'
 #' @name getPhenotypeDF
 #' @rdname getPhenotypeDF
@@ -158,25 +149,7 @@ getPhenotypeDF <- function(tasObj) {
         tasObj, "phenotype", "getPhenotypeDF"
     )$jPh
 
-    jPhenoAttri <- extractPhenotypeAttDf(jPhenoTable)
-    jPhenoTable <- tableReportToDF(jPhenoTable)
-
-    # # Get list of TASSEL data types
-    # attributes <- c("taxa", "factor", "covariate", "data")
-    # att <- lapply(seq_along(attributes), function(i) {
-    #     as.vector(jPhenoAttri$traitName[which(jPhenoAttri$traitType == attributes[i])])
-    # })
-    # names(att) <- attributes
-    #
-    # # Convert column data based TASSEL data types
-    # jPhenoTable[c(att$covariate, att$data)] <- sapply(
-    #     jPhenoTable[c(att$covariate, att$data)], as.numeric
-    # )
-    # jPhenoTable[c(att$factor)] <- lapply(
-    #     jPhenoTable[c(att$factor)], factor
-    # )
-    # names(jPhenoTable) <- jPhenoAttri$traitName
-    return(jPhenoTable)
+    return(tableReportToDF(jPhenoTable))
 }
 
 
@@ -198,19 +171,20 @@ getPhenotypeTable <- function(jtsObject) {
 
 
 ## Get Phenotype attributes as data frame - not exported (house keeping)
+##
+## Emits the same 'trait_id' / 'trait_type' / 'trait_attribute' spelling
+## that 'attributeData()' reports, so the two agree column for column.
 extractPhenotypeAttDf <- function(phenotype) {
-    traitName = phenotype$getTableColumnNames()
-    traitType = unlist(
-        lapply(as.list(phenotype$typeListCopy()), function(tc) {
-            tc$toString()
-        })
+    attrClasses <- lapply(
+        as.list(phenotype$attributeListCopy()),
+        function(attr) attr$getClass()
     )
 
-    # Pull the java class and return the class without the whole path
-    traitAttribute = unlist(
-        lapply(as.list(phenotype$attributeListCopy()), function(tc) {
-            strsplit(tc$getClass()$toString(),"\\.")[[1]][4]
-        })
+    tibble::tibble(
+        trait_id   = phenotype$getTableColumnNames(),
+        trait_type = .jStrings(as.list(phenotype$typeListCopy())),
+
+        # Java reports a class as "class <fully.qualified.Name>"
+        trait_attribute = sub(".*\\.", "", .jStrings(attrClasses))
     )
-    return(tibble::tibble(traitName, traitType, traitAttribute))
 }

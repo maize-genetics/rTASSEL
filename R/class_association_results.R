@@ -6,7 +6,8 @@
 #' Class for storing TASSEL 5 and general-purpose association results
 #' from *WAS studies.
 #'
-#' @slot results A list of \code{data.frame} objects containing summary results
+#' @slot results A named list of \code{tibble} objects containing summary
+#' results
 #' @slot traits A vector of type \code{character} containing the trait IDs
 #'    modeled.
 #' @slot assocType \code{character} object describing association type
@@ -149,22 +150,15 @@ setMethod(
         reportName = "ANY"
     ),
     definition = function(assocRes, reportName) {
-        if (missing(reportName)) {
-            reportName <- NULL
-        }
+        if (missing(reportName)) reportName <- NULL
 
-        if (!is.character(reportName) && !is.null(reportName)) {
-            stop("'reportName' must be of type 'character'")
-        }
-
-        if (is.null(reportName)) {
-            return(assocRes@results)
-        } else {
-            if (!reportName %in% reportNames(assocRes)) {
-                stop("Report ID not found in object")
-            }
-            return(assocRes@results[[reportName]])
-        }
+        # The base class has no single default report, so a missing name
+        # returns every report, which is what '"ALL"' also asks for
+        returnReportElements(
+            results              = assocRes@results,
+            reportName           = reportName,
+            defaultReportElement = NULL
+        )
     }
 )
 

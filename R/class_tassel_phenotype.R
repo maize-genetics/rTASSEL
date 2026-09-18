@@ -152,7 +152,10 @@ setClass(
 #' or a data frame containing the phenotype data.
 #' @param attr
 #' An optional attribute metadata parameter required when \code{x} is
-#' a data frame. Defaults to \code{NULL}.
+#' a data frame. Defaults to \code{NULL}. Two spellings are accepted:
+#' \code{col_id} and \code{tassel_attr}, or the \code{trait_id} and
+#' \code{trait_type} that \code{\link{attributeData}()} reports, so the
+#' metadata read off one phenotype can be used to build another.
 #'
 #' @return A phenotype object created from the input data.
 #'
@@ -176,6 +179,9 @@ setClass(
 #' )
 #'
 #' phenotypeDf <- readPhenotype(df, attr = attrDf)
+#'
+#' # The return trip, using the metadata of an existing phenotype
+#' readPhenotype(as.data.frame(phenotype), attr = attributeData(phenotype))
 #' }
 #'
 #' @export
@@ -330,8 +336,7 @@ setMethod(
 #' @aliases taxaList,TasselPhenotype-method
 #' @export
 setMethod("taxaList", "TasselPhenotype", function(tasObj) {
-    rJava::J(TASSEL_JVM$R_METHODS)$
-        genotypeTableToSampleNameArray(tasObj@jRefObj$taxa())
+    .taxaNames(tasObj@jRefObj$taxa())
 })
 
 

@@ -1,0 +1,754 @@
+---
+title: "Extracting Data into R"
+author: "Brandon Monier"
+date: "`r format(Sys.Date(), '%Y-%m-%d')`"
+output:
+    BiocStyle::html_document:
+      toc: true
+      toc_float: true
+      fig_caption: true
+      number_sections: false
+vignette: >
+    %\VignetteIndexEntry{Extracting Data into R}
+    %\VignetteEngine{knitr::rmarkdown}
+    %\VignetteEncoding{UTF-8}
+    %\usepackage[utf8]{inputenc}
+    %\usepackage{float}
+---
+
+```{r setup, include=FALSE}
+library(rTASSEL)
+
+knitr::opts_chunk$set(
+    fig.path='figure/graphics-',
+    cache.path='cache/graphics-',
+    fig.align='center',
+    external=TRUE,
+    echo=TRUE,
+    warning=FALSE
+    # fig.pos="H"
+)
+```
+
+
+# Introduction
+
+## Where the data actually lives
+An `rTASSEL` object is a handle, not a copy. When you call
+`readGenotype()` or `readPhenotype()`, the table itself is built inside the
+Java Virtual Machine and what comes back to R is a small S4 object holding
+a pointer to it:
+
+```{r, eval=TRUE, echo=TRUE}
+genoPath <- system.file("extdata", "mdp_genotype.hmp.txt", package = "rTASSEL")
+
+myGT <- readGenotype(genoPath)
+
+slotNames(myGT)
+```
+
+The `jRefObj` slot is the pointer, and the other two record what it points
+at. Nothing crosses back into R until you ask it to, which is what keeps a
+genotype table of any size cheap to filter and pass around.
+
+This vignette is about asking. Every way of turning a TASSEL object into an
+ordinary R object - a `character` vector, a `tibble`, a `matrix` - is
+collected here, grouped by the class you start from.
+
+**Prior knowledge about `rTASSEL` data structures is needed, so please refer
+to the vignette *Getting Started with rTASSEL* if you are new to this
+package!**
+
+*Note:* We will be using the base R pipe operator `|>` throughout. More
+information about this can be found [here](https://cran.r-project.org/web/packages/magrittr/vignettes/magrittr.html).
+
+
+## The whole surface at a glance
+Two kinds of function appear below. **Accessors** read one piece of an
+object and hand back an R object, and are named for what they return
+(`taxaList()`, `positionList()`, `attributeData()`). **Coercion** methods
+are the base R generics `as.matrix()` and `as.data.frame()`, which return
+the object's principal table.
+
+| Class                  | Function              | Returns                                    |
+|------------------------|-----------------------|--------------------------------------------|
+| `TasselGenotype`       | `taxaList()`          | `character` of taxa IDs                    |
+|                        | `positionList()`      | `tibble` of marker positions               |
+|                        | `seqnames()`          | `character` of chromosome IDs               |
+|                        | `granges()`           | `GRanges`, one width-1 range per marker    |
+|                        | `siteSummary()`       | `tibble`, one row per site                 |
+|                        | `taxaSummary()`       | `tibble`, one row per taxon                |
+|                        | `as.matrix()`         | `integer` dosage matrix, taxa by sites     |
+|                        | `as.matrix(type = "allele")` | `character` matrix of calls         |
+|                        | `as(x, "SummarizedExperiment")` | `SummarizedExperiment`, sites by taxa |
+| `TasselNumericGenotype` | `as.matrix()`        | `numeric` matrix of reference probabilities |
+| `TasselPhenotype`      | `as.data.frame()`     | `tibble`, one row per observation          |
+|                        | `attributeData()`     | `tibble`, one row per column               |
+|                        | `traitNames()`        | `character` of trait names                 |
+|                        | `taxaList()`          | `character` of distinct taxa IDs           |
+| `TasselGenomicDataset` | `genotype()`          | the joined `TasselGenotype`                |
+|                        | `phenotype()`         | the joined `TasselPhenotype`               |
+|                        | `as.matrix()`         | the genotype half, as above                |
+|                        | `as.data.frame()`     | the phenotype half, as above               |
+| `TasselDistanceMatrix` | `as.matrix()`         | `numeric` pairwise matrix                  |
+|                        | `as.dist()`           | `dist`, the lower triangle                 |
+|                        | `taxaList()`          | `character` of taxa IDs                    |
+|                        | `dim()`, `nrow()`, `ncol()` | `numeric` dimensions                 |
+|                        | `rownames()`, `colnames()`  | `character` of taxa IDs              |
+| `AssociationResults`   | `tableReport()`       | `tibble`, or a named `list` of them        |
+|                        | `reportNames()`       | `character` of report names                |
+|                        | `traitNames()`        | `character` of modelled traits             |
+|                        | `associationType()`   | `character` naming the model               |
+| `PCAResults`           | `tableReport()`       | `tibble`, or a named `list` of them        |
+|                        | `reportNames()`       | `character` of report names                |
+| `LDResults`            | `tableReport()`       | `tibble` of pairwise LD statistics         |
+|                        | `reportNames()`       | `character` of report names                |
+| all of the above       | `javaRefObj()`        | the underlying `jobjRef`                   |
+
+Every accessor that a `TasselGenotype` or a `TasselPhenotype` answers is
+also answered by a `TasselGenomicDataset`, which passes it to whichever
+half of itself holds the data.
+
+
+## Types and missing values
+Every table in this vignette comes across the same way, so two
+conventions hold throughout. Column names lose their spaces: TASSEL's
+`Minor Allele Frequency` is read as `Minor_Allele_Frequency`. And each
+column type carries its own spelling of a missing value:
+
+| Column type | Missing value |
+|:------------|:--------------|
+| `double`    | `NaN`         |
+| `integer`   | `NA`          |
+| `character` | `""`          |
+
+`NaN` is what TASSEL itself records for a missing number, and `is.na()`
+recognises it, so both numeric spellings answer the same test. The one
+exception is the dosage matrix, which is built from a different Java
+call and uses `NA` throughout.
+
+
+## The example data
+The examples below use the toy data sets shipped with `rTASSEL`: a hapmap
+genotype table, and the phenotype file that carries all three non-taxa
+TASSEL attribute types.
+
+```{r, eval=TRUE, echo=TRUE}
+phenoPath <- system.file("extdata", "mdp_phenotype.txt", package = "rTASSEL")
+
+myPheno <- readPhenotype(phenoPath)
+
+myDataset <- readGenomicDataset(myGT, myPheno)
+```
+
+
+
+# Genotype tables
+
+## Taxa and positions
+The two axes of a genotype table are read with `taxaList()` and
+`positionList()`. The first returns a plain `character` vector of taxa IDs,
+in the order TASSEL holds them:
+
+```{r, eval=TRUE, echo=TRUE}
+myGT |> taxaList() |> head()
+
+myGT |> taxaList() |> length()
+```
+
+`positionList()` returns a `tibble` describing each marker:
+
+```{r, eval=TRUE, echo=TRUE}
+myGT |> positionList() |> head()
+```
+
+The `Site` column is TASSEL's own site index, which starts at 0. Indices
+you hand to `rTASSEL` - `sites()`, `sitesWhere(siteIndex)`, and a bare
+numeric second bracket index - are 1-based like every other index in R, so
+`Site` is one less than the position a filter would count.
+
+The chromosomes present, without the rest of the table, are given by
+`seqnames()`:
+
+```{r, eval=TRUE, echo=TRUE}
+myGT |> seqnames()
+```
+
+
+## Site and taxa summaries
+TASSEL's genotype summary is available for either axis. `siteSummary()`
+computes one row per marker, with allele frequencies, missingness, and
+heterozygosity among its columns:
+
+```{r, eval=TRUE, echo=TRUE}
+mySiteSummary <- myGT |> siteSummary()
+
+dim(mySiteSummary)
+
+mySiteSummary[, 1:8] |> head()
+```
+
+`taxaSummary()` is the same idea on the other axis, and is short enough to
+show whole:
+
+```{r, eval=TRUE, echo=TRUE}
+myTaxaSummary <- myGT |> taxaSummary()
+
+myTaxaSummary |> head()
+```
+
+Both are ordinary `tibble` objects, so they can go straight into a plot or
+a model. Here is the distribution of minor allele frequencies:
+
+```{r, eval=TRUE, echo=TRUE}
+summary(mySiteSummary$Minor_Allele_Frequency)
+```
+
+These are the same quantities the filtering metadata is built from, under
+TASSEL's longer names. A filter on `maf` reads
+`Minor_Allele_Frequency` here, and `notMissing` is
+`1 - Proportion_Missing`. See the *Filtering Genotype Tables* vignette for
+the filtering spellings.
+
+
+## Genotype calls as a matrix
+`as.matrix()` brings the calls themselves into R as a **dosage matrix**,
+where each cell is the number of alternate alleles a taxon carries at a
+site. Taxa are rows and sites are columns:
+
+```{r, eval=TRUE, echo=TRUE}
+gtMat <- myGT |> as.matrix()
+
+dim(gtMat)
+
+gtMat[1:5, 1:4]
+```
+
+The result is an `integer` matrix with `NA` in place of missing calls, and
+its dimnames come from `taxaList()` and the `Name` column of
+`positionList()`:
+
+```{r, eval=TRUE, echo=TRUE}
+typeof(gtMat)
+
+sum(is.na(gtMat))
+```
+
+This is the one extraction that is as large as the data, so it is worth
+filtering first. A genotype table of any real size should be cut down to
+the taxa and sites you need before it is materialized:
+
+```{r, eval=TRUE, echo=TRUE}
+myGT[, sitesWhere(chrom == "1" & maf >= 0.05)] |>
+    as.matrix() |>
+    dim()
+```
+
+Passing `type = "allele"` reads the same calls as TASSEL spells them
+instead, which for nucleotide data means one IUPAC code per cell and
+`"N"` for a missing call:
+
+```{r, eval=TRUE, echo=TRUE}
+alleleMat <- myGT[, sites(1:6)] |> as.matrix(type = "allele")
+
+alleleMat[1:5, ]
+```
+
+The two readings have the same shape and dimnames, so either can be used
+wherever a matrix of calls is wanted. The dosage matrix is the smaller of
+the two and the one models expect; the allele matrix is the one to print.
+
+Numeric genotype data is the exception. A `TasselNumericGenotype` holds
+probabilities rather than discrete calls, so there is no dosage to report
+and `as.matrix()` returns the reference probabilities instead:
+
+```{r, eval=TRUE, echo=TRUE}
+numGtPath <- system.file("extdata", "numeric_genotype.txt", package = "rTASSEL")
+
+readGenotype(numGtPath) |> as.matrix()
+```
+
+TASSEL reads these one cell at a time, so unlike the dosage matrix this
+one is worth filtering down to size first.
+
+
+## Positions as a GRanges
+`granges()` returns the marker positions as a
+`GenomicRanges::GRanges` object, which is the form the rest of Bioconductor
+expects. Each marker is a width-1 range, named for the marker:
+
+```{r, eval=TRUE, echo=TRUE}
+myRanges <- myGT |> granges()
+
+myRanges |> head()
+```
+
+The rest of the `positionList()` columns come along as metadata columns
+when asked for:
+
+```{r, eval=TRUE, echo=TRUE}
+myGT |> granges(use.mcols = TRUE) |> head()
+```
+
+A `GRanges` can be handed straight back to `region()` or `overlaps()` to
+filter on, which is covered in *Filtering Genotype Tables*. This makes
+`granges()` the way to cut one genotype table down to the markers of
+another:
+
+```{r, eval=TRUE, echo=TRUE}
+myTargets <- myGT[, region("2", 20e6, 40e6)] |> granges()
+
+myGT[, sitesWhere(overlaps(myTargets))]
+```
+
+
+## As a SummarizedExperiment
+Where a Bioconductor container is wanted rather than a bare matrix,
+`as()` assembles one from the dosage matrix, the positions, and the taxa:
+
+```{r, eval=TRUE, echo=TRUE}
+myGT[, sites(1:100)] |> as("SummarizedExperiment")
+```
+
+Note that a `SummarizedExperiment` puts features in rows and samples in
+columns, which is the transpose of `as.matrix()`. The same works on a
+`TasselGenomicDataset`, where it takes the genotype half.
+
+
+## Writing to disk instead
+When the destination is a file rather than an R object, there is no need to
+go through a matrix. `exportGenotypeTable()` writes a genotype table
+directly from Java in any of four formats:
+
+```{r, eval=FALSE, echo=TRUE}
+myGT |>
+    exportGenotypeTable(
+        file   = "my_genotypes.vcf",
+        format = "vcf"
+    )
+```
+
+The supported formats are `"vcf"`, `"hapmap"`, `"plink"`, and
+`"flapjack"`.
+
+
+
+# Phenotype data
+
+## The trait table
+A `TasselPhenotype` becomes a `tibble` with `as.data.frame()`, one row per
+observation:
+
+```{r, eval=TRUE, echo=TRUE}
+myPhenoDF <- myPheno |> as.data.frame()
+
+myPhenoDF |> head()
+```
+
+Column types are translated from each column's TASSEL attribute type:
+
+| TASSEL attribute type | R type      |
+|:----------------------|:------------|
+| `taxa`                | `character` |
+| `data`                | `numeric`   |
+| `covariate`           | `numeric`   |
+| `factor`              | `character` |
+
+```{r, eval=TRUE, echo=TRUE}
+sapply(myPhenoDF, class)
+```
+
+TASSEL records a missing value as `NaN`, which `is.na()` recognises:
+
+```{r, eval=TRUE, echo=TRUE}
+colSums(is.na(myPhenoDF))
+```
+
+
+## Attribute metadata
+`as.data.frame()` returns the values alone. The attribute type of each
+column is reported separately, by `attributeData()`:
+
+```{r, eval=TRUE, echo=TRUE}
+myPheno |> attributeData()
+```
+
+The `trait_type` column holds the TASSEL attribute type, `r_type` the R
+type it is translated to, and `trait_attribute` the Java class backing it.
+Because the two tables line up column for column, they can be used together
+to pick out one kind of trait:
+
+```{r, eval=TRUE, echo=TRUE}
+myAttr <- myPheno |> attributeData()
+
+covariates <- myAttr$trait_id[myAttr$trait_type == "covariate"]
+
+myPhenoDF[covariates] |> head()
+```
+
+
+## Back the other way
+The two tables are also what `readPhenotype()` needs to build a phenotype
+from a data frame, so together they make the return trip:
+
+```{r, eval=TRUE, echo=TRUE}
+readPhenotype(myPhenoDF, attr = myAttr)
+```
+
+The `attr` argument takes either this spelling or the `col_id` and
+`tassel_attr` columns documented in *Getting Started with rTASSEL*, so
+metadata read off one phenotype can be used to build another.
+
+
+## Names and taxa
+The trait names, which is everything except the taxa column, come from
+`traitNames()`:
+
+```{r, eval=TRUE, echo=TRUE}
+myPheno |> traitNames()
+```
+
+`taxaList()` means the same thing it does on a genotype table: the distinct
+taxa. A phenotype may hold several observations of one taxon, so this is
+generally shorter than the data frame is tall:
+
+```{r, eval=TRUE, echo=TRUE}
+myPheno |> taxaList() |> length()
+
+myPheno |> as.data.frame() |> nrow()
+```
+
+
+
+# Genomic datasets
+
+## The two components
+A `TasselGenomicDataset` holds a genotype table and a phenotype joined on
+their shared taxa. Either half can be pulled out whole, as the object it
+would have been on its own:
+
+```{r, eval=TRUE, echo=TRUE}
+myDataset |> genotype()
+```
+
+```{r, eval=TRUE, echo=TRUE}
+myDataset |> phenotype()
+```
+
+These are the *joined* tables rather than the ones handed to
+`readGenomicDataset()`, so they carry only the taxa the join kept.
+
+Every accessor from the two sections above also works on the dataset
+directly, which passes it to whichever half can answer it:
+
+```{r, eval=TRUE, echo=TRUE}
+myDataset |> taxaList() |> length()
+
+myDataset |> traitNames()
+```
+
+
+## Coercion
+The two coercion methods each address the half they belong to.
+`as.matrix()` returns the genotype calls and `as.data.frame()` the
+phenotype table:
+
+```{r, eval=TRUE, echo=TRUE}
+myDataset |> as.matrix() |> dim()
+
+myDataset |> as.data.frame() |> dim()
+```
+
+
+## Lining the two up
+The matrix is indexed by taxon and the data frame by observation, so
+joining them in R means joining on the taxa column. Since a taxon may be
+observed more than once, the matrix rows are matched to the data frame
+rows rather than the other way around:
+
+```{r, eval=TRUE, echo=TRUE}
+myMat <- myDataset |> as.matrix()
+myDF  <- myDataset |> as.data.frame()
+
+# One row of genotype calls per observation
+myCalls <- myMat[myDF$Taxa, 1:4]
+
+head(myCalls)
+```
+
+Both halves come out of the same joined object, so every taxon in the data
+frame is guaranteed to be a row of the matrix.
+
+
+
+# Distance and kinship matrices
+
+## Matrix-like accessors
+`kinshipMatrix()`, `distanceMatrix()`, and `readTasselDistanceMatrix()` all
+return a `TasselDistanceMatrix`, which is another handle to a Java object.
+It answers the base R generics you would ask of a `matrix`:
+
+```{r, eval=TRUE, echo=TRUE}
+myKin <- kinshipMatrix(myGT)
+
+dim(myKin)
+
+nrow(myKin)
+
+myKin |> rownames() |> head()
+```
+
+
+## Coercion
+`as.matrix()` brings the pairwise values across as an ordinary `numeric`
+matrix:
+
+```{r, eval=TRUE, echo=TRUE}
+myKinMat <- myKin |> as.matrix()
+
+class(myKinMat)
+
+myKinMat[1:4, 1:4]
+```
+
+From there it is a base R matrix like any other, so it can go to
+`heatmap()` or any modelling function that takes a relationship matrix.
+
+Clustering functions want a `dist` rather than a matrix, which
+`as.dist()` returns:
+
+```{r, eval=TRUE, echo=TRUE}
+myDistances <- distanceMatrix(myGT[, sites(1:500)])
+
+myDistances |> as.dist() |> hclust()
+```
+
+A `dist` holds only the lower triangle, so the diagonal is dropped. Use
+`as.matrix()` when the whole square is wanted.
+
+
+## Back the other way
+A pairwise R matrix can be handed to TASSEL with
+`asTasselDistanceMatrix()`, which is the return trip:
+
+```{r, eval=TRUE, echo=TRUE}
+myKinMat |> asTasselDistanceMatrix()
+```
+
+The matrix must be square, and its row and column names must match.
+
+
+
+# Analysis results
+
+## Table reports
+The analysis functions return objects that are already R-side: a list of
+`tibble` objects, one per TASSEL table report, plus whatever metadata the
+analysis produced. `tableReport()` reads them and `reportNames()` lists
+what is there.
+
+`tableReport()` with no arguments returns the default report for the
+analysis that produced the object, which is the one you almost always want:
+
+```{r, eval=TRUE, echo=TRUE}
+myGLM <- assocModelFitter(
+    tasObj     = myDataset,
+    formula    = EarHT ~ .,
+    fitMarkers = TRUE
+)
+
+myGLM |> reportNames()
+```
+
+```{r, eval=TRUE, echo=TRUE}
+myGLM |> tableReport() |> head()
+```
+
+Naming a report returns that one instead:
+
+```{r, eval=TRUE, echo=TRUE}
+myGLM |> tableReport("GLM_Genotypes") |> head()
+```
+
+Passing `"ALL"` returns every report at once, as a named list:
+
+```{r, eval=TRUE, echo=TRUE}
+myGLM |> tableReport("ALL") |> names()
+```
+
+
+## Association results
+Alongside the reports, an `AssociationResults` object knows which traits
+were modelled and which model was fit:
+
+```{r, eval=TRUE, echo=TRUE}
+myGLM |> traitNames()
+
+myGLM |> associationType()
+```
+
+`associationType()` is what the plotting functions read to decide how to
+draw a result, and is worth checking when a pipeline handles several kinds
+of model. The same three accessors work on every association subclass -
+BLUE, GLM, MLM, Fast Association, and stepwise - with only the default
+report differing:
+
+```{r, eval=TRUE, echo=TRUE}
+myBLUE <- assocModelFitter(
+    tasObj     = myPheno,
+    formula    = . ~ .,
+    fitMarkers = FALSE
+)
+
+myBLUE |> reportNames()
+
+myBLUE |> tableReport() |> head()
+```
+
+
+## PCA results
+`pca()` returns a `PCAResults` object, which reads the same way. Its
+default report is the principal components themselves:
+
+```{r, eval=TRUE, echo=TRUE}
+myPCA <- pca(myGT)
+
+myPCA |> reportNames()
+
+myPCA |> tableReport() |> head()
+```
+
+The eigenvalues and eigenvectors are the other two reports:
+
+```{r, eval=TRUE, echo=TRUE}
+myPCA |> tableReport("Eigenvalues_Datum") |> head()
+```
+
+
+## LD results
+`linkageDiseq()` returns an `LDResults` object holding a single table of
+pairwise statistics, which `tableReport()` returns:
+
+```{r, eval=TRUE, echo=TRUE}
+myLD <- linkageDiseq(
+    tasObj  = myGT[, region("2", 228e6, 300e6)],
+    ldType  = "All",
+    verbose = FALSE
+)
+
+myLD |> tableReport() |> head()
+```
+
+Since there is only the one table, naming it and taking the default come
+to the same thing:
+
+```{r, eval=TRUE, echo=TRUE}
+myLD |> reportNames()
+
+identical(tableReport(myLD, "LD"), tableReport(myLD))
+```
+
+`"ALL"` behaves as it does everywhere else and returns a named list, of
+one element.
+
+
+## Functions that return R objects directly
+Not every analysis is wrapped in a class. Several hand back an ordinary R
+object, with nothing further to extract.
+
+`mds()` returns a `tibble` of axes, one row per taxon:
+
+```{r, eval=TRUE, echo=TRUE}
+myDist <- distanceMatrix(myGT)
+
+mds(myDist) |> head()
+```
+
+`seqDiversity()` returns a named `list` of `tibble` objects:
+
+```{r, eval=TRUE, echo=TRUE}
+myDiversity <- seqDiversity(myGT)
+
+names(myDiversity)
+
+myDiversity$Diversity[, 1:8] |> head()
+```
+
+`createTree()` returns an `ape` `phylo` object, ready for `plot()` or any
+of the tree libraries that build on it:
+
+```{r, eval=TRUE, echo=TRUE}
+myTree <- createTree(myGT, clustMethod = "Neighbor_Joining")
+
+class(myTree)
+```
+
+And `genomicPrediction()` returns a `tibble` of either accuracies or
+predictions, depending on whether cross-validation was asked for:
+
+```{r, eval=FALSE, echo=TRUE}
+genomicPrediction(
+    tasPhenoObj = myDataset,
+    kinship     = myKin,
+    doCV        = TRUE,
+    kFolds      = 5,
+    nIter       = 1
+) |> head()
+```
+```
+## # A tibble: 6 x 4
+##   Trait Iteration  Fold Accuracy
+##   <chr>     <dbl> <dbl>    <dbl>
+## 1 EarHT         0     0    0.501
+## 2 EarHT         0     1    0.376
+## 3 EarHT         0     2    0.506
+## 4 EarHT         0     3    0.595
+## 5 EarHT         0     4    0.528
+## 6 dpoll         0     0    0.785
+```
+
+
+
+# Reaching into Java
+When something is not covered by an accessor, `javaRefObj()` returns the
+pointer itself and `rJava`'s `$` operator calls TASSEL methods on it
+directly:
+
+```{r, eval=TRUE, echo=TRUE}
+jGT <- myGT |> javaRefObj()
+
+jGT
+
+jGT$numberOfSites()
+
+jGT$genotypeAsString(0L, 0L)
+```
+
+It works on the phenotype and dataset classes too:
+
+```{r, eval=TRUE, echo=TRUE}
+myPheno |> javaRefObj()
+```
+
+Two things to keep in mind. Java indices start at 0, so the call above
+reads the first taxon at the first site. And this is an escape hatch rather
+than a supported interface: what you reach is TASSEL's own API, which can
+change between releases without `rTASSEL` changing with it. Prefer an
+accessor where one exists.
+
+
+
+# Superseded functions
+Earlier versions of `rTASSEL` extracted data with dedicated functions
+rather than base R generics. These still work but warn, and are scheduled
+for removal in the next major release:
+
+| Deprecated                       | Use instead                          |
+|----------------------------------|--------------------------------------|
+| `getPhenotypeDF()`               | `as.data.frame()`                    |
+| `getSumExpFromGenotypeTable()`   | `as(x, "SummarizedExperiment")`      |
+| `as.matrix()` on a `TasselGenotypePhenotype` | `as.matrix()` on a `TasselGenotype` or `TasselGenomicDataset` |
+
+`getSumExpFromGenotypeTable()` built a `SummarizedExperiment` from the
+dosage matrix and the position list, which is what the `as()` coercion
+shown above now does.

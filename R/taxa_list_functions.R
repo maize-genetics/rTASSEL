@@ -49,8 +49,7 @@ getTaxaIDs <- function(tasObj) {
         ))
     }
 
-    rJava::J("net/maizegenetics/plugindef/GenerateRCode")$
-        genotypeTableToSampleNameArray(jtsTL)
+    .taxaNames(jtsTL)
 }
 
 

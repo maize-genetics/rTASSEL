@@ -1,7 +1,37 @@
 # /// Table report functions /////////////////////////////////////////
 
 ## ----
-#' @title Table reports to tibble objects ----
+#' @title Table reports to tibble objects
+#'
+#' @description
+#' The single route any TASSEL \code{TableReport} takes into R. Every
+#' position list, genotype summary, phenotype table, and analysis report
+#' comes across this way, so the conventions below hold for all of them.
+#'
+#' @details
+#' Column names are taken from the report and every space in them is
+#' replaced with an underscore, so TASSEL's \code{"Minor Allele
+#' Frequency"} is read as \code{Minor_Allele_Frequency} in R.
+#'
+#' Column types follow the Java type of the report's values, and each
+#' carries its own spelling of a missing value:
+#'
+#' \tabular{lll}{
+#'   \strong{Java type} \tab \strong{R type} \tab \strong{Missing} \cr
+#'   \code{Float}, \code{Double} \tab \code{double} \tab \code{NaN} \cr
+#'   \code{Byte}, \code{Short}, \code{Integer}, \code{Long} \tab
+#'     \code{integer} \tab \code{NA} \cr
+#'   anything else \tab \code{character} \tab \code{""} \cr
+#' }
+#'
+#' \code{NaN} is what TASSEL itself uses for a missing numeric value, and
+#' \code{is.na()} recognises it, so both numeric spellings answer the
+#' same test.
+#'
+#' @param x A Java \code{TableReport} reference.
+#'
+#' @return A \code{tibble}.
+#'
 #' @noRd
 #' @importFrom rJava .jevalArray
 #' @importFrom rJava J
@@ -26,8 +56,7 @@ tableReportToDF <- function(x) {
 #' @importFrom rJava .jstrVal
 tableReportList <- function(x) {
 
-    hashVectors <- rJava::.jrcall(x, "keySet")
-    hashVectors <- lapply(hashVectors, rJava::.jstrVal)
+    hashVectors <- .jStrings(rJava::.jrcall(x, "keySet"))
 
     myList <- lapply(hashVectors, function(i) x$get(i))
     myList <- lapply(myList, tableReportToDF)
@@ -298,29 +327,43 @@ checkForValidColumns <- function(assocStats, neededCols) {
 
 ## ----
 # @title Get report elements
+#
+# The one reading of a 'reportName' argument, shared by every class that
+# answers 'tableReport()'. A missing name returns the class's default
+# report, or every report when the class has no single default. The catch
+# all always returns every report as a named list.
+#
+# @param results A named 'list' of table reports
+# @param reportName A specific table report to return, or 'NULL'
+# @param defaultCatchAll The name that asks for every report
+# @param defaultReportElement The report a missing name returns, or
+#    'NULL' to return every report
 returnReportElements <- function(
-    assocRes,
+    results,
     reportName,
     defaultCatchAll = "ALL",
-    defaultReportElement
+    defaultReportElement = NULL
 ) {
-        if (!is.character(reportName) && !is.null(reportName)) {
-            stop("'reportName' must be of type 'character'")
-        }
+    if (!is.character(reportName) && !is.null(reportName)) {
+        stop("'reportName' must be of type 'character'")
+    }
 
-        if (is.null(reportName)) {
-            return(assocRes@results[[defaultReportElement]])
+    if (is.null(reportName)) {
+        if (is.null(defaultReportElement)) {
+            return(results)
         }
+        return(results[[defaultReportElement]])
+    }
 
-        if (toupper(reportName) == defaultCatchAll) {
-            return(assocRes@results)
-        }
+    if (toupper(reportName) == defaultCatchAll) {
+        return(results)
+    }
 
-        if(reportName %in% reportNames(assocRes)) {
-            return(assocRes@results[[reportName]])
-        } else {
-            stop("Report ID not found in object")
-        }
+    if (reportName %in% names(results)) {
+        return(results[[reportName]])
+    }
+
+    stop("Report ID not found in object")
 }
 
 

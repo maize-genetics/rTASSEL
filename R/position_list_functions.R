@@ -19,7 +19,12 @@ getPositionList <- function(jtsObject) {
 
 
 ## ----
-## Constructor for GRanges (GenomicRanges) class object - not exported (<TMP>)
+## Constructor for GRanges (GenomicRanges) class object - not exported
+##
+## Serves the deprecated 'getSumExpFromGenotypeTable()', whose row ranges
+## carry TASSEL's own site index and reference alleles. The supported
+## route into a 'GRanges' is the 'granges()' method, which is built on
+## 'positionList()'.
 genomicRanges <- function(genoTable) {
     jtsPL <- .getTASSELClass(genoTable, "PositionList")
 
@@ -58,5 +63,18 @@ setMethod("positionList", "TasselGenotypePhenotype", function(tasObj) {
 
     return(tableReportToDF(sites))
 })
+
+
+## ----
+#' @rdname granges
+#' @aliases granges,TasselGenotypePhenotype-method
+#' @export
+setMethod(
+    "granges",
+    "TasselGenotypePhenotype",
+    function(x, use.names = TRUE, use.mcols = FALSE, ...) {
+        .positionRanges(positionList(x), use.names, use.mcols)
+    }
+)
 
 

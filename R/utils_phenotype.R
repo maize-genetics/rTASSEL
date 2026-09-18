@@ -245,27 +245,47 @@ selectTraitsFromJavaRef <- function(jRefObj, traits) {
 #
 # @description
 # This function checks if the input `attrDf` is a valid data frame
-# and contains the required columns: `col_id` and `tassel_attr`. If
-# the input is not a data frame or if the required columns are
-# missing, an error is raised.
+# and names each column of a phenotype with its TASSEL attribute
+# type. If the input is not a data frame or if neither spelling of
+# the required columns is present, an error is raised.
+#
+# @details
+# Two spellings are accepted. `col_id` and `tassel_attr` is the
+# hand-written form documented for `readPhenotype()`, and `trait_id`
+# and `trait_type` is what `attributeData()` reports, so the metadata
+# read off one phenotype can be used to build another. The second is
+# renamed to the first, which is what the rest of the phenotype code
+# reads.
 #
 # @param attrDf
-# A data frame to be validated. It must contain the columns `col_id`
-# and `tassel_attr`.
+# A data frame to be validated. It must contain either the columns
+# `col_id` and `tassel_attr`, or `trait_id` and `trait_type`.
 #
 # @return
-# This function does not return a value. It raises an error if the
-# validation fails.
+# The validated data frame, with its attribute columns under the
+# `col_id` and `tassel_attr` names.
 validateAttrDf <- function(attrDf) {
     # Ensure attrDf is a data frame and has required columns
     if (!inherits(attrDf, "data.frame")) {
         rlang::abort("'attrDf' parameter needs to be of type 'data.frame'")
     }
+
     requiredCols <- c("col_id", "tassel_attr")
+    attrDataCols <- c("trait_id", "trait_type")
+
+    if (all(attrDataCols %in% names(attrDf))) {
+        attrDf <- attrDf[setdiff(names(attrDf), requiredCols)]
+        names(attrDf)[match(attrDataCols, names(attrDf))] <- requiredCols
+
+        return(attrDf)
+    }
+
     missingCols <- setdiff(requiredCols, names(attrDf))
     if (length(missingCols) > 0) {
         rlang::abort("Incorrect column IDs used - must be of type 'col_id' and 'tassel_attr'")
     }
+
+    return(attrDf)
 }
 
 
@@ -419,7 +439,6 @@ validateColumns <- function(df, attrDf) {
 makeAttributeData <- function(javaPh, rData) {
     # Extract attribute metadata
     attrData <- extractPhenotypeAttDf(javaPh)
-    colnames(attrData) <- c("trait_id", "trait_type", "trait_attribute")
 
     # Append R-side type info
     attrData$r_type <- vapply(rData, class, "character")
@@ -428,7 +447,7 @@ makeAttributeData <- function(javaPh, rData) {
     attrList <- rJava::.jevalArray(javaPh$attributeListCopy()$toArray())
     attrIdxXRef <- tibble::tibble(
         attr_idx = as.integer(seq_along(attrList) - 1),
-        trait_id = vapply(attrList, function(it) it$toString(), character(1))
+        trait_id = .jStrings(attrList)
     )
 
     # Merge index data and return sorted df by attribute index
@@ -537,7 +556,7 @@ readPhenotypeFromFile <- function(path) {
 # A TASSEL phenotype object created from the input data frame.
 readPhenotypeFromDf <- function(df, attrDf) {
     # Validate data and attribute cross references
-    validateAttrDf(attrDf)
+    attrDf <- validateAttrDf(attrDf)
     validateTasselAttributes(df, attrDf)
     validateColumns(df, attrDf)
 

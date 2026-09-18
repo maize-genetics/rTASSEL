@@ -69,7 +69,9 @@ only be estimated when the data source is genotype (not a probability).
 The additive effect will always be non-negative. Defaults to \code{FALSE}.}
 }
 \value{
-Returns an R list containing \code{DataFrame}-based data frames
+An \code{\linkS4class{AssociationResults}} object holding one
+\code{tibble} per TASSEL table report, which
+\code{\link{tableReport}()} reads.
 }
 \description{
 This function acts as a front-end for TASSEL's extensive

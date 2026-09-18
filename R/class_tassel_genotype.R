@@ -146,8 +146,7 @@ setMethod(
 #' @aliases taxaList,TasselGenotype-method
 #' @export
 setMethod("taxaList", "TasselGenotype", function(tasObj) {
-    rJava::J("net/maizegenetics/plugindef/GenerateRCode")$
-        genotypeTableToSampleNameArray(tasObj@jRefObj$taxa())
+    .taxaNames(tasObj@jRefObj$taxa())
 })
 
 
@@ -179,10 +178,54 @@ setMethod("positionList", "TasselGenotype", function(tasObj) {
 #' @aliases seqnames,TasselGenotype-method
 #' @export
 setMethod("seqnames", "TasselGenotype", function(x) {
-    jRef <- javaRefObj(x)
-    chroms <- jRef$chromosomes()
-    unlist(lapply(chroms, function(ch) rJava::.jstrVal(ch)))
+    .jStrings(javaRefObj(x)$chromosomes())
 })
+
+
+## ----
+#' @title Marker positions as a GRanges object
+#'
+#' @description
+#' Returns the positions of a genotype table as a
+#' \code{GenomicRanges::GRanges} object, which is the form the rest of
+#' Bioconductor expects. Each marker is a width-1 range.
+#'
+#' @details
+#' The result can be handed straight back to \code{\link{region}()} or
+#' \code{\link{overlaps}()} to filter on, and carries the same
+#' information as \code{\link{positionList}()} in a different shape.
+#'
+#' @param x A \code{TasselGenotype}, \code{TasselGenomicDataset}, or
+#'   deprecated \code{TasselGenotypePhenotype} object.
+#' @param use.names Name each range with its marker ID? Defaults to
+#'   \code{TRUE}.
+#' @param use.mcols Carry the remaining \code{\link{positionList}()}
+#'   columns (\code{Site}, \code{Name}, and \code{VARIANT}) across as
+#'   metadata columns? Defaults to \code{FALSE}.
+#' @param ... Additional arguments, for use in specific methods.
+#'
+#' @return A \code{GRanges} object with one range per marker.
+#'
+#' @examples
+#' \dontrun{
+#' granges(gt)
+#'
+#' granges(gt, use.mcols = TRUE)
+#'
+#' # Filter one genotype table on the ranges of another
+#' gt[, sitesWhere(overlaps(granges(otherGt)))]
+#' }
+#'
+#' @rdname granges
+#' @aliases granges,TasselGenotype-method
+#' @export
+setMethod(
+    "granges",
+    "TasselGenotype",
+    function(x, use.names = TRUE, use.mcols = FALSE, ...) {
+        .positionRanges(positionList(x), use.names, use.mcols)
+    }
+)
 
 
 
@@ -214,17 +257,39 @@ setMethod("taxaSummary", "TasselGenotype", function(tasObj) {
 #'
 #' @description
 #' Converts the genotype table held by a \code{TasselGenotype} object into a
-#' matrix of dosage values, with taxa as rows and sites as columns.
+#' matrix with taxa as rows and sites as columns.
+#'
+#' @details
+#' Two readings of the same calls are available. \code{"dosage"} counts the
+#' alternate alleles a taxon carries at a site, which is the form most
+#' models want. \code{"allele"} returns the calls as TASSEL itself spells
+#' them, which for nucleotide data means one IUPAC code per cell and
+#' \code{"N"} for a missing call.
+#'
+#' Both readings are as large as the data, so a table of any real size
+#' should be filtered down to the taxa and sites of interest first.
 #'
 #' @param x A \code{TasselGenotype} object.
+#' @param type Reading of the genotype calls to return. Either
+#'   \code{"dosage"} (the default) for alternate allele counts, or
+#'   \code{"allele"} for call strings.
 #' @param ... Additional arguments to be passed to or from methods.
 #'
-#' @return An \code{integer} matrix of taxa (rows) by sites (columns).
+#' @return
+#' An \code{integer} matrix of taxa (rows) by sites (columns) when
+#' \code{type} is \code{"dosage"}, or a \code{character} matrix of the same
+#' shape when \code{type} is \code{"allele"}.
 #'
-#' @importFrom rJava .jevalArray
+#' @examples
+#' \dontrun{
+#' as.matrix(gt)
+#' as.matrix(gt, type = "allele")
+#' }
 #'
 #' @export
-as.matrix.TasselGenotype <- function(x, ...) {
+as.matrix.TasselGenotype <- function(x, type = c("dosage", "allele"), ...) {
+    type <- match.arg(type)
+
     if (!x@jRefObj$hasGenotype()) {
         rlang::abort(c(
             "`x` does not contain discrete genotype calls",
@@ -232,21 +297,53 @@ as.matrix.TasselGenotype <- function(x, ...) {
         ))
     }
 
-    jrc <- rJava::J(TASSEL_JVM$R_METHODS)
-    m <- rJava::.jevalArray(
-        jrc$genotypeTableToDosageByteArray(x@jRefObj),
-        simplify = TRUE
+    taxa <- taxaList(x)
+    siteNames <- positionList(x)$Name
+
+    switch(
+        type,
+        "dosage" = .dosageMatrix(x@jRefObj, taxa = taxa, siteNames = siteNames),
+        "allele" = .alleleStringMatrix(x@jRefObj, taxa = taxa, siteNames = siteNames)
     )
-    mode(m) <- "integer"
-
-    # 128 is a conversion artifact of TASSEL's unsigned missing value
-    m[m == 128] <- NA
-
-    colnames(m) <- positionList(x)$Name
-    rownames(m) <- taxaList(x)
-
-    return(m)
 }
+
+
+## ----
+#' @title Coerce genotype data to a SummarizedExperiment
+#'
+#' @description
+#' Assembles the dosage matrix, marker positions, and taxa IDs of a
+#' \code{TasselGenotype} into a
+#' \code{SummarizedExperiment::SummarizedExperiment}, which is the
+#' container the rest of Bioconductor expects.
+#'
+#' @details
+#' A \code{SummarizedExperiment} puts features in rows and samples in
+#' columns, so the assay is the transpose of
+#' \code{\link{as.matrix.TasselGenotype}}: sites are rows and taxa are
+#' columns.
+#'
+#' This replaces the deprecated \code{\link{getSumExpFromGenotypeTable}()}.
+#'
+#' @param from A \code{TasselGenotype} object.
+#' @param to The target class, \code{"SummarizedExperiment"}.
+#' @param strict Supplied by \code{\link[methods]{as}()}; unused here.
+#'
+#' @return
+#' A \code{SummarizedExperiment} of sites (rows) by taxa (columns).
+#'
+#' @name coerce-TasselGenotype-SummarizedExperiment
+#' @aliases coerce,TasselGenotype,SummarizedExperiment-method
+#'
+#' @examples
+#' \dontrun{
+#' se <- as(gt, "SummarizedExperiment")
+#' }
+#'
+#' @export
+setAs("TasselGenotype", "SummarizedExperiment", function(from) {
+    .genotypeSummarizedExperiment(from)
+})
 
 
 
