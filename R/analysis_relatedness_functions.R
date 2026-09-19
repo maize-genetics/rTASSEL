@@ -308,7 +308,7 @@ pca <- function(
 #' @param removeNaN Remove \code{NaNs} from matrix before performing MDS.
 #'    Defaults to \code{TRUE}.
 #'
-#' @return A \code{tibble} of axes, one row per taxon.
+#' @return A \code{\linkS4class{MDSResults}} object.
 #'
 #' @importFrom rJava new
 #' @importFrom rJava J
@@ -335,11 +335,25 @@ mds <- function(
     plugin$setParameter("axes", as.character(nAxes))
     plugin$setParameter("removeNaN", tolower(as.character(removeNaN)))
 
-    # Run PCA plugin
+    # Run MDS plugin
     dataSet <- rJava::J("net.maizegenetics.plugindef.DataSet")
     mdsRes <- plugin$performFunction(dataSet$getDataSet(distMat@jDistMatrix))
 
-    return(tableReportToDF(mdsRes$getData(0L)$getData()))
+    reportBody <- lapply(seq_len(mdsRes$getSize()), function(i) {
+        tableReportToDF(mdsRes$getData(as.integer(i - 1))$getData())
+    })
+
+    names(reportBody) <- vapply(seq_len(mdsRes$getSize()), function(i) {
+        mdsRes$getData(as.integer(i - 1))$getName()
+    }, character(1))
+
+    return(
+        methods::new(
+            "MDSResults",
+            results = reportBody,
+            jObj    = mdsRes$getDataWithName("MDS_PCs_Datum")$get(0L)$getData()
+        )
+    )
 }
 
 

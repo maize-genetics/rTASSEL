@@ -39,7 +39,7 @@
 #
 # @description
 # The join functions accept any mix of objects that carry phenotype
-# data, plus 'PCAResults', whose principal components TASSEL also
+# data, plus 'PCAResults' and 'MDSResults', whose axes TASSEL also
 # models as a phenotype. Objects carrying only genotype data are set
 # aside so that '.joinPhenotypes()' can attach the joined phenotype to
 # them. Each element is validated and unwrapped, and the class the
@@ -69,7 +69,7 @@
     nPh         <- 0L
 
     for (obj in x) {
-        if (methods::is(obj, "PCAResults")) {
+        if (methods::is(obj, "PCAResults") || methods::is(obj, "MDSResults")) {
             jPhenotypes$add(obj@jObj)
             nPh <- nPh + 1L
             next
@@ -109,8 +109,8 @@
         ))
     }
 
-    # 'PCAResults' is an analysis result rather than a data object, so it
-    # does not get a vote on which class the join returns
+    # 'PCAResults' and 'MDSResults' are analysis results rather than data
+    # objects, so they do not get a vote on which class the join returns
     isLegacy <- vapply(x, .isAnyClass, logical(1), TASSEL_INPUT$LEGACY)
     isModern <- vapply(x, .isAnyClass, logical(1), TASSEL_INPUT$MODERN)
 
@@ -184,10 +184,10 @@
 #' @param ... Any number of rTASSEL objects containing a phenotype. Accepted
 #'    classes are \code{\linkS4class{TasselPhenotype}},
 #'    \code{\linkS4class{TasselGenomicDataset}},
-#'    \code{\linkS4class{PCAResults}}, and the deprecated
-#'    \code{TasselGenotypePhenotype}. At most one object carrying only
-#'    genotype data (\code{\linkS4class{TasselGenotype}}) may also be given.
-#'    Lists of objects are flattened, so earlier
+#'    \code{\linkS4class{PCAResults}}, \code{\linkS4class{MDSResults}}, and
+#'    the deprecated \code{TasselGenotypePhenotype}. At most one object
+#'    carrying only genotype data (\code{\linkS4class{TasselGenotype}}) may
+#'    also be given. Lists of objects are flattened, so earlier
 #'    \code{intersectJoin(c(ph1, ph2))} style calls keep working.
 #'
 #' @return A \code{\linkS4class{TasselPhenotype}} object, or a
@@ -226,10 +226,10 @@ intersectJoin <- function(...) {
 #' @param ... Any number of rTASSEL objects containing a phenotype. Accepted
 #'    classes are \code{\linkS4class{TasselPhenotype}},
 #'    \code{\linkS4class{TasselGenomicDataset}},
-#'    \code{\linkS4class{PCAResults}}, and the deprecated
-#'    \code{TasselGenotypePhenotype}. At most one object carrying only
-#'    genotype data (\code{\linkS4class{TasselGenotype}}) may also be given.
-#'    Lists of objects are flattened, so earlier
+#'    \code{\linkS4class{PCAResults}}, \code{\linkS4class{MDSResults}}, and
+#'    the deprecated \code{TasselGenotypePhenotype}. At most one object
+#'    carrying only genotype data (\code{\linkS4class{TasselGenotype}}) may
+#'    also be given. Lists of objects are flattened, so earlier
 #'    \code{unionJoin(c(ph1, ph2))} style calls keep working.
 #'
 #' @return A \code{\linkS4class{TasselPhenotype}} object, or a
@@ -266,9 +266,10 @@ unionJoin <- function(...) {
 #' @param ... Any number of rTASSEL objects containing a phenotype. Accepted
 #'    classes are \code{\linkS4class{TasselPhenotype}},
 #'    \code{\linkS4class{TasselGenomicDataset}},
-#'    \code{\linkS4class{PCAResults}}, and the deprecated
-#'    \code{TasselGenotypePhenotype}. Lists of objects are flattened, so
-#'    earlier \code{concatenate(c(ph1, ph2))} style calls keep working.
+#'    \code{\linkS4class{PCAResults}}, \code{\linkS4class{MDSResults}}, and
+#'    the deprecated \code{TasselGenotypePhenotype}. Lists of objects are
+#'    flattened, so earlier \code{concatenate(c(ph1, ph2))} style calls keep
+#'    working.
 #'    Unlike the joins, this function binds phenotype rows together and so
 #'    does not accept genotype-only input.
 #'

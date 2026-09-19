@@ -86,6 +86,7 @@ Collate:
     'class_genotype_selectors.R'
     'class_ld_region.R'
     'class_ld_results.R'
+    'class_mds_results.R'
     'class_pca_results.R'
     'class_phenotype_selectors.R'
     'class_tassel_dataset.R'

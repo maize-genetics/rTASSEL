@@ -89,7 +89,7 @@ reference:
   - taxaList
   - positionList
   - matches("seqnames")
-  - granges
+  - matches("granges")
   - siteSummary
   - taxaSummary
   - attributeData
@@ -146,6 +146,7 @@ reference:
   - AssociationResultsFast-class
   - AssociationResultsStepwise-class
   - PCAResults-class
+  - MDSResults-class
   - LDResults-class
   - LDRegion
   - LDRegion-class

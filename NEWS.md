@@ -96,6 +96,18 @@
   + Taxa are combined with `join = "intersect"` (default) or
     `join = "union"`
   + Replaces `readGenotypePhenotype()`
+* Added new `MDSResults` class:
+  + **Breaking change**: `mds()` returns an `MDSResults` object rather than
+    a `tibble` of axes. Call `tableReport()` on the result for the table
+    earlier code was handed
+  + Reads the same way `PCAResults` does, with `reportNames()` and
+    `tableReport()`, whose default report is the axes themselves
+    (`MDS_PCs_Datum`)
+  + TASSEL computes eigenvalues alongside the axes, and these are now
+    reported as `MDS_Eigenvalues_Datum` instead of being discarded
+  + `intersectJoin()`, `unionJoin()`, and `concatenate()` accept an
+    `MDSResults` object, as they already did a `PCAResults`, so MDS axes can
+    be joined to phenotype data and used as covariates
 * `intersectJoin()`, `unionJoin()`, and `concatenate()` now take objects
   directly instead of a single list:
   + `intersectJoin(ph1Cov, ph2Traits, ph3MoreTraits)` joins any number of

@@ -130,6 +130,20 @@ test_that("Joining returns correct values with PCA objects", {
     expect_equal(attributeData(unionPheno)$trait_id, expectedTraits)
 })
 
+test_that("Joining returns correct values with MDS objects", {
+    mdsRes   <- mds(distanceMatrix(rtObjs$gt_hmp))
+    tasPheno <- rtObjs$ph_nomiss
+
+    expectedTraits <- c(
+        "Taxa", "PC1", "PC2", "PC3", "PC4", "PC5",
+        "EarHT", "dpoll", "EarDia"
+    )
+
+    intersectPheno <- intersectJoin(mdsRes, tasPheno)
+    expect_s4_class(intersectPheno, "TasselPhenotype")
+    expect_equal(attributeData(intersectPheno)$trait_id, expectedTraits)
+})
+
 test_that("Joining accepts a genomic dataset's phenotype data", {
     joined <- intersectJoin(c(rtObjs$ds_hmp_ph_nomiss, pca(rtObjs$gt_hmp)))
 

@@ -625,6 +625,27 @@ myPCA |> tableReport("Eigenvalues_Datum") |> head()
 ```
 
 
+## MDS results
+`mds()` returns an `MDSResults` object, which follows the same pattern.
+Its default report is the axes, one row per taxon:
+
+```{r, eval=TRUE, echo=TRUE}
+myDist <- distanceMatrix(myGT)
+
+myMDS <- mds(myDist)
+
+myMDS |> reportNames()
+
+myMDS |> tableReport() |> head()
+```
+
+The eigenvalues TASSEL computes alongside the axes are the second report:
+
+```{r, eval=TRUE, echo=TRUE}
+myMDS |> tableReport("MDS_Eigenvalues_Datum")
+```
+
+
 ## LD results
 `linkageDiseq()` returns an `LDResults` object holding a single table of
 pairwise statistics, which `tableReport()` returns:
@@ -655,14 +676,6 @@ one element.
 ## Functions that return R objects directly
 Not every analysis is wrapped in a class. Several hand back an ordinary R
 object, with nothing further to extract.
-
-`mds()` returns a `tibble` of axes, one row per taxon:
-
-```{r, eval=TRUE, echo=TRUE}
-myDist <- distanceMatrix(myGT)
-
-mds(myDist) |> head()
-```
 
 `seqDiversity()` returns a named `list` of `tibble` objects:
 

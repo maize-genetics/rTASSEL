@@ -705,9 +705,10 @@ mdsRes <- mds(tasDist)
 ```
 
 
-Both of these will return a `DataFrame` object that will contain a Taxa ID
-column and the number of components or axes that were specified in the
-function call. For example, let's take a look at the `pcaRes` object made
+Both of these return a results object holding a collection of TASSEL 5 table
+reports, which `tableReport()` reads. The default report is a table with a
+Taxa ID column and the number of components or axes that were specified in
+the function call. For example, let's take a look at the `pcaRes` object made
 previously:
 
 ```{r, eval=TRUE, echo=TRUE}

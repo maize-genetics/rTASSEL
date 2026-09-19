@@ -153,8 +153,8 @@ setGeneric("phenotype", function(object, ...) standardGeneric("phenotype"))
 #' Returns a \code{character} vector of table report names
 #'
 #' @param object an \code{\linkS4class{AssociationResults}},
-#'    \code{\linkS4class{PCAResults}}, or \code{\linkS4class{LDResults}}
-#'    object
+#'    \code{\linkS4class{PCAResults}}, \code{\linkS4class{MDSResults}}, or
+#'    \code{\linkS4class{LDResults}} object
 #'
 #' @return A \code{character} vector of report names.
 #'
@@ -177,8 +177,8 @@ setGeneric("reportNames", function(object) standardGeneric("reportNames"))
 #' any other name returns that one report.
 #'
 #' @param assocRes an \code{\linkS4class{AssociationResults}},
-#'    \code{\linkS4class{PCAResults}}, or \code{\linkS4class{LDResults}}
-#'    object
+#'    \code{\linkS4class{PCAResults}}, \code{\linkS4class{MDSResults}}, or
+#'    \code{\linkS4class{LDResults}} object
 #' @param reportName a specific table report to return. \code{"ALL"}
 #'    returns every report.
 #'
