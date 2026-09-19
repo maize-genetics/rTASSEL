@@ -1,3 +1,20 @@
+# /// Constants /////////////////////////////////////////////////////
+
+## ----
+# Analysis result classes that keep a TASSEL 'Phenotype' in '@jObj'
+#
+# @description
+# These are not data objects, but the values they report - PCA and MDS
+# axes, and BLUE trait estimates - are held as a TASSEL phenotype, so
+# the join functions can treat them as another table of traits.
+PHENOTYPE_BACKED_RESULTS <- c(
+    "PCAResults",
+    "MDSResults",
+    "AssociationResultsBLUE"
+)
+
+
+
 # /// Shared helpers ////////////////////////////////////////////////
 
 ## ----
@@ -39,11 +56,12 @@
 #
 # @description
 # The join functions accept any mix of objects that carry phenotype
-# data, plus 'PCAResults' and 'MDSResults', whose axes TASSEL also
-# models as a phenotype. Objects carrying only genotype data are set
-# aside so that '.joinPhenotypes()' can attach the joined phenotype to
-# them. Each element is validated and unwrapped, and the class the
-# joined result should be returned as is reported back.
+# data, plus the analysis results whose values TASSEL also models as a
+# phenotype: the axes of 'PCAResults' and 'MDSResults' and the trait
+# estimates of 'AssociationResultsBLUE'. Objects carrying only genotype
+# data are set aside so that '.joinPhenotypes()' can attach the joined
+# phenotype to them. Each element is validated and unwrapped, and the
+# class the joined result should be returned as is reported back.
 #
 # @param x
 # A list (or vector) of rTASSEL objects.
@@ -69,10 +87,35 @@
     nPh         <- 0L
 
     for (obj in x) {
-        if (methods::is(obj, "PCAResults") || methods::is(obj, "MDSResults")) {
+        if (.isAnyClass(obj, PHENOTYPE_BACKED_RESULTS)) {
+            if (rJava::is.jnull(obj@jObj)) {
+                rlang::abort(c(
+                    sprintf(
+                        "`%s()` got a <%s> object with no phenotype data",
+                        fn, class(obj)
+                    ),
+                    "i" = paste0(
+                        "Only results returned by the analysis functions ",
+                        "carry a TASSEL phenotype."
+                    )
+                ))
+            }
+
             jPhenotypes$add(obj@jObj)
             nPh <- nPh + 1L
             next
+        }
+
+        if (methods::is(obj, "AssociationResults")) {
+            rlang::abort(c(
+                sprintf(
+                    "`%s()` cannot join <%s> results", fn, class(obj)
+                ),
+                "x" = paste0(
+                    "Only BLUE results hold values TASSEL models as a ",
+                    "phenotype - the other models report marker statistics."
+                )
+            ))
         }
 
         tasIn <- .resolveTasselInput(obj, "any", fn)
@@ -109,8 +152,8 @@
         ))
     }
 
-    # 'PCAResults' and 'MDSResults' are analysis results rather than data
-    # objects, so they do not get a vote on which class the join returns
+    # The classes in 'PHENOTYPE_BACKED_RESULTS' are analysis results rather
+    # than data objects, so they do not get a vote on the returned class
     isLegacy <- vapply(x, .isAnyClass, logical(1), TASSEL_INPUT$LEGACY)
     isModern <- vapply(x, .isAnyClass, logical(1), TASSEL_INPUT$MODERN)
 
@@ -184,8 +227,9 @@
 #' @param ... Any number of rTASSEL objects containing a phenotype. Accepted
 #'    classes are \code{\linkS4class{TasselPhenotype}},
 #'    \code{\linkS4class{TasselGenomicDataset}},
-#'    \code{\linkS4class{PCAResults}}, \code{\linkS4class{MDSResults}}, and
-#'    the deprecated \code{TasselGenotypePhenotype}. At most one object
+#'    \code{\linkS4class{PCAResults}}, \code{\linkS4class{MDSResults}},
+#'    \code{\linkS4class{AssociationResultsBLUE}}, and the deprecated
+#'    \code{TasselGenotypePhenotype}. At most one object
 #'    carrying only genotype data (\code{\linkS4class{TasselGenotype}}) may
 #'    also be given. Lists of objects are flattened, so earlier
 #'    \code{intersectJoin(c(ph1, ph2))} style calls keep working.
@@ -202,6 +246,10 @@
 #'
 #' # Attach a genotype table at the same time
 #' intersectJoin(gt, ph1Cov, ph2Traits, ph3MoreTraits)
+#'
+#' # Carry BLUE estimates forward as the traits of a new data set
+#' blues <- assocModelFitter(ph2Traits, . ~ .)
+#' intersectJoin(gt, blues, ph1Cov)
 #' }
 #'
 #' @importFrom rJava .jnew
@@ -226,8 +274,9 @@ intersectJoin <- function(...) {
 #' @param ... Any number of rTASSEL objects containing a phenotype. Accepted
 #'    classes are \code{\linkS4class{TasselPhenotype}},
 #'    \code{\linkS4class{TasselGenomicDataset}},
-#'    \code{\linkS4class{PCAResults}}, \code{\linkS4class{MDSResults}}, and
-#'    the deprecated \code{TasselGenotypePhenotype}. At most one object
+#'    \code{\linkS4class{PCAResults}}, \code{\linkS4class{MDSResults}},
+#'    \code{\linkS4class{AssociationResultsBLUE}}, and the deprecated
+#'    \code{TasselGenotypePhenotype}. At most one object
 #'    carrying only genotype data (\code{\linkS4class{TasselGenotype}}) may
 #'    also be given. Lists of objects are flattened, so earlier
 #'    \code{unionJoin(c(ph1, ph2))} style calls keep working.
@@ -266,8 +315,9 @@ unionJoin <- function(...) {
 #' @param ... Any number of rTASSEL objects containing a phenotype. Accepted
 #'    classes are \code{\linkS4class{TasselPhenotype}},
 #'    \code{\linkS4class{TasselGenomicDataset}},
-#'    \code{\linkS4class{PCAResults}}, \code{\linkS4class{MDSResults}}, and
-#'    the deprecated \code{TasselGenotypePhenotype}. Lists of objects are
+#'    \code{\linkS4class{PCAResults}}, \code{\linkS4class{MDSResults}},
+#'    \code{\linkS4class{AssociationResultsBLUE}}, and the deprecated
+#'    \code{TasselGenotypePhenotype}. Lists of objects are
 #'    flattened, so earlier \code{concatenate(c(ph1, ph2))} style calls keep
 #'    working.
 #'    Unlike the joins, this function binds phenotype rows together and so

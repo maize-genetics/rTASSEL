@@ -71,7 +71,11 @@ The additive effect will always be non-negative. Defaults to \code{FALSE}.}
 \value{
 An \code{\linkS4class{AssociationResults}} object holding one
 \code{tibble} per TASSEL table report, which
-\code{\link{tableReport}()} reads.
+\code{\link{tableReport}()} reads. TASSEL models BLUEs as a phenotype, so
+a \code{\linkS4class{AssociationResultsBLUE}} object can also be given to
+\code{\link{intersectJoin}()}, \code{\link{unionJoin}()}, and
+\code{\link{concatenate}()} to combine the estimates with other phenotype
+data.
 }
 \description{
 This function acts as a front-end for TASSEL's extensive

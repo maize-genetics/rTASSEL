@@ -144,6 +144,69 @@ test_that("Joining returns correct values with MDS objects", {
     expect_equal(attributeData(intersectPheno)$trait_id, expectedTraits)
 })
 
+test_that("Joining returns correct values with BLUE objects", {
+    blueRes <- assocModelFitter(rtObjs$ph_nomiss, . ~ .)
+    phCov   <- readPhenotype(rtFiles$ph_popstruct_path)
+
+    joined <- intersectJoin(blueRes, phCov)
+
+    expect_s4_class(joined, "TasselPhenotype")
+    expect_equal(
+        attributeData(joined)$trait_id,
+        c("Taxa", "EarHT", "dpoll", "EarDia", "Q1", "Q2", "Q3")
+    )
+    expect_equal(
+        attributeData(joined)$trait_type,
+        c("taxa", rep("data", 3), rep("covariate", 3))
+    )
+
+    # The estimates themselves, rather than a table of the same shape
+    blueDf   <- tableReport(blueRes, "BLUE")
+    joinedDf <- as.data.frame(joined)
+    expect_equal(
+        joinedDf$EarHT,
+        blueDf$EarHT[match(joinedDf$Taxa, blueDf$Taxa)]
+    )
+
+    withGt <- intersectJoin(rtObjs$gt_hmp, blueRes, phCov)
+    expect_s4_class(withGt, "TasselGenomicDataset")
+    expect_equal(
+        traitNames(withGt),
+        c("EarHT", "dpoll", "EarDia", "Q1", "Q2", "Q3")
+    )
+})
+
+test_that("Joins reject association results without phenotype data", {
+    mockResults <- list("td_1" = iris)
+
+    expect_error(
+        intersectJoin(
+            methods::new(
+                "AssociationResultsGLM",
+                results   = mockResults,
+                traits    = "trait_1",
+                assocType = "GLM"
+            ),
+            phA
+        ),
+        "cannot join <AssociationResultsGLM> results"
+    )
+
+    # A BLUE object built by hand has no TASSEL phenotype behind it
+    expect_error(
+        intersectJoin(
+            methods::new(
+                "AssociationResultsBLUE",
+                results   = mockResults,
+                traits    = "trait_1",
+                assocType = "BLUE"
+            ),
+            phA
+        ),
+        "no phenotype data"
+    )
+})
+
 test_that("Joining accepts a genomic dataset's phenotype data", {
     joined <- intersectJoin(c(rtObjs$ds_hmp_ph_nomiss, pca(rtObjs$gt_hmp)))
 

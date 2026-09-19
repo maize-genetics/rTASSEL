@@ -70,14 +70,21 @@ tableReportList <- function(x) {
 # Convert list to AssociationResults object ----
 # @param trl A tableReportList object
 # @param aType Association type
-tableReportListToAssociationResults <- function(trl, aType) {
+# @param jPh The Java 'Phenotype' holding the BLUE values, which the join
+#    functions read. Only BLUE results carry one.
+tableReportListToAssociationResults <- function(
+    trl,
+    aType,
+    jPh = rJava::.jnull()
+) {
     result <- switch (aType,
         "BLUE" = {
             methods::new(
                 Class = "AssociationResultsBLUE",
                 results = trl,
                 traits = trl$BLUE_ANOVA$Trait,
-                assocType = aType
+                assocType = aType,
+                jObj = jPh
             )
         },
         "GLM" = {

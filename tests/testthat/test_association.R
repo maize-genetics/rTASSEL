@@ -315,6 +315,17 @@ test_that("BLUE analysis return correct data types.", {
     )
 })
 
+### BLUEs as phenotype data ----
+test_that("BLUE analysis keeps its TASSEL phenotype", {
+    expect_equal(
+        rJava::.jclass(tasBLUE@jObj),
+        "net.maizegenetics.phenotype.CorePhenotype"
+    )
+
+    # The other models report marker statistics, so they carry nothing
+    expect_false(methods::.hasSlot(tasGLM, "jObj"))
+})
+
 
 ## Miscellaneous logic checks ----
 test_that("assocModelFitter() handles threads", {

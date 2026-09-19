@@ -108,6 +108,13 @@
   + `intersectJoin()`, `unionJoin()`, and `concatenate()` accept an
     `MDSResults` object, as they already did a `PCAResults`, so MDS axes can
     be joined to phenotype data and used as covariates
+* `intersectJoin()`, `unionJoin()`, and `concatenate()` also accept the BLUE
+  results of `assocModelFitter()`:
+  + TASSEL models BLUEs as a phenotype, so the estimates can be joined to
+    other phenotype data and carried into a later analysis as traits:
+    `intersectJoin(gt, assocModelFitter(ph, . ~ .), phCov)`
+  + The other association models report marker statistics rather than
+    phenotype data, and are rejected with a message saying so
 * `intersectJoin()`, `unionJoin()`, and `concatenate()` now take objects
   directly instead of a single list:
   + `intersectJoin(ph1Cov, ph2Traits, ph3MoreTraits)` joins any number of

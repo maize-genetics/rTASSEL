@@ -56,7 +56,11 @@
 #' @return
 #' An \code{\linkS4class{AssociationResults}} object holding one
 #' \code{tibble} per TASSEL table report, which
-#' \code{\link{tableReport}()} reads.
+#' \code{\link{tableReport}()} reads. TASSEL models BLUEs as a phenotype, so
+#' a \code{\linkS4class{AssociationResultsBLUE}} object can also be given to
+#' \code{\link{intersectJoin}()}, \code{\link{unionJoin}()}, and
+#' \code{\link{concatenate}()} to combine the estimates with other phenotype
+#' data.
 #'
 #' @importFrom rJava is.jnull
 #' @importFrom rJava J
@@ -345,7 +349,12 @@ assocModelFitter <- function(
         return(
             tableReportListToAssociationResults(
                 trl   = tableReportList(assocOut),
-                aType = assocType
+                aType = assocType,
+                jPh   = if (assocType == "BLUE") {
+                    assocOut$get("BLUE")
+                } else {
+                    rJava::.jnull()
+                }
             )
         )
     } else {

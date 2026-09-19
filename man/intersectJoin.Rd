@@ -10,8 +10,9 @@ intersectJoin(...)
 \item{...}{Any number of rTASSEL objects containing a phenotype. Accepted
 classes are \code{\linkS4class{TasselPhenotype}},
 \code{\linkS4class{TasselGenomicDataset}},
-\code{\linkS4class{PCAResults}}, \code{\linkS4class{MDSResults}}, and
-the deprecated \code{TasselGenotypePhenotype}. At most one object
+\code{\linkS4class{PCAResults}}, \code{\linkS4class{MDSResults}},
+\code{\linkS4class{AssociationResultsBLUE}}, and the deprecated
+\code{TasselGenotypePhenotype}. At most one object
 carrying only genotype data (\code{\linkS4class{TasselGenotype}}) may
 also be given. Lists of objects are flattened, so earlier
 \code{intersectJoin(c(ph1, ph2))} style calls keep working.}
@@ -35,6 +36,10 @@ intersectJoin(ph1Cov, ph2Traits, ph3MoreTraits)
 
 # Attach a genotype table at the same time
 intersectJoin(gt, ph1Cov, ph2Traits, ph3MoreTraits)
+
+# Carry BLUE estimates forward as the traits of a new data set
+blues <- assocModelFitter(ph2Traits, . ~ .)
+intersectJoin(gt, blues, ph1Cov)
 }
 
 }

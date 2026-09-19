@@ -958,6 +958,37 @@ tasBLUE |> reportNames()
 tasBLUE |> tableReport("BLUE_ANOVA") |> head()
 ```
 
+### Using BLUEs as phenotype data
+The estimates themselves are one value per taxon per trait, which is how
+TASSEL models a phenotype. An `AssociationResultsBLUE` object can therefore
+be handed to the join functions, in the same way a `TasselPhenotype` object
+can, so that the estimates become the traits of a new data set:
+
+```{r, echo=TRUE, eval=TRUE}
+# Population structure to control for in the next model
+popStructPath <- system.file(
+    "extdata",
+    "mdp_population_structure.txt",
+    package = "rTASSEL"
+)
+tasPopStruct <- readPhenotype(popStructPath)
+
+# Join the estimates, the covariates, and a genotype table
+tasBlueGenoPheno <- intersectJoin(tasGenoHMP, tasBLUE, tasPopStruct)
+tasBlueGenoPheno
+```
+
+Since the field variation the factors captured has been absorbed into the
+estimates, the result is ready to fit markers against:
+
+```{r, echo=TRUE, eval=TRUE}
+assocModelFitter(
+    tasObj     = tasBlueGenoPheno,
+    formula    = . ~ .,
+    fitMarkers = TRUE
+) |> tableReport() |> head()
+```
+
 
 ## Calculate GLM
 Similar to BLUEs, we can fit a generalized linear model (GLM) by simply

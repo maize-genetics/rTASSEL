@@ -10,8 +10,9 @@ concatenate(...)
 \item{...}{Any number of rTASSEL objects containing a phenotype. Accepted
 classes are \code{\linkS4class{TasselPhenotype}},
 \code{\linkS4class{TasselGenomicDataset}},
-\code{\linkS4class{PCAResults}}, \code{\linkS4class{MDSResults}}, and
-the deprecated \code{TasselGenotypePhenotype}. Lists of objects are
+\code{\linkS4class{PCAResults}}, \code{\linkS4class{MDSResults}},
+\code{\linkS4class{AssociationResultsBLUE}}, and the deprecated
+\code{TasselGenotypePhenotype}. Lists of objects are
 flattened, so earlier \code{concatenate(c(ph1, ph2))} style calls keep
 working.
 Unlike the joins, this function binds phenotype rows together and so
