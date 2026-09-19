@@ -238,6 +238,39 @@ downstream `rTASSEL` functions where we will bring the TASSEL data into the R
 environment. Every function that does so is collected in the
 [Extracting Data into R](extracting_data.html) vignette.
 
+### Joining genotype data split across files
+Genotype data often arrives split up - one file per chromosome, or one file
+per collection of sites. `intersectJoin()` and `unionJoin()` put such files
+back together into a single `TasselGenotype` object. For example, the package
+ships two small VCF files, one holding sites on chromosome 1 and the other
+sites on chromosome 5:
+
+```{r, eval=TRUE, echo=TRUE}
+tasGenoChr1 <- readGenotype(
+    system.file("extdata", "rt_sub_chr1.vcf", package = "rTASSEL")
+)
+tasGenoChr5 <- readGenotype(
+    system.file("extdata", "rt_sub_chr5.vcf", package = "rTASSEL")
+)
+
+tasGenoChrAll <- intersectJoin(tasGenoChr1, tasGenoChr5)
+tasGenoChrAll
+```
+
+The sites of every table are kept and returned in genomic order, whichever
+order the tables were given in:
+
+```{r, eval=TRUE, echo=TRUE}
+tasGenoChrAll |> positionList()
+```
+
+The two joins differ in which taxa they keep: `intersectJoin()` keeps the
+taxa every table holds, while `unionJoin()` keeps every taxon any of them
+holds and returns the calls a table never made as missing.
+
+Joining is for tables that hold *different* sites. To merge the calls of
+tables that describe the same sites, use `mergeGenotypeTables()` instead.
+
 
 ## Loading phenotype data
 

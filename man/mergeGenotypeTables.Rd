@@ -19,3 +19,12 @@ A \code{\linkS4class{TasselGenotype}} object, or a
 \description{
 Merges multiple genotype tables together by site information
 }
+\details{
+Tables are merged site by site, so a call two tables both make at the
+same site is resolved into one. Use \code{\link{intersectJoin}} or
+\code{\link{unionJoin}} instead to bring together tables that hold
+different sites, such as data split by chromosome.
+}
+\seealso{
+\code{\link{intersectJoin}}, \code{\link{unionJoin}}
+}

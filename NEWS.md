@@ -119,13 +119,28 @@
   directly instead of a single list:
   + `intersectJoin(ph1Cov, ph2Traits, ph3MoreTraits)` joins any number of
     phenotype objects in one call
-  + `intersectJoin()` and `unionJoin()` also accept one object holding only
-    genotype data, which is joined to the result. The return value is then a
-    `TasselGenomicDataset` rather than a `TasselPhenotype`, so a study's
+  + `intersectJoin()` and `unionJoin()` also accept objects holding only
+    genotype data, which are joined to the result. The return value is then
+    a `TasselGenomicDataset` rather than a `TasselPhenotype`, so a study's
     genotype, covariates, and trait tables can be assembled in one step:
     `intersectJoin(gt, ph1Cov, ph2Traits)`
   + Lists are still flattened, so earlier `intersectJoin(c(ph1, ph2))` calls
     keep working unchanged
+* `intersectJoin()` and `unionJoin()` also join genotype tables to each
+  other, which is the way back from data split by chromosome or by
+  collection of sites:
+  + `intersectJoin(gtChr1, gtChr2, gtChr3)` returns a single
+    `TasselGenotype` holding the sites of each table in genomic order, no
+    matter which order the tables were given in
+  + `intersectJoin()` keeps the taxa every table holds, while `unionJoin()`
+    keeps every taxon any of them holds and returns the calls a table never
+    made as missing
+  + Genotype tables can be joined alongside phenotype data in the same
+    call, which returns a `TasselGenomicDataset`:
+    `intersectJoin(gtChr1, gtChr2, phTraits)`
+  + The tables are expected to hold different sites. Use
+    `mergeGenotypeTables()` to merge the calls of tables describing the
+    same sites
 * Added new function `removeMinorSNPStates()`:
   + Collapses every site to its two most common allelic states
   + Replaces the `removeMinorSNPStates` argument of

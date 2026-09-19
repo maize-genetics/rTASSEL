@@ -266,16 +266,104 @@ test_that("Joins reject empty and unsupported input", {
 
 test_that("Joins reject genotype input they cannot use", {
     expect_error(
-        intersectJoin(rtObjs$gt_hmp),
-        "at least one object with phenotype data"
-    )
-    expect_error(
-        intersectJoin(rtObjs$gt_hmp, rtObjs$gt_vcf, phA),
-        "at most one genotype-only object"
-    )
-    expect_error(
         concatenate(rtObjs$gt_hmp, phA1, phA2),
         "does not accept genotype data"
+    )
+    expect_error(
+        intersectJoin(rtObjs$gt_hmp, readGenotype(rtMatrices$num_gt_sm)),
+        "Only genotype tables holding allele calls"
+    )
+})
+
+
+## Genotype table joining ----
+gtChr1 <- readGenotype(returnSysFiles("rt_sub_chr1.vcf"))
+gtChr5 <- readGenotype(returnSysFiles("rt_sub_chr5.vcf"))
+
+test_that("Joining genotype tables returns their sites in genomic order", {
+    joined <- intersectJoin(gtChr1, gtChr5)
+
+    expect_s4_class(joined, "TasselGenotype")
+    expect_equal(getTaxaIDs(joined), getTaxaIDs(gtChr1))
+    expect_equal(
+        as.data.frame(positionList(joined))[, c("Name", "Chromosome")],
+        rbind(
+            as.data.frame(positionList(gtChr1)),
+            as.data.frame(positionList(gtChr5))
+        )[, c("Name", "Chromosome")]
+    )
+    expect_equal(
+        as.matrix(joined),
+        cbind(as.matrix(gtChr1), as.matrix(gtChr5))
+    )
+
+    # The sites TASSEL reports are only as good as the site scores it can
+    # compute from them, which a lazy view over the tables cannot
+    expect_equal(dim(as.matrix(kinshipMatrix(joined))), c(5L, 5L))
+})
+
+test_that("The order genotype tables are given in does not matter", {
+    expect_equal(
+        as.matrix(intersectJoin(gtChr5, gtChr1)),
+        as.matrix(intersectJoin(gtChr1, gtChr5))
+    )
+})
+
+test_that("Joining genotype tables handles interleaved sites", {
+    nSites <- nrow(positionList(rtObjs$gt_hmp))
+
+    oddSites  <- rtObjs$gt_hmp[, sites(seq(1, nSites, by = 2))]
+    evenSites <- rtObjs$gt_hmp[, sites(seq(2, nSites, by = 2))]
+
+    rejoined <- intersectJoin(oddSites, evenSites)
+
+    expect_equal(
+        positionList(rejoined),
+        positionList(rtObjs$gt_hmp)
+    )
+    expect_equal(as.matrix(rejoined), as.matrix(rtObjs$gt_hmp))
+})
+
+test_that("The join mode decides which taxa a genotype join keeps", {
+    gtChr5Sub <- gtChr5[taxa("33-16", "38-11"), ]
+
+    intersectGt <- intersectJoin(gtChr1, gtChr5Sub)
+    unionGt     <- unionJoin(gtChr1, gtChr5Sub)
+
+    expect_equal(getTaxaIDs(intersectGt), c("33-16", "38-11"))
+    expect_equal(getTaxaIDs(unionGt), getTaxaIDs(gtChr1))
+
+    # The calls the subset never made come back as missing
+    unionCalls <- as.matrix(unionGt, type = "allele")
+    chr5Sites  <- nrow(positionList(gtChr1)) + seq_len(nrow(positionList(gtChr5)))
+    expect_true(all(unionCalls[c("4226", "4722", "A188"), chr5Sites] == "N"))
+    expect_equal(
+        unionCalls[c("33-16", "38-11"), chr5Sites],
+        as.matrix(gtChr5Sub, type = "allele")
+    )
+})
+
+test_that("Genotype tables and phenotype data can be joined at once", {
+    joined <- intersectJoin(gtChr1, gtChr5, rtObjs$ph_nomiss)
+
+    expect_s4_class(joined, "TasselGenomicDataset")
+    expect_equal(nrow(positionList(joined)), 17)
+    expect_equal(traitNames(joined), c("EarHT", "dpoll", "EarDia"))
+    expect_setequal(
+        getTaxaIDs(joined),
+        intersect(getTaxaIDs(gtChr1), getTaxaIDs(rtObjs$ph_nomiss))
+    )
+})
+
+test_that("A single genotype object is returned as it was given", {
+    expect_equal(as.matrix(intersectJoin(gtChr1)), as.matrix(gtChr1))
+    expect_s4_class(intersectJoin(gtChr1), "TasselGenotype")
+})
+
+test_that("Genotype tables sharing no taxa cannot be joined", {
+    expect_error(
+        intersectJoin(gtChr1[taxa("33-16"), ], gtChr5[taxa("4226"), ]),
+        "Could not join the genotype tables"
     )
 })
 
@@ -322,6 +410,13 @@ test_that("joins and merges accept deprecated TasselGenotypePhenotype input", {
     )
     expect_s4_class(legacyGtJoin, "TasselGenotypePhenotype")
     expect_false(rJava::is.jnull(getGenotypeTable(legacyGtJoin)))
+
+    legacyGtOnlyJoin <- intersectJoin(
+        readGenotypeTableFromPath(returnSysFiles("rt_sub_chr1.vcf")),
+        readGenotypeTableFromPath(returnSysFiles("rt_sub_chr5.vcf"))
+    )
+    expect_s4_class(legacyGtOnlyJoin, "TasselGenotypePhenotype")
+    expect_equal(nrow(positionList(legacyGtOnlyJoin)), 17)
 
     legacyMerge <- mergeGenotypeTables(list(
         rtObjsLegacy$gt_hmp,

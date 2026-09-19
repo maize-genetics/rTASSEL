@@ -13,9 +13,14 @@ test_that("TASSEL_JVM contains required Java class references", {
     required_keys <- c(
         "ARRAY_LIST",
         "CHROMOSOME",
+        "COMBINE_GENOTYPE_TABLE",
+        "FILTER_GENOTYPE_TABLE",
+        "GENOTYPE_TABLE",
         "GENOTYPE_TABLE_BUILDER",
         "LOGGING_UTILS",
+        "PHENOTYPE",
         "PHENO_BUILDER",
+        "POSITION_LIST",
         "R_METHODS",
         "TAXA_LIST_BUILDER"
     )
