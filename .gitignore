@@ -13,6 +13,7 @@ rTASSEL_log
 rtassel_log.txt
 vignettes/*.log
 vignettes/figure/
+data-raw/
 
 
 ## R projects ----
