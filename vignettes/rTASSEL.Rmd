@@ -305,8 +305,8 @@ type of each column.
 In some cases you might want to first modify your phenotype data set in R and
 then load it into the TASSEL environment. `readPhenotype()` also accepts a
 `data.frame`, but since a plain data frame carries no TASSEL attribute
-information, it needs a second table describing what each column is. First,
-we will construct an R data frame:
+information, the `attrTypes` parameter supplies them. First, we will construct
+an R data frame:
 
 ```{r, eval=TRUE, echo=TRUE}
 # Create phenotype data frame
@@ -317,9 +317,35 @@ colnames(phenoDF)[1] <- "Taxon"
 head(phenoDF)
 ```
 
-The attribute table maps each column of the data frame (`col_id`) to its
-TASSEL type (`tassel_attr`), which is one of `taxa`, `data`, `covariate`, or
-`factor`:
+In the simplest form, `attrTypes` is a named character vector: the names are
+the columns of the data frame, and the values their TASSEL types, which are
+one of `taxa`, `data`, `covariate`, or `factor`:
+
+```{r, eval=TRUE, echo=TRUE}
+# Load into rTASSEL `TasselPhenotype` object
+tasPhenoDF <- readPhenotype(
+    phenoDF,
+    attrTypes = c(
+        Taxon  = "taxa",
+        EarHT  = "data",
+        dpoll  = "data",
+        EarDia = "data"
+    )
+)
+
+# Inspect new object
+tasPhenoDF
+```
+
+`attrTypes` plays the part `colData` plays in a `SummarizedExperiment`: it
+has to describe every column of the data frame exactly once, and describe
+nothing else. A column left out, named twice, or misspelled is an error
+rather than a silently dropped trait, and each type accepts only the R types
+it can hold - a `character` column marked as `data`, or a column of dates,
+is reported by name instead of being coerced on a guess.
+
+The mapping can also be written as a data frame, which is easier to build
+programmatically. Its columns are `col_id` and `tassel_attr`:
 
 ```{r, eval=TRUE, echo=TRUE}
 # Describe each column
@@ -330,11 +356,7 @@ attrDF <- tibble::tibble(
 
 attrDF
 
-# Load into rTASSEL `TasselPhenotype` object
-tasPhenoDF <- readPhenotype(phenoDF, attr = attrDF)
-
-# Inspect new object
-tasPhenoDF
+readPhenotype(phenoDF, attrTypes = attrDF)
 ```
 
 
@@ -421,14 +443,14 @@ tasGenoPheno
 
 We can also use a combination of the above parameter options (e.g. load a
 genotype path and a phenotype data frame, etc.). As with `readPhenotype()`,
-a data frame needs its attribute table, which is passed through the `attr`
-parameter:
+a data frame needs its attribute types, which are passed through the
+`attrTypes` parameter:
 
 ```{r, eval=TRUE, echo=TRUE}
 tasGenoPhenoDF <- readGenomicDataset(
     genotype  = genoPathHMP,
     phenotype = phenoDF,
-    attr      = attrDF
+    attrTypes = attrDF
 )
 tasGenoPhenoDF
 ```

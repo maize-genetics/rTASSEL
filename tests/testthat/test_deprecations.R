@@ -56,6 +56,22 @@ test_that("readPhenotypeFromDataFrame() points at readPhenotype()", {
     )
 })
 
+test_that("the attr argument of readPhenotype() points at attrTypes", {
+    lifecycle::expect_deprecated(
+        readPhenotype(smallPhDfs$a, attr = smallPhAttr("weight")),
+        "attrTypes"
+    )
+})
+
+test_that("readPhenotype() still builds from a deprecated attr argument", {
+    withr::local_options(lifecycle_verbosity = "quiet")
+
+    ph <- readPhenotype(smallPhDfs$a, attr = smallPhAttr("weight"))
+
+    expect_s4_class(ph, "TasselPhenotype")
+    expect_equal(traitNames(ph), "weight")
+})
+
 test_that("readGenotypePhenotype() points at readGenomicDataset()", {
     lifecycle::expect_deprecated(
         readGenotypePhenotype(rtFiles$gt_hmp_path, rtFiles$ph_nomiss_path),
@@ -259,8 +275,8 @@ test_that("mergeGenotypeTables() returns TGP only when every input was one", {
 test_that("joins return TGP only when every input was one", {
     withr::local_options(lifecycle_verbosity = "quiet")
 
-    modernA <- readPhenotype(smallPhDfs$a, attr = smallPhAttr("weight"))
-    modernB <- readPhenotype(smallPhDfs$b, attr = smallPhAttr("height"))
+    modernA <- readPhenotype(smallPhDfs$a, attrTypes = smallPhAttr("weight"))
+    modernB <- readPhenotype(smallPhDfs$b, attrTypes = smallPhAttr("height"))
     legacyA <- readPhenotypeFromDataFrame(smallPhDfs$a, "taxa")
     legacyB <- readPhenotypeFromDataFrame(smallPhDfs$b, "taxa")
 

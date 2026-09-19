@@ -265,15 +265,15 @@ resolveGenotypeArg <- function(x) {
 #
 # @param x
 # A `TasselPhenotype` object, a path to a phenotype file, or a `data.frame`.
-# @param attr
-# Attribute metadata, required when `x` is a `data.frame`. See
-# `readPhenotype()`.
+# @param attrTypes
+# A mapping of each column to its TASSEL attribute type, required when `x`
+# is a `data.frame`. See `readPhenotype()`.
 #
 # @return
 # A Java `Phenotype` object reference.
-resolvePhenotypeArg <- function(x, attr = NULL) {
+resolvePhenotypeArg <- function(x, attrTypes = NULL) {
     if (is.character(x) || is.data.frame(x)) {
-        x <- readPhenotype(x, attr = attr)
+        x <- readPhenotype(x, attrTypes = attrTypes)
     }
 
     jPh <- getPhenotypeTable(x)
@@ -283,7 +283,7 @@ resolvePhenotypeArg <- function(x, attr = NULL) {
             "`phenotype` does not contain phenotype data",
             "i" = paste0(
                 "Pass a <TasselPhenotype> object, a path to a phenotype ",
-                "file, or a `data.frame` along with `attr`."
+                "file, or a `data.frame` along with `attrTypes`."
             )
         ))
     }
@@ -311,10 +311,10 @@ resolvePhenotypeArg <- function(x, attr = NULL) {
 #' A \code{\linkS4class{TasselPhenotype}} object, a path to a phenotype file,
 #' or a \code{data.frame} of phenotype data. Paths and data frames are passed
 #' to \code{\link{readPhenotype}()}.
-#' @param attr
-#' Attribute metadata describing the columns of \code{phenotype}. Required
-#' when \code{phenotype} is a \code{data.frame} and ignored otherwise. See
-#' \code{\link{readPhenotype}()} for the expected format.
+#' @param attrTypes
+#' A mapping of each column of \code{phenotype} to its TASSEL attribute
+#' type. Required when \code{phenotype} is a \code{data.frame} and ignored
+#' otherwise. See \code{\link{readPhenotype}()} for the accepted forms.
 #' @param join
 #' How taxa from the two data sets are combined. \code{"intersect"} (the
 #' default) keeps only taxa found in both; \code{"union"} keeps taxa found in
@@ -344,13 +344,13 @@ resolvePhenotypeArg <- function(x, attr = NULL) {
 readGenomicDataset <- function(
     genotype,
     phenotype,
-    attr = NULL,
+    attrTypes = NULL,
     join = c("intersect", "union")
 ) {
     join <- rlang::arg_match(join)
 
     jGt <- resolveGenotypeArg(genotype)
-    jPh <- resolvePhenotypeArg(phenotype, attr)
+    jPh <- resolvePhenotypeArg(phenotype, attrTypes)
 
     createTasselGenomicDataset(joinGenotypePhenotype(jGt, jPh, join))
 }

@@ -4,17 +4,22 @@
 \alias{readPhenotype}
 \title{Read and convert phenotype data into TASSEL 5 phenotype objects}
 \usage{
-readPhenotype(x, attr = NULL)
+readPhenotype(x, attrTypes = NULL, attr = lifecycle::deprecated())
 }
 \arguments{
 \item{x}{A character string representing the file path to the phenotype data
 or a data frame containing the phenotype data.}
 
-\item{attr}{An optional attribute metadata parameter required when \code{x} is
-a data frame. Defaults to \code{NULL}. Two spellings are accepted:
+\item{attrTypes}{A mapping of each column of \code{x} to its TASSEL attribute type,
+required when \code{x} is a data frame and ignored otherwise.
+Either a named character vector, where the names are column names,
+or a data frame. A data frame is read in either spelling:
 \code{col_id} and \code{tassel_attr}, or the \code{trait_id} and
 \code{trait_type} that \code{\link{attributeData}()} reports, so the
 metadata read off one phenotype can be used to build another.}
+
+\item{attr}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
+Renamed to \code{attrTypes}.}
 }
 \value{
 A phenotype object created from the input data.
@@ -31,14 +36,49 @@ data frame.
 
   \item
   If \code{x} is a data frame, the function requires the
-  \code{attr} parameter to provide metadata and calls
-  \code{readPhenotypeFromDf(x, attr)}.
+  \code{attrTypes} parameter to map each column to a TASSEL
+  attribute type and calls
+  \code{readPhenotypeFromDf(x, attrTypes)}.
 
   \item
   If \code{x} is neither a character string nor a data frame,
   the function throws an error.
 
 }
+
+A file carries its own attribute types in its header, but a plain
+data frame carries none, so \code{attrTypes} supplies them. It
+plays the part \code{colData} plays in a
+\code{SummarizedExperiment}: it must describe every column of
+\code{x} exactly once, and describe nothing else. Nothing is read
+off column position or guessed from the data, so a column left
+out, named twice, or misspelled is an error rather than a silent
+drop.
+
+Each attribute type accepts one R type, and the column is coerced
+to what TASSEL needs to hold it:
+
+\describe{
+  \item{\code{"taxa"}}{
+    \code{character} or \code{factor}, and no missing values,
+    since each observation has to name its taxon. Exactly one
+    column is the taxa column.
+  }
+  \item{\code{"data"}, \code{"covariate"}}{
+    \code{double} or \code{integer}. \code{NA} and non-finite
+    values are carried through as TASSEL missing values.
+  }
+  \item{\code{"factor"}}{
+    \code{character}, \code{factor}, \code{integer}, or
+    \code{logical}, and no missing values, since TASSEL would read
+    them as a category of their own. A \code{double} column is
+    rejected, as rounding a continuous measure into categories is
+    rarely intended.
+  }
+}
+
+Any other column type, such as a \code{Date} or a list column, is
+rejected by name.
 }
 \examples{
 \dontrun{
@@ -46,6 +86,23 @@ data frame.
 phenotype <- readPhenotype("path/to/phenotype/file.txt")
 
 # Reading phenotype data from a data frame
+df <- tibble::tribble(
+    ~"taxa_id", ~"plant_height", ~"PC1", ~"yield",
+    "line_a",   12.3,            0.5,    2,
+    "line_b",   22.8,            -1.5,   3,
+)
+
+phenotypeDf <- readPhenotype(
+    df,
+    attrTypes = c(
+        taxa_id      = "taxa",
+        plant_height = "data",
+        PC1          = "covariate",
+        yield        = "data"
+    )
+)
+
+# The same mapping, written as a data frame
 attrDf <- tibble::tribble(
     ~"col_id",      ~"tassel_attr",
     "taxa_id",      "taxa",
@@ -53,16 +110,13 @@ attrDf <- tibble::tribble(
     "PC1",          "covariate",
     "yield",        "data",
 )
-df <- tibble::tribble(
-    ~"taxa_id", ~"plant_height", ~"PC1", ~"yield",
-    "line_a",   12.3,            0.5,    2,
-    "line_b",   22.8,            -1.5,   3,
-)
-
-phenotypeDf <- readPhenotype(df, attr = attrDf)
+readPhenotype(df, attrTypes = attrDf)
 
 # The return trip, using the metadata of an existing phenotype
-readPhenotype(as.data.frame(phenotype), attr = attributeData(phenotype))
+readPhenotype(
+    as.data.frame(phenotype),
+    attrTypes = attributeData(phenotype)
+)
 }
 
 }

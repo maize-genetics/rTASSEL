@@ -34,7 +34,7 @@ noMissingDf <- fullDf[
 tasDatasetCovNoMiss <- readGenomicDataset(
     genotype  = tasGeno,
     phenotype = noMissingDf,
-    attr      = data.frame(
+    attrTypes = data.frame(
         col_id      = colnames(noMissingDf),
         tassel_attr = c("taxa", "factor", "data", rep("covariate", 3))
     )

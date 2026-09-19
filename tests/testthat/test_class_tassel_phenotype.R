@@ -12,13 +12,13 @@ phTestAttr <- data.frame(
     tassel_attr = c("taxa", "data", "covariate", "data"),
     stringsAsFactors = FALSE
 )
-phTestObj <- readPhenotype(phTestDf, attr = phTestAttr)
+phTestObj <- readPhenotype(phTestDf, attrTypes = phTestAttr)
 
 
 # === TasselPhenotype construction =================================
 
 test_that("TasselPhenotype creation works", {
-    expect_no_error(phenotype <- readPhenotype(phTestDf, attr = phTestAttr))
+    expect_no_error(phenotype <- readPhenotype(phTestDf, attrTypes = phTestAttr))
     expect_s4_class(phenotype, "TasselPhenotype")
     expect_true(all(
         c("attrData", "attrSummary", "dispData", "rData",
@@ -38,8 +38,8 @@ test_that("TasselPhenotype methods work correctly", {
 
 test_that("TasselPhenotype validation works", {
     expect_error(
-        readPhenotype(data.frame(x = 1), attr = NULL),
-        "Phenotype objects evaluated from 'data.frame' need attribute metadata"
+        readPhenotype(data.frame(x = 1), attrTypes = NULL),
+        "A `data.frame` phenotype needs attribute metadata"
     )
     expect_error(
         readPhenotype(list(x = 1)),
@@ -59,8 +59,8 @@ test_that("readPhenotype dispatches to file path when given a character", {
     expect_true(nrow(phPath@rData) > 0)
 })
 
-test_that("readPhenotype dispatches to data.frame path with attr", {
-    ph <- readPhenotype(phTestDf, attr = phTestAttr)
+test_that("readPhenotype dispatches to data.frame path with attrTypes", {
+    ph <- readPhenotype(phTestDf, attrTypes = phTestAttr)
     expect_s4_class(ph, "TasselPhenotype")
     expect_true("plant_height" %in% attributeData(ph)$trait_id)
 })

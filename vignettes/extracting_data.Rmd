@@ -392,10 +392,10 @@ The two tables are also what `readPhenotype()` needs to build a phenotype
 from a data frame, so together they make the return trip:
 
 ```{r, eval=TRUE, echo=TRUE}
-readPhenotype(myPhenoDF, attr = myAttr)
+readPhenotype(myPhenoDF, attrTypes = myAttr)
 ```
 
-The `attr` argument takes either this spelling or the `col_id` and
+The `attrTypes` argument takes either this spelling or the `col_id` and
 `tassel_attr` columns documented in *Getting Started with rTASSEL*, so
 metadata read off one phenotype can be used to build another.
 

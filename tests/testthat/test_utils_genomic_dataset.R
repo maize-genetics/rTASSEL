@@ -116,7 +116,7 @@ test_that("buildGenotypeColumn() collects reference probabilities", {
     dsNum <- readGenomicDataset(
         rtMatrices$num_gt_sm,
         data.frame(Taxa = rownames(rtMatrices$num_gt_sm), yield = c(1, 2, 3)),
-        attr = data.frame(
+        attrTypes = data.frame(
             col_id      = c("Taxa", "yield"),
             tassel_attr = c("taxa", "data")
         )

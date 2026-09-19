@@ -88,6 +88,45 @@
   + Components are reachable with `genotype()` and `phenotype()`
   + Subsetting with `[` filters the genotype table and re-joins the
     phenotype data, so both components stay in step
+* Building a phenotype from a `data.frame` now states what every column is
+  rather than inferring it:
+  + **Breaking change**: the `attr` argument of `readPhenotype()` and
+    `readGenomicDataset()` is renamed `attrTypes`. `readPhenotype(attr =)`
+    still works with a deprecation warning; `readGenomicDataset()` is new in
+    this release, so its argument is renamed outright
+  + `attrTypes` takes a named character vector, where the names are columns
+    and the values TASSEL attribute types, so a mapping can be written
+    inline as `c(Taxon = "taxa", EarHT = "data")`. The data frame forms are
+    unchanged
+  + The mapping is held to the contract `colData` is held to in a
+    `SummarizedExperiment`: it must describe every column of the data frame
+    exactly once, and describe nothing else. A column left out of the
+    mapping was previously dropped from the phenotype without a word, and
+    is now an error naming the column, as is an entry with no matching
+    column, a column named twice, and a duplicated or unnamed data frame
+    column
+  + A character vector is read by name only. An unnamed or partially named
+    vector is rejected rather than lined up against the columns by position
+  + Each attribute type accepts only the R types it can hold, and the column
+    is coerced to what TASSEL needs: `taxa` takes `character` or `factor`,
+    `data` and `covariate` take `double` or `integer`, and `factor` takes
+    anything but `double`. Every mismatch reports the column, its R type,
+    and the coercion that would fix it
+  + Missing values are carried into TASSEL as missing values in a `data` or
+    `covariate` column, and rejected in a `taxa` or `factor` column, where a
+    taxon has to be named and `NA` would otherwise become a category of its
+    own
+  + Column types TASSEL has no attribute for, such as a `Date` or a list
+    column, are rejected by name instead of reaching the JVM
+  + Only `double[]` and `String[]` are now handed to TASSEL, so an R
+    `factor` marked as `factor` keeps its labels rather than being recoded
+    to its integer codes, and an integer column marked as `factor` no longer
+    depends on TASSEL's `int[]` handling
+  + Fixed a bug where the check for illegal attribute types read the
+    phenotype data frame rather than the mapping, so a misspelled type
+    reached TASSEL and failed there instead
+  + Traits are now built in the column order of the data frame rather than
+    the row order of the mapping
 * Added new function `readGenomicDataset()`:
   + Joins genotype and phenotype data into a `TasselGenomicDataset`
   + Both arguments accept either an existing `rTASSEL` object or the raw
@@ -195,11 +234,11 @@
     which every other class already answered, and an `as.dist()` coercion
     for `hclust()` and friends
   + `LDResults` gained a `reportNames()` method
-  + The `attr` argument of `readPhenotype()` accepts the `trait_id` and
+  + The `attrTypes` argument of `readPhenotype()` accepts the `trait_id` and
     `trait_type` columns that `attributeData()` reports, alongside the
     `col_id` and `tassel_attr` spelling, so
-    `readPhenotype(as.data.frame(ph), attr = attributeData(ph))` makes the
-    return trip
+    `readPhenotype(as.data.frame(ph), attrTypes = attributeData(ph))` makes
+    the return trip
 * `filterGenotypeTableBySiteName()` now keeps phenotype data attached to
   its input instead of dropping it
 * Converted the ad-hoc "will be deprecated soon" messages to formal

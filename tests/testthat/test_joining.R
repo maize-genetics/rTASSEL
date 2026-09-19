@@ -17,7 +17,7 @@ phA <- readPhenotype(
         taxa = c("a", "b", "c", "d"),
         weight = c(120, 150, 100, 70)
     ),
-    attr = phAttr("weight")
+    attrTypes = phAttr("weight")
 )
 
 phB <- readPhenotype(
@@ -25,7 +25,7 @@ phB <- readPhenotype(
         taxa = c("a", "b", "c"),
         height = c(12, 15, 10)
     ),
-    attr = phAttr("height")
+    attrTypes = phAttr("height")
 )
 
 
@@ -58,7 +58,7 @@ phC <- readPhenotype(
         taxa = c("a", "b", "c"),
         girth = c(3, 4, 5)
     ),
-    attr = phAttr("girth")
+    attrTypes = phAttr("girth")
 )
 
 test_that("Joins take any number of objects without a list", {
@@ -93,7 +93,7 @@ phA1 <- readPhenotype(
         taxa = c("a", "b", "c"),
         height = c(12, 15, 10)
     ),
-    attr = phAttr("height")
+    attrTypes = phAttr("height")
 )
 
 phA2 <- readPhenotype(
@@ -101,7 +101,7 @@ phA2 <- readPhenotype(
         taxa = c("d", "e", "f", "g"),
         height = c(14, 50, 13, 23)
     ),
-    attr = phAttr("height")
+    attrTypes = phAttr("height")
 )
 
 test_that("Concatenation returns correct values", {
@@ -244,11 +244,11 @@ test_that("The join mode carries through to the genotype join", {
 
     phX <- readPhenotype(
         data.frame(taxa = phTaxa, weight = c(120, 150, 100, 70)),
-        attr = phAttr("weight")
+        attrTypes = phAttr("weight")
     )
     phY <- readPhenotype(
         data.frame(taxa = phTaxa, height = c(12, 15, 10, 9)),
-        attr = phAttr("height")
+        attrTypes = phAttr("height")
     )
 
     intersectDs <- intersectJoin(rtObjs$gt_hmp, phX, phY)

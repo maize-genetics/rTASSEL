@@ -41,7 +41,7 @@ test_that("readGenomicDataset() builds a dataset from a data frame", {
         yield = c(1, 2, 3, 4, 5)
     )
 
-    dsDf <- readGenomicDataset(gt, phDf, attr = attrDf)
+    dsDf <- readGenomicDataset(gt, phDf, attrTypes = attrDf)
 
     expect_s4_class(dsDf, "TasselGenomicDataset")
     expect_equal(dsDf@genotype@jRefObj$numberOfTaxa(), 5L)
@@ -91,17 +91,17 @@ test_that("readGenomicDataset() rejects inputs missing phenotype data", {
     )
 })
 
-test_that("readGenomicDataset() requires attr for a data frame phenotype", {
+test_that("readGenomicDataset() requires attrTypes for a data frame phenotype", {
     expect_error(
         readGenomicDataset(gt, data.frame(taxa = "33-16", yield = 1)),
-        "need attribute metadata"
+        "needs attribute metadata"
     )
 })
 
 test_that("readGenomicDataset() reports a join with no shared taxa", {
     phUnrelated <- readPhenotype(
         data.frame(taxa_id = c("zz1", "zz2"), yield = c(1, 2)),
-        attr = data.frame(
+        attrTypes = data.frame(
             col_id      = c("taxa_id", "yield"),
             tassel_attr = c("taxa", "data")
         )
@@ -249,7 +249,7 @@ test_that("show() displays reference probabilities for numeric genotypes", {
     dsNum <- readGenomicDataset(
         rtMatrices$num_gt_sm,
         data.frame(Taxa = rownames(rtMatrices$num_gt_sm), yield = c(1, 2, 3)),
-        attr = data.frame(
+        attrTypes = data.frame(
             col_id      = c("Taxa", "yield"),
             tassel_attr = c("taxa", "data")
         )

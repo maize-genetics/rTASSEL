@@ -339,7 +339,7 @@ test_that("the trait metadata helpers agree on their column names", {
 test_that("attributeData() can be handed back to readPhenotype()", {
     back <- readPhenotype(
         as.data.frame(tasPheno),
-        attr = attributeData(tasPheno)
+        attrTypes = attributeData(tasPheno)
     )
 
     expect_s4_class(back, "TasselPhenotype")
@@ -364,20 +364,26 @@ test_that("readPhenotype() still takes the col_id spelling", {
         "line_b",   22.8,            -1.5
     )
 
-    out <- readPhenotype(df, attr = attrDf)
+    out <- readPhenotype(df, attrTypes = attrDf)
 
     expect_s4_class(out, "TasselPhenotype")
     expect_equal(traitNames(out), c("plant_height", "PC1"))
 })
 
-test_that("validateAttrDf() normalises either spelling and rejects neither", {
+test_that("normalizeAttrTypes() reads either spelling and rejects neither", {
     attrData <- tibble::tibble(trait_id = "a", trait_type = "taxa")
     colId    <- tibble::tibble(col_id = "a", tassel_attr = "taxa")
 
-    expect_equal(names(validateAttrDf(attrData)), names(colId))
-    expect_equal(validateAttrDf(colId), colId)
-    expect_error(validateAttrDf(data.frame(a = 1)), "Incorrect column IDs")
-    expect_error(validateAttrDf(list()), "needs to be of type 'data.frame'")
+    expect_equal(normalizeAttrTypes(attrData), colId)
+    expect_equal(normalizeAttrTypes(colId), colId)
+    expect_error(
+        normalizeAttrTypes(data.frame(a = 1)),
+        "does not name its columns and attribute types"
+    )
+    expect_error(
+        normalizeAttrTypes(list()),
+        "must be a named character vector or a `data.frame`"
+    )
 })
 
 

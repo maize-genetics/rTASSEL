@@ -7,7 +7,7 @@
 readGenomicDataset(
   genotype,
   phenotype,
-  attr = NULL,
+  attrTypes = NULL,
   join = c("intersect", "union")
 )
 }
@@ -20,9 +20,9 @@ values. Paths and matrices are passed to \code{\link{readGenotype}()}.}
 or a \code{data.frame} of phenotype data. Paths and data frames are passed
 to \code{\link{readPhenotype}()}.}
 
-\item{attr}{Attribute metadata describing the columns of \code{phenotype}. Required
-when \code{phenotype} is a \code{data.frame} and ignored otherwise. See
-\code{\link{readPhenotype}()} for the expected format.}
+\item{attrTypes}{A mapping of each column of \code{phenotype} to its TASSEL attribute
+type. Required when \code{phenotype} is a \code{data.frame} and ignored
+otherwise. See \code{\link{readPhenotype}()} for the accepted forms.}
 
 \item{join}{How taxa from the two data sets are combined. \code{"intersect"} (the
 default) keeps only taxa found in both; \code{"union"} keeps taxa found in
