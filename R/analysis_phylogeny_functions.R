@@ -26,11 +26,10 @@
 #' @export
 createTree <- function(tasObj, clustMethod = c("Neighbor_Joining", "UPGMA")) {
     if (!requireNamespace("ape", quietly = TRUE)) {
-        rlang::abort(
-            "Package 'ape' is required for createTree(). ",
-            "Install it with: install.packages('ape')",
-            call. = FALSE
-        )
+        rlang::abort(c(
+            "Package 'ape' is required for `createTree()`",
+            "i" = "Install it with `install.packages(\"ape\")`"
+        ))
     }
 
     jGenoTable <- .resolveTasselInput(tasObj, "genotype", "createTree")$jGt

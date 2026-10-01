@@ -242,7 +242,7 @@ setClass(
 readPhenotype <- function(x, attrTypes = NULL, attr = lifecycle::deprecated()) {
     if (lifecycle::is_present(attr)) {
         lifecycle::deprecate_warn(
-            "0.14.0", "readPhenotype(attr)", "readPhenotype(attrTypes)"
+            "1.0.0", "readPhenotype(attr)", "readPhenotype(attrTypes)"
         )
         if (is.null(attrTypes)) attrTypes <- attr
     }

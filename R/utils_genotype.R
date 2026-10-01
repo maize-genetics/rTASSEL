@@ -580,16 +580,29 @@ printGtDisp <- function(fgs, nTaxa, nSites, jMem, className = "TasselGenotype") 
 #' positions/sites. The matrix values are used to calculate reference
 #' probabilities.
 #' @param asTGP
-#' Should the return object be a "classic" \code{TasselGenotypePhenotype}
-#' object (\code{TRUE}) or should it return a \code{TasselNumericGenotype}
-#' object (\code{FALSE})? Defaults to \code{TRUE}.
+#' Deprecated. Should the return object be the
+#' deprecated \code{TasselGenotypePhenotype} class (\code{TRUE}) rather
+#' than a \code{TasselNumericGenotype} (\code{FALSE})? A
+#' \code{TasselNumericGenotype} is returned unless \code{TRUE} is passed.
 #'
 #' @return
 #' An object of class `TasselNumericGenotype` containing the genotype
 #' data and metadata.
 #'
 #' @export
-readNumericGenotypeFromRMatrix <- function(m, asTGP = TRUE) {
+readNumericGenotypeFromRMatrix <- function(m, asTGP = lifecycle::deprecated()) {
+    if (lifecycle::is_present(asTGP)) {
+        lifecycle::deprecate_warn(
+            "1.0.0", "readNumericGenotypeFromRMatrix(asTGP)",
+            details = paste0(
+                "A <TasselNumericGenotype> is always returned in the ",
+                "next release."
+            )
+        )
+    } else {
+        asTGP <- FALSE
+    }
+
     if (!is(m, "matrix")) {
         rlang::abort("Provided object is not of type 'matrix'")
     }

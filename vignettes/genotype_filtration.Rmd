@@ -885,8 +885,8 @@ myRealGT |> filterSites(maf >= 0.05) |> removeMinorSNPStates()
 # Migrating from `filterGenotypeTable*()`
 The `filterGenotypeTableSites()`, `filterGenotypeTableTaxa()`, and
 `filterGenotypeTableBySiteName()` functions are deprecated as of `rTASSEL`
-0.14.0. They still work and still return the class they are given, but they
-warn once per session and will be removed in the next major release.
+1.0.0. They still work and still return the class they are given, but they
+warn once per session and will be removed in the next release.
 
 Every argument of the old functions has a replacement in both grammars. The
 tables below list them side by side, using `gt` for the genotype object;

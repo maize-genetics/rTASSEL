@@ -19,7 +19,7 @@ Class \code{TasselGenotypePhenotype} defines a \code{rTASSEL}
    superseded by \code{\linkS4class{TasselGenotype}},
    \code{\linkS4class{TasselPhenotype}}, and
    \code{\linkS4class{TasselGenomicDataset}}, and is scheduled for removal
-   in the next major release.
+   in the next release.
 
 Prints out information related taxa, positions, genotype, and
    phenotype information.

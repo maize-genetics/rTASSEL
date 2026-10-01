@@ -32,7 +32,7 @@ simNumericGt <- function(nRow, nCol) {
 # /// Options ///////////////////////////////////////////////////////
 
 ## ----
-# The 0.14.0 soft deprecations are asserted on purpose in
+# The 1.0.0 soft deprecations are asserted on purpose in
 # test_deprecations.R, where `lifecycle::expect_deprecated()` re-enables
 # them locally. Silencing them here keeps the rest of the suite - and the
 # legacy fixtures below - free of notices that are not what is under test.
@@ -65,7 +65,7 @@ rtMatrices <- list(
 ## ----
 # General rTASSEL objects
 #
-# The primary (0.14.0) classes: TasselGenotype, TasselPhenotype, and
+# The primary (1.0.0) classes: TasselGenotype, TasselPhenotype, and
 # TasselGenomicDataset. The genotype and phenotype objects are reused when
 # building the datasets so that the hapmap file is only parsed once.
 rtObjs <- local({

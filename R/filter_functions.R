@@ -128,7 +128,7 @@ filterGenotypeTableSites <- function(
     bedFile = NULL
 ) {
     lifecycle::deprecate_warn(
-        when    = "0.14.0",
+        when    = "1.0.0",
         what    = "filterGenotypeTableSites()",
         details = c(
             "i" = "Use bracket subsetting instead, e.g. `gt[, sitesWhere(maf >= 0.05)]`.",
@@ -334,7 +334,7 @@ filterGenotypeTableSites <- function(
 #' @export
 filterGenotypeTableBySiteName <- function(tasObj, siteNames) {
     lifecycle::deprecate_warn(
-        when    = "0.14.0",
+        when    = "1.0.0",
         what    = "filterGenotypeTableBySiteName()",
         details = c(
             "i" = 'Use bracket subsetting instead, e.g. `gt[, siteIds("rs1", "rs2")]`.'
@@ -443,7 +443,7 @@ filterGenotypeTableTaxa <- function(
     taxa = NULL
 ) {
     lifecycle::deprecate_warn(
-        when    = "0.14.0",
+        when    = "1.0.0",
         what    = "filterGenotypeTableTaxa()",
         details = c(
             "i" = "Use bracket subsetting instead, e.g. `gt[taxaWhere(notMissing >= 0.8), ]`.",

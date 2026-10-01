@@ -49,6 +49,7 @@ reference:
   - readGenomicDataset
   - readTasselDistanceMatrix
   - readNumericGenotypeFromRMatrix
+  - readGenotypeTableFromGigwa
   - asTasselDistanceMatrix
 
 - title: Filtering and subsetting
@@ -168,14 +169,13 @@ reference:
 - title: Deprecated
   desc: >
     Superseded by the classes and functions above. These still work but
-    warn, and are scheduled for removal in the next major release.
+    warn, and are scheduled for removal in the next release.
   contents:
   - TasselGenotypePhenotype-class
   - readGenotypeTableFromPath
   - readPhenotypeFromPath
   - readPhenotypeFromDataFrame
   - readGenotypePhenotype
-  - readGenotypeTableFromGigwa
   - filterGenotypeTableSites
   - filterGenotypeTableTaxa
   - filterGenotypeTableBySiteName

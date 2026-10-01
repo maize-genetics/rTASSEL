@@ -754,7 +754,7 @@ accessor where one exists.
 # Superseded functions
 Earlier versions of `rTASSEL` extracted data with dedicated functions
 rather than base R generics. These still work but warn, and are scheduled
-for removal in the next major release:
+for removal in the next release:
 
 | Deprecated                       | Use instead                          |
 |----------------------------------|--------------------------------------|

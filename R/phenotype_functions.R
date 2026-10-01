@@ -26,7 +26,7 @@
 #' @export
 readPhenotypeFromPath <- function(path) {
     lifecycle::deprecate_warn(
-        "0.14.0", "readPhenotypeFromPath()", "readPhenotype()"
+        "1.0.0", "readPhenotypeFromPath()", "readPhenotype()"
     )
 
     if (!file.exists(path)) {
@@ -72,7 +72,7 @@ readPhenotypeFromDataFrame <- function(phenotypeDF,
                                        taxaID,
                                        attributeTypes = NULL) {
     lifecycle::deprecate_warn(
-        "0.14.0", "readPhenotypeFromDataFrame()", "readPhenotype()"
+        "1.0.0", "readPhenotypeFromDataFrame()", "readPhenotype()"
     )
 
     safeAtt <- c("covariate", "data", "factor", "taxa")
@@ -89,12 +89,7 @@ readPhenotypeFromDataFrame <- function(phenotypeDF,
         )
     }
 
-    # TODO Remove tibble check
-    if (inherits(phenotypeDF, "tbl_df")) {
-        phenotypeDF <- as.data.frame(phenotypeDF)
-    }
-
-    taxaNames <- as.vector(phenotypeDF[, taxaID])
+    taxaNames <- as.vector(phenotypeDF[[taxaID]])
     colnames <- colnames(phenotypeDF)
     notTaxaCols <- colnames[!colnames %in% taxaID]
     if(is.null(attributeTypes)) {
@@ -142,7 +137,7 @@ readPhenotypeFromDataFrame <- function(phenotypeDF,
 #' @export
 getPhenotypeDF <- function(tasObj) {
     lifecycle::deprecate_warn(
-        "0.14.0", "getPhenotypeDF()", I("`as.data.frame()`")
+        "1.0.0", "getPhenotypeDF()", I("`as.data.frame()`")
     )
 
     jPhenoTable <- .resolveTasselInput(

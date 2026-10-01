@@ -69,12 +69,6 @@ exploits the analytical prowess of TASSEL in conjunction with R's popular
 data handling and parsing capabilities without ever having the user to switch
 between these two environments.
 
-## Disclaimer
-Due to the *experimental* nature of this package's lifecycle, end
-functionalities are prone to change after end-user input is obtained in the
-near future.
-
-
 ## Citation
 To cite `rTASSEL`, please use the following citation:
 

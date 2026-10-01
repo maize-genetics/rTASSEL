@@ -1,4 +1,4 @@
-# === Tests for the 0.14.0 deprecations ==============================
+# === Tests for the 1.0.0 deprecations ===============================
 #
 # `helper_vars.R` silences lifecycle notices for the rest of the suite,
 # so every test here re-enables them - `lifecycle::expect_deprecated()`
@@ -70,6 +70,26 @@ test_that("readPhenotype() still builds from a deprecated attr argument", {
 
     expect_s4_class(ph, "TasselPhenotype")
     expect_equal(traitNames(ph), "weight")
+})
+
+test_that("the asTGP argument of readNumericGenotypeFromRMatrix() is deprecated", {
+    lifecycle::expect_deprecated(
+        readNumericGenotypeFromRMatrix(rtMatrices$num_gt_sm, asTGP = FALSE),
+        "asTGP"
+    )
+})
+
+test_that("readNumericGenotypeFromRMatrix() returns the class asTGP asks for", {
+    withr::local_options(lifecycle_verbosity = "quiet")
+
+    expect_s4_class(
+        readNumericGenotypeFromRMatrix(rtMatrices$num_gt_sm),
+        "TasselNumericGenotype"
+    )
+    expect_s4_class(
+        readNumericGenotypeFromRMatrix(rtMatrices$num_gt_sm, asTGP = TRUE),
+        "TasselGenotypePhenotype"
+    )
 })
 
 test_that("readGenotypePhenotype() points at readGenomicDataset()", {

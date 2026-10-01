@@ -26,7 +26,7 @@
 #' @export
 readGenotypeTableFromPath <- function(path, keepDepth = FALSE, sortPositions = FALSE) {
     lifecycle::deprecate_warn(
-        "0.14.0", "readGenotypeTableFromPath()", "readGenotype()"
+        "1.0.0", "readGenotypeTableFromPath()", "readGenotype()"
     )
 
     if (!file.exists(path)) {
@@ -74,7 +74,7 @@ readGenotypeTableFromPath <- function(path, keepDepth = FALSE, sortPositions = F
 getSumExpFromGenotypeTable <- function(tasObj,
                                        coerceDosageToInt = TRUE,
                                        verbose = FALSE) {
-    lifecycle::deprecate_warn("0.14.0", "getSumExpFromGenotypeTable()")
+    lifecycle::deprecate_warn("1.0.0", "getSumExpFromGenotypeTable()")
 
     jGT <- .resolveTasselInput(
         tasObj, "genotype", "getSumExpFromGenotypeTable"
@@ -169,17 +169,13 @@ getMinMaxVarSites <- function(tasObj) {
 #'
 #' @param gigwa A \code{QBMS}-formatted GIGWA data frame object
 #'
+#' @return A \code{TasselGenotype} object.
+#'
 #' @importFrom rJava .jarray
 #' @importFrom rJava J
 #'
 #' @export
 readGenotypeTableFromGigwa <- function(gigwa) {
-    warnMsg <- paste0(
-        "The function 'readGenotypeTableFromGigwa()' will be deprecated soon.\n",
-        "This will be replaced by '", cli::style_bold("readGenotype()"), "' in the next update."
-    )
-    message(warnMsg)
-
     plugin <- rJava::J("net/maizegenetics/plugindef/GenerateRCode")
 
     matrixSub <- as.matrix(gigwa[, 5:ncol(gigwa)])
@@ -194,7 +190,7 @@ readGenotypeTableFromGigwa <- function(gigwa) {
         rJava::.jarray(matrixSub, dispatch = TRUE)
     )
 
-    return(.tasselObjectConstructor(myGt))
+    return(createTasselGenotype(myGt))
 }
 
 

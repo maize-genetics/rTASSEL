@@ -1,4 +1,7 @@
-# rTASSEL 0.14.0
+# rTASSEL 1.0.0
+* First stable release. The classes, readers, selectors, and verbs below
+  make up the supported API; the functions listed under the deprecations
+  further down keep working with a warning until the next release
 * Bracket subsetting is now the primary way to filter genotype data and is
   no longer experimental:
   + `gt[<taxa selector>, <site selector>]` returns an object of the same
@@ -244,7 +247,7 @@
 * Converted the ad-hoc "will be deprecated soon" messages to formal
   `lifecycle` warnings, which report the call site and fire once per
   session. The following are deprecated and scheduled for removal in the
-  next major release:
+  next release:
   + `filterGenotypeTableSites()`, `filterGenotypeTableTaxa()`, and
     `filterGenotypeTableBySiteName()`, replaced by `[`
   + `readGenotypeTableFromPath()`, replaced by `readGenotype()`
@@ -253,14 +256,20 @@
   + `readGenotypePhenotype()`, replaced by `readGenomicDataset()`
   + `getPhenotypeDF()`, replaced by `as.data.frame()`
   + `getSumExpFromGenotypeTable()`
+  + The `asTGP` argument of `readNumericGenotypeFromRMatrix()`, which now
+    returns a `TasselNumericGenotype` unless `asTGP = TRUE` is passed
   + The `TasselGenotypePhenotype` class, replaced by `TasselGenotype`,
     `TasselPhenotype`, and `TasselGenomicDataset`
   + **NOTE**: passing a `TasselGenotypePhenotype` object to any function
     also warns, but keeps working and still returns a
     `TasselGenotypePhenotype` object
-* `readGenotypeTableFromGigwa()` still returns a `TasselGenotypePhenotype`
-  object; a `TasselGenotype`-based GIGWA reader is planned for a future
-  release
+* **Breaking change**: `readGenotypeTableFromGigwa()` returns a
+  `TasselGenotype` rather than a `TasselGenotypePhenotype`, and no longer
+  prints a notice that it will be deprecated
+* Removed deprecated `treeJavaApp()` function
+* Moved `ape` from Imports to Suggests. It is only needed by
+  `createTree()`, which returns an `ape` `phylo` object and now asks for
+  `ape` to be installed when it is missing
 * Rewrote the *Filtering Genotype Tables* vignette around bracket
   subsetting and updated *Getting Started with rTASSEL* to the new classes
 * Added the *Extracting Data into R* vignette, which collects every

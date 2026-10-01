@@ -239,7 +239,7 @@ test_that("as.matrix() on a distance matrix labels both axes", {
 test_that("the array route agrees with the tab-delimited text it replaced", {
     kin <- kinshipMatrix(tasGeno)
 
-    # How 'as.matrix()' read a distance matrix before 0.14.0. The text
+    # How 'as.matrix()' read a distance matrix before 1.0.0. The text
     # form rounds, so the two agree only to the precision it carries
     parsed <- local({
         rows <- unlist(strsplit(javaRefObj(kin)$toStringTabDelim(), split = "\n"))

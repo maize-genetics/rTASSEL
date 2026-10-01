@@ -36,7 +36,7 @@
 #' @export
 readGenotypePhenotype <- function(genoPathOrObj, phenoPathDFOrObj, ...) {
     lifecycle::deprecate_warn(
-        "0.14.0", "readGenotypePhenotype()", "readGenomicDataset()"
+        "1.0.0", "readGenotypePhenotype()", "readGenomicDataset()"
     )
 
     # The legacy readers this delegates to are deprecated in their own right;

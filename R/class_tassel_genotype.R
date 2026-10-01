@@ -88,7 +88,7 @@ readGenotype <- function(x, sortPositions = FALSE, keepDepth = FALSE) {
 
         readGenotypeFromPath(xNorm, sortPositions, keepDepth)
     } else if (is.matrix(x)) {
-        readNumericGenotypeFromRMatrix(x, asTGP = FALSE)
+        readNumericGenotypeFromRMatrix(x)
     } else {
         rlang::abort("Unsupported data type")
     }

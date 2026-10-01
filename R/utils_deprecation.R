@@ -5,8 +5,8 @@
 #
 # @description
 # 'MODERN' lists the wrapper classes that are the primary path as of
-# rTASSEL 0.14.0. 'LEGACY' is kept working behind a deprecation
-# warning and is scheduled for removal in the next major release.
+# rTASSEL 1.0.0. 'LEGACY' is kept working behind a deprecation
+# warning and is scheduled for removal in the next release.
 TASSEL_INPUT <- list(
     "MODERN" = c("TasselGenotype", "TasselPhenotype", "TasselGenomicDataset"),
     "LEGACY" = "TasselGenotypePhenotype"
@@ -105,7 +105,7 @@ TASSEL_INPUT <- list(
 
     if (.isAnyClass(x, TASSEL_INPUT$LEGACY)) {
         lifecycle::deprecate_warn(
-            when = "0.14.0",
+            when = "1.0.0",
             what = I(
                 sprintf(
                     "Passing a <TasselGenotypePhenotype> object to `%s()`",
@@ -119,7 +119,7 @@ TASSEL_INPUT <- list(
                 ),
                 "i" = paste0(
                     "<TasselGenotypePhenotype> is scheduled for removal in ",
-                    "the next major release."
+                    "the next release."
                 )
             ),
             # Two frames up is user code, so the warning is reported

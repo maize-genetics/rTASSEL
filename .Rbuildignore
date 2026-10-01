@@ -16,3 +16,4 @@
 ^rtassel_log\.txt$
 ^LICENSE\.md$
 ^docker/
+^vignettes/.*\.R$

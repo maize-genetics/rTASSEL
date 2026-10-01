@@ -36,15 +36,15 @@ test_that("exportGenotypeTable() returns errors", {
         regexp = "File name not specified."
     )
 
-    # TODO - fix Unix/Windows quote bug (Brandon)
-    # expect_error(
-    #     object = exportGenotypeTable(
-    #         tasObj = tasGeno,
-    #         file = "my_gt",
-    #         format = "csv"
-    #     ),
-    #     regexp = "'arg' should be one of “vcf”, “hapmap”, “plink”, “flapjack”, “hdf5”"
-    # )
+    # 'match.arg()' quotes the choices differently by platform and locale
+    expect_error(
+        object = exportGenotypeTable(
+            tasObj = tasGeno,
+            file = "my_gt",
+            format = "csv"
+        ),
+        regexp = "should be one of"
+    )
 })
 
 
@@ -92,8 +92,6 @@ test_that("exportGenotypeTable() writes correct file type.", {
 
     file.remove(fileID)
 })
-
-# TODO - write better HDF5 test...
 
 test_that("exportGenotypeTable() writes correct file type.", {
 

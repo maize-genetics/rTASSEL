@@ -9,7 +9,7 @@
 #'    superseded by \code{\linkS4class{TasselGenotype}},
 #'    \code{\linkS4class{TasselPhenotype}}, and
 #'    \code{\linkS4class{TasselGenomicDataset}}, and is scheduled for removal
-#'    in the next major release.
+#'    in the next release.
 #'
 #' @name TasselGenotypePhenotype-class
 #' @rdname TasselGenotypePhenotype-class
