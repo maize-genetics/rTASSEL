@@ -149,7 +149,7 @@ generateQQData <- function(params) {
     ## Sanity check coerce data frame from assocStats object
     # NOTE - probably don't need to do this right now but a security
     #        feature if I change TableReport classes in the future...
-    assocStats <- as.data.frame(assocStats)
+    assocStats <- tibble::as_tibble(assocStats)
 
     ## Sanity check for columns
     neededCols <- c("Trait", "p")
@@ -196,7 +196,7 @@ expectedQuantiles <- function(pVal, trait) {
     expQuant <- seq_along(filtPVal) / n # {1/n, 2/n, ... n/n}
 
     ## Return
-    eDf <- data.frame(
+    eDf <- tibble::tibble(
         trait_id = trait,
         expected = expQuant,
         observed = obsQuant

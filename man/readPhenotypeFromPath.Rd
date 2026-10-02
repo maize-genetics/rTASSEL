@@ -14,8 +14,14 @@ readPhenotypeFromPath(path)
 Returns an object of \code{TasselGenotypePhenotype} class.
 }
 \description{
-This function is a wrapper for the
-   \code{TasselGenotypePhenotype} class. It is used for storing phenotype
-   information into a class object. This will read in phenotype data from
-   a path.
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
+
+This function is a wrapper for the deprecated
+\code{TasselGenotypePhenotype} class. It is used for storing phenotype
+information into a class object. This will read in phenotype data from
+a path. Use \code{\link{readPhenotype}()} instead, which returns a
+\code{\linkS4class{TasselPhenotype}} object.
+}
+\seealso{
+\code{\link{readPhenotype}}
 }

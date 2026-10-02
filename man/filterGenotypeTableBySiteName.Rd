@@ -7,14 +7,34 @@
 filterGenotypeTableBySiteName(tasObj, siteNames)
 }
 \arguments{
-\item{tasObj}{An object of class \code{TasselGenotypePenotype}.}
+\item{tasObj}{An object of class \code{\linkS4class{TasselGenotype}} or
+\code{\linkS4class{TasselGenomicDataset}}. Objects of the deprecated
+\code{TasselGenotypePhenotype} class are still accepted.}
 
 \item{siteNames}{A character vector of site names to filter on.}
 }
 \value{
-Returns an object of \code{TasselGenotypePhenotype} class.
+Returns an object of the same class as \code{tasObj}.
 }
 \description{
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
+
 Filter a genotype table object by specifying literal site names (IDs)
 for variant markers.
+
+Use bracket subsetting with \code{\link{siteIds}()} instead; see
+\emph{Details}.
+}
+\details{
+\tabular{ll}{
+   \strong{Deprecated argument} \tab \strong{Replacement} \cr
+   \code{siteNames = c("rs1", "rs2")} \tab \code{gt[, siteIds("rs1", "rs2")]}
+}
+
+A character vector can be handed to \code{\link{siteIds}()} directly
+(\code{gt[, siteIds(myMarkers)]}), or passed as the \code{j} index
+without a selector (\code{gt[, myMarkers]}).
+}
+\seealso{
+\code{\link{siteIds}}, \code{\linkS4class{TasselGenotype}}
 }

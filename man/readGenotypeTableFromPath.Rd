@@ -18,7 +18,13 @@ readGenotypeTableFromPath(path, keepDepth = FALSE, sortPositions = FALSE)
 Returns an object of \code{TasselGenotypePhenotype} class.
 }
 \description{
-This function is a wrapper for the
-   \code{TasselGenotypePhenotype} class. It is used for storing genotype
-   information into a class object.
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
+
+This function is a wrapper for the deprecated
+\code{TasselGenotypePhenotype} class. It is used for storing genotype
+information into a class object. Use \code{\link{readGenotype}()} instead,
+which returns a \code{\linkS4class{TasselGenotype}} object.
+}
+\seealso{
+\code{\link{readGenotype}}
 }

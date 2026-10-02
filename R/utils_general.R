@@ -1,6 +1,38 @@
-# === Table report functions ========================================
+# /// Table report functions /////////////////////////////////////////
 
-## Table reports to S4Vectors::DataFrame objects ----
+## ----
+#' @title Table reports to tibble objects
+#'
+#' @description
+#' The single route any TASSEL \code{TableReport} takes into R. Every
+#' position list, genotype summary, phenotype table, and analysis report
+#' comes across this way, so the conventions below hold for all of them.
+#'
+#' @details
+#' Column names are taken from the report and every space in them is
+#' replaced with an underscore, so TASSEL's \code{"Minor Allele
+#' Frequency"} is read as \code{Minor_Allele_Frequency} in R.
+#'
+#' Column types follow the Java type of the report's values, and each
+#' carries its own spelling of a missing value:
+#'
+#' \tabular{lll}{
+#'   \strong{Java type} \tab \strong{R type} \tab \strong{Missing} \cr
+#'   \code{Float}, \code{Double} \tab \code{double} \tab \code{NaN} \cr
+#'   \code{Byte}, \code{Short}, \code{Integer}, \code{Long} \tab
+#'     \code{integer} \tab \code{NA} \cr
+#'   anything else \tab \code{character} \tab \code{""} \cr
+#' }
+#'
+#' \code{NaN} is what TASSEL itself uses for a missing numeric value, and
+#' \code{is.na()} recognises it, so both numeric spellings answer the
+#' same test.
+#'
+#' @param x A Java \code{TableReport} reference.
+#'
+#' @return A \code{tibble}.
+#'
+#' @noRd
 #' @importFrom rJava .jevalArray
 #' @importFrom rJava J
 #' @importFrom S4Vectors DataFrame
@@ -13,18 +45,18 @@ tableReportToDF <- function(x) {
     tabRepCols <- do.call("data.frame", c(tabRepCols, stringsAsFactors = FALSE))
     colnames(tabRepCols) <- tabRep$columnNames
     colnames(tabRepCols) <- gsub(" ", "_", colnames(tabRepCols))
-    # return(S4Vectors::DataFrame(tabRepCols, check.names = FALSE))
-    return(tabRepCols)
+    return(tibble::as_tibble(tabRepCols))
 }
 
 
-## Get table reports based on HashMap ----
+## ----
+#' @title Get table reports based on HashMap ----
+#' @noRd
 #' @importFrom rJava .jrcall
 #' @importFrom rJava .jstrVal
 tableReportList <- function(x) {
 
-    hashVectors <- rJava::.jrcall(x, "keySet")
-    hashVectors <- lapply(hashVectors, rJava::.jstrVal)
+    hashVectors <- .jStrings(rJava::.jrcall(x, "keySet"))
 
     myList <- lapply(hashVectors, function(i) x$get(i))
     myList <- lapply(myList, tableReportToDF)
@@ -34,17 +66,25 @@ tableReportList <- function(x) {
 }
 
 
-## Convert list to AssociationResults object ----
+## ----
+# Convert list to AssociationResults object ----
 # @param trl A tableReportList object
 # @param aType Association type
-tableReportListToAssociationResults <- function(trl, aType) {
+# @param jPh The Java 'Phenotype' holding the BLUE values, which the join
+#    functions read. Only BLUE results carry one.
+tableReportListToAssociationResults <- function(
+    trl,
+    aType,
+    jPh = rJava::.jnull()
+) {
     result <- switch (aType,
         "BLUE" = {
             methods::new(
                 Class = "AssociationResultsBLUE",
                 results = trl,
                 traits = trl$BLUE_ANOVA$Trait,
-                assocType = aType
+                assocType = aType,
+                jObj = jPh
             )
         },
         "GLM" = {
@@ -93,9 +133,10 @@ tableReportListToAssociationResults <- function(trl, aType) {
 
 
 
-# === LD plot functions =============================================
+# /// LD plot functions //////////////////////////////////////////////
 
-## Rotate vector coordinates by a given angle ----
+## ----
+# Rotate vector coordinates by a given angle
 rotate <- function(x, y, angle = 135) {
     rad <- angle * (pi / 180)
     new_x <- x * cos(rad) - y * sin(rad)
@@ -110,7 +151,8 @@ rotate <- function(x, y, angle = 135) {
 }
 
 
-## Rotated polygon coordinate, group, value "class" ----
+## ----
+# Rotated polygon coordinate, group, value "class"
 ldCellRotater <- function(ldDF, angle) {
     # Reconstruct site rank order: coord2 first captures rank-1 site,
     # then coord1 adds the highest-ranked site not in coord2
@@ -147,14 +189,15 @@ ldCellRotater <- function(ldDF, angle) {
 
     rot <- rotate(x, y, angle)
 
-    data.frame(x = rot$x, y = rot$y, val = val, group = group)
+    tibble::tibble(x = rot$x, y = rot$y, val = val, group = group)
 }
 
 
 
-# === TasselDistanceMatrix functions ================================
+# /// TasselDistanceMatrix functions /////////////////////////////////
 
-## Truncate taxa IDs if too long ----
+## ----
+# Truncate taxa IDs if too long
 truncate <- function(t, max = 10, etc = "...") {
     if (nchar(t) > max) {
         return(paste0(c(unlist(strsplit(t, ""))[1:(max - 3)], etc), collapse = ""))
@@ -164,7 +207,8 @@ truncate <- function(t, max = 10, etc = "...") {
 }
 
 
-## Clean up taxa IDs and format spacing ----
+## ----
+# Clean up taxa IDs and format spacing
 cleanUpTaxa <- function(v, width = 10, regex = "^\"|\"$") {
     t <- gsub(regex, "", v)
     if (!is.null(width)) {
@@ -175,7 +219,8 @@ cleanUpTaxa <- function(v, width = 10, regex = "^\"|\"$") {
 }
 
 
-## Clean up summary matrix with formatting ----
+## ----
+# Clean up summary matrix with formatting
 cleanUpMatrix <- function(t, d, space = "...", size = 5, width = 10, nTaxa) {
     if (nTaxa <= size) {
         m2 <- rbind(t, d)
@@ -203,12 +248,15 @@ cleanUpMatrix <- function(t, d, space = "...", size = 5, width = 10, nTaxa) {
 }
 
 
-## "Pretty" print distance matrices ----
-summaryDistance <- function(kinJ,
-                            width = 10,
-                            etc = "...",
-                            size = 5,
-                            regex = "^\"|\"$") {
+## ----
+# "Pretty" print distance matrices
+summaryDistance <- function(
+    kinJ,
+    width = 10,
+    etc = "...",
+    size = 5,
+    regex = "^\"|\"$"
+) {
 
     if (kinJ$numberOfTaxa() <= size) {
         taxaCleaned <- cleanUpTaxa(
@@ -262,7 +310,7 @@ summaryDistance <- function(kinJ,
 
 
 
-# === Data frame functions ==========================================
+# /// Data frame functions ///////////////////////////////////////////
 
 ## ----
 # @title Check for valid columns in a data frame object
@@ -282,33 +330,48 @@ checkForValidColumns <- function(assocStats, neededCols) {
 
 
 
-# === Class helper functions (TEMP) =================================
+# /// Class helper functions (TEMP) /////////////////////////////////
 
 ## ----
 # @title Get report elements
+#
+# The one reading of a 'reportName' argument, shared by every class that
+# answers 'tableReport()'. A missing name returns the class's default
+# report, or every report when the class has no single default. The catch
+# all always returns every report as a named list.
+#
+# @param results A named 'list' of table reports
+# @param reportName A specific table report to return, or 'NULL'
+# @param defaultCatchAll The name that asks for every report
+# @param defaultReportElement The report a missing name returns, or
+#    'NULL' to return every report
 returnReportElements <- function(
-    assocRes,
+    results,
     reportName,
     defaultCatchAll = "ALL",
-    defaultReportElement
+    defaultReportElement = NULL
 ) {
-        if (!is.character(reportName) && !is.null(reportName)) {
-            stop("'reportName' must be of type 'character'")
-        }
+    if (!is.character(reportName) && !is.null(reportName)) {
+        stop("'reportName' must be of type 'character'")
+    }
 
-        if (is.null(reportName)) {
-            return(assocRes@results[[defaultReportElement]])
+    if (is.null(reportName)) {
+        if (is.null(defaultReportElement)) {
+            return(results)
         }
+        return(results[[defaultReportElement]])
+    }
 
-        if (toupper(reportName) == defaultCatchAll) {
-            return(assocRes@results)
-        }
+    if (toupper(reportName) == defaultCatchAll) {
+        return(results)
+    }
 
-        if(reportName %in% reportNames(assocRes)) {
-            return(assocRes@results[[reportName]])
-        } else {
-            stop("Report ID not found in object")
-        }
+    if (reportName %in% names(results)) {
+        return(results[[reportName]])
+    }
+
+    stop("Report ID not found in object")
 }
+
 
 

@@ -1,4 +1,78 @@
 ## ----
+#' @title Get taxa IDs from genotype data
+#'
+#' @description
+#' Returns a character vector of taxa (sample) IDs from a
+#' \code{\linkS4class{TasselGenotypePhenotype}} or
+#' \code{\linkS4class{TasselGenotype}} object.
+#'
+#' @param tasObj A \code{TasselGenotypePhenotype} or \code{TasselGenotype}
+#'   object containing genotype data.
+#'
+#' @return A character vector of taxa IDs.
+#'
+#' @rdname taxaList
+#' @export
+setGeneric("taxaList", function(tasObj) standardGeneric("taxaList"))
+
+
+## ----
+#' @title Get position list metadata from genotype data
+#'
+#' @description
+#' Returns positional metadata (chromosome, position, etc.) from a
+#' \code{\linkS4class{TasselGenotypePhenotype}} or
+#' \code{\linkS4class{TasselGenotype}} object.
+#'
+#' @param tasObj A \code{TasselGenotypePhenotype} or \code{TasselGenotype}
+#'   object containing genotype data.
+#'
+#' @return A \code{tibble} of positional metadata.
+#'
+#' @rdname positionList
+#' @export
+setGeneric("positionList", function(tasObj) standardGeneric("positionList"))
+
+
+## ----
+#' @title Get site summary of genotype table
+#'
+#' @description
+#' Returns per-site summary statistics (allele frequencies, heterozygosity,
+#' missingness, etc.) from genotype data stored in a
+#' \code{\linkS4class{TasselGenotypePhenotype}} or
+#' \code{\linkS4class{TasselGenotype}} object.
+#'
+#' @param tasObj A \code{TasselGenotypePhenotype} or \code{TasselGenotype}
+#'   object containing genotype data.
+#'
+#' @return A \code{tibble} of per-site summary statistics.
+#'
+#' @rdname siteSummary
+#' @export
+setGeneric("siteSummary", function(tasObj) standardGeneric("siteSummary"))
+
+
+## ----
+#' @title Get taxa summary of genotype table
+#'
+#' @description
+#' Returns per-taxon summary statistics (missingness, heterozygosity, etc.)
+#' from genotype data stored in a
+#' \code{\linkS4class{TasselGenotypePhenotype}} or
+#' \code{\linkS4class{TasselGenotype}} object.
+#'
+#' @param tasObj A \code{TasselGenotypePhenotype} or \code{TasselGenotype}
+#'   object containing genotype data.
+#'
+#' @return A \code{tibble} of per-taxon summary statistics.
+#'
+#' @rdname taxaSummary
+#' @export
+setGeneric("taxaSummary", function(tasObj) standardGeneric("taxaSummary"))
+
+
+## ----
 #' @title Return GWAS association type
 #'
 #' @description
@@ -27,6 +101,22 @@ setGeneric("attributeData", function(object, ...) standardGeneric("attributeData
 
 
 ## ----
+#' @title Return the genotype component of an rTASSEL object
+#'
+#' @description
+#' Returns the genotype data held by a composite \code{rTASSEL} object, such as
+#' the \code{\linkS4class{TasselGenotype}} carried by a
+#' \code{\linkS4class{TasselGenomicDataset}}.
+#'
+#' @param object an \code{rTASSEL} object
+#' @param ... Additional arguments, for use in specific methods
+#'
+#' @rdname genotype
+#' @export
+setGeneric("genotype", function(object, ...) standardGeneric("genotype"))
+
+
+## ----
 #' @title Return \code{rJava} reference object
 #'
 #' @description
@@ -41,12 +131,32 @@ setGeneric("javaRefObj", function(object, ...) standardGeneric("javaRefObj"))
 
 
 ## ----
+#' @title Return the phenotype component of an rTASSEL object
+#'
+#' @description
+#' Returns the phenotype data held by a composite \code{rTASSEL} object, such as
+#' the \code{\linkS4class{TasselPhenotype}} carried by a
+#' \code{\linkS4class{TasselGenomicDataset}}.
+#'
+#' @param object an \code{rTASSEL} object
+#' @param ... Additional arguments, for use in specific methods
+#'
+#' @rdname phenotype
+#' @export
+setGeneric("phenotype", function(object, ...) standardGeneric("phenotype"))
+
+
+## ----
 #' @title Return report names
 #'
 #' @description
 #' Returns a \code{character} vector of table report names
 #'
-#' @param object a \code{\linkS4class{AssociationResults}} object
+#' @param object an \code{\linkS4class{AssociationResults}},
+#'    \code{\linkS4class{PCAResults}}, \code{\linkS4class{MDSResults}}, or
+#'    \code{\linkS4class{LDResults}} object
+#'
+#' @return A \code{character} vector of report names.
 #'
 #' @rdname reportNames
 #' @export
@@ -57,10 +167,24 @@ setGeneric("reportNames", function(object) standardGeneric("reportNames"))
 #' @title Return selected table report
 #'
 #' @description
-#' Returns a \code{data.frame} object of association table reports
+#' Returns one of the table reports held by a results object.
 #'
-#' @param assocRes a \code{\linkS4class{AssociationResults}} object
-#' @param reportName a specific table report to return
+#' @details
+#' Every class that answers \code{tableReport()} reads
+#' \code{reportName} the same way. Left missing, it returns the class's
+#' default report, or every report when the class has no single default.
+#' \code{"ALL"} always returns every report as a named \code{list}, and
+#' any other name returns that one report.
+#'
+#' @param assocRes an \code{\linkS4class{AssociationResults}},
+#'    \code{\linkS4class{PCAResults}}, \code{\linkS4class{MDSResults}}, or
+#'    \code{\linkS4class{LDResults}} object
+#' @param reportName a specific table report to return. \code{"ALL"}
+#'    returns every report.
+#'
+#' @return
+#' A \code{tibble}, or a named \code{list} of them when every report is
+#' asked for.
 #'
 #' @rdname tableReport
 #' @export

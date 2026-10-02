@@ -2,22 +2,9 @@
 
 test_that("plotManhattanQC works correctly", {
     ## Load data ----
-    genoPathHMP <- system.file(
-        "extdata",
-        "mdp_genotype.hmp.txt",
-        package = "rTASSEL"
-    )
-    phenoPathFast <- system.file(
-        "extdata",
-        "mdp_traits_nomissing.txt",
-        package = "rTASSEL"
-    )
-    tasGenoPhenoFast <- rTASSEL::readGenotypePhenotype(
-        genoPathOrObj = genoPathHMP,
-        phenoPathDFOrObj = phenoPathFast
-    )
+    tasDataset <- rtObjs$ds_hmp_ph_nomiss
     fastRep <- rTASSEL::assocModelFitter(
-        tasGenoPhenoFast,
+        tasDataset,
         . ~ .,
         fitMarkers = TRUE,
         maxP = 1
@@ -61,7 +48,7 @@ test_that("plotManhattanQC works correctly", {
 
     ## Test for general errors ----
     tasBLUE <- rTASSEL::assocModelFitter(
-        tasGenoPhenoFast,
+        tasDataset,
         . ~ .,
         fitMarkers = FALSE
     )

@@ -7,11 +7,24 @@
 mergeGenotypeTables(tasObjL)
 }
 \arguments{
-\item{tasObjL}{A list of objects of class \code{TasselGenotypePenotype}.}
+\item{tasObjL}{A list of objects containing genotype data. Accepted
+classes are \code{\linkS4class{TasselGenotype}},
+\code{\linkS4class{TasselGenomicDataset}}, and the deprecated
+\code{TasselGenotypePhenotype}.}
 }
 \value{
-Returns an object of \code{TasselGenotypePhenotype} class.
+A \code{\linkS4class{TasselGenotype}} object, or a
+\code{TasselGenotypePhenotype} if every input was one.
 }
 \description{
 Merges multiple genotype tables together by site information
+}
+\details{
+Tables are merged site by site, so a call two tables both make at the
+same site is resolved into one. Use \code{\link{intersectJoin}} or
+\code{\link{unionJoin}} instead to bring together tables that hold
+different sites, such as data split by chromosome.
+}
+\seealso{
+\code{\link{intersectJoin}}, \code{\link{unionJoin}}
 }

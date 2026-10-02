@@ -1,4 +1,7 @@
+# /// Helper functions ///////////////////////////////////////////////
+
 ## ----
+# Generate HaploView analog colors
 haploviewColors <- function(dprime, lod) {
     colors <- rep("#FFFFFF", length(dprime))
     validD  <- !is.na(dprime)
@@ -18,6 +21,7 @@ haploviewColors <- function(dprime, lod) {
 
 
 ## ----
+# Global plot size elements
 computeSizingParams <- function(nSites) {
     scaleFactor <- sqrt(nSites / 15)
     snpTextSize <- max(2, min(4, 60 / nSites))
@@ -34,6 +38,7 @@ computeSizingParams <- function(nSites) {
 
 
 ## ----
+# Generate polygon positions in plot space
 computePhysicalPositions <- function(sites, verbose) {
     chroms <- unique(sites$locus)
 
@@ -59,20 +64,20 @@ computePhysicalPositions <- function(sites, verbose) {
 
 
 ## ----
+# Highlighter resolution - takes either 'GRanges' or 'LDRegion" types
 resolveBlocks <- function(ldBlocks, sites) {
     if (inherits(ldBlocks, "GRanges")) {
         blockMcols <- S4Vectors::mcols(ldBlocks)
         hasLabels  <- "label" %in% colnames(blockMcols)
         n <- length(ldBlocks)
-        data.frame(
+        tibble::tibble(
             chr       = as.character(GenomicRanges::seqnames(ldBlocks)),
             start     = GenomicRanges::start(ldBlocks),
             end       = GenomicRanges::end(ldBlocks),
             label     = if (hasLabels) as.character(blockMcols$label) else NA_character_,
             color     = rep("black", n),
             linewidth = rep(NA_real_, n),
-            showSpan  = rep(TRUE, n),
-            stringsAsFactors = FALSE
+            showSpan  = rep(TRUE, n)
         )
     } else {
         if (methods::is(ldBlocks, "LDRegion")) {
@@ -92,19 +97,21 @@ resolveBlocks <- function(ldBlocks, sites) {
                 "use a GRanges object for multi-chromosome block specification"
             )
         }
-        data.frame(
+        tibble::tibble(
             chr       = rep(chroms, length(ldBlocks)),
             start     = vapply(ldBlocks, slot, numeric(1), "start"),
             end       = vapply(ldBlocks, slot, numeric(1), "end"),
             label     = vapply(ldBlocks, slot, character(1), "label"),
             color     = vapply(ldBlocks, slot, character(1), "color"),
             linewidth = vapply(ldBlocks, slot, numeric(1), "linewidth"),
-            showSpan  = vapply(ldBlocks, slot, logical(1), "showSpan"),
-            stringsAsFactors = FALSE
+            showSpan  = vapply(ldBlocks, slot, logical(1), "showSpan")
         )
     }
 }
 
+
+
+# /// Primary function ///////////////////////////////////////////////
 
 ## ----
 #' @title Linkage disequilibrium plot
@@ -208,17 +215,16 @@ plotLD <- function(
         }
     }
 
-    ldDF <- as.data.frame(ldObj@results)
+    ldDF <- tibble::as_tibble(ldObj@results)
 
     if (plotVal == "r2") plotVal <- "R^2"
     ldDF$coord1 <- paste0(ldDF$Locus1, "_", ldDF$Position1)
     ldDF$coord2 <- paste0(ldDF$Locus2, "_", ldDF$Position2)
 
-    sites <- unique(data.frame(
+    sites <- unique(tibble::tibble(
         coord = c(ldDF$coord1, ldDF$coord2),
         locus = c(ldDF$Locus1, ldDF$Locus2),
-        pos   = as.numeric(c(ldDF$Position1, ldDF$Position2)),
-        stringsAsFactors = FALSE
+        pos   = as.numeric(c(ldDF$Position1, ldDF$Position2))
     ))
     locusAsNum <- suppressWarnings(as.numeric(sites$locus))
     if (all(!is.na(locusAsNum))) {
@@ -243,16 +249,15 @@ plotLD <- function(
     if (useHaploview) {
         lod <- ldDF$N * ldDF[["R^2"]] / (2 * log(10))
         cellColors <- haploviewColors(ldDF$DPrime, lod)
-        ldSub <- data.frame(
+        ldSub <- tibble::tibble(
             coord1 = ldDF$coord1,
             coord2 = ldDF$coord2,
-            val    = cellColors,
-            stringsAsFactors = FALSE
+            val    = cellColors
         )
     } else {
         ldSub <- ldDF[, c("coord1", "coord2", plotVal)]
     }
-    ldSub    <- as.data.frame(ldSub)
+    ldSub    <- tibble::as_tibble(ldSub)
     ldSubRot <- ldCellRotater(ldSub, angle)
 
     nSites <- length(ids)

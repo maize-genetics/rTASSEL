@@ -3,8 +3,9 @@
 #'
 #' @description Exports genotype tables to various flat file formats.
 #'
-#' @param tasObj An object of class \code{TasselGenotypePenotype} that
-#'   contains a genotype table.
+#' @param tasObj An object of class \code{\linkS4class{TasselGenotype}} or
+#'   \code{\linkS4class{TasselGenomicDataset}}. Objects of the deprecated
+#'   \code{TasselGenotypePhenotype} class are still accepted.
 #' @param file Output file name.
 #' @param format Export file format. This function current supports the
 #'   following:
@@ -34,14 +35,9 @@ exportGenotypeTable <- function(tasObj,
                                 keepDepth = TRUE,
                                 taxaAnnotations = TRUE,
                                 branchLengths = TRUE) {
-    if (!inherits(tasObj, "TasselGenotypePhenotype")) {
-        stop("`tasObj` must be of class `TasselGenotypePhenotype`")
-    }
-
-    jGenoTable <- getGenotypeTable(tasObj)
-    if (rJava::is.jnull(jGenoTable)) {
-        stop("TASSEL genotype object not found")
-    }
+    jGenoTable <- .resolveTasselInput(
+        tasObj, "genotype", "exportGenotypeTable"
+    )$jGt
 
     if (file == "") {
         stop("File name not specified.")

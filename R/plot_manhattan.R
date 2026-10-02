@@ -146,7 +146,7 @@ primeManhattanData <- function(params) {
     ## Sanity check coerce data frame from assocStats object
     # NOTE - probably don't need to do this right now but a security
     #        feature if I change TableReport classes in the future...
-    assocStats <- as.data.frame(assocStats)
+    assocStats <- tibble::as_tibble(assocStats)
 
     ## Sanity check for columns
     neededCols <- c("Chr", "Pos", "Trait")

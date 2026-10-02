@@ -2,29 +2,16 @@
 
 test_that("plotQQ works correctly", {
     ## Load data ----
-    genoPathHMP <- system.file(
-        "extdata",
-        "mdp_genotype.hmp.txt",
-        package = "rTASSEL"
-    )
-    phenoPathFast <- system.file(
-        "extdata",
-        "mdp_traits_nomissing.txt",
-        package = "rTASSEL"
-    )
-    tasGenoPhenoFast <- rTASSEL::readGenotypePhenotype(
-        genoPathOrObj = genoPathHMP,
-        phenoPathDFOrObj = phenoPathFast
-    )
+    tasDataset <- rtObjs$ds_hmp_ph_nomiss
     fastRep <- rTASSEL::assocModelFitter(
-        tasGenoPhenoFast,
+        tasDataset,
         . ~ .,
         fastAssociation = TRUE,
         fitMarkers = TRUE,
         maxP = 1
     )
     tasBLUE <- rTASSEL::assocModelFitter(
-        tasGenoPhenoFast,
+        tasDataset,
         . ~ .,
         fitMarkers = FALSE
     )

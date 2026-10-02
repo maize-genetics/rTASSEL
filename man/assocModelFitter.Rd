@@ -19,7 +19,10 @@ assocModelFitter(
 )
 }
 \arguments{
-\item{tasObj}{An object of class \code{TasselGenotypePenotype}.}
+\item{tasObj}{An object of class \code{\linkS4class{TasselPhenotype}} or
+\code{\linkS4class{TasselGenomicDataset}}. A genotype table is required
+for every analysis except BLUEs. Objects of the deprecated
+\code{TasselGenotypePhenotype} class are still accepted.}
 
 \item{formula}{An R-based linear model formula. The general layout of this
 formula uses the following TASSEL data scheme:
@@ -66,7 +69,13 @@ only be estimated when the data source is genotype (not a probability).
 The additive effect will always be non-negative. Defaults to \code{FALSE}.}
 }
 \value{
-Returns an R list containing \code{DataFrame}-based data frames
+An \code{\linkS4class{AssociationResults}} object holding one
+\code{tibble} per TASSEL table report, which
+\code{\link{tableReport}()} reads. TASSEL models BLUEs as a phenotype, so
+a \code{\linkS4class{AssociationResultsBLUE}} object can also be given to
+\code{\link{intersectJoin}()}, \code{\link{unionJoin}()}, and
+\code{\link{concatenate}()} to combine the estimates with other phenotype
+data.
 }
 \description{
 This function acts as a front-end for TASSEL's extensive

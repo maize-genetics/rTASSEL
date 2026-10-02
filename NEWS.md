@@ -1,3 +1,283 @@
+# rTASSEL 1.0.0
+* First stable release. The classes, readers, selectors, and verbs below
+  make up the supported API; the functions listed under the deprecations
+  further down keep working with a warning until the next release
+* Bracket subsetting is now the primary way to filter genotype data and is
+  no longer experimental:
+  + `gt[<taxa selector>, <site selector>]` returns an object of the same
+    class it was given
+  + Taxa selectors: `taxa()` (literal IDs) and `taxaWhere()` (predicate on
+    `taxaId`, `notMissing`, and `het`)
+  + Site selectors: `sites()` (indices), `siteIds()` (marker names),
+    `chrom()`, `region()`, and `sitesWhere()` (predicate on `siteIndex`,
+    `siteId`, `chrom`, `pos`, `maf`, `alleleCount`, `het`, `isIndel`, and
+    `isBiallelic`)
+  + Any selector can be inverted with `!`, and predicates can be combined
+    with `&` and `|` in a single call
+  + Simple predicates are pushed down to TASSEL's `FilterSiteBuilder` and
+    `FilterTaxaBuilder` plugins rather than being evaluated in R
+  + See the *Filtering Genotype Tables* vignette for a full walkthrough and
+    a migration guide from `filterGenotypeTable*()`
+* Every filter is also available as a pipe-friendly verb modelled on
+  `dplyr`, so either grammar can be used interchangeably:
+  + `filterSites()` and `filterTaxa()` take any number of predicates over
+    the same metadata columns as `sitesWhere()` and `taxaWhere()`, combined
+    with `&`, in the manner of `dplyr::filter()`
+  + `selectSites()` and `selectTaxa()` take `tidyselect` expressions over
+    marker names and taxa IDs, so `all_of()`, `any_of()`, `starts_with()`,
+    `matches()`, and `-` all work, in the manner of `dplyr::select()`
+  + `sliceSites()` and `sliceTaxa()` take 1-based positions, where negative
+    positions drop rather than keep, in the manner of `dplyr::slice()`
+  + `overlaps()` tests sites against a `GRanges` object from inside
+    `filterSites()` or `sitesWhere()`, which is the one range-based
+    criterion that `region()` cannot combine with other site criteria
+  + The verbs build the same selectors `[` does, so predicate push-down to
+    TASSEL's filter plugins and the "class in, class out" rule apply
+    equally to both
+* Bracket subsetting also works on phenotype data, where the two axes are
+  observations and traits:
+  + `ph[<taxa selector>, <trait selector>]` returns a new
+    `TasselPhenotype`
+  + The row index takes the same selectors it does on a genotype table:
+    `taxa()` and a bare character vector keep whole taxa with every
+    observation they have, while `taxaWhere()` tests each observation on
+    its own against the phenotype's own columns, plus a `taxaId` alias
+    for whichever column holds the taxa
+  + New `traits()` (literal names) and `traitsWhere()` (predicate on
+    `traitIndex`, `traitId`, `traitType`, and `notMissing`) address the
+    trait axis, alongside a bare numeric vector of 1-based trait
+    positions and a bare character vector of trait names
+  + The taxa column is an axis rather than a trait, so no trait index
+    can drop it
+  + Indices are applied left to right, so a trait predicate sees the
+    observations the row index left behind, exactly as `filterTraits()`
+    does when it follows `filterTaxa()` in a pipeline
+  + Both selectors can be inverted with `!`
+  + On a `TasselGenomicDataset`, the row index routes the way
+    `filterTaxa()` does - a predicate naming a phenotype column filters
+    observations, and anything else filters the genotype table - and the
+    column index takes a trait selector as well as a site selector, so
+    `ds[, traits("EarHT")]` addresses the phenotype half. Chain two calls
+    to subset both column axes: `ds[, sites(1:1000)][, traits("EarHT")]`
+  + See the *Filtering Phenotype Data* vignette for a full walkthrough
+* The verbs also filter phenotype data, where the two axes are
+  observations and traits:
+  + `filterTaxa()` filters observations with predicates over the
+    phenotype's own columns, plus a `taxaId` alias for whichever column
+    holds the taxa, so `filterTaxa(ph, EarHT > 100, location == "A")`
+    works alongside the genotype form `filterTaxa(gt, notMissing >= 0.8)`
+  + `selectTaxa()` and `sliceTaxa()` work a taxon at a time, keeping every
+    observation of a selected taxon
+  + New `filterTraits()`, `selectTraits()`, and `sliceTraits()` address
+    the trait axis. `filterTraits()` takes predicates over `traitIndex`,
+    `traitId`, `traitType`, and `notMissing`; `selectTraits()` takes
+    `tidyselect` expressions over the trait columns, so `where()` can pick
+    traits out by their values; `sliceTraits()` takes 1-based positions.
+    The taxa column is an axis rather than a trait, so it is never
+    dropped
+  + On a `TasselGenomicDataset`, `filterTaxa()` reads the predicate to
+    decide which axis to filter: naming a phenotype column filters
+    observations, and anything else filters the genotype table, so
+    `notMissing` and `het` keep their genotype meaning and can be combined
+    with phenotype criteria in one call. Either way the two components are
+    re-joined, so taxa left without observations are dropped from the
+    genotype table as well
+  + See the *Filtering Phenotype Data* vignette for a full walkthrough
+* Added `tidyselect` to Imports
+* Added new `TasselGenomicDataset` class:
+  + Holds joined genotype and phenotype data, wrapping TASSEL's
+    `GenotypePhenotype` object
+  + Replaces `TasselGenotypePhenotype` for combined data sets
+  + Components are reachable with `genotype()` and `phenotype()`
+  + Subsetting with `[` filters the genotype table and re-joins the
+    phenotype data, so both components stay in step
+* Building a phenotype from a `data.frame` now states what every column is
+  rather than inferring it:
+  + **Breaking change**: the `attr` argument of `readPhenotype()` and
+    `readGenomicDataset()` is renamed `attrTypes`. `readPhenotype(attr =)`
+    still works with a deprecation warning; `readGenomicDataset()` is new in
+    this release, so its argument is renamed outright
+  + `attrTypes` takes a named character vector, where the names are columns
+    and the values TASSEL attribute types, so a mapping can be written
+    inline as `c(Taxon = "taxa", EarHT = "data")`. The data frame forms are
+    unchanged
+  + The mapping is held to the contract `colData` is held to in a
+    `SummarizedExperiment`: it must describe every column of the data frame
+    exactly once, and describe nothing else. A column left out of the
+    mapping was previously dropped from the phenotype without a word, and
+    is now an error naming the column, as is an entry with no matching
+    column, a column named twice, and a duplicated or unnamed data frame
+    column
+  + A character vector is read by name only. An unnamed or partially named
+    vector is rejected rather than lined up against the columns by position
+  + Each attribute type accepts only the R types it can hold, and the column
+    is coerced to what TASSEL needs: `taxa` takes `character` or `factor`,
+    `data` and `covariate` take `double` or `integer`, and `factor` takes
+    anything but `double`. Every mismatch reports the column, its R type,
+    and the coercion that would fix it
+  + Missing values are carried into TASSEL as missing values in a `data` or
+    `covariate` column, and rejected in a `taxa` or `factor` column, where a
+    taxon has to be named and `NA` would otherwise become a category of its
+    own
+  + Column types TASSEL has no attribute for, such as a `Date` or a list
+    column, are rejected by name instead of reaching the JVM
+  + Only `double[]` and `String[]` are now handed to TASSEL, so an R
+    `factor` marked as `factor` keeps its labels rather than being recoded
+    to its integer codes, and an integer column marked as `factor` no longer
+    depends on TASSEL's `int[]` handling
+  + Fixed a bug where the check for illegal attribute types read the
+    phenotype data frame rather than the mapping, so a misspelled type
+    reached TASSEL and failed there instead
+  + Traits are now built in the column order of the data frame rather than
+    the row order of the mapping
+* Added new function `readGenomicDataset()`:
+  + Joins genotype and phenotype data into a `TasselGenomicDataset`
+  + Both arguments accept either an existing `rTASSEL` object or the raw
+    inputs that `readGenotype()` and `readPhenotype()` understand (file
+    paths, an R `matrix`, or a `data.frame`)
+  + Taxa are combined with `join = "intersect"` (default) or
+    `join = "union"`
+  + Replaces `readGenotypePhenotype()`
+* Added new `MDSResults` class:
+  + **Breaking change**: `mds()` returns an `MDSResults` object rather than
+    a `tibble` of axes. Call `tableReport()` on the result for the table
+    earlier code was handed
+  + Reads the same way `PCAResults` does, with `reportNames()` and
+    `tableReport()`, whose default report is the axes themselves
+    (`MDS_PCs_Datum`)
+  + TASSEL computes eigenvalues alongside the axes, and these are now
+    reported as `MDS_Eigenvalues_Datum` instead of being discarded
+  + `intersectJoin()`, `unionJoin()`, and `concatenate()` accept an
+    `MDSResults` object, as they already did a `PCAResults`, so MDS axes can
+    be joined to phenotype data and used as covariates
+* `intersectJoin()`, `unionJoin()`, and `concatenate()` also accept the BLUE
+  results of `assocModelFitter()`:
+  + TASSEL models BLUEs as a phenotype, so the estimates can be joined to
+    other phenotype data and carried into a later analysis as traits:
+    `intersectJoin(gt, assocModelFitter(ph, . ~ .), phCov)`
+  + The other association models report marker statistics rather than
+    phenotype data, and are rejected with a message saying so
+* `intersectJoin()`, `unionJoin()`, and `concatenate()` now take objects
+  directly instead of a single list:
+  + `intersectJoin(ph1Cov, ph2Traits, ph3MoreTraits)` joins any number of
+    phenotype objects in one call
+  + `intersectJoin()` and `unionJoin()` also accept objects holding only
+    genotype data, which are joined to the result. The return value is then
+    a `TasselGenomicDataset` rather than a `TasselPhenotype`, so a study's
+    genotype, covariates, and trait tables can be assembled in one step:
+    `intersectJoin(gt, ph1Cov, ph2Traits)`
+  + Lists are still flattened, so earlier `intersectJoin(c(ph1, ph2))` calls
+    keep working unchanged
+* `intersectJoin()` and `unionJoin()` also join genotype tables to each
+  other, which is the way back from data split by chromosome or by
+  collection of sites:
+  + `intersectJoin(gtChr1, gtChr2, gtChr3)` returns a single
+    `TasselGenotype` holding the sites of each table in genomic order, no
+    matter which order the tables were given in
+  + `intersectJoin()` keeps the taxa every table holds, while `unionJoin()`
+    keeps every taxon any of them holds and returns the calls a table never
+    made as missing
+  + Genotype tables can be joined alongside phenotype data in the same
+    call, which returns a `TasselGenomicDataset`:
+    `intersectJoin(gtChr1, gtChr2, phTraits)`
+  + The tables are expected to hold different sites. Use
+    `mergeGenotypeTables()` to merge the calls of tables describing the
+    same sites
+* Added new function `removeMinorSNPStates()`:
+  + Collapses every site to its two most common allelic states
+  + Replaces the `removeMinorSNPStates` argument of
+    `filterGenotypeTableSites()`, which recoded genotype calls rather than
+    selecting sites and so does not fit the selector model
+* Every exported function now accepts `TasselGenotype`, `TasselPhenotype`,
+  and `TasselGenomicDataset` objects, and returns the class it was given
+* `region()` now accepts a `GRanges` object in place of a chromosome and
+  coordinate range, which is the migration path for the `gRangesObj`,
+  `bedFile`, and `chrPosFile` arguments of `filterGenotypeTableSites()`
+* `taxaWhere()` gained the `notMissing` and `het` metrics, replacing the
+  `minNotMissing`, `minHeterozygous`, and `maxHeterozygous` arguments of
+  `filterGenotypeTableTaxa()`
+* **Breaking change**: site indices in `sites()`, `sitesWhere(siteIndex)`,
+  and numeric `j` values passed to `[` are 1-based, matching R's own
+  subsetting conventions. TASSEL's 0-based index is still reported in the
+  `Site` column of `positionList()`
+* Added coercion methods promised by earlier deprecation notices:
+  + `as.data.frame()` for `TasselPhenotype` and `TasselGenomicDataset`,
+    replacing `getPhenotypeDF()`
+  + `as.matrix()` for `TasselGenotype` and `TasselGenomicDataset`
+* Every route data takes out of the JVM now has a single implementation,
+  so the conventions each one follows hold everywhere it is used:
+  + `as.matrix()` on a `TasselGenotype`, on the deprecated
+    `TasselGenotypePhenotype`, and inside `getSumExpFromGenotypeTable()`
+    share one dosage reader, so the missing value rule is stated once
+  + `as.matrix()` on a `TasselDistanceMatrix` reads TASSEL's own array of
+    distances instead of parsing its tab-delimited text, which is faster
+    and carries full precision rather than the eight significant digits
+    the text form rounds to
+  + `tableReport()` reads its `reportName` argument the same way on every
+    results class. `"ALL"` now returns every report as a named list on
+    `AssociationResults` and `LDResults` as well as `PCAResults`
+  + `attributeData()` and the internal trait metadata agree on one set of
+    column names
+* Filled in the gaps in the extraction surface:
+  + `granges()` returns marker positions as a `GRanges` object, with the
+    rest of `positionList()` available as metadata columns via
+    `use.mcols = TRUE`. The result can be handed back to `region()` or
+    `overlaps()`, so one genotype table can be cut down to the markers of
+    another
+  + `as(x, "SummarizedExperiment")` assembles the Bioconductor container
+    from a `TasselGenotype` or `TasselGenomicDataset`, replacing the
+    deprecated `getSumExpFromGenotypeTable()`
+  + `as.matrix()` gained a `type` argument, where `type = "allele"`
+    returns the genotype calls as TASSEL spells them rather than as
+    dosages
+  + `as.matrix()` on a `TasselNumericGenotype` returns the reference
+    probabilities instead of failing. TASSEL reads these one cell at a
+    time, so filter before materializing
+  + `TasselDistanceMatrix` gained `javaRefObj()` and `taxaList()` methods,
+    which every other class already answered, and an `as.dist()` coercion
+    for `hclust()` and friends
+  + `LDResults` gained a `reportNames()` method
+  + The `attrTypes` argument of `readPhenotype()` accepts the `trait_id` and
+    `trait_type` columns that `attributeData()` reports, alongside the
+    `col_id` and `tassel_attr` spelling, so
+    `readPhenotype(as.data.frame(ph), attrTypes = attributeData(ph))` makes
+    the return trip
+* `filterGenotypeTableBySiteName()` now keeps phenotype data attached to
+  its input instead of dropping it
+* Converted the ad-hoc "will be deprecated soon" messages to formal
+  `lifecycle` warnings, which report the call site and fire once per
+  session. The following are deprecated and scheduled for removal in the
+  next release:
+  + `filterGenotypeTableSites()`, `filterGenotypeTableTaxa()`, and
+    `filterGenotypeTableBySiteName()`, replaced by `[`
+  + `readGenotypeTableFromPath()`, replaced by `readGenotype()`
+  + `readPhenotypeFromPath()` and `readPhenotypeFromDataFrame()`, replaced
+    by `readPhenotype()`
+  + `readGenotypePhenotype()`, replaced by `readGenomicDataset()`
+  + `getPhenotypeDF()`, replaced by `as.data.frame()`
+  + `getSumExpFromGenotypeTable()`
+  + The `asTGP` argument of `readNumericGenotypeFromRMatrix()`, which now
+    returns a `TasselNumericGenotype` unless `asTGP = TRUE` is passed
+  + The `TasselGenotypePhenotype` class, replaced by `TasselGenotype`,
+    `TasselPhenotype`, and `TasselGenomicDataset`
+  + **NOTE**: passing a `TasselGenotypePhenotype` object to any function
+    also warns, but keeps working and still returns a
+    `TasselGenotypePhenotype` object
+* **Breaking change**: `readGenotypeTableFromGigwa()` returns a
+  `TasselGenotype` rather than a `TasselGenotypePhenotype`, and no longer
+  prints a notice that it will be deprecated
+* Removed deprecated `treeJavaApp()` function
+* Moved `ape` from Imports to Suggests. It is only needed by
+  `createTree()`, which returns an `ape` `phylo` object and now asks for
+  `ape` to be installed when it is missing
+* Rewrote the *Filtering Genotype Tables* vignette around bracket
+  subsetting and updated *Getting Started with rTASSEL* to the new classes
+* Added the *Extracting Data into R* vignette, which collects every
+  accessor and coercion method for pulling data out of the JVM-backed
+  classes, and linked it from *Getting Started with rTASSEL*
+* Added an explicit function reference index to the package website
+* Added `lifecycle` to Imports
+
 # rTASSEL 0.13.0
 * Added installation of TASSEL from the standalone archives published on
   GitHub, which is the only source of nightly builds:

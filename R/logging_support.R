@@ -1,3 +1,4 @@
+## ----
 #' @title Start TASSEL logging information
 #'
 #' @description This function will create a file for storing logging output

@@ -7,9 +7,11 @@
 #' `TasselGenotype` class. This class is used to represent numeric
 #' genotype data in the TASSEL 5 framework.
 #'
+#' @include class_tassel_genotype.R
+#'
 #' @name TasselNumericGenotype-class
 #' @rdname TasselNumericGenotype-class
-#' @exportClass TasselGenotype
+#' @exportClass TasselNumericGenotype
 setClass(
     Class = "TasselNumericGenotype",
     contains = "TasselGenotype"
@@ -29,12 +31,6 @@ setClass(
 #' genotype data, including the number of taxa, number of sites, and
 #' memory address of the Java object.
 #'
-#' @details
-#' The function \code{printNumGtDisp} is called internally to format
-#' and display the genotype data. The number of taxa and sites are
-#' retrieved from the Java reference object associated with the
-#' \code{TasselNumericGenotype} instance.
-#'
 #' @param object
 #' An object of class \code{TasselNumericGenotype}.
 #'
@@ -42,27 +38,64 @@ setClass(
 #' @rdname TasselNumericGenotype-class
 #' @aliases show,TasselNumericGenotype-method
 setMethod("show", "TasselNumericGenotype", function(object) {
-    printNumGtDisp(
-        fgs    = object@dispData,
-        nTaxa  = object@jRefObj$numberOfTaxa(),
-        nSites = object@jRefObj$numberOfSites(),
-        jMem   = object@jMemAddress
+    fgs <- formatNumGtStrings(object@jRefObj, nTaxa = 5, nSites = 5)
+    printGtDisp(
+        fgs       = fgs,
+        nTaxa     = object@jRefObj$numberOfTaxa(),
+        nSites    = object@jRefObj$numberOfSites(),
+        jMem      = object@jMemAddress,
+        className = "TasselNumericGenotype"
     )
 })
 
 
 
-# /// Methods (general) /////////////////////////////////////////////
+# /// Methods (coercion) ////////////////////////////////////////////
 
 ## ----
-#' @rdname javaRefObj
+#' @title Coerce numeric genotype data to an R matrix
+#'
+#' @description
+#' Converts the numeric genotype table held by a
+#' \code{TasselNumericGenotype} object into a matrix of reference
+#' probabilities, with taxa as rows and sites as columns.
+#'
+#' @details
+#' A numeric genotype table holds a probability rather than a discrete
+#' call, so there is no dosage to report and the \code{type} argument of
+#' \code{\link{as.matrix.TasselGenotype}} does not apply.
+#'
+#' TASSEL 5 reads reference probabilities one cell at a time, so this
+#' costs a Java call per cell and is far slower than the dosage matrix of
+#' a comparably sized allele-based table. Filter the table down to the
+#' taxa and sites of interest before materializing it.
+#'
+#' @param x A \code{TasselNumericGenotype} object.
+#' @param ... Additional arguments to be passed to or from methods.
+#'
+#' @return A \code{numeric} matrix of taxa (rows) by sites (columns).
+#'
+#' @examples
+#' \dontrun{
+#' numGtPath <- system.file("extdata", "numeric_genotype.txt", package = "rTASSEL")
+#'
+#' readGenotype(numGtPath) |> as.matrix()
+#' }
+#'
 #' @export
-setMethod(
-    f = "javaRefObj",
-    signature = signature(object = "TasselNumericGenotype"),
-    definition = function(object) {
-        return(object@jRefObj)
+as.matrix.TasselNumericGenotype <- function(x, ...) {
+    if (!x@jRefObj$hasReferenceProbablity()) {
+        rlang::abort(c(
+            "`x` does not contain reference probabilities",
+            "i" = "Only numeric genotype tables can be coerced this way"
+        ))
     }
-)
+
+    .refProbMatrix(
+        jGt       = x@jRefObj,
+        taxa      = taxaList(x),
+        siteNames = positionList(x)$Name
+    )
+}
 
 

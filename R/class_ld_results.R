@@ -6,7 +6,7 @@
 #'   The object contains the full pairwise LD table together with the
 #'   parameters used to generate it.
 #'
-#' @slot results A \code{data.frame} containing the pairwise LD
+#' @slot results A \code{tibble} containing the pairwise LD
 #'   statistics. Expected columns include \code{Locus1}, \code{Position1},
 #'   \code{Locus2}, \code{Position2}, \code{R^2}, \code{DPrime},
 #'   \code{pDiseq}, and \code{N}, among others.
@@ -32,6 +32,19 @@ setClass(
         hetCalls   = "character"
     )
 )
+
+
+## ----
+# Coerce the LD table to a tibble once, when the object is built, so that
+# every 'LDResults' holds one and 'tableReport()' can hand back the slot
+# without coercing on each call
+setMethod("initialize", "LDResults", function(.Object, ..., results) {
+    if (missing(results)) {
+        return(callNextMethod(.Object, ...))
+    }
+
+    callNextMethod(.Object, ..., results = tibble::as_tibble(results))
+})
 
 
 ## ----
@@ -129,6 +142,19 @@ setMethod(
 # /// Methods (tableReport) /////////////////////////////////////////
 
 ## ----
+#' @rdname reportNames
+#' @aliases reportNames,LDResults-method
+#' @export
+setMethod(
+    f = "reportNames",
+    signature = "LDResults",
+    definition = function(object) {
+        return("LD")
+    }
+)
+
+
+## ----
 #' @rdname tableReport
 #' @export
 setMethod(
@@ -138,6 +164,14 @@ setMethod(
         reportName = "ANY"
     ),
     definition = function(assocRes, reportName) {
-        tibble::as_tibble(assocRes@results)
+        if (missing(reportName)) reportName <- NULL
+
+        # An LD analysis produces the one table, so naming it and asking
+        # for it by default come to the same thing
+        returnReportElements(
+            results              = list("LD" = assocRes@results),
+            reportName           = reportName,
+            defaultReportElement = "LD"
+        )
     }
 )

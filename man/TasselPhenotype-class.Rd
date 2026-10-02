@@ -3,10 +3,55 @@
 \docType{class}
 \name{TasselPhenotype-class}
 \alias{TasselPhenotype-class}
+\alias{[,TasselPhenotype,ANY,ANY,ANY-method}
+\alias{[,TasselPhenotype,ANY,ANY-method}
 \title{TasselPhenotype Class Definition}
+\usage{
+\S4method{[}{TasselPhenotype,ANY,ANY,ANY}(x, i, j, ..., drop = FALSE)
+}
+\arguments{
+\item{x}{A \code{TasselPhenotype} object.}
+
+\item{i}{Observation selector: a character vector of taxa IDs, a
+\code{\linkS4class{TaxaSelector}}, or missing.}
+
+\item{j}{Trait selector: an integer vector of 1-based trait
+positions, a character vector of trait names, a
+\code{\linkS4class{TraitSelector}}, or missing.}
+
+\item{...}{Ignored.}
+
+\item{drop}{Ignored.}
+}
+\value{
+A new \code{TasselPhenotype} containing the selected
+  observations and/or traits.
+}
 \description{
 Defines the \code{TasselPhenotype} class, which represents
 phenotype data in the TASSEL 5 framework.
+
+Matrix-style subsetting for \code{TasselPhenotype} objects using
+the \code{ph[observations, traits]} syntax, the phenotype
+counterpart of the \code{gt[taxa, sites]} syntax used on genotype
+tables.
+}
+\details{
+The row axis is observations rather than taxa, since a phenotype
+may hold several observations of one taxon.
+\code{\link{taxaWhere}()} tests each observation on its own, while
+\code{\link{taxa}()} and a bare character vector keep whole taxa
+with every observation they have.
+
+The column axis is traits. The taxa column is the label on the row
+axis rather than a trait, so it is not a position in \code{j} and
+is never dropped.
+
+Indices are applied left to right, so a trait predicate sees the
+observations that the row index left behind. \code{notMissing} in
+\code{\link{traitsWhere}()} is therefore computed over the
+surviving observations, as it is when \code{\link{filterTraits}()}
+follows \code{\link{filterTaxa}()} in a pipeline.
 }
 \section{Slots}{
 
@@ -29,3 +74,14 @@ Java object.}
 object.}
 }}
 
+\examples{
+\dontrun{
+ph[taxa("33-16", "38-11"), ]
+ph[taxaWhere(EarHT > 100), ]
+ph[, traits("EarHT", "dpoll")]
+ph[, traitsWhere(traitType == "covariate")]
+ph[taxaWhere(location == "A"), 1:3]
+ph[, !traits("EarDia")]
+}
+
+}

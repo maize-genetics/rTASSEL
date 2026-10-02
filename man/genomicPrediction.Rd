@@ -7,8 +7,9 @@
 genomicPrediction(tasPhenoObj, kinship, doCV = FALSE, kFolds, nIter)
 }
 \arguments{
-\item{tasPhenoObj}{An object of class \code{TasselGenotypePenotype} that
-contains a phenotype object.}
+\item{tasPhenoObj}{An object of class \code{\linkS4class{TasselPhenotype}}
+or \code{\linkS4class{TasselGenomicDataset}}. Objects of the deprecated
+\code{TasselGenotypePhenotype} class are still accepted.}
 
 \item{kinship}{A TASSEL kinship object of class \code{TasselDistanceMatrix}.}
 
@@ -20,7 +21,8 @@ contains a phenotype object.}
 \item{nIter}{Number of iterations to be ran.}
 }
 \value{
-Returns a \code{DataFrame}-based data frame
+A \code{tibble} of either accuracies or predictions, depending on
+whether cross-validation was asked for.
 }
 \description{
 This function acts as a front-end for TASSEL's genomic

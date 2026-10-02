@@ -38,50 +38,79 @@ test_that("formatRefProb errors on values outside range 0–1", {
 })
 
 
+# Styling is applied by cli at call time, so the tests below ask cli for a
+# colour-capable terminal and compare styles rather than literal escapes
+stripValue <- function(x, val) {
+    sub(sprintf(" %.3f ", val), "", x, fixed = TRUE)
+}
+
 test_that("formatRefProb formats NA and numeric values correctly", {
     vals <- c(NA, 0, 0.21, 0.41, 0.61, 0.81)
     res <- formatRefProb(vals)
 
-    validAnsiCols <- c(231, 195, 159, 87, 45)
-    ansiTemplate <- "\033[30;48;5;%sm %s \033[0m"
-    # Test for background colors
     expect_equal(res[1], " NA ")
-    expect_equal(res[2], sprintf(ansiTemplate, validAnsiCols[1], "0.000"))
-    expect_equal(res[3], sprintf(ansiTemplate, validAnsiCols[2], "0.210"))
-    expect_equal(res[4], sprintf(ansiTemplate, validAnsiCols[3], "0.410"))
-    expect_equal(res[5], sprintf(ansiTemplate, validAnsiCols[4], "0.610"))
-    expect_equal(res[6], sprintf(ansiTemplate, validAnsiCols[5], "0.810"))
+    expect_equal(
+        cli::ansi_strip(res),
+        c(" NA ", " 0.000 ", " 0.210 ", " 0.410 ", " 0.610 ", " 0.810 ")
+    )
 })
 
-# ANSI style functions tests
+test_that("formatRefProb gives each 0.2-wide bin its own background", {
+    withr::local_options(cli.num_colors = 256L)
 
-test_that("boldStyle wraps allele with ANSI bold codes", {
-    allele <- "X"
-    expect_equal(boldStyle(allele), sprintf("\033[1m %s \033[22m", allele))
+    vals <- c(0.1, 0.3, 0.5, 0.7, 0.9)
+    styles <- mapply(stripValue, formatRefProb(vals), vals, USE.NAMES = FALSE)
+
+    expect_length(unique(styles), 5L)
+    expect_true(all(cli::ansi_has_any(formatRefProb(vals))))
 })
 
-test_that("bgGreenBold wraps allele correctly", {
-    allele <- "X"
-    expect_equal(bgGreenBold(allele),
-                 sprintf("\033[42m\033[37m\033[1m %s \033[22m\033[39m\033[49m", allele))
+test_that("formatRefProb clamps the ends of the range into the outer bins", {
+    withr::local_options(cli.num_colors = 256L)
+
+    expect_equal(stripValue(formatRefProb(1), 1), stripValue(formatRefProb(0.9), 0.9))
+    expect_equal(stripValue(formatRefProb(0), 0), stripValue(formatRefProb(0.1), 0.1))
 })
 
-# styleCache consistency
+# Allele style helper tests
 
-test_that("styleCache entries match style functions", {
-    expect_equal(styleCache[["N"]], boldStyle("N"))
-    expect_equal(styleCache[["AMaj"]], bgYellowBold("A"))
-    expect_equal(styleCache[["CMin"]], bgBlueWhiteBold("C"))
+test_that("style helpers pad the allele and apply cli styling", {
+    withr::local_options(cli.num_colors = 256L)
+
+    for (style in list(styleBold, styleHetero, styleMajor, styleMinor)) {
+        expect_equal(cli::ansi_strip(style("X")), " X ")
+        expect_true(cli::ansi_has_any(style("X")))
+    }
+})
+
+test_that("style helpers are distinguishable from one another", {
+    withr::local_options(cli.num_colors = 256L)
+
+    styles <- c(
+        styleBold("X"), styleHetero("X"), styleMajor("X"), styleMinor("X")
+    )
+
+    expect_length(unique(styles), 4L)
 })
 
 # formatAllele tests
 
 test_that("formatAllele returns minor style when allele equals minAllele", {
-    expect_equal(formatAllele("A", "A"), styleCache[["AMin"]])
+    expect_equal(formatAllele("A", "A"), styleMinor("A"))
 })
 
 test_that("formatAllele returns major style when allele differs from minAllele", {
-    expect_equal(formatAllele("A", "C"), styleCache[["AMaj"]])
+    expect_equal(formatAllele("A", "C"), styleMajor("A"))
+})
+
+test_that("formatAllele styles heterozygous calls", {
+    for (allele in c("R", "Y", "S", "W", "K", "M")) {
+        expect_equal(formatAllele(allele, "A"), styleHetero(allele))
+    }
+})
+
+test_that("formatAllele styles missing calls in bold", {
+    expect_equal(formatAllele("N", "A"), styleBold("N"))
 })
 
 test_that("formatAllele returns subEllipsis for ellipsis input", {
@@ -90,8 +119,7 @@ test_that("formatAllele returns subEllipsis for ellipsis input", {
 })
 
 test_that("formatAllele defaults to bold for unrecognized allele", {
-    res <- formatAllele("Z", "A")
-    expect_equal(res, "\033[1m Z \033[22m")
+    expect_equal(formatAllele("Z", "A"), styleBold("Z"))
 })
 
 # genMinorAlleles tests

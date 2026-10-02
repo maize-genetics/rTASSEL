@@ -14,7 +14,10 @@
 #' @name assocModelFitter
 #' @rdname assocModelFitter
 #'
-#' @param tasObj An object of class \code{TasselGenotypePenotype}.
+#' @param tasObj An object of class \code{\linkS4class{TasselPhenotype}} or
+#'   \code{\linkS4class{TasselGenomicDataset}}. A genotype table is required
+#'   for every analysis except BLUEs. Objects of the deprecated
+#'   \code{TasselGenotypePhenotype} class are still accepted.
 #' @param formula An R-based linear model formula. The general layout of this
 #'   formula uses the following TASSEL data scheme:
 #'   \code{<data> ~ <factor> and/or <covariate>}. If all traits in a Phenotype
@@ -50,7 +53,14 @@
 #'   only be estimated when the data source is genotype (not a probability).
 #'   The additive effect will always be non-negative. Defaults to \code{FALSE}.
 #'
-#' @return Returns an R list containing \code{DataFrame}-based data frames
+#' @return
+#' An \code{\linkS4class{AssociationResults}} object holding one
+#' \code{tibble} per TASSEL table report, which
+#' \code{\link{tableReport}()} reads. TASSEL models BLUEs as a phenotype, so
+#' a \code{\linkS4class{AssociationResultsBLUE}} object can also be given to
+#' \code{\link{intersectJoin}()}, \code{\link{unionJoin}()}, and
+#' \code{\link{concatenate}()} to combine the estimates with other phenotype
+#' data.
 #'
 #' @importFrom rJava is.jnull
 #' @importFrom rJava J
@@ -73,15 +83,9 @@ assocModelFitter <- function(
     appendAddDom = FALSE
 ) {
 
-    # Logic - Check for TasselGenotypePhenotype class
-    if (!is(tasObj, "TasselGenotypePhenotype")) {
-        stop("tasObj is not of class \"TasselGenotypePhenotype\"")
-    }
-
-    # Logic - Check to see if TASSEL object has a phenotype table
-    if (rJava::is.jnull(tasObj@jPhenotypeTable)) {
-        stop("tasObj does not contain a Phenotype object")
-    }
+    tasIn <- .resolveTasselInput(tasObj, "phenotype", "assocModelFitter")
+    jGt   <- tasIn$jGt
+    jPh   <- tasIn$jPh
 
     # Logic - check kinship object
     if (!is.null(kinship) && !inherits(kinship, "TasselDistanceMatrix")) {
@@ -99,17 +103,18 @@ assocModelFitter <- function(
     }
 
     # Subset phenotype data
-    rData        <- tableReportToDF(tasObj@jPhenotypeTable)
-    attrData     <- makeAttributeData(tasObj@jPhenotypeTable, rData)
+    rData        <- tableReportToDF(jPh)
+    attrData     <- makeAttributeData(jPh, rData)
     traitsToKeep <- unlist(parseFormula(formula, attrData))
 
     # Logic - Handle association analyses
     jRC <- rJava::J("net/maizegenetics/plugindef/GenerateRCode")
     jTasFilt <- tasPhenoFilter(
-        tasObj = tasObj,
+        jPh     = jPh,
+        jGt     = jGt,
         filtObj = traitsToKeep
     )
-    tmpDF <- as.data.frame(jTasFilt$phenoDf) # check for missing values
+    tmpDF <- jTasFilt$phenoDf # check for missing values
 
     # Logic - Check for out of range p-values
     if (maxP > 1 || maxP < 0) {
@@ -142,30 +147,26 @@ assocModelFitter <- function(
     # Logic - Handle association types and output
     if (!fitMarkers & is.null(kinship)) {
         if (!fastAssociation) {
-            if (!rJava::is.jnull(tasObj@jPhenotypeTable)) {
-                message("Association Analysis : BLUEs")
-                assocOut <- jRC$association(
-                    rJava::.jnull(),
-                    rJava::.jnull(),
-                    jTasFilt$phenotype,
-                    rJava::.jnull(),
-                    as.integer(minClassSize),
-                    biallelicOnly,
-                    appendAddDom,
-                    saveToFile,
-                    outputFile,
-                    maxP
-                )
-                assocType <- "BLUE"
-            } else {
-                stop("No TASSEL phenotype table was found in TasselGenotypePhenotype object!")
-            }
+            message("Association Analysis : BLUEs")
+            assocOut <- jRC$association(
+                rJava::.jnull(),
+                rJava::.jnull(),
+                jTasFilt$phenotype,
+                rJava::.jnull(),
+                as.integer(minClassSize),
+                biallelicOnly,
+                appendAddDom,
+                saveToFile,
+                outputFile,
+                maxP
+            )
+            assocType <- "BLUE"
         } else {
             stop("Don't know how to analyze with given parameter inputs.")
         }
     } else if (fitMarkers & is.null(kinship)) {
         if (!fastAssociation) {
-            if (!rJava::is.jnull(tasObj@jGenotypeTable)) {
+            if (!rJava::is.jnull(jGt)) {
                 if (any(jTasFilt$attTypes == "factor")) {
                     message("Association Analysis : GLM")
                     message("(NOTE) Factors detected - running initial BLUE calculation...")
@@ -184,7 +185,7 @@ assocModelFitter <- function(
                     blueOut <- blueOut$get("BLUE")
                     message("(NOTE) BLUEs calculated - using output to test markers...")
                     blueOut <- combineTasselGenotypePhenotype(
-                        genotypeTable = tasObj@jGenotypeTable,
+                        genotypeTable = jGt,
                         phenotype = blueOut
                     )
                     assocOut <- jRC$association(
@@ -217,10 +218,10 @@ assocModelFitter <- function(
                     assocType <- "GLM"
                 }
             } else {
-                stop("No TASSEL genotype table was found in TasselGenotypePhenotype object!")
+                stop("`assocModelFitter()` needs genotype data to fit markers")
             }
         } else {
-            if (!rJava::is.jnull(tasObj@jGenotypeTable)) {
+            if (!rJava::is.jnull(jGt)) {
                 if (any(apply(tmpDF, 2, function(x) any(is.na(x))))) {
                     stop("Missing phenotype data entries detected!")
                 } else if (any(jTasFilt$attTypes == "factor")) {
@@ -241,7 +242,7 @@ assocModelFitter <- function(
                     blueOut <- blueOut$get("BLUE")
                     message("(NOTE) BLUEs calculated - using output to test markers...")
                     blueOut <- combineTasselGenotypePhenotype(
-                        genotypeTable = tasObj@jGenotypeTable,
+                        genotypeTable = jGt,
                         phenotype = blueOut
                     )
 
@@ -279,11 +280,11 @@ assocModelFitter <- function(
                     assocType <- "FastAssoc"
                 }
             } else {
-                stop("No TASSEL genotype table was found in TasselGenotypePhenotype object!")
+                stop("`assocModelFitter()` needs genotype data to fit markers")
             }
         }
     } else if (fitMarkers & !is.null(kinship) & !fastAssociation) {
-        if (!rJava::is.jnull(tasObj@jGenotypeTable)) {
+        if (!rJava::is.jnull(jGt)) {
             if (any(jTasFilt$attTypes == "factor")) {
                 message("Association Analysis : MLM")
                 message("(NOTE) Factors detected - running initial BLUE calculation...")
@@ -302,7 +303,7 @@ assocModelFitter <- function(
                 blueOut <- blueOut$get("BLUE")
                 message("(NOTE) BLUEs calculated - using output to test markers...")
                 blueOut <- combineTasselGenotypePhenotype(
-                    genotypeTable = tasObj@jGenotypeTable,
+                    genotypeTable = jGt,
                     phenotype = blueOut
                 )
                 assocOut <- jRC$association(
@@ -335,7 +336,7 @@ assocModelFitter <- function(
                 assocType <- "MLM"
             }
         } else {
-            stop("No TASSEL genotype table was found in TasselGenotypePhenotype object!")
+            stop("`assocModelFitter()` needs genotype data to fit markers")
         }
     } else {
         stop("Don't know how to analyze with given parameter inputs.")
@@ -348,7 +349,12 @@ assocModelFitter <- function(
         return(
             tableReportListToAssociationResults(
                 trl   = tableReportList(assocOut),
-                aType = assocType
+                aType = assocType,
+                jPh   = if (assocType == "BLUE") {
+                    assocOut$get("BLUE")
+                } else {
+                    rJava::.jnull()
+                }
             )
         )
     } else {
@@ -361,23 +367,26 @@ assocModelFitter <- function(
 
 
 ## Phenotype filter - return modified TASSEL object - not exported (house keeping)
+##
+## 'jPh' is a Java Phenotype and 'jGt' a Java GenotypeTable (possibly a Java
+## null), both as resolved by '.resolveTasselInput()'.
 #' @importFrom rlang .data
-tasPhenoFilter <- function(tasObj, filtObj) {
+tasPhenoFilter <- function(jPh, jGt, filtObj) {
 
     # Get all TASSEL object trait metadata
-    phenoAttDf <- extractPhenotypeAttDf(tasObj@jPhenotypeTable)
+    phenoAttDf <- extractPhenotypeAttDf(jPh)
 
     # Get phenotype data frame
-    phenoDF <- as.data.frame(tableReportToDF(tasObj@jPhenotypeTable))
+    phenoDF <- tableReportToDF(jPh)
 
     # Convert <data> and <covariates> to doubles (correct pass to TASSEL)
     doubCols <- as.character(
-        phenoAttDf$traitName[which(phenoAttDf$traitType == "data" | phenoAttDf$traitType == "covariate")]
+        phenoAttDf$trait_id[which(phenoAttDf$trait_type == "data" | phenoAttDf$trait_type == "covariate")]
     )
     phenoDF[doubCols] <- sapply(phenoDF[doubCols], as.double)
 
     # Get taxa column
-    taxaCol <- as.character(phenoAttDf$traitName[which(phenoAttDf$traitType == "taxa")])
+    taxaCol <- as.character(phenoAttDf$trait_id[which(phenoAttDf$trait_type == "taxa")])
     taxaNames <- as.vector(phenoDF[[taxaCol]])
 
     # Get non-taxa columns and reorder filtered columns (correct pass to TASSEL)
@@ -388,14 +397,14 @@ tasPhenoFilter <- function(tasObj, filtObj) {
 
     # Filter data frame columns based on association formula
     phenoDF <- phenoDF[, filtObjRight]
-    phenoAttDf <- phenoAttDf[phenoAttDf$traitName %in% filtObjRight, , drop = FALSE]
+    phenoAttDf <- phenoAttDf[phenoAttDf$trait_id %in% filtObjRight, , drop = FALSE]
 
     # Get vector of non-taxa column names
     phenoColNames <- colnames(phenoDF)
     notTaxaCols <- phenoColNames[!(phenoColNames %in% taxaCol)]
 
     # Get attribute types
-    attTypes <- as.vector(phenoAttDf$traitType[which(phenoAttDf$traitType != "taxa")])
+    attTypes <- as.vector(phenoAttDf$trait_type[which(phenoAttDf$trait_type != "taxa")])
 
     # Send filtered data frame to TASSEL methods
     jList <- rJava::new(rJava::J("java/util/ArrayList"))
@@ -413,7 +422,7 @@ tasPhenoFilter <- function(tasObj, filtObj) {
     )
 
     # Return modified TASSEL objects
-    if (rJava::is.jnull(tasObj@jGenotypeTable)) {
+    if (rJava::is.jnull(jGt)) {
         return(
             list(
                 attTypes = attTypes,
@@ -427,7 +436,7 @@ tasPhenoFilter <- function(tasObj, filtObj) {
         )
     } else {
         jcComb <- combineTasselGenotypePhenotype(
-            genotypeTable = tasObj@jGenotypeTable,
+            genotypeTable = jGt,
             phenotype = jc
         )
         return(

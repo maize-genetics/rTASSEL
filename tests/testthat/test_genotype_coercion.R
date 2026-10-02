@@ -1,19 +1,14 @@
-
-genoPathHMP <- system.file(
-    "extdata",
-    "mdp_genotype.hmp.txt",
-    package = "rTASSEL"
-)
-tasGeno <- readGenotypeTableFromPath(
-    path = genoPathHMP
-)
-
+# === Tests for genotype table coercion =============================
 
 test_that("Genotype table coercion to matrix returns correct data", {
-    m <- as.matrix(tasGeno)
+    m <- as.matrix(rtObjs$gt_hmp)
 
     expect_equal(dim(m), c(281, 3093))
-
 })
 
-
+test_that("Coercion is unaffected by the class holding the genotype table", {
+    expect_equal(
+        as.matrix(rtObjs$gt_hmp),
+        as.matrix(rtObjsLegacy$gt_hmp)
+    )
+})

@@ -26,8 +26,14 @@ sorting in Genotype Tables from a path, indicate them here. See
 Returns an object of \code{TasselGenotypePhenotype} class.
 }
 \description{
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
+
 Creates a Java GenotypePhenotype object which is used for
-   \code{TasselGenotypePhenotype} object construction. The Java
-   GenotypePhenotype object is created via an \code{intersect} method
-   from TASSEL.
+   the deprecated \code{TasselGenotypePhenotype} object construction. The
+   Java GenotypePhenotype object is created via an \code{intersect} method
+   from TASSEL. Use \code{\link{readGenomicDataset}()} instead, which
+   returns a \code{\linkS4class{TasselGenomicDataset}} object.
+}
+\seealso{
+\code{\link{readGenomicDataset}}
 }

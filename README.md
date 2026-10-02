@@ -1,6 +1,6 @@
 # rTASSEL <img src="man/figures/logo.png" align="right" width="120" />
 
-[![Life Cycle Status](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing) [![CI](https://github.com/maize-genetics/rTASSEL/actions/workflows/ci.yaml/badge.svg)](https://github.com/maize-genetics/rTASSEL/actions/workflows/ci.yaml) [![codecov](https://codecov.io/gh/maize-genetics/rTASSEL/branch/master/graph/badge.svg?token=4D0JSKT0UC)](https://codecov.io/gh/maize-genetics/rTASSEL) [![DOI](https://joss.theoj.org/papers/10.21105/joss.04530/status.svg)](https://doi.org/10.21105/joss.04530) [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/btmonier/rTASSEL_sandbox/HEAD?labpath=getting_started.ipynb) 
+[![Life Cycle Status](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable) [![CI](https://github.com/maize-genetics/rTASSEL/actions/workflows/ci.yaml/badge.svg)](https://github.com/maize-genetics/rTASSEL/actions/workflows/ci.yaml) [![codecov](https://codecov.io/gh/maize-genetics/rTASSEL/branch/master/graph/badge.svg?token=4D0JSKT0UC)](https://codecov.io/gh/maize-genetics/rTASSEL) [![DOI](https://joss.theoj.org/papers/10.21105/joss.04530/status.svg)](https://doi.org/10.21105/joss.04530) [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/btmonier/rTASSEL_sandbox/HEAD?labpath=getting_started.ipynb) 
 
 `rTASSEL` is an R-based front-end for accessing key TASSEL 5 methods and tools.
 This allows users to run powerful TASSEL 5 analyses within a unified R workflow,
@@ -49,6 +49,56 @@ To avoid configuring Java and R locally, you can build a container from the
 [`docker/Dockerfile`](https://github.com/maize-genetics/rTASSEL/blob/master/docker/Dockerfile)
 in this repository. See the [installation article](https://rtassel.maizegenetics.net/articles/rtassel_installation.html#running-from-docker)
 for build instructions, `docker run` examples, and RStudio Server usage.
+
+
+## Quick start
+
+Genotype and phenotype data are read with `readGenotype()` and
+`readPhenotype()`, and joined on their shared taxa with
+`readGenomicDataset()`:
+
+```r
+library(rTASSEL)
+
+gt <- readGenotype("my_genotypes.vcf")
+ds <- readGenomicDataset(gt, "my_traits.txt")
+```
+
+Filtering uses the same bracket syntax as a `matrix` or `data.frame`, where
+rows select taxa and columns select marker sites:
+
+```r
+# Sites with a minor allele frequency of at least 5%
+gt[, sitesWhere(maf >= 0.05)]
+
+# Taxa called at 80% or more of sites, in a region of chromosome 2
+gt[taxaWhere(notMissing >= 0.8), region("2", 20e6, 30e6)]
+
+# Named taxa and markers
+gt[taxa("B73", "Mo17"), siteIds("PZB00859.1")]
+```
+
+The same filters are also available as pipe-friendly verbs, for anyone who
+would rather write them the way `dplyr` does:
+
+```r
+gt |>
+    filterTaxa(notMissing >= 0.8) |>
+    filterSites(maf >= 0.05, !isIndel)
+```
+
+Filtered objects keep their class, so a dataset stays a dataset - with its
+phenotype data re-joined against the taxa that survived - and can be passed
+straight into an analysis:
+
+```r
+ds[, sitesWhere(maf >= 0.05)] |>
+    assocModelFitter(formula = . ~ ., fitMarkers = TRUE) |>
+    plotManhattan()
+```
+
+A full walkthrough is available in the
+[filtering article](https://rtassel.maizegenetics.net/articles/genotype_filtration.html).
 
 
 ## Demo

@@ -4,6 +4,7 @@ getPositionList <- function(jtsObject) {
     if(is(jtsObject, "TasselGenotypePhenotype")) {
         return(jtsObject@jPositionList)
     }
+    jtsObject <- .unwrapTasselObject(jtsObject)
     if(!is(jtsObject,"jobjRef")) return(rJava::.jnull())
     if(jtsObject %instanceof% "net.maizegenetics.dna.map.PositionList") {
         return(jtsObject)
@@ -18,7 +19,12 @@ getPositionList <- function(jtsObject) {
 
 
 ## ----
-## Constructor for GRanges (GenomicRanges) class object - not exported (<TMP>)
+## Constructor for GRanges (GenomicRanges) class object - not exported
+##
+## Serves the deprecated 'getSumExpFromGenotypeTable()', whose row ranges
+## carry TASSEL's own site index and reference alleles. The supported
+## route into a 'GRanges' is the 'granges()' method, which is built on
+## 'positionList()'.
 genomicRanges <- function(genoTable) {
     jtsPL <- .getTASSELClass(genoTable, "PositionList")
 
@@ -37,25 +43,17 @@ genomicRanges <- function(genoTable) {
 
 
 ## ----
-#' @title Get position list metadata from genotype table
-#'
-#' @description Returns positional data from a \code{TasselGenotypePhenotype}
-#'    object
-#'
-#' @param tasObj A \code{TasselGenotypePhenotype} object
+#' @rdname positionList
+#' @aliases positionList,TasselGenotypePhenotype-method
 #'
 #' @importFrom rJava is.jnull
 #' @importFrom rJava J
 #' @importFrom rJava new
 #'
 #' @export
-positionList <- function(tasObj) {
-    if (!inherits(tasObj, "TasselGenotypePhenotype")) {
-        stop("`tasObj` must be of class `TasselGenotypePhenotype`")
-    }
-
+setMethod("positionList", "TasselGenotypePhenotype", function(tasObj) {
     if (rJava::is.jnull(tasObj@jGenotypeTable)) {
-        stop("`tasObj` must contain genotype data")
+        rlang::abort("`tasObj` must contain genotype data")
     }
 
     sites <- rJava::new(
@@ -64,6 +62,19 @@ positionList <- function(tasObj) {
     )
 
     return(tableReportToDF(sites))
-}
+})
+
+
+## ----
+#' @rdname granges
+#' @aliases granges,TasselGenotypePhenotype-method
+#' @export
+setMethod(
+    "granges",
+    "TasselGenotypePhenotype",
+    function(x, use.names = TRUE, use.mcols = FALSE, ...) {
+        .positionRanges(positionList(x), use.names, use.mcols)
+    }
+)
 
 

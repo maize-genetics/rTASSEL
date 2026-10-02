@@ -1,31 +1,23 @@
 # === Tests for phylogenetic analyses ===============================
 
+skip_if_not_installed("ape")
+
 ## Preamble - load data ----
 
 ### Start logging info
 startLogger()
 
 
-### Create rTASSEL genotype only object
-tasGeno <- readGenotypeTableFromPath(
-    path = system.file(
-        "extdata",
-        "mdp_genotype.hmp.txt",
-        package = "rTASSEL"
-    )
-)
-
-tasGenoSub <- filterGenotypeTableTaxa(
-    tasObj = tasGeno,
-    taxa = c("33-16", "38-11", "4226", "4722", "A188", "A214N")
-)
+### Shared fixtures (see helper_vars.R)
+tasGeno    <- rtObjs$gt_hmp
+tasGenoSub <- tasGeno[taxa("33-16", "38-11", "4226", "4722", "A188", "A214N"), ]
 
 
 ## Error tests ----
 test_that("createTree() throws general exceptions.", {
     expect_error(
         object = createTree(tasObj = mtcars),
-        regexp = "tasObj is not of class \"TasselGenotypePhenotype\""
+        regexp = "Unsupported input object"
     )
     expect_error(
         object = createTree(tasObj = tasGeno, clustMethod = "NA"),
@@ -62,6 +54,15 @@ test_that("createTree() returns correct data types", {
     expect_equal(
         object = length(tSub$tip.label),
         expected = 6
+    )
+})
+
+
+## Back-compatibility ----
+test_that("createTree() accepts a deprecated TasselGenotypePhenotype", {
+    expect_equal(
+        createTree(tasObj = rtObjsLegacy$gt_hmp),
+        createTree(tasObj = tasGeno)
     )
 })
 

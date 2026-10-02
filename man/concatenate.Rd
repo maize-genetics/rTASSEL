@@ -4,12 +4,39 @@
 \alias{concatenate}
 \title{Concatenate phenotype tables}
 \usage{
-concatenate(x)
+concatenate(...)
 }
 \arguments{
-\item{x}{A vector of phenotype objects.}
+\item{...}{Any number of rTASSEL objects containing a phenotype. Accepted
+classes are \code{\linkS4class{TasselPhenotype}},
+\code{\linkS4class{TasselGenomicDataset}},
+\code{\linkS4class{PCAResults}}, \code{\linkS4class{MDSResults}},
+\code{\linkS4class{AssociationResultsBLUE}}, and the deprecated
+\code{TasselGenotypePhenotype}. Lists of objects are
+flattened, so earlier \code{concatenate(c(ph1, ph2))} style calls keep
+working.
+Unlike the joins, this function binds phenotype rows together and so
+does not accept genotype-only input. Genotype tables are combined by
+\code{\link{intersectJoin}} and \code{\link{unionJoin}}, which bring
+together the sites of each, or by
+\code{\link{mergeGenotypeTables}}, which merges the calls of tables
+describing the same sites.}
+}
+\value{
+A \code{\linkS4class{TasselPhenotype}} object, or a
+   \code{TasselGenotypePhenotype} if every data-bearing input was one.
 }
 \description{
-Concatenate (e.g. bind rows) multiple phenotype objects based
-   on \code{Taxa} column.
+Concatenate (e.g. bind rows) any number of phenotype objects
+   based on the \code{Taxa} column.
+}
+\examples{
+\dontrun{
+# Stack phenotype tables that share the same traits
+concatenate(ph2021, ph2022, ph2023)
+}
+
+}
+\seealso{
+\code{\link{intersectJoin}}, \code{\link{unionJoin}}
 }

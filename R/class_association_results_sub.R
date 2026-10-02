@@ -1,4 +1,4 @@
-# === BLUE Reports ==================================================
+# /// BLUE Reports ///////////////////////////////////////////////////
 
 ## ----
 #' @title AssociationResultsBLUE Class
@@ -7,12 +7,18 @@
 #' Class \code{AssociationResultsBLUE} defines a \code{rTASSEL}
 #' Class for storing TASSEL 5 BLUE GWAS results
 #'
+#' @slot jObj An rJava reference object pointing to the BLUE values in Java
+#'    memory, which TASSEL models as a phenotype
+#'
 #' @name AssociationResultsBLUE-class
 #' @rdname AssociationResultsBLUE-class
 #' @exportClass AssociationResultsBLUE
 setClass(
     Class = "AssociationResultsBLUE",
-    contains = "AssociationResults"
+    contains = "AssociationResults",
+    representation = representation(
+        jObj = "jobjRef"
+    )
 )
 
 
@@ -28,7 +34,7 @@ setMethod(
     definition = function(assocRes, reportName) {
         if (missing(reportName)) reportName <- NULL
         returnReportElements(
-            assocRes             = assocRes,
+            results              = assocRes@results,
             reportName           = reportName,
             defaultReportElement = "BLUE"
         )
@@ -37,7 +43,7 @@ setMethod(
 
 
 
-# === GLM Reports ===================================================
+# /// GLM Reports ////////////////////////////////////////////////////
 
 ## ----
 #' @title AssociationResultsGLM Class
@@ -67,7 +73,7 @@ setMethod(
     definition = function(assocRes, reportName) {
         if (missing(reportName)) reportName <- NULL
         returnReportElements(
-            assocRes             = assocRes,
+            results              = assocRes@results,
             reportName           = reportName,
             defaultReportElement = "GLM_Stats"
         )
@@ -76,7 +82,7 @@ setMethod(
 
 
 
-# === MLM Reports ===================================================
+# /// MLM Reports /////////////////////////////////////////////////////
 
 ## ----
 #' @title AssociationResultsMLM Class
@@ -106,7 +112,7 @@ setMethod(
     definition = function(assocRes, reportName) {
         if (missing(reportName)) reportName <- NULL
         returnReportElements(
-            assocRes             = assocRes,
+            results              = assocRes@results,
             reportName           = reportName,
             defaultReportElement = "MLM_Stats"
         )
@@ -115,7 +121,7 @@ setMethod(
 
 
 
-# === Fast Association (Shabalin) Reports ===========================
+# /// Fast Association (Shabalin) Reports ////////////////////////////
 
 ## ----
 #' @title AssociationResultsFast Class
@@ -145,7 +151,7 @@ setMethod(
     definition = function(assocRes, reportName) {
         if (missing(reportName)) reportName <- NULL
         returnReportElements(
-            assocRes             = assocRes,
+            results              = assocRes@results,
             reportName           = reportName,
             defaultReportElement = "FastAssociation"
         )
@@ -154,7 +160,7 @@ setMethod(
 
 
 
-# === Stepwise results ==============================================
+# /// Stepwise results ///////////////////////////////////////////////
 
 ## ----
 #' @title AssociationResultsStepwise Class
@@ -184,11 +190,12 @@ setMethod(
     definition = function(assocRes, reportName) {
         if (missing(reportName)) reportName <- NULL
         returnReportElements(
-            assocRes             = assocRes,
+            results              = assocRes@results,
             reportName           = reportName,
             defaultReportElement = "ANOVA_report"
         )
     }
 )
+
 
 

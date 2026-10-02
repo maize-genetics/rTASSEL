@@ -26,7 +26,9 @@ filterGenotypeTableSites(
 )
 }
 \arguments{
-\item{tasObj}{An object of class \code{TasselGenotypePenotype}.}
+\item{tasObj}{An object of class \code{\linkS4class{TasselGenotype}} or
+\code{\linkS4class{TasselGenomicDataset}}. Objects of the deprecated
+\code{TasselGenotypePhenotype} class are still accepted.}
 
 \item{siteMinCount}{Site minimum count of alleles not unknown. Can range
 from 0 to inf. Defaults to 0.}
@@ -89,11 +91,51 @@ a chromosome position file must contain correct formatting
 \code{character} class. Defaults to \code{NULL}.}
 }
 \value{
-Returns an object of \code{TasselGenotypePhenotype} class.
+Returns an object of the same class as \code{tasObj}.
 }
 \description{
-This function will filter R objects of
-   \code{TasselGenotypePhenotype} class containing genotype tables.
-   The parameters for this function are derived from TASSEL's
-   \code{FilterSiteBuilder} plugin.
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
+
+This function will filter R objects containing genotype tables by
+marker (site) criteria. The parameters for this function are derived
+from TASSEL's \code{FilterSiteBuilder} plugin.
+
+Use bracket subsetting with the site selectors instead
+(\code{gt[, <selector>]}); see \emph{Details} for the equivalent of
+each argument.
+}
+\details{
+Every argument of this function has a bracket-API replacement:
+
+\tabular{ll}{
+   \strong{Deprecated argument} \tab \strong{Replacement} \cr
+   \code{siteMinCount = 150} \tab \code{gt[, sitesWhere(alleleCount >= 150)]} \cr
+   \code{siteMinAlleleFreq = 0.05} \tab \code{gt[, sitesWhere(maf >= 0.05)]} \cr
+   \code{siteMaxAlleleFreq = 0.3} \tab \code{gt[, sitesWhere(maf <= 0.3)]} \cr
+   \code{minHeterozygous = 0.1} \tab \code{gt[, sitesWhere(het >= 0.1)]} \cr
+   \code{maxHeterozygous = 0.1} \tab \code{gt[, sitesWhere(het <= 0.1)]} \cr
+   \code{removeSitesWithIndels = TRUE} \tab \code{gt[, sitesWhere(!isIndel)]} \cr
+   \code{removeMinorSNPStates = TRUE} \tab \code{removeMinorSNPStates(gt)} \cr
+   \code{siteRangeFilterType = "sites"} \tab \code{gt[, sites(startSite:endSite)]} \cr
+   \code{siteRangeFilterType = "position"} \tab \code{gt[, region("1", startPos, endPos)]} \cr
+   \code{gRangesObj = gr} \tab \code{gt[, region(gr)]} \cr
+   \code{bedFile = "x.bed"} \tab \code{gt[, region(rtracklayer::import("x.bed"))]} \cr
+   \code{chrPosFile = "x.tsv"} \tab \code{gt[, region(gr)]}, building \code{gr} from the file
+}
+
+Site indices passed to \code{\link{sites}()} are 1-based, while
+\code{startSite} and \code{endSite} are the 0-based indices TASSEL uses
+internally: \code{startSite = 1, endSite = 3} becomes
+\code{gt[, sites(2:4)]}.
+
+Unlike this function, selectors can be combined with \code{&} inside a
+single \code{\link{sitesWhere}()} call and taxa can be filtered in the
+same expression:
+\code{gt[taxaWhere(notMissing >= 0.8), sitesWhere(maf >= 0.05 & !isIndel)]}.
+}
+\seealso{
+\code{\link{sitesWhere}}, \code{\link{sites}},
+   \code{\link{siteIds}}, \code{\link{chrom}}, \code{\link{region}},
+   \code{\link{removeMinorSNPStates}},
+   \code{\linkS4class{TasselGenotype}}
 }

@@ -20,7 +20,8 @@ Prints outs summary information from \code{PCAResults} objects
 \section{Slots}{
 
 \describe{
-\item{\code{results}}{A list of \code{data.frame} objects containing summary results}
+\item{\code{results}}{A named list of \code{tibble} objects containing summary
+results}
 
 \item{\code{jObj}}{An rJava reference object pointing to PCA results in Java memory}
 }}

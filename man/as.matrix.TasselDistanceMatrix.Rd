@@ -11,6 +11,9 @@
 
 \item{...}{Additional arguments to be passed to or from methods.}
 }
+\value{
+A \code{numeric} matrix of taxa by taxa.
+}
 \description{
 Coerces an object of class \code{TasselDistanceMatrix} to
    a \code{matrix} object.
