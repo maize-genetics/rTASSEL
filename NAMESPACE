@@ -154,6 +154,8 @@ importFrom(grDevices,
 )
 importFrom(lifecycle,deprecated)
 importFrom(methods,
+  callNextMethod,
+  coerce,
   is,
   new,
   slot,
