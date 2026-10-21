@@ -105,10 +105,9 @@ the object's principal table.
 |                        | `reportNames()`       | `character` of report names                |
 | all of the above       | `javaRefObj()`        | the underlying `jobjRef`                   |
 
-Every accessor that a `TasselGenotype` or a `TasselPhenotype` answers is
-also answered by a `TasselGenomicDataset`, which passes it to whichever
-half of itself holds the data.
-
+Every accessor that works on a `TasselGenotype` or `TasselPhenotype` also
+works on a `TasselGenomicDataset`, pulling from its genotype or phenotype
+component when needed.
 
 ## Types and missing values
 Every table in this vignette comes across the same way, so two
