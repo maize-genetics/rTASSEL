@@ -4,16 +4,17 @@
 \alias{readNumericGenotypeFromRMatrix}
 \title{Read Genotype Data from R Matrix}
 \usage{
-readNumericGenotypeFromRMatrix(m, asTGP = TRUE)
+readNumericGenotypeFromRMatrix(m, asTGP = lifecycle::deprecated())
 }
 \arguments{
 \item{m}{A numeric matrix where rows represent taxa and columns represent
 positions/sites. The matrix values are used to calculate reference
 probabilities.}
 
-\item{asTGP}{Should the return object be a "classic" \code{TasselGenotypePhenotype}
-object (\code{TRUE}) or should it return a \code{TasselNumericGenotype}
-object (\code{FALSE})? Defaults to \code{TRUE}.}
+\item{asTGP}{Deprecated. Should the return object be the
+deprecated \code{TasselGenotypePhenotype} class (\code{TRUE}) rather
+than a \code{TasselNumericGenotype} (\code{FALSE})? A
+\code{TasselNumericGenotype} is returned unless \code{TRUE} is passed.}
 }
 \value{
 An object of class `TasselNumericGenotype` containing the genotype

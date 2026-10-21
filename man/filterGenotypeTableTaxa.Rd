@@ -13,7 +13,9 @@ filterGenotypeTableTaxa(
 )
 }
 \arguments{
-\item{tasObj}{An object of class \code{TasselGenotypePenotype}.}
+\item{tasObj}{An object of class \code{\linkS4class{TasselGenotype}} or
+\code{\linkS4class{TasselGenomicDataset}}. Objects of the deprecated
+\code{TasselGenotypePhenotype} class are still accepted.}
 
 \item{minNotMissing}{Minimum proportion of sites not unknown to pass this
 filter. Value can be between 0.0 and 1.0.}
@@ -28,11 +30,35 @@ Value can be between 0.0 and 1.0.}
 \code{NULL}.}
 }
 \value{
-Returns an object of \code{TasselGenotypePhenotype} class.
+Returns an object of the same class as \code{tasObj}.
 }
 \description{
-This function will filter R objects of
-   \code{TasselGenotypePhenotype} class containing genotype tables.
-   The parameters for this function are derived from TASSEL's
-   \code{FilterTaxaBuilder} plugin.
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
+
+This function will filter R objects containing genotype tables by taxa
+(sample) criteria. The parameters for this function are derived from
+TASSEL's \code{FilterTaxaBuilder} plugin.
+
+Use bracket subsetting with the taxa selectors instead
+(\code{gt[<selector>, ]}); see \emph{Details} for the equivalent of each
+argument.
+}
+\details{
+Every argument of this function has a bracket-API replacement:
+
+\tabular{ll}{
+   \strong{Deprecated argument} \tab \strong{Replacement} \cr
+   \code{minNotMissing = 0.8} \tab \code{gt[taxaWhere(notMissing >= 0.8), ]} \cr
+   \code{minHeterozygous = 0.1} \tab \code{gt[taxaWhere(het >= 0.1), ]} \cr
+   \code{maxHeterozygous = 0.1} \tab \code{gt[taxaWhere(het <= 0.1), ]} \cr
+   \code{taxa = c("B73", "Mo17")} \tab \code{gt[taxa("B73", "Mo17"), ]}
+ }
+
+\code{\link{taxaWhere}()} also evaluates arbitrary R expressions against
+the \code{taxaId} column, which has no equivalent here:
+\code{gt[taxaWhere(startsWith(taxaId, "NAM")), ]}.
+}
+\seealso{
+\code{\link{taxaWhere}}, \code{\link{taxa}},
+   \code{\linkS4class{TasselGenotype}}
 }

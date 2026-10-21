@@ -47,7 +47,34 @@ setMethod(
 )
 
 
-# @TODO - Optimize this code to use 2d array methods
+# /// Methods (general) /////////////////////////////////////////////
+
+## ----
+#' @rdname javaRefObj
+#' @aliases javaRefObj,TasselDistanceMatrix-method
+#' @export
+setMethod(
+    f = "javaRefObj",
+    signature = signature(object = "TasselDistanceMatrix"),
+    definition = function(object) {
+        return(object@jDistMatrix)
+    }
+)
+
+
+## ----
+#' @rdname taxaList
+#' @aliases taxaList,TasselDistanceMatrix-method
+#' @export
+setMethod("taxaList", "TasselDistanceMatrix", function(tasObj) {
+    tasObj@taxa
+})
+
+
+
+# /// Methods (coercion) ////////////////////////////////////////////
+
+## ----
 #' @title Coerce matrix from TasselDistanceMatrix class
 #'
 #' @description Coerces an object of class \code{TasselDistanceMatrix} to
@@ -56,18 +83,40 @@ setMethod(
 #' @param x An object of \code{TasselDistanceMatrix} class.
 #' @param ... Additional arguments to be passed to or from methods.
 #'
+#' @return A \code{numeric} matrix of taxa by taxa.
+#'
 #' @export
 as.matrix.TasselDistanceMatrix <- function(x, ...) {
-    tmp1 <- unlist(strsplit(x@jDistMatrix$toStringTabDelim(), split = "\n"))
-    tmp2 <- strsplit(tmp1, split = "\t")
-    tmp3 <- t(simplify2array(tmp2))
-    colnames(tmp3) <- as.character(unlist(tmp3[1, ]))
-    tmp3 <- tmp3[-1, ]
-    matRow <- tmp3[, 1]
-    tmp3 <- tmp3[, -1]
-    tmp3 <- apply(tmp3, 2, as.numeric)
-    rownames(tmp3) <- matRow
-    return(tmp3)
+    .distanceToMatrix(x@jDistMatrix, taxa = x@taxa)
+}
+
+
+## ----
+#' @title Coerce a TasselDistanceMatrix to a dist object
+#'
+#' @description
+#' Coerces an object of class \code{TasselDistanceMatrix} to a
+#' \code{\link[stats]{dist}} object, which is the form
+#' \code{\link[stats]{hclust}}, \code{\link[stats]{cmdscale}}, and most
+#' other clustering functions expect.
+#'
+#' @details
+#' A \code{dist} object holds only the lower triangle, so the diagonal of
+#' a kinship matrix is dropped. Distances between a taxon and itself are
+#' therefore not recoverable from the result.
+#'
+#' @param m An object of \code{TasselDistanceMatrix} class.
+#' @param diag Should the diagonal be printed by \code{print.dist()}?
+#' @param upper Should the upper triangle be printed by
+#'   \code{print.dist()}?
+#'
+#' @return A \code{dist} object.
+#'
+#' @importFrom stats as.dist
+#'
+#' @export
+as.dist.TasselDistanceMatrix <- function(m, diag = FALSE, upper = FALSE) {
+    stats::as.dist(as.matrix(m), diag = diag, upper = upper)
 }
 
 

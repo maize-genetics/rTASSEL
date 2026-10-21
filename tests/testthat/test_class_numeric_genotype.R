@@ -10,7 +10,6 @@ test_that("basic properties", {
     expect_true(is(gtLg, "TasselNumericGenotype"))
 
     expect_s4_class(gtSm, "TasselGenotype")
-    expect_type(gtSm@dispData, "list")
     expect_s4_class(gtSm@jRefObj, "jobjRef")
     expect_type(gtSm@jMemAddress, "character")
     expect_type(gtSm@jClass, "character")
@@ -63,9 +62,11 @@ test_that("jClass slot contains a Java class path", {
     expect_match(gtSm@jClass, "\\.", perl = TRUE)
 })
 
-test_that("dispData slot is a non-empty list", {
-    expect_true(length(gtSm@dispData) > 0)
-    expect_true(length(gtLg@dispData) > 0)
+test_that("the subclass adds no slots of its own", {
+    expect_equal(
+        methods::getSlots("TasselNumericGenotype"),
+        methods::getSlots("TasselGenotype")
+    )
 })
 
 test_that("different matrix sizes produce distinct memory addresses", {

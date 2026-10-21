@@ -1,19 +1,14 @@
 test_that("stepwiseModelFitter basic operations", {
     expect_error(stepwiseModelFitter(mtcars))
-    expect_error(stepwiseModelFitter(rtObjs$gt_hmp_ph_nomiss, entryLimit = -0.1))
-    expect_error(stepwiseModelFitter(rtObjs$gt_hmp_ph_nomiss, exitLimit = 1.5))
-    expect_error(stepwiseModelFitter(rtObjs$gt_hmp_ph_nomiss, maxNumberOfMarkers = 1e5))
-    expect_error(stepwiseModelFitter(rtObjs$gt_hmp_ph_nomiss, nPermutations = 1e6))
+    expect_error(stepwiseModelFitter(rtObjs$ds_hmp_ph_nomiss, entryLimit = -0.1))
+    expect_error(stepwiseModelFitter(rtObjs$ds_hmp_ph_nomiss, exitLimit = 1.5))
+    expect_error(stepwiseModelFitter(rtObjs$ds_hmp_ph_nomiss, maxNumberOfMarkers = 1e5))
+    expect_error(stepwiseModelFitter(rtObjs$ds_hmp_ph_nomiss, nPermutations = 1e6))
 
-    gtSmall <- filterGenotypeTableSites(
-        rtObjs$gt_hmp,
-        siteRangeFilterType = "sites",
-        startSite = 0, endSite = 100
-    )
-    gtPhSmall <- readGenotypePhenotype(gtSmall, rtObjs$ph_nomiss)
+    dsSmall <- rtObjs$ds_hmp_ph_nomiss[, sites(1:101)]
 
-    stepRes01 <- stepwiseModelFitter(gtPhSmall)
-    stepRes02 <- stepwiseModelFitter(gtPhSmall, dpoll ~ .)
+    stepRes01 <- stepwiseModelFitter(dsSmall)
+    stepRes02 <- stepwiseModelFitter(dsSmall, dpoll ~ .)
 
     expect_true(is(stepRes01, "AssociationResults"))
     expect_equal(traitNames(stepRes02), "dpoll")
@@ -32,3 +27,17 @@ test_that("stepwiseModelFitter basic operations", {
 })
 
 
+test_that("stepwiseModelFitter accepts a deprecated TasselGenotypePhenotype", {
+    legacySmall <- filterGenotypeTableSites(
+        rtObjsLegacy$gt_hmp_ph_nomiss,
+        siteRangeFilterType = "sites",
+        startSite = 0, endSite = 100
+    )
+
+    expect_equal(
+        tableReport(stepwiseModelFitter(legacySmall, dpoll ~ .)),
+        tableReport(
+            stepwiseModelFitter(rtObjs$ds_hmp_ph_nomiss[, sites(1:101)], dpoll ~ .)
+        )
+    )
+})

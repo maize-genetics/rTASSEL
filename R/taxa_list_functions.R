@@ -4,6 +4,7 @@ getTaxaList <- function(jtsObject) {
     if(is(jtsObject, "TasselGenotypePhenotype")) {
         return(jtsObject@jTaxaList)
     }
+    jtsObject <- .unwrapTasselObject(jtsObject)
     if(!is(jtsObject,"jobjRef")) return(rJava::.jnull())
     if(jtsObject %instanceof% "net.maizegenetics.taxa.TaxaList") {
         return(jtsObject)
@@ -20,34 +21,35 @@ getTaxaList <- function(jtsObject) {
 
 
 ## ----
-#' @title Get list of taxa from TASSEL data
-#'
-#' @description Returns a list of taxa from a \code{TasselGenotypePhenotype}
-#'    object
-#'
-#' @param tasObj A \code{TasselGenotypePhenotype} object
-#'
+#' @rdname taxaList
+#' @aliases taxaList,TasselGenotypePhenotype-method
 #' @export
-taxaList <- function(tasObj) {
-    if (!inherits(tasObj, "TasselGenotypePhenotype")) {
-        stop("`tasObj` must be of class `TasselGenotypePhenotype`")
-    }
-
+setMethod("taxaList", "TasselGenotypePhenotype", function(tasObj) {
     return(getTaxaIDs(tasObj))
-}
+})
 
 
 
 ## Methods for pulling Taxa or Samples - not exported (house keeping)
+##
+## Any object that carries either genotype or phenotype data has a taxa
+## list, so this reaches for the list directly rather than going through
+## '.resolveTasselInput()' and its component requirements.
 #' @importFrom rJava J
 getTaxaIDs <- function(tasObj) {
-    if (!inherits(tasObj, "TasselGenotypePhenotype")) {
-        stop("`tasObj` must be of class `TasselGenotypePhenotype`")
+    jtsTL <- getTaxaList(tasObj)
+
+    if (rJava::is.jnull(jtsTL)) {
+        rlang::abort(c(
+            "No taxa found in input",
+            "x" = sprintf(
+                "Got an object of class <%s>",
+                paste(class(tasObj), collapse = "/")
+            )
+        ))
     }
 
-    jtsTL <- getTaxaList(tasObj)
-    rJava::J("net/maizegenetics/plugindef/GenerateRCode")$
-        genotypeTableToSampleNameArray(jtsTL)
+    .taxaNames(jtsTL)
 }
 
 
@@ -55,7 +57,7 @@ getTaxaIDs <- function(tasObj) {
 sampleDataFrame <- function(tasObj) {
     taxaArray <- getTaxaIDs(tasObj)
 
-    S4Vectors::DataFrame(
+    tibble::tibble(
         Sample = taxaArray,
         TasselIndex = 0:(length(taxaArray) - 1L)
     )

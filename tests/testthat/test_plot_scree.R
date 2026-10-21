@@ -2,14 +2,7 @@
 
 test_that("plotScree works correctly", {
     ## Load data ----
-    genoPathHMP <- system.file(
-        "extdata",
-        "mdp_genotype.hmp.txt",
-        package = "rTASSEL"
-    )
-    tasGeno <- readGenotypeTableFromPath(
-        path = genoPathHMP
-    )
+    tasGeno <- rtObjs$gt_hmp
 
     ## Run test PCA ----
     pcaRes <- pca(tasGeno)

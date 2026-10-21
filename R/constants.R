@@ -8,10 +8,17 @@
 TASSEL_JVM <- list(
     "ARRAY_LIST"               = "java.util.ArrayList",
     "CHROMOSOME"               = "net.maizegenetics.dna.map.Chromosome",
+    "COMBINE_GENOTYPE_TABLE"   = "net.maizegenetics.dna.snp.CombineGenotypeTable",
+    "FILTER_GENOTYPE_TABLE"    = "net.maizegenetics.dna.snp.FilterGenotypeTable",
     "GENERAL_POSITION_BUILDER" = "net.maizegenetics.dna.map.GeneralPosition$Builder",
+    "GENO_PHENO_BUILDER"       = "net.maizegenetics.phenotype.GenotypePhenotypeBuilder",
+    "GENOTYPE_TABLE"           = "net.maizegenetics.dna.snp.GenotypeTable",
     "GENOTYPE_TABLE_BUILDER"   = "net.maizegenetics.dna.snp.GenotypeTableBuilder",
     "LOGGING_UTILS"            = "net.maizegenetics.util.LoggingUtils",
+    "PHENOTYPE"                = "net.maizegenetics.phenotype.Phenotype",
+    "PHENO_ATTRIBUTE"          = "net.maizegenetics.phenotype.PhenotypeAttribute",
     "PHENO_BUILDER"            = "net.maizegenetics.phenotype.PhenotypeBuilder",
+    "POSITION_LIST"            = "net.maizegenetics.dna.map.PositionList",
     "POSITION_LIST_BUILDER"    = "net.maizegenetics.dna.map.PositionListBuilder",
     "R_METHODS"                = "net.maizegenetics.plugindef.GenerateRCode",
     "REF_PROBABILITY_BUILDER"  = "net.maizegenetics.dna.snp.score.ReferenceProbabilityBuilder",
@@ -21,18 +28,6 @@ TASSEL_JVM <- list(
     "VERSIONS"                 = "net.maizegenetics.tassel.TasselVersions"
 )
 
-
-## ----
-# ANSI Formatting Constants
-#
-# @description
-# ANSI escape codes and Unicode symbols used for console output
-# formatting throughout the package.
-ANSI <- list(
-    "BOLD_ON"  = "\033[1m",
-    "BOLD_OFF" = "\033[22m",
-    "INFO"     = intToUtf8(0x2139)
-)
 
 
 ## ----

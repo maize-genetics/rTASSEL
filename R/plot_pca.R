@@ -5,7 +5,7 @@
 #' This function will generate a general 2D scatterplot for a given set
 #' of principal components.
 #'
-#' @param pcaObj A \code{PCAResults} object containing eigenvalue data (
+#' @param object A \code{PCAResults} object containing eigenvalue data (
 #'    e.g \code{PC_Datum}).
 #' @param x Principal component number to plot on x-axis.
 #' @param y Principal component number to plot on y-axis.
@@ -19,47 +19,47 @@
 #' @param interactive Do you want to produce an interactive visualization?
 #'    Defaults to \code{FALSE}.
 #' @param pointColor color of non-categorical PCA data points.
+#' @param ... Additional arguments (not used).
 #'
+#' @importFrom BiocGenerics plotPCA
 #' @export
-plotPCA <- function(
-    pcaObj,
-    x = 1,
-    y = 2,
-    cluster = FALSE,
-    nClust = 2,
-    metadata = NULL,
-    mCol = NULL,
-    interactive = FALSE,
-    pointColor = "black"
-) {
-    if (!is(pcaObj, "PCAResults")) {
-        stop(
-            "The object '", deparse(substitute(assocRes)),
-            "' is not an 'AssociationResults' object"
+setMethod(
+    f = "plotPCA",
+    signature = "PCAResults",
+    definition = function(
+        object,
+        x = 1,
+        y = 2,
+        cluster = FALSE,
+        nClust = 2,
+        metadata = NULL,
+        mCol = NULL,
+        interactive = FALSE,
+        pointColor = "black",
+        ...
+    ) {
+        if (!"PC_Datum" %in% reportNames(object)) {
+            stop("'PC_Datum' table report not found")
+        }
+
+        pPCACoreParams <- list(
+            "pcaObj"     = object,
+            "x"          = x,
+            "y"          = y,
+            "cluster"    = cluster,
+            "nClust"     = nClust,
+            "pointColor" = pointColor,
+            "metaData"   = metadata,
+            "mCol"       = mCol
         )
-    }
 
-    if (!"PC_Datum" %in% reportNames(pcaObj)) {
-        stop("'PC_Datum' table report not found")
+        if (!interactive) {
+            plotPCACore(pPCACoreParams)
+        } else {
+            plotPCACoreInteractive(pPCACoreParams)
+        }
     }
-
-    pPCACoreParams <- list(
-        "pcaObj"     = pcaObj,
-        "x"          = x,
-        "y"          = y,
-        "cluster"    = cluster,
-        "nClust"     = nClust,
-        "pointColor" = pointColor,
-        "metaData"   = metadata,
-        "mCol"       = mCol
-    )
-
-    if (!interactive) {
-        plotPCACore(pPCACoreParams)
-    } else {
-        plotPCACoreInteractive(pPCACoreParams)
-    }
-}
+)
 
 
 ## ----

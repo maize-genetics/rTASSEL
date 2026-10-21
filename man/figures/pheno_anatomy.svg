@@ -1,0 +1,197 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="504" viewBox="0 0 960 504" font-family="'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" style="font-variant-ligatures: none">
+
+  <defs>
+    <marker id="arrowAccent" viewBox="0 0 10 10" refX="9" refY="5"
+            markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#7c2d12"/>
+    </marker>
+    <marker id="arrowTeal" viewBox="0 0 10 10" refX="9" refY="5"
+            markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#0f766e"/>
+    </marker>
+  </defs>
+<g><rect x="124" y="128" width="66" height="22" rx="11" fill="#efe0da" stroke="none" stroke-width="1" />
+<text x="157.0" y="144" font-size="12" fill="#7c2d12" text-anchor="middle" font-family="'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="600" >taxa</text>
+</g>
+<g><rect x="206" y="128" width="66" height="22" rx="11" fill="#d7ebe8" stroke="none" stroke-width="1" />
+<text x="239.0" y="144" font-size="12" fill="#0f766e" text-anchor="middle" font-family="'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="600" >factor</text>
+</g>
+<g><rect x="288" y="128" width="66" height="22" rx="11" fill="#dbe6f5" stroke="none" stroke-width="1" />
+<text x="321.0" y="144" font-size="12" fill="#1e3a8a" text-anchor="middle" font-family="'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="600" >data</text>
+</g>
+<g><rect x="370" y="128" width="66" height="22" rx="11" fill="#dbe6f5" stroke="none" stroke-width="1" />
+<text x="403.0" y="144" font-size="12" fill="#1e3a8a" text-anchor="middle" font-family="'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="600" >data</text>
+</g>
+<g><rect x="452" y="128" width="66" height="22" rx="11" fill="#dbe6f5" stroke="none" stroke-width="1" />
+<text x="485.0" y="144" font-size="12" fill="#1e3a8a" text-anchor="middle" font-family="'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="600" >data</text>
+</g>
+<g><rect x="534" y="128" width="66" height="22" rx="11" fill="#e7e5e4" stroke="none" stroke-width="1" />
+<text x="567.0" y="144" font-size="12" fill="#57534e" text-anchor="middle" font-family="'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="600" >covariate</text>
+</g>
+<g><rect x="616" y="128" width="66" height="22" rx="11" fill="#e7e5e4" stroke="none" stroke-width="1" />
+<text x="649.0" y="144" font-size="12" fill="#57534e" text-anchor="middle" font-family="'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="600" >covariate</text>
+</g>
+<g><rect x="118" y="158" width="78" height="32" rx="4" fill="#efe0da" stroke="none" stroke-width="1" />
+<text x="157.0" y="179.0" font-size="13" fill="#1c1917" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" font-weight="600" >Taxa</text>
+</g>
+<g><rect x="200" y="158" width="78" height="32" rx="4" fill="#e7e5e4" stroke="none" stroke-width="1" />
+<text x="239.0" y="179.0" font-size="13" fill="#1c1917" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" font-weight="600" >location</text>
+</g>
+<g><rect x="282" y="158" width="78" height="32" rx="4" fill="#e7e5e4" stroke="none" stroke-width="1" />
+<text x="321.0" y="179.0" font-size="13" fill="#1c1917" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" font-weight="600" >EarHT</text>
+</g>
+<g><rect x="364" y="158" width="78" height="32" rx="4" fill="#e7e5e4" stroke="none" stroke-width="1" />
+<text x="403.0" y="179.0" font-size="13" fill="#1c1917" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" font-weight="600" >dpoll</text>
+</g>
+<g><rect x="446" y="158" width="78" height="32" rx="4" fill="#e7e5e4" stroke="none" stroke-width="1" />
+<text x="485.0" y="179.0" font-size="13" fill="#1c1917" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" font-weight="600" >EarDia</text>
+</g>
+<g><rect x="528" y="158" width="78" height="32" rx="4" fill="#e7e5e4" stroke="none" stroke-width="1" />
+<text x="567.0" y="179.0" font-size="13" fill="#1c1917" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" font-weight="600" >Q1</text>
+</g>
+<g><rect x="610" y="158" width="78" height="32" rx="4" fill="#e7e5e4" stroke="none" stroke-width="1" />
+<text x="649.0" y="179.0" font-size="13" fill="#1c1917" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" font-weight="600" >Q2</text>
+</g>
+<g><rect x="118" y="194" width="78" height="32" rx="4" fill="#f7ece7" stroke="#d6d3d1" stroke-width="1" />
+<text x="157.0" y="215.0" font-size="14" fill="#1c1917" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" >B73</text>
+</g>
+<g><rect x="200" y="194" width="78" height="32" rx="4" fill="#fdfcfa" stroke="#d6d3d1" stroke-width="1" />
+<text x="239.0" y="215.0" font-size="14" fill="#1c1917" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" >A</text>
+</g>
+<g><rect x="282" y="194" width="78" height="32" rx="4" fill="#fdfcfa" stroke="#d6d3d1" stroke-width="1" />
+<text x="321.0" y="215.0" font-size="14" fill="#1c1917" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" >64.75</text>
+</g>
+<g><rect x="364" y="194" width="78" height="32" rx="4" fill="#fdfcfa" stroke="#d6d3d1" stroke-width="1" />
+<text x="403.0" y="215.0" font-size="14" fill="#1c1917" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" >64.5</text>
+</g>
+<g><rect x="446" y="194" width="78" height="32" rx="4" fill="#fdfcfa" stroke="#d6d3d1" stroke-width="1" />
+<text x="485.0" y="215.0" font-size="14" fill="#57534e" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" >NA</text>
+</g>
+<g><rect x="528" y="194" width="78" height="32" rx="4" fill="#fdfcfa" stroke="#d6d3d1" stroke-width="1" />
+<text x="567.0" y="215.0" font-size="14" fill="#1c1917" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" >0.014</text>
+</g>
+<g><rect x="610" y="194" width="78" height="32" rx="4" fill="#fdfcfa" stroke="#d6d3d1" stroke-width="1" />
+<text x="649.0" y="215.0" font-size="14" fill="#1c1917" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" >0.972</text>
+</g>
+<g><rect x="118" y="230" width="78" height="32" rx="4" fill="#f7ece7" stroke="#d6d3d1" stroke-width="1" />
+<text x="157.0" y="251.0" font-size="14" fill="#1c1917" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" >Mo17</text>
+</g>
+<g><rect x="200" y="230" width="78" height="32" rx="4" fill="#fdfcfa" stroke="#d6d3d1" stroke-width="1" />
+<text x="239.0" y="251.0" font-size="14" fill="#1c1917" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" >A</text>
+</g>
+<g><rect x="282" y="230" width="78" height="32" rx="4" fill="#fdfcfa" stroke="#d6d3d1" stroke-width="1" />
+<text x="321.0" y="251.0" font-size="14" fill="#1c1917" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" >92.25</text>
+</g>
+<g><rect x="364" y="230" width="78" height="32" rx="4" fill="#fdfcfa" stroke="#d6d3d1" stroke-width="1" />
+<text x="403.0" y="251.0" font-size="14" fill="#1c1917" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" >68.5</text>
+</g>
+<g><rect x="446" y="230" width="78" height="32" rx="4" fill="#fdfcfa" stroke="#d6d3d1" stroke-width="1" />
+<text x="485.0" y="251.0" font-size="14" fill="#1c1917" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" >37.90</text>
+</g>
+<g><rect x="528" y="230" width="78" height="32" rx="4" fill="#fdfcfa" stroke="#d6d3d1" stroke-width="1" />
+<text x="567.0" y="251.0" font-size="14" fill="#1c1917" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" >0.003</text>
+</g>
+<g><rect x="610" y="230" width="78" height="32" rx="4" fill="#fdfcfa" stroke="#d6d3d1" stroke-width="1" />
+<text x="649.0" y="251.0" font-size="14" fill="#1c1917" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" >0.993</text>
+</g>
+<g><rect x="118" y="266" width="78" height="32" rx="4" fill="#f7ece7" stroke="#d6d3d1" stroke-width="1" />
+<text x="157.0" y="287.0" font-size="14" fill="#1c1917" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" >CML52</text>
+</g>
+<g><rect x="200" y="266" width="78" height="32" rx="4" fill="#fdfcfa" stroke="#d6d3d1" stroke-width="1" />
+<text x="239.0" y="287.0" font-size="14" fill="#1c1917" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" >A</text>
+</g>
+<g><rect x="282" y="266" width="78" height="32" rx="4" fill="#fdfcfa" stroke="#d6d3d1" stroke-width="1" />
+<text x="321.0" y="287.0" font-size="14" fill="#1c1917" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" >65.50</text>
+</g>
+<g><rect x="364" y="266" width="78" height="32" rx="4" fill="#fdfcfa" stroke="#d6d3d1" stroke-width="1" />
+<text x="403.0" y="287.0" font-size="14" fill="#1c1917" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" >59.5</text>
+</g>
+<g><rect x="446" y="266" width="78" height="32" rx="4" fill="#fdfcfa" stroke="#d6d3d1" stroke-width="1" />
+<text x="485.0" y="287.0" font-size="14" fill="#1c1917" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" >32.21</text>
+</g>
+<g><rect x="528" y="266" width="78" height="32" rx="4" fill="#fdfcfa" stroke="#d6d3d1" stroke-width="1" />
+<text x="567.0" y="287.0" font-size="14" fill="#1c1917" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" >0.071</text>
+</g>
+<g><rect x="610" y="266" width="78" height="32" rx="4" fill="#fdfcfa" stroke="#d6d3d1" stroke-width="1" />
+<text x="649.0" y="287.0" font-size="14" fill="#1c1917" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" >0.917</text>
+</g>
+<g><rect x="118" y="302" width="78" height="32" rx="4" fill="#f7ece7" stroke="#d6d3d1" stroke-width="1" />
+<text x="157.0" y="323.0" font-size="14" fill="#1c1917" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" >B73</text>
+</g>
+<g><rect x="200" y="302" width="78" height="32" rx="4" fill="#fdfcfa" stroke="#d6d3d1" stroke-width="1" />
+<text x="239.0" y="323.0" font-size="14" fill="#1c1917" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" >B</text>
+</g>
+<g><rect x="282" y="302" width="78" height="32" rx="4" fill="#fdfcfa" stroke="#d6d3d1" stroke-width="1" />
+<text x="321.0" y="323.0" font-size="14" fill="#1c1917" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" >81.13</text>
+</g>
+<g><rect x="364" y="302" width="78" height="32" rx="4" fill="#fdfcfa" stroke="#d6d3d1" stroke-width="1" />
+<text x="403.0" y="323.0" font-size="14" fill="#1c1917" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" >62.5</text>
+</g>
+<g><rect x="446" y="302" width="78" height="32" rx="4" fill="#fdfcfa" stroke="#d6d3d1" stroke-width="1" />
+<text x="485.0" y="323.0" font-size="14" fill="#1c1917" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" >36.48</text>
+</g>
+<g><rect x="528" y="302" width="78" height="32" rx="4" fill="#fdfcfa" stroke="#d6d3d1" stroke-width="1" />
+<text x="567.0" y="323.0" font-size="14" fill="#1c1917" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" >0.014</text>
+</g>
+<g><rect x="610" y="302" width="78" height="32" rx="4" fill="#fdfcfa" stroke="#d6d3d1" stroke-width="1" />
+<text x="649.0" y="323.0" font-size="14" fill="#1c1917" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" >0.972</text>
+</g>
+<g><rect x="118" y="338" width="78" height="32" rx="4" fill="#f7ece7" stroke="#d6d3d1" stroke-width="1" />
+<text x="157.0" y="359.0" font-size="14" fill="#1c1917" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" >Mo17</text>
+</g>
+<g><rect x="200" y="338" width="78" height="32" rx="4" fill="#fdfcfa" stroke="#d6d3d1" stroke-width="1" />
+<text x="239.0" y="359.0" font-size="14" fill="#1c1917" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" >B</text>
+</g>
+<g><rect x="282" y="338" width="78" height="32" rx="4" fill="#fdfcfa" stroke="#d6d3d1" stroke-width="1" />
+<text x="321.0" y="359.0" font-size="14" fill="#1c1917" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" >94.63</text>
+</g>
+<g><rect x="364" y="338" width="78" height="32" rx="4" fill="#fdfcfa" stroke="#d6d3d1" stroke-width="1" />
+<text x="403.0" y="359.0" font-size="14" fill="#1c1917" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" >66.5</text>
+</g>
+<g><rect x="446" y="338" width="78" height="32" rx="4" fill="#fdfcfa" stroke="#d6d3d1" stroke-width="1" />
+<text x="485.0" y="359.0" font-size="14" fill="#1c1917" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" >38.55</text>
+</g>
+<g><rect x="528" y="338" width="78" height="32" rx="4" fill="#fdfcfa" stroke="#d6d3d1" stroke-width="1" />
+<text x="567.0" y="359.0" font-size="14" fill="#1c1917" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" >0.003</text>
+</g>
+<g><rect x="610" y="338" width="78" height="32" rx="4" fill="#fdfcfa" stroke="#d6d3d1" stroke-width="1" />
+<text x="649.0" y="359.0" font-size="14" fill="#1c1917" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" >0.993</text>
+</g>
+<g><rect x="118" y="374" width="78" height="32" rx="4" fill="#f7ece7" stroke="#d6d3d1" stroke-width="1" />
+<text x="157.0" y="395.0" font-size="14" fill="#1c1917" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" >CML52</text>
+</g>
+<g><rect x="200" y="374" width="78" height="32" rx="4" fill="#fdfcfa" stroke="#d6d3d1" stroke-width="1" />
+<text x="239.0" y="395.0" font-size="14" fill="#1c1917" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" >B</text>
+</g>
+<g><rect x="282" y="374" width="78" height="32" rx="4" fill="#fdfcfa" stroke="#d6d3d1" stroke-width="1" />
+<text x="321.0" y="395.0" font-size="14" fill="#1c1917" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" >70.38</text>
+</g>
+<g><rect x="364" y="374" width="78" height="32" rx="4" fill="#fdfcfa" stroke="#d6d3d1" stroke-width="1" />
+<text x="403.0" y="395.0" font-size="14" fill="#1c1917" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" >61.5</text>
+</g>
+<g><rect x="446" y="374" width="78" height="32" rx="4" fill="#fdfcfa" stroke="#d6d3d1" stroke-width="1" />
+<text x="485.0" y="395.0" font-size="14" fill="#1c1917" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" >33.06</text>
+</g>
+<g><rect x="528" y="374" width="78" height="32" rx="4" fill="#fdfcfa" stroke="#d6d3d1" stroke-width="1" />
+<text x="567.0" y="395.0" font-size="14" fill="#1c1917" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" >0.071</text>
+</g>
+<g><rect x="610" y="374" width="78" height="32" rx="4" fill="#fdfcfa" stroke="#d6d3d1" stroke-width="1" />
+<text x="649.0" y="395.0" font-size="14" fill="#1c1917" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" >0.917</text>
+</g>
+<line x1="200" y1="82" x2="688" y2="82" stroke="#0f766e" stroke-width="2" stroke-linecap="round" marker-end="url(#arrowTeal)"/>
+<text x="444.0" y="72" font-size="16" fill="#0f766e" text-anchor="middle" font-family="'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="600" >traits  (measured values)  →  columns</text>
+<line x1="40" y1="158" x2="40" y2="406" stroke="#7c2d12" stroke-width="2" stroke-linecap="round" marker-end="url(#arrowAccent)"/>
+<text x="0" y="0" font-size="16" fill="#7c2d12" text-anchor="middle" font-family="'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="600" transform="translate(30,282.0) rotate(-90)">observations  →  rows</text>
+<rect x="762" y="118" width="188" height="104" rx="6" fill="#f5f5f4" stroke="#e7e5e4" stroke-width="1" />
+<text x="776" y="144" font-size="15" fill="#7c2d12" text-anchor="start" font-family="'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="600" >Each observation has</text>
+<text x="776" y="168" font-size="14" fill="#1c1917" text-anchor="start" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" >taxaId</text>
+<text x="776" y="190" font-size="14" fill="#1c1917" text-anchor="start" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" >every trait column</text>
+<rect x="762" y="248" width="188" height="146" rx="6" fill="#f5f5f4" stroke="#e7e5e4" stroke-width="1" />
+<text x="776" y="274" font-size="15" fill="#0f766e" text-anchor="start" font-family="'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="600" >Each trait knows</text>
+<text x="776" y="298" font-size="14" fill="#1c1917" text-anchor="start" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" >traitIndex</text>
+<text x="776" y="320" font-size="14" fill="#1c1917" text-anchor="start" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" >traitId</text>
+<text x="776" y="342" font-size="14" fill="#1c1917" text-anchor="start" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" >traitType</text>
+<text x="776" y="364" font-size="14" fill="#1c1917" text-anchor="start" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" >notMissing</text>
+<text x="30" y="452" font-size="14" fill="#57534e" text-anchor="start" font-family="'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" >The pills above each column are its TASSEL attribute type, and the trait metadata is computed for you.</text>
+<text x="30" y="474" font-size="14" fill="#57534e" text-anchor="start" font-family="'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" >The taxa column labels the rows rather than measuring anything, so no trait verb can drop it.</text>
+</svg>

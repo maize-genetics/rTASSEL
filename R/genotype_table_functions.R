@@ -2,9 +2,13 @@
 #' @title Wrapper function of TasselGenotypePhenotype class for genotype
 #'    data
 #'
-#' @description This function is a wrapper for the
-#'    \code{TasselGenotypePhenotype} class. It is used for storing genotype
-#'    information into a class object.
+#' @description
+#' \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
+#'
+#' This function is a wrapper for the deprecated
+#' \code{TasselGenotypePhenotype} class. It is used for storing genotype
+#' information into a class object. Use \code{\link{readGenotype}()} instead,
+#' which returns a \code{\linkS4class{TasselGenotype}} object.
 #'
 #' @name readGenotypeTableFromPath
 #' @rdname readGenotypeTableFromPath
@@ -15,15 +19,15 @@
 #'
 #' @return Returns an object of \code{TasselGenotypePhenotype} class.
 #'
+#' @seealso \code{\link{readGenotype}}
+#'
 #' @importFrom rJava J
 #' @importFrom rJava %instanceof%
 #' @export
 readGenotypeTableFromPath <- function(path, keepDepth = FALSE, sortPositions = FALSE) {
-    warnMsg <- paste0(
-        "The function 'readGenotypeTableFromPath()' will be deprecated soon.\n",
-        "This will be replaced by '", cli::style_bold("readGenotype()"), "' in the next update."
+    lifecycle::deprecate_warn(
+        "1.0.0", "readGenotypeTableFromPath()", "readGenotype()"
     )
-    message(warnMsg)
 
     if (!file.exists(path)) {
         stop("Cannot open file ", path, ": No such file or directory")
@@ -41,14 +45,18 @@ readGenotypeTableFromPath <- function(path, keepDepth = FALSE, sortPositions = F
 ## ----
 #' @title Create Summarized Experiment from a TASSEL Genotype Table
 #'
-#' @description This function will generate an object of
-#'    \code{SummarizedExperiment} class for marker data derived from a
-#'    \code{TasselGenotypePhenotype} class object.
+#' @description
+#' \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
+#'
+#' This function will generate an object of \code{SummarizedExperiment} class
+#' for marker data derived from a genotype table.
 #'
 #' @name getSumExpFromGenotypeTable
 #' @rdname getSumExpFromGenotypeTable
 #'
-#' @param tasObj An object of class \code{TasselGenotypePenotype}.
+#' @param tasObj An object of class \code{\linkS4class{TasselGenotype}} or
+#'    \code{\linkS4class{TasselGenomicDataset}}. Objects of the deprecated
+#'    \code{TasselGenotypePhenotype} class are still accepted.
 #' @param coerceDosageToInt Should dosage array be returned as \code{integer}
 #'    values? If \code{FALSE}, dosage array will be returned as type
 #'    \code{raw} byte values. Returning \code{raw} byte values. Will greatly
@@ -66,44 +74,30 @@ readGenotypeTableFromPath <- function(path, keepDepth = FALSE, sortPositions = F
 getSumExpFromGenotypeTable <- function(tasObj,
                                        coerceDosageToInt = TRUE,
                                        verbose = FALSE) {
-    if (!inherits(tasObj, "TasselGenotypePhenotype")) {
-        stop("`tasObj` must be of class `TasselGenotypePhenotype`")
-    }
+    lifecycle::deprecate_warn("1.0.0", "getSumExpFromGenotypeTable()")
 
-    jGT <- getGenotypeTable(tasObj)
-
-    if (rJava::is.jnull(jGT)) {
-        stop("TASSEL genotype object not found")
-    }
+    jGT <- .resolveTasselInput(
+        tasObj, "genotype", "getSumExpFromGenotypeTable"
+    )$jGt
 
     # Create SumExp components (DF and ranges)
     sampleDF <- sampleDataFrame(tasObj)
     genomicRangesDF <- genomicRanges(jGT)
 
     # Create and return byte array from TASSEL
-    if (verbose) message("Generating byte array...")
-    jc <- rJava::J("net/maizegenetics/plugindef/GenerateRCode")
-    genoCallByteArray <- jc$genotypeTableToDosageByteArray(jGT)
     if (verbose) message("Returning Java byte array to R...")
-    dosMat <- lapply(genoCallByteArray, rJava::.jevalArray)
-    if (coerceDosageToInt) {
-        if (verbose) message("Coercing to integer...")
-        dosMat <- lapply(dosMat, as.integer)
 
-        # Replace 128 values (conversion artifact?) with NAs...
-        dosMat <- lapply(dosMat, function(i) replace(i, i == 128, NA))
-    }
+    # A 'SummarizedExperiment' puts features in rows and samples in
+    # columns, which is the transpose of the taxa-by-sites dosage matrix
+    dosMat <- t(.dosageMatrix(jGT, asInteger = coerceDosageToInt))
+
     if (verbose) message("Transforming to SummarizedExperiment...")
-    dosMat <- simplify2array(dosMat)
-
     se <- SummarizedExperiment::SummarizedExperiment(
         assays = dosMat,
         rowRanges = genomicRangesDF,
         colData = sampleDF
     )
     if (verbose) message("Finished.")
-    warnMsg <- paste0("The function 'getSumExpFromGenotypeTable()' will be deprecated soon.")
-    message(warnMsg, call. = FALSE)
     return(se)
 }
 
@@ -114,6 +108,7 @@ getGenotypeTable <- function(jtsObject) {
     if(is(jtsObject, "TasselGenotypePhenotype")) {
         return(jtsObject@jGenotypeTable)
     }
+    jtsObject <- .unwrapTasselObject(jtsObject)
     if(!is(jtsObject,"jobjRef")) return(rJava::.jnull())
     if(jtsObject %instanceof% "net.maizegenetics.dna.snp.GenotypeTable") {
         return(jtsObject)
@@ -130,16 +125,9 @@ getGenotypeTable <- function(jtsObject) {
 #' @importFrom rJava .jevalArray
 #' @importFrom rJava is.jnull
 getMinMaxPhysPositions <- function(tasObj) {
-    if (!inherits(tasObj, "TasselGenotypePhenotype")) {
-        stop("`tasObj` must be of class `TasselGenotypePhenotype`")
-    }
-
-    jGenoTable <- getGenotypeTable(tasObj)
-    if (rJava::is.jnull(jGenoTable)) {
-        stop("TASSEL genotype object not found")
-    }
-
-    javaGT <- getGenotypeTable(tasObj)
+    javaGT <- .resolveTasselInput(
+        tasObj, "genotype", "getMinMaxPhysPositions"
+    )$jGt
 
     positions <- javaGT$positions()
     chroms <- rJava::.jevalArray(javaGT$chromosomes())
@@ -160,16 +148,9 @@ getMinMaxPhysPositions <- function(tasObj) {
 #' @importFrom rJava .jevalArray
 #' @importFrom rJava is.jnull
 getMinMaxVarSites <- function(tasObj) {
-    if (!inherits(tasObj, "TasselGenotypePhenotype")) {
-        stop("`tasObj` must be of class `TasselGenotypePhenotype`")
-    }
-
-    jGenoTable <- getGenotypeTable(tasObj)
-    if (rJava::is.jnull(jGenoTable)) {
-        stop("TASSEL genotype object not found")
-    }
-
-    javaGT <- getGenotypeTable(tasObj)
+    javaGT <- .resolveTasselInput(
+        tasObj, "genotype", "getMinMaxVarSites"
+    )$jGt
 
     positions <- javaGT$positions()
     chroms <- rJava::.jevalArray(javaGT$chromosomes())
@@ -188,17 +169,13 @@ getMinMaxVarSites <- function(tasObj) {
 #'
 #' @param gigwa A \code{QBMS}-formatted GIGWA data frame object
 #'
+#' @return A \code{TasselGenotype} object.
+#'
 #' @importFrom rJava .jarray
 #' @importFrom rJava J
 #'
 #' @export
 readGenotypeTableFromGigwa <- function(gigwa) {
-    warnMsg <- paste0(
-        "The function 'readGenotypeTableFromGigwa()' will be deprecated soon.\n",
-        "This will be replaced by '", cli::style_bold("readGenotype()"), "' in the next update."
-    )
-    message(warnMsg)
-
     plugin <- rJava::J("net/maizegenetics/plugindef/GenerateRCode")
 
     matrixSub <- as.matrix(gigwa[, 5:ncol(gigwa)])
@@ -213,7 +190,7 @@ readGenotypeTableFromGigwa <- function(gigwa) {
         rJava::.jarray(matrixSub, dispatch = TRUE)
     )
 
-    return(.tasselObjectConstructor(myGt))
+    return(createTasselGenotype(myGt))
 }
 
 
@@ -230,8 +207,6 @@ readGenotypeTableFromGigwa <- function(gigwa) {
 #'
 #' @export
 as.matrix.TasselGenotypePhenotype <- function(x, ...) {
-    plugin <- rJava::J("net/maizegenetics/plugindef/GenerateRCode")
-
     if (!inherits(x, "TasselGenotypePhenotype")) {
         stop("`x` must be of class `TasselGenotypePhenotype`")
     }
@@ -240,95 +215,55 @@ as.matrix.TasselGenotypePhenotype <- function(x, ...) {
         stop("`x` must contain genotype data")
     }
 
-    jg <- x@jGenotypeTable
-    m <- rJava::.jevalArray(plugin$genotypeTableToDosageByteArray(jg), simplify = TRUE)
-    mode(m) <- "integer"
-
-    siteNames <- positionList(x)
-
-    m[m == 128] <- NA
-    colnames(m) <- siteNames$Name
-    rownames(m) <- getTaxaIDs(x)
-
-    return(m)
+    .dosageMatrix(
+        jGt       = x@jGenotypeTable,
+        taxa      = getTaxaIDs(x),
+        siteNames = positionList(x)$Name
+    )
 }
 
 
 ## ----
-#' @title Get site summary of genotype table
-#'
-#' @description Returns positional data from a \code{TasselGenotypePhenotype}
-#'    object
-#'
-#' @param tasObj A \code{TasselGenotypePhenotype} object
-#'
-#' @export
-siteSummary <- function(tasObj) {
-    if (!inherits(tasObj, "TasselGenotypePhenotype")) {
-        stop("`tasObj` must be of class `TasselGenotypePhenotype`")
-    }
-
-    if (rJava::is.jnull(tasObj@jGenotypeTable)) {
-        stop("`tasObj` must contain genotype data")
-    }
-
+## Helper: run GenotypeSummaryPlugin on a Java GenotypeTable reference
+.runGenotypeSummary <- function(jGenoTable, doSite = FALSE, doTaxa = FALSE) {
     plugin <- rJava::new(
         rJava::J("net.maizegenetics.analysis.data.GenotypeSummaryPlugin"),
         rJava::.jnull(),
         FALSE
     )
 
-    plugin$setParameter("overview", tolower(as.character(FALSE)))
-    plugin$setParameter("siteSummary", tolower(as.character(TRUE)))
-    plugin$setParameter("taxaSummary", tolower(as.character(FALSE)))
+    plugin$setParameter("overview",    "false")
+    plugin$setParameter("siteSummary", tolower(as.character(doSite)))
+    plugin$setParameter("taxaSummary", tolower(as.character(doTaxa)))
 
     dataSet <- rJava::J("net.maizegenetics.plugindef.DataSet")
-    summaryResults <- plugin$processData(dataSet$getDataSet(tasObj@jGenotypeTable))
+    summaryResults <- plugin$processData(dataSet$getDataSet(jGenoTable))
 
-    return(
-        tableReportToDF(
-            summaryResults$getData(0L)$getData()
-        )
-    )
+    tableReportToDF(summaryResults$getData(0L)$getData())
 }
 
 
 ## ----
-#' @title Get taxa summary of genotype table
-#'
-#' @description Returns taxa data from a \code{TasselGenotypePhenotype}
-#'    object
-#'
-#' @param tasObj A \code{TasselGenotypePhenotype} object
-#'
+#' @rdname siteSummary
+#' @aliases siteSummary,TasselGenotypePhenotype-method
 #' @export
-taxaSummary <- function(tasObj) {
-    if (!inherits(tasObj, "TasselGenotypePhenotype")) {
-        stop("`tasObj` must be of class `TasselGenotypePhenotype`")
-    }
-
+setMethod("siteSummary", "TasselGenotypePhenotype", function(tasObj) {
     if (rJava::is.jnull(tasObj@jGenotypeTable)) {
         stop("`tasObj` must contain genotype data")
     }
+    .runGenotypeSummary(tasObj@jGenotypeTable, doSite = TRUE)
+})
 
-    plugin <- rJava::new(
-        rJava::J("net.maizegenetics.analysis.data.GenotypeSummaryPlugin"),
-        rJava::.jnull(),
-        FALSE
-    )
 
-    plugin$setParameter("overview", tolower(as.character(FALSE)))
-    plugin$setParameter("siteSummary", tolower(as.character(FALSE)))
-    plugin$setParameter("taxaSummary", tolower(as.character(TRUE)))
-
-    dataSet <- rJava::J("net.maizegenetics.plugindef.DataSet")
-    summaryResults <- plugin$processData(dataSet$getDataSet(tasObj@jGenotypeTable))
-
-    return(
-        tableReportToDF(
-            summaryResults$getData(0L)$getData()
-        )
-    )
-}
+## ----
+#' @rdname taxaSummary
+#' @aliases taxaSummary,TasselGenotypePhenotype-method
+#' @export
+setMethod("taxaSummary", "TasselGenotypePhenotype", function(tasObj) {
+    if (rJava::is.jnull(tasObj@jGenotypeTable)) {
+        stop("`tasObj` must contain genotype data")
+    }
+    .runGenotypeSummary(tasObj@jGenotypeTable, doTaxa = TRUE)
+})
 
 

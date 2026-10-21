@@ -7,7 +7,9 @@
 #' @name kinshipMatrix
 #' @rdname kinshipMatrix
 #'
-#' @param tasObj An object of class \code{TasselGenotypePenotype}.
+#' @param tasObj An object of class \code{\linkS4class{TasselGenotype}} or
+#'    \code{\linkS4class{TasselGenomicDataset}}. Objects of the deprecated
+#'    \code{TasselGenotypePhenotype} class are still accepted.
 #' @param method A Kinship method. Defaults to \code{Centered_IBS}. Other
 #'    options include \code{Normalized_IBS}, \code{Dominance_Centered_IBS},
 #'    and \code{Dominance_Normalized_IBS}.
@@ -28,14 +30,7 @@ kinshipMatrix <- function(tasObj,
                           method = "Centered_IBS",
                           maxAlleles = 6,
                           algorithmVariation = "Observed_Allele_Freq") {
-    if (!inherits(tasObj, "TasselGenotypePhenotype")) {
-        stop("`tasObj` must be of class `TasselGenotypePhenotype`")
-    }
-
-    jGenoTable <- getGenotypeTable(tasObj)
-    if (rJava::is.jnull(jGenoTable)) {
-        stop("TASSEL genotype object not found")
-    }
+    jGenoTable <- .resolveTasselInput(tasObj, "genotype", "kinshipMatrix")$jGt
 
     # Create kinship plugin
     plugin <- rJava::new(
@@ -72,7 +67,9 @@ kinshipMatrix <- function(tasObj,
 #' @name distanceMatrix
 #' @rdname distanceMatrix
 #'
-#' @param tasObj an rTASSEL \code{TasselGenotypePhenotype} object
+#' @param tasObj An object of class \code{\linkS4class{TasselGenotype}} or
+#'    \code{\linkS4class{TasselGenomicDataset}}. Objects of the deprecated
+#'    \code{TasselGenotypePhenotype} class are still accepted.
 #'
 #' @return Returns a `TasselDistanceMatrix` object.
 #'
@@ -82,14 +79,8 @@ kinshipMatrix <- function(tasObj,
 #' @importFrom rJava .jnull
 #' @export
 distanceMatrix <- function(tasObj) {
-    if (!inherits(tasObj, "TasselGenotypePhenotype")) {
-        stop("`tasObj` must be of class `TasselGenotypePhenotype`")
-    }
+    jGenoTable <- .resolveTasselInput(tasObj, "genotype", "distanceMatrix")$jGt
 
-    jGenoTable <- getGenotypeTable(tasObj)
-    if (rJava::is.jnull(jGenoTable)) {
-        stop("TASSEL genotype object not found")
-    }
     plugin <- rJava::new(
         rJava::J("net.maizegenetics.analysis.distance.DistanceMatrixPlugin"),
         rJava::.jnull(),
@@ -208,7 +199,9 @@ asTasselDistanceMatrix <- function(m) {
 #' @description This method performs principal components analysis and returns
 #'    the requested number of PC axes (components).
 #'
-#' @param tasObj an rTASSEL \code{TasselGenotypePhenotype} object.
+#' @param tasObj An object of class \code{\linkS4class{TasselGenotype}} or
+#'    \code{\linkS4class{TasselGenomicDataset}}. Objects of the deprecated
+#'    \code{TasselGenotypePhenotype} class are still accepted.
 #' @param useCovariance If \code{TRUE}, analysis will do an eigenvalue
 #'    decomposition of the covariance matrix. If \code{FALSE}, it will use a
 #'    correlation matrix. NOTE: Using the covariance matrix is recommended for
@@ -231,7 +224,7 @@ asTasselDistanceMatrix <- function(m) {
 #'    Singular Value Decomposition of the data. The resulting table can be
 #'    quite large if the number of variants and taxa are big.
 #'
-#' @return A \code{DataFrame} object.
+#' @return A \code{\linkS4class{PCAResults}} object.
 #'
 #' @importFrom rJava new
 #' @importFrom rJava J
@@ -249,14 +242,7 @@ pca <- function(
     reportEigenvectors = TRUE
 ) {
 
-    if (!inherits(tasObj, "TasselGenotypePhenotype")) {
-        stop("`tasObj` must be of class `TasselGenotypePhenotype`")
-    }
-
-    jGenoTable <- getGenotypeTable(tasObj)
-    if (rJava::is.jnull(jGenoTable)) {
-        stop("TASSEL genotype object not found")
-    }
+    jGenoTable <- .resolveTasselInput(tasObj, "genotype", "pca")$jGt
 
     limitBy <- match.arg(limitBy)
 
@@ -289,9 +275,6 @@ pca <- function(
     })
 
     names(reportBody) <- unlist(reportNames)
-    if (reportEigenvalues) {
-        colnames(reportBody$Eigenvalues_Datum) <- gsub(" ", "_", colnames(reportBody$Eigenvalues_Datum))
-    }
 
     return(
         methods::new(
@@ -325,7 +308,7 @@ pca <- function(
 #' @param removeNaN Remove \code{NaNs} from matrix before performing MDS.
 #'    Defaults to \code{TRUE}.
 #'
-#' @return A \code{DataFrame} object.
+#' @return A \code{\linkS4class{MDSResults}} object.
 #'
 #' @importFrom rJava new
 #' @importFrom rJava J
@@ -352,11 +335,25 @@ mds <- function(
     plugin$setParameter("axes", as.character(nAxes))
     plugin$setParameter("removeNaN", tolower(as.character(removeNaN)))
 
-    # Run PCA plugin
+    # Run MDS plugin
     dataSet <- rJava::J("net.maizegenetics.plugindef.DataSet")
     mdsRes <- plugin$performFunction(dataSet$getDataSet(distMat@jDistMatrix))
 
-    return(tableReportToDF(mdsRes$getData(0L)$getData()))
+    reportBody <- lapply(seq_len(mdsRes$getSize()), function(i) {
+        tableReportToDF(mdsRes$getData(as.integer(i - 1))$getData())
+    })
+
+    names(reportBody) <- vapply(seq_len(mdsRes$getSize()), function(i) {
+        mdsRes$getData(as.integer(i - 1))$getName()
+    }, character(1))
+
+    return(
+        methods::new(
+            "MDSResults",
+            results = reportBody,
+            jObj    = mdsRes$getDataWithName("MDS_PCs_Datum")$get(0L)$getData()
+        )
+    )
 }
 
 

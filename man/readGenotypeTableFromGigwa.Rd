@@ -9,6 +9,9 @@ readGenotypeTableFromGigwa(gigwa)
 \arguments{
 \item{gigwa}{A \code{QBMS}-formatted GIGWA data frame object}
 }
+\value{
+A \code{TasselGenotype} object.
+}
 \description{
 Reads and stores genotype information from a
    \code{QBMS}-formatted data frame from a GIGWA server

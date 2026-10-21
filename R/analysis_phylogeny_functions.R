@@ -2,10 +2,14 @@
 #' @title R interface for TASSEL's tree creation methods
 #'
 #' @description This function acts as a wrapper for TASSEL's
-#'    \code{CreateTreePlugin}.
+#'    \code{CreateTreePlugin}. Requires the
+#'    \href{https://cran.r-project.org/web/packages/ape/index.html}{ape}
+#'    package to be installed.
 #'
 #' @param tasObj
-#' An object of class \code{TasselGenotypePenotype}.
+#' An object of class \code{\linkS4class{TasselGenotype}} or
+#' \code{\linkS4class{TasselGenomicDataset}}. Objects of the deprecated
+#' \code{TasselGenotypePhenotype} class are still accepted.
 #' @param clustMethod
 #' What clustering method should be used? Current options are \code{UGMA} and
 #' \code{Neighbor_Joining}. Defaults to \code{Neighbor_Joining}.
@@ -15,16 +19,20 @@
 #' \href{https://cran.r-project.org/web/packages/ape/ape.pdf}{ape} package
 #' for further details.
 #'
-#' @importFrom ape read.tree
 #' @importFrom rJava .jnull
 #' @importFrom rJava new
 #' @importFrom rJava J
 #'
 #' @export
 createTree <- function(tasObj, clustMethod = c("Neighbor_Joining", "UPGMA")) {
-    if (!is(tasObj, "TasselGenotypePhenotype")) {
-        stop("tasObj is not of class \"TasselGenotypePhenotype\"")
+    if (!requireNamespace("ape", quietly = TRUE)) {
+        rlang::abort(c(
+            "Package 'ape' is required for `createTree()`",
+            "i" = "Install it with `install.packages(\"ape\")`"
+        ))
     }
+
+    jGenoTable <- .resolveTasselInput(tasObj, "genotype", "createTree")$jGt
 
     clustMethod <- match.arg(clustMethod)
 
@@ -35,7 +43,7 @@ createTree <- function(tasObj, clustMethod = c("Neighbor_Joining", "UPGMA")) {
     )
 
     input <- rJava::J("net/maizegenetics/plugindef/DataSet")
-    input <- input$getDataSet(getGenotypeTable(tasObj))
+    input <- input$getDataSet(jGenoTable)
 
     plugin$setParameter("clusteringMethod", clustMethod)
     plugin$setParameter("saveDistanceMatrix", "false")

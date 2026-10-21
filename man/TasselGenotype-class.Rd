@@ -3,9 +3,35 @@
 \docType{class}
 \name{TasselGenotype-class}
 \alias{TasselGenotype-class}
+\alias{[,TasselGenotype,ANY,ANY,ANY-method}
+\alias{[,TasselGenotype,ANY,ANY-method}
 \title{TasselGenotype Class}
+\usage{
+\S4method{[}{TasselGenotype,ANY,ANY,ANY}(x, i, j, ..., drop = FALSE)
+}
+\arguments{
+\item{x}{A \code{TasselGenotype} object.}
+
+\item{i}{Taxa selector: a character vector of IDs, a
+\code{\linkS4class{TaxaSelector}}, or missing.}
+
+\item{j}{Site selector: an integer vector of 1-based indices, a
+character vector of site names, a
+\code{\linkS4class{SiteSelector}}, or missing.}
+
+\item{...}{Ignored.}
+
+\item{drop}{Ignored.}
+}
+\value{
+A new \code{TasselGenotype} (or subclass) containing the
+  selected taxa and/or sites.
+}
 \description{
 An S4 class to represent a Tassel Genotype object.
+
+Matrix-style subsetting for \code{TasselGenotype} objects using
+the \code{gt[taxa, sites]} syntax.
 }
 \details{
 This class is designed to interface with TASSEL 5 for genotype
@@ -15,8 +41,6 @@ interact with Java objects used in TASSEL 5.
 \section{Slots}{
 
 \describe{
-\item{\code{dispData}}{A list containing the display data for the genotype.}
-
 \item{\code{jRefObj}}{A reference to a Java object (`jobjRef`) associated with the genotype.}
 
 \item{\code{jMemAddress}}{A character string representing the memory address of the Java object.}
@@ -24,3 +48,14 @@ interact with Java objects used in TASSEL 5.
 \item{\code{jClass}}{A character string representing the Java class of the object.}
 }}
 
+\examples{
+\dontrun{
+gt[taxa("B73", "Mo17"), ]
+gt[, sites(1:1000)]
+gt[, sitesWhere(maf >= 0.05)]
+gt[taxaWhere(notMissing >= 0.8), ]
+gt[taxa("B73"), region("chr1", 1e6, 2e6)]
+gt[, !sites(1:10)]
+}
+
+}

@@ -5,33 +5,12 @@
 ### Start logging info
 startLogger()
 
-### Load hapmap data
-genoPathHMP <- system.file(
-    "extdata",
-    "mdp_genotype.hmp.txt",
-    package = "rTASSEL"
-)
-
-### Read data - need only non missing data!
-phenoPathFast <- system.file(
-    "extdata",
-    "mdp_traits_nomissing.txt",
-    package = "rTASSEL"
-)
-
-### Create rTASSEL genotype only object
-tasGeno <- readGenotypeTableFromPath(
-    path = genoPathHMP
-)
-
-### Create rTASSEL object - use prior TASSEL genotype object
-tasGenoPheno <- readGenotypePhenotype(
-    genoPathOrObj = genoPathHMP,
-    phenoPathDFOrObj = phenoPathFast
-)
+### Shared fixtures (see helper_vars.R)
+tasGeno    <- rtObjs$gt_hmp
+tasDataset <- rtObjs$ds_hmp_ph_nomiss
 
 ### Create kinship object
-tasKin <- kinshipMatrix(tasGenoPheno)
+tasKin <- kinshipMatrix(tasDataset)
 
 
 
@@ -45,7 +24,7 @@ test_that("genomicPrediction() throws general exceptions.", {
             kFolds      = 10,
             nIter       = 10
         ),
-        regexp = "`tasObj` must be of class `TasselGenotypePhenotype`"
+        regexp = "Unsupported input object"
     )
     expect_error(
         object = genomicPrediction(
@@ -55,11 +34,11 @@ test_that("genomicPrediction() throws general exceptions.", {
             kFolds      = 10,
             nIter       = 10
         ),
-        regexp = "TASSEL phenotype object not found"
+        regexp = "needs phenotype data"
     )
     expect_error(
         object = genomicPrediction(
-            tasPhenoObj = tasGenoPheno,
+            tasPhenoObj = tasDataset,
             kinship     = mtcars,
             doCV        = TRUE,
             kFolds      = 10,
@@ -74,14 +53,14 @@ test_that("genomicPrediction() throws general exceptions.", {
 ## Return tests ----
 test_that("genomicPrediction() returns correct data.", {
     gpCV <- genomicPrediction(
-        tasPhenoObj = tasGenoPheno,
+        tasPhenoObj = tasDataset,
         kinship     = tasKin,
         doCV        = TRUE,
         kFolds      = 2,
         nIter       = 1
     )
     gp <- genomicPrediction(
-        tasPhenoObj = tasGenoPheno,
+        tasPhenoObj = tasDataset,
         kinship     = tasKin,
         doCV        = FALSE
     )
@@ -101,6 +80,23 @@ test_that("genomicPrediction() returns correct data.", {
     expect_equal(
         object = dim(gp),
         expected = c(834, 5)
+    )
+})
+
+
+## Back-compatibility ----
+test_that("genomicPrediction() accepts a deprecated TasselGenotypePhenotype", {
+    expect_equal(
+        genomicPrediction(
+            tasPhenoObj = rtObjsLegacy$gt_hmp_ph_nomiss,
+            kinship     = tasKin,
+            doCV        = FALSE
+        ),
+        genomicPrediction(
+            tasPhenoObj = tasDataset,
+            kinship     = tasKin,
+            doCV        = FALSE
+        )
     )
 })
 

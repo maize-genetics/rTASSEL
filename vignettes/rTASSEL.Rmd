@@ -69,12 +69,6 @@ exploits the analytical prowess of TASSEL in conjunction with R's popular
 data handling and parsing capabilities without ever having the user to switch
 between these two environments.
 
-## Disclaimer
-Due to the *experimental* nature of this package's lifecycle, end
-functionalities are prone to change after end-user input is obtained in the
-near future.
-
-
 ## Citation
 To cite `rTASSEL`, please use the following citation:
 
@@ -188,20 +182,20 @@ genoPathVCF
 ```
 
 Now that we have the file paths to this data, we can pass this to TASSEL and
-create a formal `TasselGenotypePhenotype` class object in R using the
-following:
+create a formal `TasselGenotype` class object in R using the `readGenotype()`
+function:
 
 ```{r, eval=TRUE, echo=TRUE}
 # Load in hapmap file
-tasGenoHMP <- readGenotypeTableFromPath(
-    path = genoPathHMP
-)
+tasGenoHMP <- readGenotype(genoPathHMP)
 
 # Load in VCF file
-tasGenoVCF <- readGenotypeTableFromPath(
-    path = genoPathVCF
-)
+tasGenoVCF <- readGenotype(genoPathVCF)
 ```
+
+`readGenotype()` inspects what it is given, so the same function reads every
+supported file type as well as an R matrix of numeric genotype values (see
+*Reading numeric genotype data*).
 
 When we call these objects, a summary of the data will be posted to the R
 console:
@@ -210,12 +204,11 @@ console:
 tasGenoHMP
 ```
 
-This summary details the number of Taxa (`Taxa`) and marker positions
-(`Positions`) within the data set. Additionally, since we can load both
-genotype and phenotype information into this object, a helpful check will be
-displayed to show what is populating the object (`[x] or [ ]`).
+This summary details the number of taxa and marker positions in the data set,
+a preview of the genotype calls themselves, and the memory address of the
+underlying TASSEL object.
 
-### Additional information about TasselPhenotypeGenotype data sets
+### Additional information about rTASSEL data objects
 In general, this S4 class data object houses "slot" information relating to
 TASSEL/Java pointers of the respective data.
 
@@ -226,17 +219,51 @@ slotNames(tasGenoHMP)
 
 Technically, this object does not contain the full information of the data
 represented in R space, but merely contains addresses to the memory store of
-the reference TASSEL object ID. For example, if we wanted to extract the
-`GenotypeTable` with the S4 `@` operator, we would get something that looks
-like this:
+the reference TASSEL object ID. If we wanted to extract the `GenotypeTable`
+that a `TasselGenotype` object points at, we would use the `javaRefObj()`
+accessor:
 
 ```{r, eval=TRUE, echo=TRUE}
-tasGenoHMP@jGenotypeTable
+tasGenoHMP |> javaRefObj()
 ```
 
 This entity is a `rJava` internal identifier. It isn't until we call
 downstream `rTASSEL` functions where we will bring the TASSEL data into the R
-environment.
+environment. Every function that does so is collected in the
+[Extracting Data into R](extracting_data.html) vignette.
+
+### Joining genotype data split across files
+Genotype data often arrives split up - one file per chromosome, or one file
+per collection of sites. `intersectJoin()` and `unionJoin()` put such files
+back together into a single `TasselGenotype` object. For example, the package
+ships two small VCF files, one holding sites on chromosome 1 and the other
+sites on chromosome 5:
+
+```{r, eval=TRUE, echo=TRUE}
+tasGenoChr1 <- readGenotype(
+    system.file("extdata", "rt_sub_chr1.vcf", package = "rTASSEL")
+)
+tasGenoChr5 <- readGenotype(
+    system.file("extdata", "rt_sub_chr5.vcf", package = "rTASSEL")
+)
+
+tasGenoChrAll <- intersectJoin(tasGenoChr1, tasGenoChr5)
+tasGenoChrAll
+```
+
+The sites of every table are kept and returned in genomic order, whichever
+order the tables were given in:
+
+```{r, eval=TRUE, echo=TRUE}
+tasGenoChrAll |> positionList()
+```
+
+The two joins differ in which taxa they keep: `intersectJoin()` keeps the
+taxa every table holds, while `unionJoin()` keeps every taxon any of them
+holds and returns the calls a table never made as missing.
+
+Joining is for tables that hold *different* sites. To merge the calls of
+tables that describe the same sites, use `mergeGenotypeTables()` instead.
 
 
 ## Loading phenotype data
@@ -251,31 +278,29 @@ analyses. More information about how these files can be found at this
 under the *Numerical Data* section.
 
 Loading this type of data is very similar to how genotype data is loaded.
-here, we will use the `readPhenotypeFromPath()` function:
+Here, we will use the `readPhenotype()` function:
 
 ```{r, eval=TRUE, echo=TRUE}
 # Read from phenotype path
 phenoPath  <- system.file("extdata", "mdp_traits.txt", package = "rTASSEL")
 phenoPath
 
-# Load into rTASSEL `TasselGenotypePhenotype` object
-tasPheno <- readPhenotypeFromPath(
-    path = phenoPath
-)
+# Load into rTASSEL `TasselPhenotype` object
+tasPheno <- readPhenotype(phenoPath)
 
 # Inspect object
 tasPheno
 ```
 
-The object output is very similar to the genotype table output with some minor
-additions to which traits are displayed in the file.
+The object output shows the trait data itself along with the TASSEL attribute
+type of each column.
 
 ### From an R data frame
 In some cases you might want to first modify your phenotype data set in R and
-then load it into the TASSEL environment. If you wish to choose this route, you
-will need to use the `readPhenotypeFromDataFrame()` function along
-with a couple of parameters. First, we will construct an R data frame and load
-it with this function:
+then load it into the TASSEL environment. `readPhenotype()` also accepts a
+`data.frame`, but since a plain data frame carries no TASSEL attribute
+information, the `attrTypes` parameter supplies them. First, we will construct
+an R data frame:
 
 ```{r, eval=TRUE, echo=TRUE}
 # Create phenotype data frame
@@ -284,72 +309,154 @@ colnames(phenoDF)[1] <- "Taxon"
 
 # Inspect first few rows
 head(phenoDF)
+```
 
-# Load into rTASSEL `TasselGenotypePhenotype` object
-tasPhenoDF <- readPhenotypeFromDataFrame(
-    phenotypeDF = phenoDF,
-    taxaID = "Taxon",
-    attributeTypes = NULL
+In the simplest form, `attrTypes` is a named character vector: the names are
+the columns of the data frame, and the values their TASSEL types, which are
+one of `taxa`, `data`, `covariate`, or `factor`:
+
+```{r, eval=TRUE, echo=TRUE}
+# Load into rTASSEL `TasselPhenotype` object
+tasPhenoDF <- readPhenotype(
+    phenoDF,
+    attrTypes = c(
+        Taxon  = "taxa",
+        EarHT  = "data",
+        dpoll  = "data",
+        EarDia = "data"
+    )
 )
 
 # Inspect new object
 tasPhenoDF
 ```
 
-The `phenotypeDF` parameter is for the R data frame object. The `taxaID`
-parameter is needed to determine which column of your data frame is your
-TASSEL taxa data. The final parameter (`attributeTypes`) is optional. If this
-parameter is set to `NULL`, all remaining data frame columns will be classified
-as TASSEL `data` types. If this is not the case for your data (e.g. if you
-have covariate or factor data in your experiment), **you will need to
-specify which columns are what TASSEL data type** (i.e. `data`, `covariate`,
-or `factor`). This will have to be passed as an R vector of string elements
-(e.g. `c("data", "factor", "covariate")`). *Currently*, this data type needs to
-be entered in the same order as they are found in the data frame.
+`attrTypes` plays the part `colData` plays in a `SummarizedExperiment`: it
+has to describe every column of the data frame exactly once, and describe
+nothing else. A column left out, named twice, or misspelled is an error
+rather than a silently dropped trait, and each type accepts only the R types
+it can hold - a `character` column marked as `data`, or a column of dates,
+is reported by name instead of being coerced on a guess.
+
+The mapping can also be written as a data frame, which is easier to build
+programmatically. Its columns are `col_id` and `tassel_attr`:
+
+```{r, eval=TRUE, echo=TRUE}
+# Describe each column
+attrDF <- tibble::tibble(
+    col_id      = colnames(phenoDF),
+    tassel_attr = c("taxa", rep("data", ncol(phenoDF) - 1))
+)
+
+attrDF
+
+readPhenotype(phenoDF, attrTypes = attrDF)
+```
+
+
+## Filtering phenotype data
+
+**NOTE**: This is just a "snapshot" of how we can filter phenotype
+information in rTASSEL. For more information, please see the additional
+vignette, *"Filtering Phenotype Data"*.
+
+Phenotype objects are filtered with the same pipe-friendly verbs used on
+genotype tables. A phenotype has its own two axes - observations and traits -
+so the verbs address those instead:
+
+| Verb              | Modelled on       | Selects observations/traits by |
+|-------------------|-------------------|--------------------------------|
+| `filterTaxa()`    | `dplyr::filter()` | Expressions over trait columns  |
+| `selectTaxa()`    | `dplyr::select()` | Taxa IDs and `tidyselect`       |
+| `sliceTaxa()`     | `dplyr::slice()`  | Taxon position (1-based)        |
+| `filterTraits()`  | `dplyr::filter()` | Expressions over trait metadata |
+| `selectTraits()`  | `dplyr::select()` | Trait names and `tidyselect`    |
+| `sliceTraits()`   | `dplyr::slice()`  | Trait position (1-based)        |
+
+To show these off we will use a phenotype file that carries all three
+non-taxa TASSEL attribute types - a `factor`, three `data` traits, and three
+`covariate` traits:
+
+```{r, eval=TRUE, echo=TRUE}
+tasPhenoFull <- readPhenotype(
+    system.file("extdata", "mdp_phenotype.txt", package = "rTASSEL")
+)
+tasPhenoFull
+```
+
+`filterTaxa()` keeps observations, with every trait column in scope. Several
+expressions are combined with `&`, as in `dplyr::filter()`:
+
+```{r, eval=TRUE, echo=TRUE}
+tasPhenoFull |> filterTaxa(location == "A", EarHT > 100)
+```
+
+On the other axis, `selectTraits()` takes trait names or any `tidyselect`
+expression, and `filterTraits()` describes traits by their metadata, such as
+their TASSEL attribute type:
+
+```{r, eval=TRUE, echo=TRUE}
+tasPhenoFull |> selectTraits(EarHT, starts_with("Q"))
+
+tasPhenoFull |> filterTraits(traitType == "covariate")
+```
+
+The taxa column is an axis rather than a trait, so it is never dropped by the
+trait verbs. As with genotype data, every verb returns a new object of the
+same class it was given, leaving the original alone.
 
 
 ## Loading genotype and phenotype data simultaneously
 In association studies, we are interested in combining our genotype and
 phenotype data. To usually run this operation in TASSEL, an intersect
 combination between the two data sets is needed. To run this in `rTASSEL`, we
-can use the `readGenotypePhenotype()` function. The parameter input
-needed for this function is, of course, a genotype and phenotype object. For
-genotype input, the following can be used:
+can use the `readGenomicDataset()` function, which joins the two on their
+shared taxa and returns a `TasselGenomicDataset` object. For genotype input,
+the following can be used:
 
 * a path to a genotype file
-* a prior `TasselGenotypePhenotype` object
+* an R matrix of numeric genotype values
+* a prior `TasselGenotype` object
 
 For phenotype input, the following can be used:
 
-* a path to a phenotype data set,
-* a prior `TasselGenotypePhenotype` object
-* an R data frame
+* a path to a phenotype data set
+* an R data frame (along with its attribute table)
+* a prior `TasselPhenotype` object
 
-For example, if we wanted to read the prior `TasselGenotypePhenotype`
-genotype and phenotype objects from earlier:
+For example, if we wanted to join the genotype and phenotype objects from
+earlier:
 
 ```{r, eval=TRUE, echo=TRUE}
-tasGenoPheno <- readGenotypePhenotype(
-    genoPathOrObj = tasGenoHMP,
-    phenoPathDFOrObj = tasPheno
+tasGenoPheno <- readGenomicDataset(
+    genotype  = tasGenoHMP,
+    phenotype = tasPheno
 )
 tasGenoPheno
 ```
 
 We can also use a combination of the above parameter options (e.g. load a
-genotype path and a phenotype data frame, etc.). One caveat though, **if you
-load in a phenotype data frame object with this function, the prior parameters
-from the** `readPhenotypeFromDataFrame` **will be needed** (i.e. the
-`taxaID` and `attributeTypes` parameters):
+genotype path and a phenotype data frame, etc.). As with `readPhenotype()`,
+a data frame needs its attribute types, which are passed through the
+`attrTypes` parameter:
 
 ```{r, eval=TRUE, echo=TRUE}
-tasGenoPhenoDF <- readGenotypePhenotype(
-    genoPathOrObj = genoPathHMP,
-    phenoPathDFOrObj = phenoDF,
-    taxaID = "Taxon",
-    attributeTypes = NULL
+tasGenoPhenoDF <- readGenomicDataset(
+    genotype  = genoPathHMP,
+    phenotype = phenoDF,
+    attrTypes = attrDF
 )
 tasGenoPhenoDF
+```
+
+By default, taxa are combined with an intersect join, keeping only the taxa
+found in both data sets. Use `join = "union"` to keep taxa found in either.
+
+The two components of a dataset can be pulled back out at any time with
+`genotype()` and `phenotype()`:
+
+```{r, eval=TRUE, echo=TRUE}
+tasGenoPheno |> genotype()
 ```
 
 
@@ -391,11 +498,11 @@ analyses like association (e.g., TWAS). We can read this data in two ways:
 * From a formatted R matrix
 
 ### Read numeric data from file
-Like other genotype files, we can read this in via `readGenotypeTableFromPath()`:
+Like other genotype files, we can read this in via `readGenotype()`:
 
 ```{r, eval=TRUE, echo=TRUE}
 numGtPath <- system.file("extdata", "numeric_genotype.txt", package = "rTASSEL")
-numGt <- readGenotypeTableFromPath(numGtPath)
+numGt <- readGenotype(numGtPath)
 
 numGt
 ```
@@ -434,11 +541,11 @@ simMat <- simNumericGt(5, 10)
 simMat[1:3, 1:3]
 ```
 
-Once properly formatted, you read and evaluate this using the 
-`readNumericGenotypeFromRMatrix()` function:
+Once properly formatted, the matrix can be handed to `readGenotype()`, which
+returns a `TasselNumericGenotype` object:
 
 ```{r, eval=TRUE, echo=TRUE}
-numGt <- readNumericGenotypeFromRMatrix(simMat)
+numGt <- readGenotype(simMat)
 
 numGt
 ```
@@ -447,6 +554,10 @@ numGt
 
 
 # Converting TASSEL 5 data into R objects
+
+**NOTE**: This is just a "snapshot" of how we can pull data out of rTASSEL
+objects. For the full set of accessors and coercion methods, please see the
+additional vignette, *"Extracting Data into R"*.
 
 ## Convert genotype data
 To convert a TASSEL 5 genotype table into an R `matrix` object, you can use
@@ -464,11 +575,11 @@ gtMat[1:10, 1:4]
 
 ## Convert phenotype data
 If you want to bring in phenotype data into the R environment, you can use
-the `getPhenotypeDF()` function. All this function needs
-is a `TasselGenotypePhenotype` class object *containing a phenotype table*:
+base R's `as.data.frame()` function on any object *containing a phenotype
+table* (a `TasselPhenotype` or a `TasselGenomicDataset`):
 
 ```{r, eval=TRUE, echo=TRUE}
-tasExportPhenoDF <- getPhenotypeDF(tasObj = tasGenoPheno)
+tasExportPhenoDF <- as.data.frame(tasGenoPheno)
 
 head(tasExportPhenoDF)
 ```
@@ -482,7 +593,7 @@ types are tranlated into within the R environment:
 | taxa        | character             |
 | data        | numeric               |
 | covariate   | numeric               |
-| factor      | factor                |
+| factor      | character             |
 
 
 
@@ -498,23 +609,22 @@ In TASSEL, this accomplished through the Filter menu using two primary plugins:
 * Filter Site Builder plugin
 * Filter Taxa Builder plugin
 
-In `rTASSEL`, this can also be accomplished using the follwing functions:
+In `rTASSEL`, both are reached with the same bracket (`[`) syntax used to
+subset a `matrix` or `data.frame`, where rows select taxa and columns select
+marker sites:
 
-* `filterGenotypeTableSites()`
-* `filterGenotypeTableTaxa()`
+```
+myObj[<taxa>, <sites>]
+```
 
-These objects take a `TasselGenotypePhenotype` class object. For example, in
-our genotype data set, if we want to remove monomorphic and low coverage sites,
-we could use the following parameters in `filterGenotypeTableSites()`:
+Criteria are described with selector functions - `taxa()` and `taxaWhere()`
+for rows; `sites()`, `siteIds()`, `chrom()`, `region()`, and `sitesWhere()`
+for columns. For example, in our genotype data set, if we want to remove
+monomorphic and low coverage sites, we could use `sitesWhere()`:
 
 ```{r, eval=TRUE, echo=TRUE}
-tasGenoPhenoFilt <- filterGenotypeTableSites(
-    tasObj = tasGenoPheno,
-    siteMinCount = 150,
-    siteMinAlleleFreq = 0.05,
-    siteMaxAlleleFreq = 1.0,
-    siteRangeFilterType = "none"
-)
+tasGenoPhenoFilt <- tasGenoPheno[, sitesWhere(alleleCount >= 150 & maf >= 0.05)]
+
 tasGenoPhenoFilt
 ```
 
@@ -524,8 +634,16 @@ We can then compare this to our original pre-filtered data set:
 tasGenoPheno
 ```
 
-These functions can work on any `TasselGenotypePhenotype` class object that
-contains genotypic data, regardless of single or combined TASSEL objects.
+Taxa are filtered the same way, and both axes can be given at once:
+
+```{r, eval=TRUE, echo=TRUE}
+tasGenoPheno[taxaWhere(notMissing >= 0.9), sitesWhere(maf >= 0.05)]
+```
+
+Filtering returns the class it was given, so a `TasselGenotype` yields a
+`TasselGenotype` and a `TasselGenomicDataset` yields a
+`TasselGenomicDataset` with its phenotype data re-joined against the taxa
+that survived.
 
 
 
@@ -535,8 +653,7 @@ contains genotypic data, regardless of single or combined TASSEL objects.
 In TASSEL, for mixed linear model analyses, a kinship matrix calculated from
 genotype data is necessary. This can be accomplished by calculating a kinship
 TASSEL object using the function `kinshipMatrix()`. The main
-parameter input is a `TasselGenotypePhenotype` class object that contains a
-genotype data set:
+parameter input is any `rTASSEL` object that contains a genotype data set:
 
 ```{r, eval=TRUE, echo=TRUE}
 tasKin <- kinshipMatrix(tasObj = tasGenoPheno)
@@ -570,7 +687,7 @@ tasKin
 This will showcase the first four rows and columns and the last row and column
 if the distance matrix exceeds 5 dimensions (*which it probably will*).
 
-This object, similar to the `TasselGenotypePhenotype` class, essentially holds
+This object, similar to the genotype and phenotype classes, essentially holds
 pointers to the Java/TASSEL object in memory. Despite this, we can still use
 some base R methods similar to how we handle `matrix` objects:
 
@@ -619,8 +736,7 @@ testTasselDist
 rTASSEL can run principal component analysis (PCA) and multidimensional
 scaling (MDS) on objects containing a `GenotypeTable` and 
 `TasselDistanceMatrix` respectively. To run PCA, simply use the `pca()` 
-function on a `TasselGenotypePhenotype` object that contains a TASSEL
-`GenotypeTable`
+function on any `rTASSEL` object that contains a TASSEL `GenotypeTable`
 
 ```{r, eval=TRUE, echo=TRUE}
 tasGenoHMP
@@ -638,9 +754,10 @@ mdsRes <- mds(tasDist)
 ```
 
 
-Both of these will return a `DataFrame` object that will contain a Taxa ID
-column and the number of components or axes that were specified in the
-function call. For example, let's take a look at the `pcaRes` object made
+Both of these return a results object holding a collection of TASSEL 5 table
+reports, which `tableReport()` reads. The default report is a table with a
+Taxa ID column and the number of components or axes that were specified in
+the function call. For example, let's take a look at the `pcaRes` object made
 previously:
 
 ```{r, eval=TRUE, echo=TRUE}
@@ -693,7 +810,7 @@ these operate in base TASSEL can be found at following links:
 
 The `assocModelFitter()` function has several primary components:
 
-* `tasObj`: a `TasselGenotypePhenotype` class R object
+* `tasObj`: a `TasselPhenotype` or `TasselGenomicDataset` R object
 * `formula`: an R-based linear model formula
 * `fitMarkers`: a boolean parameter to differentiate between BLUE and GLM
   analyses
@@ -849,7 +966,7 @@ method, we can leave the `fitMarkers`, `kinship`, and `fastAssociation` to
 ```{r, echo=TRUE, eval=TRUE}
 # Read in phenotype data
 phenoPathCov <- system.file("extdata", "mdp_phenotype.txt", package = "rTASSEL")
-tasPhenoCov <- readPhenotypeFromPath(phenoPathCov)
+tasPhenoCov <- readPhenotype(phenoPathCov)
 
 # Calculate BLUEs
 tasBLUE <- assocModelFitter(
@@ -890,11 +1007,42 @@ tasBLUE |> reportNames()
 tasBLUE |> tableReport("BLUE_ANOVA") |> head()
 ```
 
+### Using BLUEs as phenotype data
+The estimates themselves are one value per taxon per trait, which is how
+TASSEL models a phenotype. An `AssociationResultsBLUE` object can therefore
+be handed to the join functions, in the same way a `TasselPhenotype` object
+can, so that the estimates become the traits of a new data set:
+
+```{r, echo=TRUE, eval=TRUE}
+# Population structure to control for in the next model
+popStructPath <- system.file(
+    "extdata",
+    "mdp_population_structure.txt",
+    package = "rTASSEL"
+)
+tasPopStruct <- readPhenotype(popStructPath)
+
+# Join the estimates, the covariates, and a genotype table
+tasBlueGenoPheno <- intersectJoin(tasGenoHMP, tasBLUE, tasPopStruct)
+tasBlueGenoPheno
+```
+
+Since the field variation the factors captured has been absorbed into the
+estimates, the result is ready to fit markers against:
+
+```{r, echo=TRUE, eval=TRUE}
+assocModelFitter(
+    tasObj     = tasBlueGenoPheno,
+    formula    = . ~ .,
+    fitMarkers = TRUE
+) |> tableReport() |> head()
+```
+
 
 ## Calculate GLM
 Similar to BLUEs, we can fit a generalized linear model (GLM) by simply
 fitting marker data to our model. For this, we need a genotype data set
-combined with our phenotype data in a `TasselGenotypePhenotype` class object:
+combined with our phenotype data in a `TasselGenomicDataset` object:
 
 ```{r, echo=TRUE, eval=TRUE}
 # Calculate GLM
@@ -950,10 +1098,10 @@ phenoPathFast <-system.file(
     package = "rTASSEL"
 )
 
-# Creat rTASSEL object - use prior TASSEL genotype object
-tasGenoPhenoFast <- readGenotypePhenotype(
-    genoPathOrObj = tasGenoHMP,
-    phenoPathDFOrObj = phenoPathFast
+# Create rTASSEL object - use prior TASSEL genotype object
+tasGenoPhenoFast <- readGenomicDataset(
+    genotype  = tasGenoHMP,
+    phenotype = phenoPathFast
 )
 
 
@@ -990,7 +1138,7 @@ stepRes
 # Analysis - Phylogeny
 `rTASSEL` allows for interfacing with TASSEL's tree generation methods from
 genotype information. This can be performed using the `createTree()` method
-with a `TasselGenotypePhenotype` object containing genotype table information:
+with any `rTASSEL` object containing genotype table information:
 
 ```{r, echo=TRUE, eval=TRUE}
 phyloTree <- createTree(
@@ -1006,8 +1154,10 @@ The above function allows for two clustering methods:
 * `UPGMA` - **U**nweighted **P**air **G**roup **M**ethod with **A**rithmetic 
   **M**ean. More info can be found [here](https://en.wikipedia.org/wiki/UPGMA).
 
-Upon creation, the `phyloTree` object is returned as a `phylo` object generated
-by the [ape](https://cran.r-project.org/web/packages/ape/ape.pdf) package:
+**Note:** `createTree()` requires the
+[ape](https://cran.r-project.org/web/packages/ape/ape.pdf) package to be
+installed (`install.packages("ape")`). Upon creation, the `phyloTree` object
+is returned as a `phylo` object generated by ape:
 
 ```{r, echo=TRUE, eval=TRUE}
 phyloTree
@@ -1171,14 +1321,7 @@ First, filter to a chromosomal region and compute pairwise LD:
 
 ```{r, echo=TRUE, eval=TRUE}
 # Filter genotype table by position
-tasGenoPhenoFilt <- filterGenotypeTableSites(
-    tasObj              = tasGenoPheno,
-    siteRangeFilterType = "position",
-    startPos            = 228e6,
-    endPos              = 300e6,
-    startChr            = 2,
-    endChr              = 2
-)
+tasGenoPhenoFilt <- tasGenoPheno[, region("2", 228e6, 300e6)]
 
 # Calculate LD
 myLDResults <- linkageDiseq(

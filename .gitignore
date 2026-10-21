@@ -12,7 +12,9 @@
 rTASSEL_log
 rtassel_log.txt
 vignettes/*.log
+vignettes/*.R
 vignettes/figure/
+data-raw/
 
 
 ## R projects ----
@@ -34,5 +36,9 @@ inst/java/*.jar
 inst/java/*.dylib
 inst/java/*.dll
 inst/java/*.so
+
+
+## LLMs ----
+.cursor/
 
 

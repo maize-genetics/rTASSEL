@@ -2,10 +2,14 @@
 #' @title Wrapper function of TasselGenotypePhenotype class for phenotype
 #'    data from a path.
 #'
-#' @description This function is a wrapper for the
-#'    \code{TasselGenotypePhenotype} class. It is used for storing phenotype
-#'    information into a class object. This will read in phenotype data from
-#'    a path.
+#' @description
+#' \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
+#'
+#' This function is a wrapper for the deprecated
+#' \code{TasselGenotypePhenotype} class. It is used for storing phenotype
+#' information into a class object. This will read in phenotype data from
+#' a path. Use \code{\link{readPhenotype}()} instead, which returns a
+#' \code{\linkS4class{TasselPhenotype}} object.
 #'
 #' @return Returns an object of \code{TasselGenotypePhenotype} class.
 #'
@@ -14,16 +18,16 @@
 #'
 #' @param path A phenotype data path.
 #'
+#' @seealso \code{\link{readPhenotype}}
+#'
 #' @importFrom rJava J
 #' @importFrom rJava %instanceof%
 #' @importFrom rJava new
 #' @export
 readPhenotypeFromPath <- function(path) {
-    warnMsg <- paste0(
-        "The function 'readPhenotypeFromPath()' will be deprecated soon.\n",
-        "This will be replaced by '", cli::style_bold("readPhenotype()"), "' in the next update."
+    lifecycle::deprecate_warn(
+        "1.0.0", "readPhenotypeFromPath()", "readPhenotype()"
     )
-    message(warnMsg)
 
     if (!file.exists(path)) {
         stop("Cannot open file ", path, ": No such file or directory")
@@ -40,9 +44,13 @@ readPhenotypeFromPath <- function(path) {
 #' @title Wrapper function of TasselGenotypePhenotype class for phenotype
 #'    data from an R data frame
 #'
-#' @description This function is a wrapper for the
-#'    \code{TasselGenotypePhenotype} class. It is used for storing phenotype
-#'    information into a class object.
+#' @description
+#' \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
+#'
+#' This function is a wrapper for the deprecated
+#' \code{TasselGenotypePhenotype} class. It is used for storing phenotype
+#' information into a class object. Use \code{\link{readPhenotype}()}
+#' instead, which returns a \code{\linkS4class{TasselPhenotype}} object.
 #'
 #' @return Returns an object of \code{TasselGenotypePhenotype} class.
 #'
@@ -54,6 +62,8 @@ readPhenotypeFromPath <- function(path) {
 #' @param attributeTypes A vector of non-taxa attributes. If \code{NULL}, all
 #'    attributes will be TASSEL \code{<data>} types.
 #'
+#' @seealso \code{\link{readPhenotype}}
+#'
 #' @importFrom rJava .jarray
 #' @importFrom rJava J
 #' @importFrom rJava new
@@ -61,11 +71,9 @@ readPhenotypeFromPath <- function(path) {
 readPhenotypeFromDataFrame <- function(phenotypeDF,
                                        taxaID,
                                        attributeTypes = NULL) {
-    warnMsg <- paste0(
-        "The function 'readPhenotypeFromDataFrame()' will be deprecated soon.\n",
-        "This will be replaced by '", cli::style_bold("readPhenotype()"), "' in the next update."
+    lifecycle::deprecate_warn(
+        "1.0.0", "readPhenotypeFromDataFrame()", "readPhenotype()"
     )
-    message(warnMsg)
 
     safeAtt <- c("covariate", "data", "factor", "taxa")
     if (!is.null(attributeTypes) & !all(attributeTypes %in% safeAtt)) {
@@ -81,12 +89,7 @@ readPhenotypeFromDataFrame <- function(phenotypeDF,
         )
     }
 
-    # TODO Remove tibble check
-    if (inherits(phenotypeDF, "tbl_df")) {
-        phenotypeDF <- as.data.frame(phenotypeDF)
-    }
-
-    taxaNames <- as.vector(phenotypeDF[, taxaID])
+    taxaNames <- as.vector(phenotypeDF[[taxaID]])
     colnames <- colnames(phenotypeDF)
     notTaxaCols <- colnames[!colnames %in% taxaID]
     if(is.null(attributeTypes)) {
@@ -109,63 +112,39 @@ readPhenotypeFromDataFrame <- function(phenotypeDF,
 }
 
 
-#' @title Get an R/\code{DataFrame} phenotype data frame from TASSEL object
+#' @title Get a phenotype data frame from a TASSEL object
 #'
-#' @description This function will extract a \code{DataFrame}-based R data
-#'    frame from an object of \code{TasselGenotypePhenotype} class that
-#'    contains phenotypic data. Column data will be converted to the following
-#'    types data depending on TASSEL data type:
-#'    \itemize{
-#'      \item{\code{<taxa>}: \code{character}}
-#'      \item{\code{<data>}: \code{numeric}}
-#'      \item{\code{<covariate>}: \code{numeric}}
-#'      \item{\code{<factor>}: \code{factor}}
-#'    }
+#' @description
+#' \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
 #'
-#' @return Returns an \code{DataFrame} based data frame
+#' This function will extract phenotype data from an object that contains
+#'    it. Use \code{\link[base]{as.data.frame}()} on a
+#'    \code{\linkS4class{TasselPhenotype}} or
+#'    \code{\linkS4class{TasselGenomicDataset}} instead.
+#'
+#' @return A \code{tibble}, one row per observation.
 #'
 #' @name getPhenotypeDF
 #' @rdname getPhenotypeDF
 #'
-#' @param tasObj An object of class \code{TasselGenotypePenotype}.
+#' @param tasObj An object of class \code{\linkS4class{TasselPhenotype}} or
+#'    \code{\linkS4class{TasselGenomicDataset}}. Objects of the deprecated
+#'    \code{TasselGenotypePhenotype} class are still accepted.
+#'
+#' @seealso \code{\link[base]{as.data.frame}}
 #'
 #' @importFrom rJava is.jnull
 #' @export
 getPhenotypeDF <- function(tasObj) {
-    warnMsg <- paste0(
-        "The function 'getPhenotypeDF()' will be deprecated soon.\n",
-        "This will be replaced by '", cli::style_bold("as.data.frame()"), "' in the next update."
+    lifecycle::deprecate_warn(
+        "1.0.0", "getPhenotypeDF()", I("`as.data.frame()`")
     )
-    message(warnMsg)
 
-    if (!inherits(tasObj, "TasselGenotypePhenotype")) {
-        stop("`tasObj` must be of class `TasselGenotypePhenotype`")
-    }
+    jPhenoTable <- .resolveTasselInput(
+        tasObj, "phenotype", "getPhenotypeDF"
+    )$jPh
 
-    jPhenoTable <- getPhenotypeTable(tasObj)
-    if (rJava::is.jnull(jPhenoTable)) {
-        stop("TASSEL phenotype object not found")
-    }
-
-    jPhenoAttri <- extractPhenotypeAttDf(jPhenoTable)
-    jPhenoTable <- tableReportToDF(jPhenoTable)
-
-    # # Get list of TASSEL data types
-    # attributes <- c("taxa", "factor", "covariate", "data")
-    # att <- lapply(seq_along(attributes), function(i) {
-    #     as.vector(jPhenoAttri$traitName[which(jPhenoAttri$traitType == attributes[i])])
-    # })
-    # names(att) <- attributes
-    #
-    # # Convert column data based TASSEL data types
-    # jPhenoTable[c(att$covariate, att$data)] <- sapply(
-    #     jPhenoTable[c(att$covariate, att$data)], as.numeric
-    # )
-    # jPhenoTable[c(att$factor)] <- lapply(
-    #     jPhenoTable[c(att$factor)], factor
-    # )
-    # names(jPhenoTable) <- jPhenoAttri$traitName
-    return(jPhenoTable)
+    return(tableReportToDF(jPhenoTable))
 }
 
 
@@ -174,6 +153,7 @@ getPhenotypeTable <- function(jtsObject) {
     if(is(jtsObject, "TasselGenotypePhenotype")) {
         return(jtsObject@jPhenotypeTable)
     }
+    jtsObject <- .unwrapTasselObject(jtsObject)
     if(!is(jtsObject,"jobjRef")) return(rJava::.jnull())
     if(jtsObject %instanceof% "net.maizegenetics.phenotype.Phenotype") {
         return(jtsObject)
@@ -186,19 +166,20 @@ getPhenotypeTable <- function(jtsObject) {
 
 
 ## Get Phenotype attributes as data frame - not exported (house keeping)
+##
+## Emits the same 'trait_id' / 'trait_type' / 'trait_attribute' spelling
+## that 'attributeData()' reports, so the two agree column for column.
 extractPhenotypeAttDf <- function(phenotype) {
-    traitName = phenotype$getTableColumnNames()
-    traitType = unlist(
-        lapply(as.list(phenotype$typeListCopy()), function(tc) {
-            tc$toString()
-        })
+    attrClasses <- lapply(
+        as.list(phenotype$attributeListCopy()),
+        function(attr) attr$getClass()
     )
 
-    # Pull the java class and return the class without the whole path
-    traitAttribute = unlist(
-        lapply(as.list(phenotype$attributeListCopy()), function(tc) {
-            strsplit(tc$getClass()$toString(),"\\.")[[1]][4]
-        })
+    tibble::tibble(
+        trait_id   = phenotype$getTableColumnNames(),
+        trait_type = .jStrings(as.list(phenotype$typeListCopy())),
+
+        # Java reports a class as "class <fully.qualified.Name>"
+        trait_attribute = sub(".*\\.", "", .jStrings(attrClasses))
     )
-    return(data.frame(traitName, traitType, traitAttribute))
 }

@@ -21,7 +21,8 @@ Prints outs summary information from \code{AssociationResults} objects
 \section{Slots}{
 
 \describe{
-\item{\code{results}}{A list of \code{data.frame} objects containing summary results}
+\item{\code{results}}{A named list of \code{tibble} objects containing summary
+results}
 
 \item{\code{traits}}{A vector of type \code{character} containing the trait IDs
 modeled.}

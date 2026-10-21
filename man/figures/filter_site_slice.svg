@@ -1,0 +1,170 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="430" viewBox="0 0 960 430" font-family="'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" style="font-variant-ligatures: none">
+
+  <defs>
+    <marker id="arrowAccent" viewBox="0 0 10 10" refX="9" refY="5"
+            markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#7c2d12"/>
+    </marker>
+    <marker id="arrowTeal" viewBox="0 0 10 10" refX="9" refY="5"
+            markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#0f766e"/>
+    </marker>
+  </defs>
+<rect x="20" y="14" width="830" height="78" rx="6" fill="#f5f5f4" stroke="#e7e5e4" stroke-width="1" />
+<text x="36" y="44" font-size="18" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" xml:space="preserve"><tspan fill="#1c1917">myGT[, </tspan><tspan fill="#0f766e" font-weight="600">sites(2:4)</tspan><tspan fill="#1c1917">]</tspan></text>
+<text x="36" y="72" font-size="18" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" xml:space="preserve"><tspan fill="#1c1917">myGT |&gt; </tspan><tspan fill="#0f766e" font-weight="600">sliceSites(2:4)</tspan></text>
+<path d="M 110 128 L 110 122 L 292 122 L 292 128" stroke="#57534e" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+<text x="201.0" y="114" font-size="13" fill="#57534e" text-anchor="middle" font-family="'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" >chromosome 1</text>
+<path d="M 296 128 L 296 122 L 478 122 L 478 128" stroke="#57534e" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+<text x="387.0" y="114" font-size="13" fill="#57534e" text-anchor="middle" font-family="'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" >chromosome 2</text>
+<path d="M 482 128 L 482 122 L 602 122 L 602 128" stroke="#57534e" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+<text x="542.0" y="114" font-size="13" fill="#57534e" text-anchor="middle" font-family="'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" >chromosome 3</text>
+<text x="139.0" y="150" font-size="14" fill="#57534e" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace"  opacity="0.25" text-decoration="line-through">1:120</text>
+<text x="201.0" y="150" font-size="14" fill="#57534e" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" >1:450</text>
+<text x="263.0" y="150" font-size="14" fill="#57534e" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" >1:870</text>
+<text x="325.0" y="150" font-size="14" fill="#57534e" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" >2:95</text>
+<text x="387.0" y="150" font-size="14" fill="#57534e" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace"  opacity="0.25" text-decoration="line-through">2:310</text>
+<text x="449.0" y="150" font-size="14" fill="#57534e" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace"  opacity="0.25" text-decoration="line-through">2:640</text>
+<text x="511.0" y="150" font-size="14" fill="#57534e" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace"  opacity="0.25" text-decoration="line-through">3:210</text>
+<text x="573.0" y="150" font-size="14" fill="#57534e" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace"  opacity="0.25" text-decoration="line-through">3:530</text>
+<text x="100" y="185.0" font-size="14" fill="#57534e" text-anchor="end" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" >B73</text>
+<text x="100" y="229.0" font-size="14" fill="#57534e" text-anchor="end" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" >Mo17</text>
+<text x="100" y="273.0" font-size="14" fill="#57534e" text-anchor="end" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" >CML52</text>
+<text x="100" y="317.0" font-size="14" fill="#57534e" text-anchor="end" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" >Ki3</text>
+<text x="100" y="361.0" font-size="14" fill="#57534e" text-anchor="end" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" >Tx303</text>
+<g opacity="0.18"><rect x="110" y="160" width="58" height="40" rx="4" fill="#f9c9a9" stroke="none" stroke-width="1" />
+<text x="139.0" y="185.0" font-size="14" fill="#1c1917" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" >G:G</text>
+</g>
+<g><rect x="172" y="160" width="58" height="40" rx="4" fill="#f9c9a9" stroke="none" stroke-width="1" />
+<text x="201.0" y="185.0" font-size="14" fill="#1c1917" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" >C:C</text>
+</g>
+<g><rect x="234" y="160" width="58" height="40" rx="4" fill="#f9c9a9" stroke="none" stroke-width="1" />
+<text x="263.0" y="185.0" font-size="14" fill="#1c1917" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" >A:A</text>
+</g>
+<g><rect x="296" y="160" width="58" height="40" rx="4" fill="#f9c9a9" stroke="none" stroke-width="1" />
+<text x="325.0" y="185.0" font-size="14" fill="#1c1917" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" >G:G</text>
+</g>
+<g opacity="0.18"><rect x="358" y="160" width="58" height="40" rx="4" fill="#f9c9a9" stroke="none" stroke-width="1" />
+<text x="387.0" y="185.0" font-size="14" fill="#1c1917" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" >T:T</text>
+</g>
+<g opacity="0.18"><rect x="420" y="160" width="58" height="40" rx="4" fill="#f9c9a9" stroke="none" stroke-width="1" />
+<text x="449.0" y="185.0" font-size="14" fill="#1c1917" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" >A:A</text>
+</g>
+<g opacity="0.18"><rect x="482" y="160" width="58" height="40" rx="4" fill="#f9c9a9" stroke="none" stroke-width="1" />
+<text x="511.0" y="185.0" font-size="14" fill="#1c1917" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" >C:C</text>
+</g>
+<g opacity="0.18"><rect x="544" y="160" width="58" height="40" rx="4" fill="#f9c9a9" stroke="none" stroke-width="1" />
+<text x="573.0" y="185.0" font-size="14" fill="#1c1917" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" >G:G</text>
+</g>
+<g opacity="0.18"><rect x="110" y="204" width="58" height="40" rx="4" fill="#a9c4e9" stroke="none" stroke-width="1" />
+<text x="139.0" y="229.0" font-size="14" fill="#1c1917" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" >A:A</text>
+</g>
+<g><rect x="172" y="204" width="58" height="40" rx="4" fill="#f9c9a9" stroke="none" stroke-width="1" />
+<text x="201.0" y="229.0" font-size="14" fill="#1c1917" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" >C:C</text>
+</g>
+<g><rect x="234" y="204" width="58" height="40" rx="4" fill="#f9c9a9" stroke="none" stroke-width="1" />
+<text x="263.0" y="229.0" font-size="14" fill="#1c1917" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" >A:A</text>
+</g>
+<g><rect x="296" y="204" width="58" height="40" rx="4" fill="#a9c4e9" stroke="none" stroke-width="1" />
+<text x="325.0" y="229.0" font-size="14" fill="#1c1917" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" >C:C</text>
+</g>
+<g opacity="0.18"><rect x="358" y="204" width="58" height="40" rx="4" fill="#f9c9a9" stroke="none" stroke-width="1" />
+<text x="387.0" y="229.0" font-size="14" fill="#1c1917" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" >T:T</text>
+</g>
+<g opacity="0.18"><rect x="420" y="204" width="58" height="40" rx="4" fill="#79d59a" stroke="none" stroke-width="1" />
+<text x="449.0" y="229.0" font-size="14" fill="#1c1917" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" >A:G</text>
+</g>
+<g opacity="0.18"><rect x="482" y="204" width="58" height="40" rx="4" fill="#f9c9a9" stroke="none" stroke-width="1" />
+<text x="511.0" y="229.0" font-size="14" fill="#1c1917" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" >C:C</text>
+</g>
+<g opacity="0.18"><rect x="544" y="204" width="58" height="40" rx="4" fill="#d4d1cd" stroke="none" stroke-width="1" />
+<text x="573.0" y="229.0" font-size="14" fill="#1c1917" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" >NA</text>
+</g>
+<g opacity="0.18"><rect x="110" y="248" width="58" height="40" rx="4" fill="#a9c4e9" stroke="none" stroke-width="1" />
+<text x="139.0" y="273.0" font-size="14" fill="#1c1917" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" >A:A</text>
+</g>
+<g><rect x="172" y="248" width="58" height="40" rx="4" fill="#f9c9a9" stroke="none" stroke-width="1" />
+<text x="201.0" y="273.0" font-size="14" fill="#1c1917" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" >C:C</text>
+</g>
+<g><rect x="234" y="248" width="58" height="40" rx="4" fill="#f9c9a9" stroke="none" stroke-width="1" />
+<text x="263.0" y="273.0" font-size="14" fill="#1c1917" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" >A:A</text>
+</g>
+<g><rect x="296" y="248" width="58" height="40" rx="4" fill="#79d59a" stroke="none" stroke-width="1" />
+<text x="325.0" y="273.0" font-size="14" fill="#1c1917" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" >C:G</text>
+</g>
+<g opacity="0.18"><rect x="358" y="248" width="58" height="40" rx="4" fill="#f9c9a9" stroke="none" stroke-width="1" />
+<text x="387.0" y="273.0" font-size="14" fill="#1c1917" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" >T:T</text>
+</g>
+<g opacity="0.18"><rect x="420" y="248" width="58" height="40" rx="4" fill="#a9c4e9" stroke="none" stroke-width="1" />
+<text x="449.0" y="273.0" font-size="14" fill="#1c1917" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" >G:G</text>
+</g>
+<g opacity="0.18"><rect x="482" y="248" width="58" height="40" rx="4" fill="#f9c9a9" stroke="none" stroke-width="1" />
+<text x="511.0" y="273.0" font-size="14" fill="#1c1917" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" >C:C</text>
+</g>
+<g opacity="0.18"><rect x="544" y="248" width="58" height="40" rx="4" fill="#f9c9a9" stroke="none" stroke-width="1" />
+<text x="573.0" y="273.0" font-size="14" fill="#1c1917" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" >G:G</text>
+</g>
+<g opacity="0.18"><rect x="110" y="292" width="58" height="40" rx="4" fill="#f9c9a9" stroke="none" stroke-width="1" />
+<text x="139.0" y="317.0" font-size="14" fill="#1c1917" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" >G:G</text>
+</g>
+<g><rect x="172" y="292" width="58" height="40" rx="4" fill="#79d59a" stroke="none" stroke-width="1" />
+<text x="201.0" y="317.0" font-size="14" fill="#1c1917" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" >C:T</text>
+</g>
+<g><rect x="234" y="292" width="58" height="40" rx="4" fill="#d4d1cd" stroke="none" stroke-width="1" />
+<text x="263.0" y="317.0" font-size="14" fill="#1c1917" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" >NA</text>
+</g>
+<g><rect x="296" y="292" width="58" height="40" rx="4" fill="#f9c9a9" stroke="none" stroke-width="1" />
+<text x="325.0" y="317.0" font-size="14" fill="#1c1917" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" >G:G</text>
+</g>
+<g opacity="0.18"><rect x="358" y="292" width="58" height="40" rx="4" fill="#d4d1cd" stroke="none" stroke-width="1" />
+<text x="387.0" y="317.0" font-size="14" fill="#1c1917" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" >NA</text>
+</g>
+<g opacity="0.18"><rect x="420" y="292" width="58" height="40" rx="4" fill="#f9c9a9" stroke="none" stroke-width="1" />
+<text x="449.0" y="317.0" font-size="14" fill="#1c1917" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" >A:A</text>
+</g>
+<g opacity="0.18"><rect x="482" y="292" width="58" height="40" rx="4" fill="#79d59a" stroke="none" stroke-width="1" />
+<text x="511.0" y="317.0" font-size="14" fill="#1c1917" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" >C:T</text>
+</g>
+<g opacity="0.18"><rect x="544" y="292" width="58" height="40" rx="4" fill="#a9c4e9" stroke="none" stroke-width="1" />
+<text x="573.0" y="317.0" font-size="14" fill="#1c1917" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" >A:A</text>
+</g>
+<g opacity="0.18"><rect x="110" y="336" width="58" height="40" rx="4" fill="#f9c9a9" stroke="none" stroke-width="1" />
+<text x="139.0" y="361.0" font-size="14" fill="#1c1917" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" >G:G</text>
+</g>
+<g><rect x="172" y="336" width="58" height="40" rx="4" fill="#f9c9a9" stroke="none" stroke-width="1" />
+<text x="201.0" y="361.0" font-size="14" fill="#1c1917" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" >C:C</text>
+</g>
+<g><rect x="234" y="336" width="58" height="40" rx="4" fill="#a9c4e9" stroke="none" stroke-width="1" />
+<text x="263.0" y="361.0" font-size="14" fill="#1c1917" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" >T:T</text>
+</g>
+<g><rect x="296" y="336" width="58" height="40" rx="4" fill="#f9c9a9" stroke="none" stroke-width="1" />
+<text x="325.0" y="361.0" font-size="14" fill="#1c1917" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" >G:G</text>
+</g>
+<g opacity="0.18"><rect x="358" y="336" width="58" height="40" rx="4" fill="#d4d1cd" stroke="none" stroke-width="1" />
+<text x="387.0" y="361.0" font-size="14" fill="#1c1917" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" >NA</text>
+</g>
+<g opacity="0.18"><rect x="420" y="336" width="58" height="40" rx="4" fill="#f9c9a9" stroke="none" stroke-width="1" />
+<text x="449.0" y="361.0" font-size="14" fill="#1c1917" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" >A:A</text>
+</g>
+<g opacity="0.18"><rect x="482" y="336" width="58" height="40" rx="4" fill="#f9c9a9" stroke="none" stroke-width="1" />
+<text x="511.0" y="361.0" font-size="14" fill="#1c1917" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" >C:C</text>
+</g>
+<g opacity="0.18"><rect x="544" y="336" width="58" height="40" rx="4" fill="#d4d1cd" stroke="none" stroke-width="1" />
+<text x="573.0" y="361.0" font-size="14" fill="#1c1917" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" >NA</text>
+</g>
+<text x="100" y="400" font-size="14" fill="#0f766e" text-anchor="end" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" >siteIndex</text>
+<text x="139.0" y="400" font-size="14" fill="#0f766e" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace"  opacity="0.25">1</text>
+<text x="201.0" y="400" font-size="14" fill="#0f766e" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" >2</text>
+<text x="263.0" y="400" font-size="14" fill="#0f766e" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" >3</text>
+<text x="325.0" y="400" font-size="14" fill="#0f766e" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace" >4</text>
+<text x="387.0" y="400" font-size="14" fill="#0f766e" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace"  opacity="0.25">5</text>
+<text x="449.0" y="400" font-size="14" fill="#0f766e" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace"  opacity="0.25">6</text>
+<text x="511.0" y="400" font-size="14" fill="#0f766e" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace"  opacity="0.25">7</text>
+<text x="573.0" y="400" font-size="14" fill="#0f766e" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrainsMono Nerd Font', Menlo, Consolas, monospace"  opacity="0.25">8</text>
+<text x="720" y="150" font-size="16" fill="#1c1917" text-anchor="start" font-family="'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" >Three columns, taken</text>
+<text x="720" y="174" font-size="16" fill="#1c1917" text-anchor="start" font-family="'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" >by position.</text>
+<text x="720" y="212" font-size="15" fill="#57534e" text-anchor="start" font-family="'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" >Indexes 2, 3 and 4 are</text>
+<text x="720" y="234" font-size="15" fill="#57534e" text-anchor="start" font-family="'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" >1:450, 1:870 and 2:95, so</text>
+<text x="720" y="256" font-size="15" fill="#57534e" text-anchor="start" font-family="'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" >the window can cross a</text>
+<text x="720" y="278" font-size="15" fill="#57534e" text-anchor="start" font-family="'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" >chromosome boundary.</text>
+</svg>

@@ -8,3 +8,10 @@
 Class \code{AssociationResultsBLUE} defines a \code{rTASSEL}
 Class for storing TASSEL 5 BLUE GWAS results
 }
+\section{Slots}{
+
+\describe{
+\item{\code{jObj}}{An rJava reference object pointing to the BLUE values in Java
+memory, which TASSEL models as a phenotype}
+}}
+

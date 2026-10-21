@@ -5,7 +5,8 @@
 #' Class \code{PCAResults} defines a \code{rTASSEL}
 #' Class for storing TASSEL 5 PCA results
 #'
-#' @slot results A list of \code{data.frame} objects containing summary results
+#' @slot results A named list of \code{tibble} objects containing summary
+#' results
 #' @slot jObj An rJava reference object pointing to PCA results in Java memory
 #'
 #' @name PCAResults-class
@@ -119,7 +120,7 @@ setMethod(
     definition = function(assocRes, reportName) {
         if (missing(reportName)) reportName <- NULL
         returnReportElements(
-            assocRes             = assocRes,
+            results              = assocRes@results,
             reportName           = reportName,
             defaultReportElement = "PC_Datum"
         )

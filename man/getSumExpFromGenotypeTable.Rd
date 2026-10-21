@@ -7,7 +7,9 @@
 getSumExpFromGenotypeTable(tasObj, coerceDosageToInt = TRUE, verbose = FALSE)
 }
 \arguments{
-\item{tasObj}{An object of class \code{TasselGenotypePenotype}.}
+\item{tasObj}{An object of class \code{\linkS4class{TasselGenotype}} or
+\code{\linkS4class{TasselGenomicDataset}}. Objects of the deprecated
+\code{TasselGenotypePhenotype} class are still accepted.}
 
 \item{coerceDosageToInt}{Should dosage array be returned as \code{integer}
 values? If \code{FALSE}, dosage array will be returned as type
@@ -21,7 +23,8 @@ save on memory. Defaults to \code{TRUE}.}
 Returns a \code{SummarizedExperiment} of TASSEL genotype data.
 }
 \description{
-This function will generate an object of
-   \code{SummarizedExperiment} class for marker data derived from a
-   \code{TasselGenotypePhenotype} class object.
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
+
+This function will generate an object of \code{SummarizedExperiment} class
+for marker data derived from a genotype table.
 }

@@ -138,8 +138,9 @@ setClass(
 #'
 #'   \item
 #'   If \code{x} is a data frame, the function requires the
-#'   \code{attr} parameter to provide metadata and calls
-#'   \code{readPhenotypeFromDf(x, attr)}.
+#'   \code{attrTypes} parameter to map each column to a TASSEL
+#'   attribute type and calls
+#'   \code{readPhenotypeFromDf(x, attrTypes)}.
 #'
 #'   \item
 #'   If \code{x} is neither a character string nor a data frame,
@@ -147,12 +148,54 @@ setClass(
 #'
 #' }
 #'
+#' A file carries its own attribute types in its header, but a plain
+#' data frame carries none, so \code{attrTypes} supplies them. It
+#' plays the part \code{colData} plays in a
+#' \code{SummarizedExperiment}: it must describe every column of
+#' \code{x} exactly once, and describe nothing else. Nothing is read
+#' off column position or guessed from the data, so a column left
+#' out, named twice, or misspelled is an error rather than a silent
+#' drop.
+#'
+#' Each attribute type accepts one R type, and the column is coerced
+#' to what TASSEL needs to hold it:
+#'
+#' \describe{
+#'   \item{\code{"taxa"}}{
+#'     \code{character} or \code{factor}, and no missing values,
+#'     since each observation has to name its taxon. Exactly one
+#'     column is the taxa column.
+#'   }
+#'   \item{\code{"data"}, \code{"covariate"}}{
+#'     \code{double} or \code{integer}. \code{NA} and non-finite
+#'     values are carried through as TASSEL missing values.
+#'   }
+#'   \item{\code{"factor"}}{
+#'     \code{character}, \code{factor}, \code{integer}, or
+#'     \code{logical}, and no missing values, since TASSEL would read
+#'     them as a category of their own. A \code{double} column is
+#'     rejected, as rounding a continuous measure into categories is
+#'     rarely intended.
+#'   }
+#' }
+#'
+#' Any other column type, such as a \code{Date} or a list column, is
+#' rejected by name.
+#'
 #' @param x
 #' A character string representing the file path to the phenotype data
 #' or a data frame containing the phenotype data.
+#' @param attrTypes
+#' A mapping of each column of \code{x} to its TASSEL attribute type,
+#' required when \code{x} is a data frame and ignored otherwise.
+#' Either a named character vector, where the names are column names,
+#' or a data frame. A data frame is read in either spelling:
+#' \code{col_id} and \code{tassel_attr}, or the \code{trait_id} and
+#' \code{trait_type} that \code{\link{attributeData}()} reports, so the
+#' metadata read off one phenotype can be used to build another.
 #' @param attr
-#' An optional attribute metadata parameter required when \code{x} is
-#' a data frame. Defaults to \code{NULL}.
+#' \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
+#' Renamed to \code{attrTypes}.
 #'
 #' @return A phenotype object created from the input data.
 #'
@@ -162,6 +205,23 @@ setClass(
 #' phenotype <- readPhenotype("path/to/phenotype/file.txt")
 #'
 #' # Reading phenotype data from a data frame
+#' df <- tibble::tribble(
+#'     ~"taxa_id", ~"plant_height", ~"PC1", ~"yield",
+#'     "line_a",   12.3,            0.5,    2,
+#'     "line_b",   22.8,            -1.5,   3,
+#' )
+#'
+#' phenotypeDf <- readPhenotype(
+#'     df,
+#'     attrTypes = c(
+#'         taxa_id      = "taxa",
+#'         plant_height = "data",
+#'         PC1          = "covariate",
+#'         yield        = "data"
+#'     )
+#' )
+#'
+#' # The same mapping, written as a data frame
 #' attrDf <- tibble::tribble(
 #'     ~"col_id",      ~"tassel_attr",
 #'     "taxa_id",      "taxa",
@@ -169,24 +229,38 @@ setClass(
 #'     "PC1",          "covariate",
 #'     "yield",        "data",
 #' )
-#' df <- tibble::tribble(
-#'     ~"taxa_id", ~"plant_height", ~"PC1", ~"yield",
-#'     "line_a",   12.3,            0.5,    2,
-#'     "line_b",   22.8,            -1.5,   3,
-#' )
+#' readPhenotype(df, attrTypes = attrDf)
 #'
-#' phenotypeDf <- readPhenotype(df, attr = attrDf)
+#' # The return trip, using the metadata of an existing phenotype
+#' readPhenotype(
+#'     as.data.frame(phenotype),
+#'     attrTypes = attributeData(phenotype)
+#' )
 #' }
 #'
 #' @export
-readPhenotype <- function(x, attr = NULL) {
+readPhenotype <- function(x, attrTypes = NULL, attr = lifecycle::deprecated()) {
+    if (lifecycle::is_present(attr)) {
+        lifecycle::deprecate_warn(
+            "1.0.0", "readPhenotype(attr)", "readPhenotype(attrTypes)"
+        )
+        if (is.null(attrTypes)) attrTypes <- attr
+    }
+
     if (is.character(x)) {
         return(readPhenotypeFromFile(x))
     } else if (is.data.frame(x)) {
-        if (is.null(attr)) {
-            rlang::abort("Phenotype objects evaluated from 'data.frame' need attribute metadata ('attr' parameter)")
+        if (is.null(attrTypes)) {
+            rlang::abort(c(
+                "A `data.frame` phenotype needs attribute metadata (`attrTypes`)",
+                "i" = paste0(
+                    "Pass a named character vector, e.g. ",
+                    "c(Taxon = \"taxa\", EarHT = \"data\"), or a data frame with ",
+                    "`col_id` and `tassel_attr` columns."
+                )
+            ))
         }
-        return(readPhenotypeFromDf(x, attr))
+        return(readPhenotypeFromDf(x, attrTypes))
     } else {
         rlang::abort("Unsupported input type for 'x'. Must be a file path ('character') or 'data.frame'")
     }
@@ -204,6 +278,79 @@ readPhenotype <- function(x, attr = NULL) {
 #' A \code{TasselPhenotype} object
 setMethod("show", "TasselPhenotype", function(object) {
     print(object@dispData)
+})
+
+
+
+# /// Bracket Method /////////////////////////////////////////////////
+
+## ----
+#' @title Subset a TasselPhenotype
+#'
+#' @description
+#' Matrix-style subsetting for \code{TasselPhenotype} objects using
+#' the \code{ph[observations, traits]} syntax, the phenotype
+#' counterpart of the \code{gt[taxa, sites]} syntax used on genotype
+#' tables.
+#'
+#' @details
+#' The row axis is observations rather than taxa, since a phenotype
+#' may hold several observations of one taxon.
+#' \code{\link{taxaWhere}()} tests each observation on its own, while
+#' \code{\link{taxa}()} and a bare character vector keep whole taxa
+#' with every observation they have.
+#'
+#' The column axis is traits. The taxa column is the label on the row
+#' axis rather than a trait, so it is not a position in \code{j} and
+#' is never dropped.
+#'
+#' Indices are applied left to right, so a trait predicate sees the
+#' observations that the row index left behind. \code{notMissing} in
+#' \code{\link{traitsWhere}()} is therefore computed over the
+#' surviving observations, as it is when \code{\link{filterTraits}()}
+#' follows \code{\link{filterTaxa}()} in a pipeline.
+#'
+#' @param x A \code{TasselPhenotype} object.
+#' @param i Observation selector: a character vector of taxa IDs, a
+#'   \code{\linkS4class{TaxaSelector}}, or missing.
+#' @param j Trait selector: an integer vector of 1-based trait
+#'   positions, a character vector of trait names, a
+#'   \code{\linkS4class{TraitSelector}}, or missing.
+#' @param ... Ignored.
+#' @param drop Ignored.
+#'
+#' @return A new \code{TasselPhenotype} containing the selected
+#'   observations and/or traits.
+#'
+#' @examples
+#' \dontrun{
+#' ph[taxa("33-16", "38-11"), ]
+#' ph[taxaWhere(EarHT > 100), ]
+#' ph[, traits("EarHT", "dpoll")]
+#' ph[, traitsWhere(traitType == "covariate")]
+#' ph[taxaWhere(location == "A"), 1:3]
+#' ph[, !traits("EarDia")]
+#' }
+#'
+#' @rdname TasselPhenotype-class
+#' @aliases [,TasselPhenotype,ANY,ANY-method
+setMethod("[", "TasselPhenotype", function(x, i, j, ..., drop = FALSE) {
+    tasIn <- .resolveTasselInput(x, "phenotype", "[")
+
+    jPh   <- x@jRefObj
+    rData <- x@rData
+
+    if (!missing(i)) {
+        kept  <- applyPhenotypeTaxaSelector(jPh, i, tasIn, rData)
+        jPh   <- kept$jPh
+        rData <- rData[kept$positions, , drop = FALSE]
+    }
+
+    # An observation subset keeps every attribute, so the attribute
+    # metadata cached on 'x' still describes the traits of 'jPh'
+    if (!missing(j)) jPh <- applyTraitSelector(jPh, j, x@attrData, rData)
+
+    createTasselPhenotype(jPh)
 })
 
 
@@ -232,5 +379,61 @@ setMethod(
         return(object@jRefObj)
     }
 )
+
+
+## ----
+#' @rdname traitNames
+#' @aliases traitNames,TasselPhenotype-method
+#' @export
+setMethod(
+    f = "traitNames",
+    signature = signature(object = "TasselPhenotype"),
+    definition = function(object) {
+        attrData <- object@attrData
+
+        return(attrData$trait_id[attrData$trait_type != "taxa"])
+    }
+)
+
+
+
+# /// Methods (taxa) ////////////////////////////////////////////////
+
+## ----
+#' @rdname taxaList
+#' @aliases taxaList,TasselPhenotype-method
+#' @export
+setMethod("taxaList", "TasselPhenotype", function(tasObj) {
+    .taxaNames(tasObj@jRefObj$taxa())
+})
+
+
+
+# /// Methods (coercion) ////////////////////////////////////////////
+
+## ----
+#' @title Coerce phenotype data to a data frame
+#'
+#' @description
+#' Returns the phenotype data held by a \code{TasselPhenotype} object as a
+#' \code{tibble}. Attribute metadata is available separately via
+#' \code{\link{attributeData}()}.
+#'
+#' @param x A \code{TasselPhenotype} object.
+#' @param row.names Ignored, present for generic compatibility.
+#' @param optional Ignored, present for generic compatibility.
+#' @param ... Additional arguments to be passed to or from methods.
+#'
+#' @return A \code{tibble} of phenotype data.
+#'
+#' @export
+as.data.frame.TasselPhenotype <- function(
+    x,
+    row.names = NULL,
+    optional = FALSE,
+    ...
+) {
+    return(x@rData)
+}
 
 

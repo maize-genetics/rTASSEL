@@ -5,47 +5,16 @@
 ### Start logging info
 startLogger()
 
-### Load hapmap data
-genoPathHMP <- system.file(
-    "extdata",
-    "mdp_genotype.hmp.txt",
-    package = "rTASSEL"
-)
-
-### Read data - need only non missing data!
-phenoPathFast <- system.file(
-    "extdata",
-    "mdp_traits_nomissing.txt",
-    package = "rTASSEL"
-)
-
-### Create rTASSEL phenotype only object
-tasPheno <- readPhenotypeFromPath(
-    path = phenoPathFast
-)
-
-### Create rTASSEL genotype only object
-tasGeno <- readGenotypeTableFromPath(
-    path = genoPathHMP
-)
-
-### Create rTASSEL object - use prior TASSEL genotype object
-tasGenoPhenoFast <- readGenotypePhenotype(
-    genoPathOrObj = genoPathHMP,
-    phenoPathDFOrObj = phenoPathFast
-)
+### Shared legacy fixtures (see helper_vars.R)
+tasPheno         <- rtObjsLegacy$ph_nomiss
+tasGeno          <- rtObjsLegacy$gt_hmp
+tasGenoPhenoFast <- rtObjsLegacy$gt_hmp_ph_nomiss
 
 
 ## Error tests ----
 test_that("filterGenotypeTableSites returns error when parameters not specified", {
 
-    # Load hapmap data
-    genoPathHMP <- system.file(
-        "extdata",
-        "mdp_genotype.hmp.txt",
-        package = "rTASSEL"
-    )
-    tasGenoHMP <- readGenotypeTableFromPath(path = genoPathHMP)
+    tasGenoHMP <- rtObjsLegacy$gt_hmp
 
     expect_error(
         filterGenotypeTableSites(
@@ -173,13 +142,7 @@ test_that("filterGenotypeTableSites returns error when parameters not specified"
 
 test_that("filterGenotypeTableSites rejects negative site indices", {
 
-    # Load hapmap data
-    genoPathHMP <- system.file(
-        "extdata",
-        "mdp_genotype.hmp.txt",
-        package = "rTASSEL"
-    )
-    tasGenoHMP <- readGenotypeTableFromPath(path = genoPathHMP)
+    tasGenoHMP <- rtObjsLegacy$gt_hmp
 
     # Negative startSite
     expect_error(
@@ -217,13 +180,7 @@ test_that("filterGenotypeTableSites rejects negative site indices", {
 
 test_that("filterGenotypeTableSites rejects negative position values", {
 
-    # Load hapmap data
-    genoPathHMP <- system.file(
-        "extdata",
-        "mdp_genotype.hmp.txt",
-        package = "rTASSEL"
-    )
-    tasGenoHMP <- readGenotypeTableFromPath(path = genoPathHMP)
+    tasGenoHMP <- rtObjsLegacy$gt_hmp
 
     # Negative startPos
     expect_error(
@@ -254,13 +211,7 @@ test_that("filterGenotypeTableSites rejects negative position values", {
 
 test_that("filterGenotypeTableSites handles same chromosome with NULL positions", {
 
-    # Load hapmap data
-    genoPathHMP <- system.file(
-        "extdata",
-        "mdp_genotype.hmp.txt",
-        package = "rTASSEL"
-    )
-    tasGenoHMP <- readGenotypeTableFromPath(path = genoPathHMP)
+    tasGenoHMP <- rtObjsLegacy$gt_hmp
 
     # Same startChr and endChr with NULL positions should NOT error
     # (This was previously causing "missing value where TRUE/FALSE needed")
@@ -288,13 +239,7 @@ test_that("filterGenotypeTableSites returns correct positions.", {
     obs_taxa <- 281
     obs_site <- 139
 
-    # Load hapmap data
-    genoPathHMP <- system.file(
-        "extdata",
-        "mdp_genotype.hmp.txt",
-        package = "rTASSEL"
-    )
-    tasGenoHMP <- readGenotypeTableFromPath(path = genoPathHMP)
+    tasGenoHMP <- rtObjsLegacy$gt_hmp
 
     # Filter
     tasFiltTests <- filterGenotypeTableSites(
@@ -320,13 +265,7 @@ test_that("filterGenotypeTableSites returns correct positions.", {
     obs_taxa <- 281
     obs_site <- 2957
 
-    # Load hapmap data
-    genoPathHMP <- system.file(
-        "extdata",
-        "mdp_genotype.hmp.txt",
-        package = "rTASSEL"
-    )
-    tasGenoHMP <- readGenotypeTableFromPath(path = genoPathHMP)
+    tasGenoHMP <- rtObjsLegacy$gt_hmp
 
     # Filter
     tasFiltTests <- filterGenotypeTableSites(
@@ -351,13 +290,7 @@ test_that("filterGenotypeTableSites returns correct positions.", {
     obs_taxa <- 281
     obs_site <- 136
 
-    # Load hapmap data
-    genoPathHMP <- system.file(
-        "extdata",
-        "mdp_genotype.hmp.txt",
-        package = "rTASSEL"
-    )
-    tasGenoHMP <- readGenotypeTableFromPath(path = genoPathHMP)
+    tasGenoHMP <- rtObjsLegacy$gt_hmp
 
     # Filter
     tasFiltTests <- filterGenotypeTableSites(
@@ -382,13 +315,7 @@ test_that("filterGenotypeTableSites returns correct positions.", {
     obs_taxa <- 281
     obs_site <- 2559
 
-    # Load hapmap data
-    genoPathHMP <- system.file(
-        "extdata",
-        "mdp_genotype.hmp.txt",
-        package = "rTASSEL"
-    )
-    tasGenoHMP <- readGenotypeTableFromPath(path = genoPathHMP)
+    tasGenoHMP <- rtObjsLegacy$gt_hmp
 
     # Filter
     tasFiltTests <- filterGenotypeTableSites(
@@ -413,13 +340,7 @@ test_that("filterGenotypeTableSites returns correct positions.", {
     obs_taxa <- 281
     obs_site <- 297
 
-    # Load hapmap data
-    genoPathHMP <- system.file(
-        "extdata",
-        "mdp_genotype.hmp.txt",
-        package = "rTASSEL"
-    )
-    tasGenoHMP <- readGenotypeTableFromPath(path = genoPathHMP)
+    tasGenoHMP <- rtObjsLegacy$gt_hmp
 
     # Filter
     tasFiltTests <- filterGenotypeTableSites(
@@ -444,13 +365,7 @@ test_that("filterGenotypeTableSites returns correct positions.", {
     obs_taxa <- 281
     obs_site <- 534
 
-    # Load hapmap data
-    genoPathHMP <- system.file(
-        "extdata",
-        "mdp_genotype.hmp.txt",
-        package = "rTASSEL"
-    )
-    tasGenoHMP <- readGenotypeTableFromPath(path = genoPathHMP)
+    tasGenoHMP <- rtObjsLegacy$gt_hmp
 
     # Filter
     tasFiltTests <- filterGenotypeTableSites(
@@ -475,13 +390,7 @@ test_that("filterGenotypeTableSites returns correct positions.", {
     obs_taxa <- 281
     obs_site <- 1486
 
-    # Load hapmap data
-    genoPathHMP <- system.file(
-        "extdata",
-        "mdp_genotype.hmp.txt",
-        package = "rTASSEL"
-    )
-    tasGenoHMP <- readGenotypeTableFromPath(path = genoPathHMP)
+    tasGenoHMP <- rtObjsLegacy$gt_hmp
 
     # Filter
     tasFiltTests <- filterGenotypeTableSites(
@@ -508,13 +417,7 @@ test_that("filterGenotypeTableSites returns correct positions.", {
     obs_taxa <- 281
     obs_site <- 2896
 
-    # Load hapmap data
-    genoPathHMP <- system.file(
-        "extdata",
-        "mdp_genotype.hmp.txt",
-        package = "rTASSEL"
-    )
-    tasGenoHMP <- readGenotypeTableFromPath(path = genoPathHMP)
+    tasGenoHMP <- rtObjsLegacy$gt_hmp
 
     # Filter
     tasFiltTests <- filterGenotypeTableSites(
@@ -543,13 +446,7 @@ test_that("filterGenotypeTableSites returns correct sites.", {
     obs_taxa <- 281
     obs_site <- 300
 
-    # Load hapmap data
-    genoPathHMP <- system.file(
-        "extdata",
-        "mdp_genotype.hmp.txt",
-        package = "rTASSEL"
-    )
-    tasGenoHMP <- readGenotypeTableFromPath(path = genoPathHMP)
+    tasGenoHMP <- rtObjsLegacy$gt_hmp
 
     # Filter
     tasFiltTests <- filterGenotypeTableSites(
@@ -643,13 +540,7 @@ test_that("filterGenotypeTableSites correct chromosome with strings as parameter
     obs_taxa <- 281
     obs_site <- 2896
 
-    # Load hapmap data
-    genoPathHMP <- system.file(
-        "extdata",
-        "mdp_genotype.hmp.txt",
-        package = "rTASSEL"
-    )
-    tasGenoHMP <- readGenotypeTableFromPath(path = genoPathHMP)
+    tasGenoHMP <- rtObjsLegacy$gt_hmp
 
     # Filter
     tasFiltTests <- filterGenotypeTableSites(
@@ -715,13 +606,7 @@ test_that("filterGenotypeTableSites properly filters by a GRanges object with ot
     obs_taxa <- 281
     obs_site <- 1
 
-    # Load hapmap data
-    genoPathHMP <- system.file(
-        "extdata",
-        "mdp_genotype.hmp.txt",
-        package = "rTASSEL"
-    )
-    tasGenoHMP <- readGenotypeTableFromPath(path = genoPathHMP)
+    tasGenoHMP <- rtObjsLegacy$gt_hmp
 
     # GRanges object
     gr <- GenomicRanges::GRanges(

@@ -5,43 +5,26 @@
 ### Start logging info
 startLogger()
 
-### Load hapmap data
-genoPathHMP <- system.file(
-    "extdata",
-    "mdp_genotype.hmp.txt",
-    package = "rTASSEL"
-)
+### Shared fixtures (see helper_vars.R)
+tasGeno    <- rtObjs$gt_hmp
+tasDataset <- rtObjs$ds_hmp_ph_nomiss
 
-### Read data - need only non missing data!
-phenoPathFast <- system.file(
-    "extdata",
-    "mdp_traits_nomissing.txt",
-    package = "rTASSEL"
-)
-
-### Create rTASSEL phenotype only object
-tasPheno <- readPhenotypeFromPath(
-    path = phenoPathFast
-)
-
-### Create rTASSEL genotype only object
-tasGeno <- readGenotypeTableFromPath(
-    path = genoPathHMP
-)
-
-### Create rTASSEL object - use prior TASSEL genotype object
-tasGenoPhenoFast <- readGenotypePhenotype(
-    genoPathOrObj = genoPathHMP,
-    phenoPathDFOrObj = phenoPathFast
-)
 
 ## Tests ----
 test_that("getTaxaList() returns correct data", {
     testObj <- getTaxaList(mtcars)
     expect_true(rJava::is.jnull(testObj))
 
-    testObj <- getTaxaList(tasGenoPhenoFast@jPositionList)
+    # A position list carries no taxa
+    testObj <- getTaxaList(getPositionList(tasGeno))
     expect_true(rJava::is.jnull(testObj))
+})
+
+test_that("getTaxaList() accepts every class carrying taxa", {
+    expect_equal(getTaxaList(tasGeno)$size(), 281L)
+    expect_equal(getTaxaList(tasDataset)$size(), 278L)
+    expect_equal(getTaxaList(rtObjs$ph_nomiss)$size(), 298L)
+    expect_equal(getTaxaList(rtObjsLegacy$gt_hmp_ph_nomiss)$size(), 278L)
 })
 
 test_that("taxaList() returns correct excpetions", {
@@ -52,5 +35,8 @@ test_that("getTaxaIDs() returns correct excpetions", {
     expect_error(getTaxaIDs(mtcars))
 })
 
-
-
+test_that("getTaxaIDs() agrees with taxaList() across classes", {
+    expect_equal(getTaxaIDs(tasGeno), taxaList(tasGeno))
+    expect_equal(getTaxaIDs(tasDataset), taxaList(tasDataset))
+    expect_equal(getTaxaIDs(rtObjsLegacy$gt_hmp), taxaList(tasGeno))
+})

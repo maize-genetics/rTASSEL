@@ -14,6 +14,8 @@ exampleGigwa <- data.frame(
 test_that("`readGenotypeTableFromGigwa()` returns correct data", {
     myGt <- readGenotypeTableFromGigwa(exampleGigwa)
 
+    expect_s4_class(myGt, "TasselGenotype")
+    expect_false(is(myGt, "TasselGenotypePhenotype"))
     expect_equal(getTaxaIDs(myGt), c("ind1", "ind2", "ind3", "ind4"))
 })
 

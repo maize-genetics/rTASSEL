@@ -2,14 +2,61 @@
 % Please edit documentation in R/join_methods.R
 \name{intersectJoin}
 \alias{intersectJoin}
-\title{Intersect join phenotype tables}
+\title{Intersect join phenotype and genotype tables}
 \usage{
-intersectJoin(x)
+intersectJoin(...)
 }
 \arguments{
-\item{x}{A list of rTASSEL objects containing a phenotype.}
+\item{...}{Any number of rTASSEL objects containing phenotype or genotype
+data. Accepted classes are \code{\linkS4class{TasselPhenotype}},
+\code{\linkS4class{TasselGenotype}},
+\code{\linkS4class{TasselGenomicDataset}},
+\code{\linkS4class{PCAResults}}, \code{\linkS4class{MDSResults}},
+\code{\linkS4class{AssociationResultsBLUE}}, and the deprecated
+\code{TasselGenotypePhenotype}. Lists of objects are flattened, so
+earlier \code{intersectJoin(c(ph1, ph2))} style calls keep working.}
+}
+\value{
+A \code{\linkS4class{TasselPhenotype}} object, a
+   \code{\linkS4class{TasselGenotype}} object if only genotype data was
+   given, or a \code{\linkS4class{TasselGenomicDataset}} if both were.
+   Returns a \code{TasselGenotypePhenotype} if every data-bearing input
+   was one.
 }
 \description{
-Intersect join multiple phenotype objects based on \code{Taxa}
-   column.
+Intersect join any number of phenotype objects based on the
+   \code{Taxa} column. Objects carrying only genotype data are joined into
+   a single genotype table holding the sites of each, and the taxa they
+   all hold. If phenotype data was given as well, the joined phenotype is
+   attached to that table and a
+   \code{\linkS4class{TasselGenomicDataset}} is returned.
+}
+\details{
+Joining genotype tables is the way back from data split by
+   chromosome or by collection of sites. Sites are returned in genomic
+   order no matter which order the tables were given in, and the tables
+   are expected to hold different sites - use
+   \code{\link{mergeGenotypeTables}} to merge the calls of tables that
+   describe the same sites. Depth and the other per-site scores are not
+   carried into the joined table.
+}
+\examples{
+\dontrun{
+# Merge several phenotype tables of covariates and traits
+intersectJoin(ph1Cov, ph2Traits, ph3MoreTraits)
+
+# Put genotype data split by chromosome back together
+intersectJoin(gtChr1, gtChr2, gtChr3)
+
+# Attach a genotype table at the same time
+intersectJoin(gt, ph1Cov, ph2Traits, ph3MoreTraits)
+
+# Carry BLUE estimates forward as the traits of a new data set
+blues <- assocModelFitter(ph2Traits, . ~ .)
+intersectJoin(gt, blues, ph1Cov)
+}
+
+}
+\seealso{
+\code{\link{mergeGenotypeTables}}
 }

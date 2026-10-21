@@ -7,7 +7,9 @@
 distanceMatrix(tasObj)
 }
 \arguments{
-\item{tasObj}{an rTASSEL \code{TasselGenotypePhenotype} object}
+\item{tasObj}{An object of class \code{\linkS4class{TasselGenotype}} or
+\code{\linkS4class{TasselGenomicDataset}}. Objects of the deprecated
+\code{TasselGenotypePhenotype} class are still accepted.}
 }
 \value{
 Returns a `TasselDistanceMatrix` object.

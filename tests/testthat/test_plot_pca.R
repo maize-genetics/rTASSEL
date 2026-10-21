@@ -2,20 +2,8 @@
 
 test_that("plotPCA works correctly.", {
     ## Load data ----
-    genoPathHMP <- system.file(
-        "extdata",
-        "mdp_genotype.hmp.txt",
-        package = "rTASSEL"
-    )
-    metadataPath <- system.file(
-        "extdata",
-        "mdp_metadata.csv",
-        package = "rTASSEL"
-    )
-    tasGeno <- readGenotypeTableFromPath(
-        path = genoPathHMP
-    )
-    tasMeta <- read.csv(metadataPath)
+    tasGeno <- rtObjs$gt_hmp
+    tasMeta <- read.csv(returnSysFiles("mdp_metadata.csv"))
     tasMetaFaulty <- tasMeta
     colnames(tasMetaFaulty) <- c("sample", "Subpopulation")
     mockPCAResults <- list(
