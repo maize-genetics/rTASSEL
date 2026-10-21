@@ -51,9 +51,9 @@ The `jRefObj` slot is the pointer, and the other two record what it points
 at. Nothing crosses back into R until you ask it to, which is what keeps a
 genotype table of any size cheap to filter and pass around.
 
-This vignette is about asking. Every way of turning a TASSEL object into an
-ordinary R object - a `character` vector, a `tibble`, a `matrix` - is
-collected here, grouped by the class you start from.
+This vignette shows how to bring that data into R. It collects every way of
+turning a TASSEL object into an ordinary R object, such as a `character`
+vector, a `tibble`, or a `matrix`, grouped by the class you start from.
 
 **Prior knowledge about `rTASSEL` data structures is needed, so please refer
 to the vignette *Getting Started with rTASSEL* if you are new to this
