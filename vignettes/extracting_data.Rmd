@@ -257,9 +257,12 @@ The two readings have the same shape and dimnames, so either can be used
 wherever a matrix of calls is wanted. The dosage matrix is the smaller of
 the two and the one models expect; the allele matrix is the one to print.
 
-Numeric genotype data is the exception. A `TasselNumericGenotype` holds
-probabilities rather than discrete calls, so there is no dosage to report
-and `as.matrix()` returns the reference probabilities instead:
+Numeric genotype data is the exception. In the TASSEL API, numeric
+genotypes are stored as reference allele probabilities (`ReferenceProbability`)
+rather than discrete allele calls. Because a `TasselNumericGenotype` holds
+these continuous values (ranging from `0` to `1`) instead of genotypes that
+can be counted as dosages or spelled as alleles, `as.matrix()` returns the
+reference allele probabilities directly:
 
 ```{r, eval=TRUE, echo=TRUE}
 numGtPath <- system.file("extdata", "numeric_genotype.txt", package = "rTASSEL")
