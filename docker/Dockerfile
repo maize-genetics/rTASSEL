@@ -22,7 +22,7 @@ RUN R CMD javareconf
 RUN R -e "install.packages('pak')"
 
 # Install rTASSEL (RTASSEL_TAG expanded by the shell, e.g. v0.12.0)
-RUN R -e "pak::pak('maize-genetics/rTASSEL@${RTASSEL_TAG}')"
+RUN R -e "pak::pak('maize-genetics/tassel-r@${RTASSEL_TAG}')"
 
 # Setup rTASSEL
 RUN R -e "rTASSEL::setupTASSEL()"

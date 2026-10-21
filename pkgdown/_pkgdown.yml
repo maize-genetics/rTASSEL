@@ -192,6 +192,6 @@ footer:
 home:
   links:
   - text: Report a bug
-    href: https://github.com/maize-genetics/rTASSEL/issues
+    href: https://github.com/maize-genetics/tassel-r/issues
 
 

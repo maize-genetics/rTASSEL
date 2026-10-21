@@ -21,7 +21,7 @@ generation, please alter only typos found in `.R` files and _not_ `.Rd` files.
 ## Bigger changes and bug reporting
 
 If you want to make a bigger change, it's a good idea to first file an
-[issue](https://github.com/maize-genetics/rTASSEL/issues)
+[issue](https://github.com/maize-genetics/tassel-r/issues)
 and make sure someone from the team agrees that it’s needed. If you’ve found a 
 bug, please file an issue that illustrates the bug with a minimal 
 [reprex](https://www.tidyverse.org/help/#reprex) (this will also help you write 
@@ -34,7 +34,7 @@ a unit test, if needed).
   of `git`-based methods to help you out. For forking, you can use:
   
   ```
-  usethis::create_from_github("maize-genetics/rTASSEL", fork = TRUE)
+  usethis::create_from_github("maize-genetics/tassel-r", fork = TRUE)
   ```
 
 * From this fork, make sure you have all dependencies installed for `rTASSEL`. 
@@ -81,7 +81,7 @@ a unit test, if needed).
 
 ## Docker (`docker/Dockerfile`)
 
-A [`docker/Dockerfile`](https://github.com/maize-genetics/rTASSEL/blob/master/docker/Dockerfile) is maintained in this repository for local builds; it is not built or published by CI. To try it locally, from a clone of the repository root:
+A [`docker/Dockerfile`](https://github.com/maize-genetics/tassel-r/blob/master/docker/Dockerfile) is maintained in this repository for local builds; it is not built or published by CI. To try it locally, from a clone of the repository root:
 
 ```
 docker build --build-arg RTASSEL_TAG=v0.12.0 -t rtassel:local -f docker/Dockerfile .

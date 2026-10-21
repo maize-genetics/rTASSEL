@@ -13,7 +13,7 @@ The aim of rTASSEL is to provide an R front-end for the Java program, TASSEL. TA
 \seealso{
 Useful links:
 \itemize{
-  \item \url{https://github.com/maize-genetics/rTASSEL} \url{https://rtassel.maizegenetics.net/}
+  \item \url{https://github.com/maize-genetics/tassel-r} \url{https://rtassel.maizegenetics.net/}
 }
 
 }

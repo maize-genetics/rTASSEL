@@ -36,7 +36,7 @@ Description:
     approaches to association mapping such general and mixed linear modelling.
 License: Apache License (>= 2) | file LICENSE
 URL:
-    https://github.com/maize-genetics/rTASSEL
+    https://github.com/maize-genetics/tassel-r
     https://rtassel.maizegenetics.net/
 Depends:
     R (>= 4.1.0)

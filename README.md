@@ -1,11 +1,10 @@
 # rTASSEL <img src="man/figures/logo.png" align="right" width="120" />
 
-[![Life Cycle Status](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable) [![CI](https://github.com/maize-genetics/rTASSEL/actions/workflows/ci.yaml/badge.svg)](https://github.com/maize-genetics/rTASSEL/actions/workflows/ci.yaml) [![codecov](https://codecov.io/gh/maize-genetics/rTASSEL/branch/master/graph/badge.svg?token=4D0JSKT0UC)](https://codecov.io/gh/maize-genetics/rTASSEL) [![DOI](https://joss.theoj.org/papers/10.21105/joss.04530/status.svg)](https://doi.org/10.21105/joss.04530) [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/btmonier/rTASSEL_sandbox/HEAD?labpath=getting_started.ipynb) 
-
+[![Life Cycle Status](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable) [![CI](https://github.com/maize-genetics/tassel-r/actions/workflows/ci.yaml/badge.svg)](https://github.com/maize-genetics/tassel-r/actions/workflows/ci.yaml) [![codecov](https://codecov.io/gh/maize-genetics/tassel-r/branch/master/graph/badge.svg?token=4D0JSKT0UC)](https://codecov.io/gh/maize-genetics/tassel-r) [![DOI](https://joss.theoj.org/papers/10.21105/joss.04530/status.svg)](https://doi.org/10.21105/joss.04530) [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/btmonier/rTASSEL_sandbox/HEAD?labpath=getting_started.ipynb) 
 `rTASSEL` is an R-based front-end for accessing key TASSEL 5 methods and tools.
 This allows users to run powerful TASSEL 5 analyses within a unified R workflow,
 without switching between environments. `rTASSEL` also offers performance and
-feature advantages over other R packages. See [these benchmarks](https://maize-genetics.github.io/rTASSEL/articles/rtassel_benchmarks.html)
+feature advantages over other R packages. See [these benchmarks](https://rtassel.maizegenetics.net/articles/rtassel_benchmarks.html)
 for details.
 
 
@@ -19,16 +18,19 @@ To cite `rTASSEL`, please use the following citation:
 
 ## Installation
 
+The GitHub repository is named `tassel-r`, but the package itself is still
+called `rTASSEL`, so load it with `library(rTASSEL)` after installing.
+
 ### Stable release
 ```r
 # install.packages("pak")
-pak::pak("maize-genetics/rTASSEL@v0.13.0")
+pak::pak("maize-genetics/tassel-r@v0.13.0")
 ```
 
 ### Developmental version
 ```r
 # install.packages("pak")
-pak::pak("maize-genetics/rTASSEL")
+pak::pak("maize-genetics/tassel-r")
 ```
 
 > **Note**
@@ -46,7 +48,7 @@ pak::pak("maize-genetics/rTASSEL")
 ### Docker
 
 To avoid configuring Java and R locally, you can build a container from the
-[`docker/Dockerfile`](https://github.com/maize-genetics/rTASSEL/blob/master/docker/Dockerfile)
+[`docker/Dockerfile`](https://github.com/maize-genetics/tassel-r/blob/master/docker/Dockerfile)
 in this repository. See the [installation article](https://rtassel.maizegenetics.net/articles/rtassel_installation.html#running-from-docker)
 for build instructions, `docker run` examples, and RStudio Server usage.
 
